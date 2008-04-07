@@ -1881,7 +1881,7 @@ class VariantBody implements Serializable
 				for (int i = 0;i < array.length;i++)
 				{
 					JIVariant variant = (JIVariant)array[i];
-					length += ((VariantBody)(variant.member.getReferent())).variantType * 8;
+					length += variant.getLengthInBytes(FLAG) * 8;//((VariantBody)(variant.member.getReferent())).variantType * 8;
 				}
 				
 				//now for the "user" pointer part
