@@ -33,6 +33,7 @@ public class MSTypeLibraryBrowser2 {
 	public MSTypeLibraryBrowser2(String address, String args[]) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
+		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf(session,args[4]),address,session);
 	}
 	
