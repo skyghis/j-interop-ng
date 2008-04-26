@@ -39,6 +39,8 @@ final class JIOrpcThis implements Serializable {
 
 	
 	private static final long serialVersionUID = 9148006530957254901L;
+	private static ThreadLocal cidForCallback = new ThreadLocal();
+
 	private int flags = 0;
 	private JIOrpcExtentArray[] arry = null;
 	private JIComVersion version = JISystem.getCOMVersion();  
@@ -81,7 +83,11 @@ final class JIOrpcThis implements Serializable {
 		ndr.writeUnsignedShort(version.getMinorVersion()); //COM minor version
 		ndr.writeUnsignedLong(flags); // No Flags
 		ndr.writeUnsignedLong(0); // Reserved ...always 0.
-		rpc.core.UUID uuid = new rpc.core.UUID(cid);
+		
+		//the order here is important since the cid is always filled from the ctor hence will never be null.
+		String cid2 = cidForCallback.get() == null ? cid : (String)cidForCallback.get(); 
+//		System.out.println(cid2);
+		rpc.core.UUID uuid = new rpc.core.UUID(cid2);
 		try{
 			uuid.encode(ndr,ndr.getBuffer());
 		}catch(NdrException e)
@@ -207,6 +213,12 @@ final class JIOrpcThis implements Serializable {
 		}
 		
 		retval.arry = (JIOrpcExtentArray[])extentArrays.toArray(new JIOrpcExtentArray[extentArrays.size()]);
+		
+		//decode can only be executed incase of a request made from the server side in case of a callback. so the thread making this
+		//callback will store the cid from the decode operation in the threadlocal variable. In case an encode is performed using the 
+		//same thread then we know that this is a nested call. Hence will replace the cid with the thread local cid. For the calls being in
+		//case of encode this value will not be used if the encode thread is of the client and not of JIComOxidRuntimeHelper.
+		cidForCallback.set(retval.cid);
 		return retval;
 	}
 
