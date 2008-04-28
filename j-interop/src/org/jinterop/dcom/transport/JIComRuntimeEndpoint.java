@@ -124,11 +124,13 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 					  responseCoPdu.setFormat(((RequestCoPdu) request).getFormat());
 					  responseCoPdu.setCallId(((RequestCoPdu) request).getCallId());
 					  ((NdrObject)workerObject).encode(ndr,null);
-					  responseCoPdu.setAllocationHint(ndr.getBuffer().length);
-//					  byte[] responsebytes = new byte[ndr.getBuffer().length];
-//					  System.arraycopy(ndr.getBuffer().getBuffer(), 0, responsebytes, 0, responsebytes.length);
-//					  responseCoPdu.setStub(responsebytes);
-					  responseCoPdu.setStub(ndr.getBuffer().getBuffer());
+					  int length = ndr.getBuffer().length > ndr.getBuffer().index ? ndr.getBuffer().length : ndr.getBuffer().index;
+					  length = length + 4;
+					  responseCoPdu.setAllocationHint(length);
+					  byte[] responsebytes = new byte[length];
+					  System.arraycopy(ndr.getBuffer().getBuffer(), 0, responsebytes, 0, responsebytes.length);
+					  responseCoPdu.setStub(responsebytes);
+//					  responseCoPdu.setStub(ndr.getBuffer().getBuffer());
 					  response = responseCoPdu;
 					  
 					  

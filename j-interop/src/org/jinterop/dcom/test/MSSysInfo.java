@@ -1,6 +1,7 @@
 package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
+import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIInterfaceDefinition;
@@ -25,6 +26,7 @@ public class MSSysInfo {
 	MSSysInfo(String[] args) throws JIException, UnknownHostException 
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
+		session.useSessionSecurity(true);
 		JIComServer comServer = new JIComServer(JIProgId.valueOf(session,"SYSINFO.SysInfo"),args[0],session);
 		sysInfoServer = comServer.createInstance();
 		sysInfoObject = (IJIComObject)sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
@@ -72,6 +74,7 @@ public class MSSysInfo {
 		    	System.out.println("Please provide address domain username password");
 		    	return;
 		    }
+			JISystem.getLogger().setLevel(Level.OFF);
 			JISystem.setAutoRegisteration(true);
 			MSSysInfo sysInfo = new MSSysInfo(args);
 			sysInfo.displayValues();
