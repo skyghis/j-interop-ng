@@ -110,7 +110,7 @@ public final class JIUnion implements Serializable {
 		else
 		if (member.getClass().equals(JIString.class))
 		{
-			((JIPointer)member).setDeffered(true);
+			((JIString)member).setDeffered(true);
 		}
 		
 		dsVsMember.put(discriminant,member);
