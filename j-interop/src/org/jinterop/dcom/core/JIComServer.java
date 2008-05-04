@@ -144,12 +144,17 @@ public class JIComServer extends Stub {
 		JIStringBinding nameBinding = null;
 		String targetAddress = ipAddress == null ? "" : ipAddress.trim();
 		
-		if (!targetAddress.equals(""))
+//		if (!targetAddress.equals(""))
 		{
 			//now we choose, otherwise the first one we get.
 			while(i < addressBindings.length)
 			{
 				binding = addressBindings[i];
+				if (binding.getTowerId() != 0x07) //this means, even though I asked for TCPIP something else was supplied, noticed this in win2k.				    
+				{
+				    i++;
+				    continue;
+				}
 				//get the one with IP address
 				int index = binding.getNetworkAddress().indexOf(".");
 				if (index != -1)
@@ -177,11 +182,11 @@ public class JIComServer extends Stub {
 			
 			binding = nameBinding == null ? binding : nameBinding;
 		}
-		else
-		{
-			//Just pick up the first one.
-			binding = addressBindings[0];
-		}
+//		else
+//		{
+//			//Just pick up the first one.
+//			binding = addressBindings[0];
+//		}
 		
 		
 		//will use this last binding .
@@ -228,12 +233,18 @@ public class JIComServer extends Stub {
 		
 		binding = null;
 		nameBinding = null;
-		if (!targetAddress.equals(""))
+		i = 0;
+//		if (!targetAddress.equals(""))
 		{
 			//now we choose, otherwise the first one we get.
 			while(i < bindings.length)
 			{
 				binding = bindings[i];
+				if (binding.getTowerId() != 0x07) //this means, even though I asked for TCPIP something else was supplied, noticed this in win2k.                   
+                {
+                    i++;
+                    continue;
+                }
 				//get the one with IP address
 				int index = binding.getNetworkAddress().indexOf(".");
 				if (index != -1)
@@ -261,11 +272,11 @@ public class JIComServer extends Stub {
 			
 			binding = nameBinding == null ? binding : nameBinding;
 		}
-		else
-		{
-			//Just pick up the first one.
-			binding = bindings[0];
-		}
+//		else
+//		{
+//			//Just pick up the first one.
+//			binding = bindings[0];
+//		}
 
 		
 		//now set the NTLMv2 Session Security.
@@ -552,6 +563,11 @@ public class JIComServer extends Stub {
 		while(i < bindings.length)
 		{
 			binding = bindings[i];
+			if (binding.getTowerId() != 0x07) //this means, even though I asked for TCPIP something else was supplied, noticed this in win2k.                    
+            {
+                i++;
+                continue;
+            }
 			//get the one with IP address
 			int index = binding.getNetworkAddress().indexOf(".");
 			if (index != -1)
