@@ -14,6 +14,7 @@ import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.win32.IJIDispatch;
 import org.jinterop.dcom.win32.JIComFactory;
+import org.jinterop.dcom.win32.JIExcepInfo;
 
 
 public class MSExcel3 {
@@ -137,8 +138,16 @@ public class MSExcel3 {
 		IJIDispatch pageSetup = (IJIDispatch)outVal.getObjectAsComObject(unknown);
 		pageSetup.put("Orientation",new JIVariant(2));
 		pageSetup.put("Zoom",new JIVariant(100)); 
-		sheet.callMethod("PrintOut",new Object[]{JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		try{
+		    sheet.callMethod("PrintOut",new Object[]{JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
+	                JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+	    }
+		catch(JIException e)
+		{
+		    e.printStackTrace();
+		    JIExcepInfo excepInfo = sheet.getLastExcepInfo();
+		    System.out.println("Error Code in EXCEPINFO: " + excepInfo.getErrorCode());
+		}
 		dispatchOfWorkBook.callMethod("close",new Object[]{Boolean.FALSE,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
 		dispatch.callMethod("Quit");
 		JISession.destroySession(dispatch.getAssociatedSession());
