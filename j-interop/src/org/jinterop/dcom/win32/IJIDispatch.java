@@ -414,5 +414,11 @@ public interface IJIDispatch extends IJIComObject {
 	 */
 	public void putRef(String name, Object[] params) throws JIException;
 
-	
+	/** Returns the EXCEPINFO structure wrapped as a data object for the 
+	 * last operation. Please note this will only be valid if a JIException has been raised.
+	 * 
+	 * 
+	 * @return
+	 */
+	public JIExcepInfo getLastExcepInfo();
 }

@@ -52,6 +52,8 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 		//this.comObject = comObject;
 	}
 	
+	private final JIExcepInfo lastExcepInfo = new JIExcepInfo();
+	
 	public static final int FLAG_TYPEINFO_SUPPORTED = 1;
 	public static final int FLAG_TYPEINFO_NOTSUPPORTED = 0;
 	
@@ -218,6 +220,7 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 	
 	public JIVariant[] invoke(int dispId,int dispatchFlags,JIArray arrayOfVariantsInParams,JIArray arrayOfNamedDispIds,JIVariant outParamType) throws JIException
 	{
+	    lastExcepInfo.clearAll();
 		JICallObject obj = new JICallObject(comObject.getIpid(),true);
 		obj.setOpnum(3);				
 		
@@ -314,6 +317,13 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 				String text1 = ((JIString)(excepInfoRet.getMember(2))).getString() + " ";
 				String text2 = ((JIString)(excepInfoRet.getMember(3))).getString() + " [ ";
 				String text3 = ((JIString)(excepInfoRet.getMember(4))).getString() + " ] ";
+				lastExcepInfo.excepDesc = text2;
+				lastExcepInfo.excepHelpfile = text3;
+				lastExcepInfo.excepSource = text1;
+				lastExcepInfo.errorCode = ((Short)excepInfoRet.getMember(0)).intValue() != 0 ? ((Short)excepInfoRet.getMember(0)).intValue() :
+				                                                                    ((Integer)excepInfoRet.getMember(8)).intValue();
+				
+				
 				throw new JIException(obj.getHRESULT(),JISystem.getLocalizedMessage(obj.getHRESULT()) + " ==> Message from Server: " +
 				text1 + text2 + text3);
 			}
@@ -650,6 +660,11 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 	public void putRef(String name, Object[] params) throws JIException {
 		put(getIDsOfNames(name),params,true);
 	}
+
+    public JIExcepInfo getLastExcepInfo()
+    {
+        return lastExcepInfo;
+    }
 	
 	
 }
