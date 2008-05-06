@@ -145,7 +145,7 @@ public class MSWMI {
 				MSWMI test = new MSWMI(args[0],args);
 				for (int i = 0 ; i < 100; i++)
 				{
-					System.out.println("Vikram i: " + i);
+					System.out.println("Index i: " + i);
 					test.performOp();
 				}
 				test.killme();
