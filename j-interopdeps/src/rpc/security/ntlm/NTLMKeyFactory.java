@@ -1,13 +1,11 @@
 package rpc.security.ntlm;
 
 
-import gnu.crypto.Registry;
 import gnu.crypto.hash.MD4;
 import gnu.crypto.hash.MD5;
 import gnu.crypto.prng.ARCFour;
 import gnu.crypto.prng.IRandom;
 import gnu.crypto.prng.LimitReachedException;
-import gnu.crypto.prng.PRNGFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
@@ -83,7 +81,7 @@ class NTLMKeyFactory {
 	IRandom getARCFOUR(byte[] key)
 	{
 		HashMap attrib = new HashMap();
-		IRandom keystream = PRNGFactory.getInstance(Registry.ARCFOUR_PRNG);
+		IRandom keystream = new ARCFour();
 		attrib.put(ARCFour.ARCFOUR_KEY_MATERIAL, key);
 		keystream.init(attrib);
 		return keystream;
