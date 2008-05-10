@@ -182,7 +182,7 @@ public final class JISession {
 		    	JISystem.getLogger().throwing("JISession","CleanupThread:run()",e);  
 		    }
 		}
-	});
+	},"jI_GarbageCollector");
 	
 	//from JDK bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4665037
 	private static String getLocalHost(String destination)
@@ -242,7 +242,7 @@ public final class JISession {
 					mapOfObjects.clear();
 					listOfSessions.clear();
 				}
-		}));
+		},"jI_ShutdownHook"));
 		
 		
 	}

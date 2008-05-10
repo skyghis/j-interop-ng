@@ -59,7 +59,7 @@ final class JIComOxidDetails {
 		return portForRemUnknown;
 	}
 	
-	String getIid()
+	String getIID()
 	{
 		return iid;
 	}

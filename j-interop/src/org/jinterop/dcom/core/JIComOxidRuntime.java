@@ -425,7 +425,7 @@ final class JIComOxidRuntime {
 				    		Properties properties = new Properties(defaults);
 				    		properties.put("IID","99fcfec4-5260-101b-bbcb-00aa0021347a:0.0".toUpperCase()); //IOxidResolver
 					    	JIComOxidRuntimeHelper oxidResolver = new JIComOxidRuntimeHelper(properties);
-						    oxidResolver.startOxid();
+						    oxidResolver.startOxid(socket.getLocalPort(), socket.getPort());
 						}
 				    	
 				    }
@@ -444,7 +444,7 @@ final class JIComOxidRuntime {
 			}
 		};
 		
-		Thread thread2 = new Thread(thread);
+		Thread thread2 = new Thread(thread,"jI_OxidResolver");
 		thread2.setDaemon(true);
 		thread2.start();
 		resolverStarted = true;

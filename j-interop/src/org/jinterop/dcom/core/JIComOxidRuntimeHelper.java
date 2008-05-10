@@ -73,7 +73,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 		return UUID.NIL_UUID + ":0.0" ; //returning nothing
 	}
 
-	void startOxid() throws IOException
+	void startOxid(int portNumLocal,int portNumRemote) throws IOException
 	{
 		Thread oxidResolverThread = new Thread(new Runnable() {
 			public void run() {
@@ -101,7 +101,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 					JISystem.getLogger().info("terminating startOxid thread: " + Thread.currentThread().getName());
 				}
 			}
-		});
+		},"jI_OxidResolver_Client[" + portNumLocal + " , " + portNumRemote + "]");
 		oxidResolverThread.setDaemon(true);
 		oxidResolverThread.start();
 	}
@@ -164,7 +164,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 					JISystem.getLogger().info("terminating startRemUnknown thread: " + Thread.currentThread().getName());
 				}
 			}
-		});
+		},"jI_RemUnknown[" + baseIID + " , " + remUnknownPort + "]");
 		
 		remUnknownThread.setDaemon(true);
 		remUnknownThread.start();
@@ -412,7 +412,7 @@ class OxidObject extends NdrObject implements IJICOMRuntimeWorker
 		try {
 			//this is so that repeated calls for Oxid resolution return the same rem unknwon.
 			port = details.getPortForRemUnknown();
-			port = port == -1 ? details.getCOMRuntimeHelper().startRemUnknown(details.getIid()) : port;
+			port = port == -1 ? details.getCOMRuntimeHelper().startRemUnknown(details.getIID()) : port;
 			details.setPortForRemUnknown(port);
 		} catch (IOException e) {
 			
@@ -576,7 +576,10 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			//now use the objectId , just set in before this call to read. That objectId is the IPID on which the
 			//call is being made , and was previously exported during Q.I. The component value was filled during an
 			//alter context or bind, again made some calls before.
-			
+			if (component == null)
+			{
+			    int i = 0;
+			}
 			byte b[] = null;
 			Object result = null;
 			NetworkDataRepresentation ndr2 = new NetworkDataRepresentation();
