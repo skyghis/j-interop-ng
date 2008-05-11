@@ -67,7 +67,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 		throw new JIRuntimeException(JIErrorCodes.JI_ILLEGAL_CALL);
 	}
 	
-	//use this oxidObject, it is actually OxidObject extends NdrObject. 
+	//use this oxidObject, it is actually OxidResolverImpl extends NdrObject. 
 	public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID) throws IOException 
 	{
 
@@ -231,6 +231,11 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 			  //now send the response.
 			  send(response);
 		     
+			  if (workerObject.workerOver())
+			  {
+			      JISystem.getLogger().info("processRequests: [JIComRuntimeEndPoint] Worker is over, all IPID references have been released. Thread will now exit.");
+			      break;
+			  }
 		}
 				
 	}

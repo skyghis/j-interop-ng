@@ -32,4 +32,5 @@ public interface IJICOMRuntimeWorker {
 	public UUID getCurrentObjectID();
 	public List getQIedIIDs();
 	public boolean isResolver();
+	public boolean workerOver();
 }

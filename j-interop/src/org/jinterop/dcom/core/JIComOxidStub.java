@@ -34,7 +34,7 @@ import rpc.Endpoint;
 import rpc.Stub;
 
 /**Class only used for Oxid ping requests between the Java client and the COM server. This is not for 
- * reverse operations i.e COM client and Java server. That is handled at the OxidObject level in JIComOxidRuntimeHelper,
+ * reverse operations i.e COM client and Java server. That is handled at the OxidResolverImpl level in JIComOxidRuntimeHelper,
  * since each of the Oxid Resolver has a separate thread for COM client.  
  * 
  * 

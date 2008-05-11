@@ -35,6 +35,7 @@ final class JIComOxidDetails {
 	private JIComOxidRuntimeHelper comRuntimeHelper = null;
 	private int portForRemUnknown = -1;
 	private int protectionLevel = 2;
+	private Thread remUnknownThread = null;
 	
 	JIComOxidDetails(JIJavaCoClass javaInstance, JIOxid oxid, JIObjectId oid
 					,String iid,String ipid,JIInterfacePointer ptr, JIComOxidRuntimeHelper helper,int protectionLevel)
@@ -97,5 +98,15 @@ final class JIComOxidDetails {
 	int getProtectionLevel()
 	{
 		return protectionLevel;
+	}
+	
+	void setRemUnknownThread(Thread remUnknown)
+	{
+	    this.remUnknownThread = remUnknown;
+	}
+	
+	void interruptRemUnknownThread()
+	{
+	    remUnknownThread.interrupt();
 	}
 }

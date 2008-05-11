@@ -518,6 +518,9 @@ public final class JISession {
 			}
 		}
 		
+		//finally any oids exported by this session.
+		JIComOxidRuntime.destroySessionOIDs(session.getSessionIdentifier());
+		
 	}
 	
 	//each session is associated with 1 and only 1 stub.

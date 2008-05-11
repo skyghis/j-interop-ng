@@ -20,9 +20,12 @@ package org.jinterop.dcom.core;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
@@ -83,7 +86,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 						JISystem.getLogger().info("started startOxid thread: " + Thread.currentThread().getName());
 					}
 					attach();
-					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new OxidObject(getProperties()),null);
+					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new OxidResolverImpl(getProperties()),null);
 				}catch(Exception e)
 				{
 					if (JISystem.getLogger().isLoggable(Level.WARNING))
@@ -107,11 +110,13 @@ final class JIComOxidRuntimeHelper extends Stub {
 	}
 	
 	//returns the port to which the server is listening.
-	int startRemUnknown(final String baseIID) throws IOException
+	Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent) throws IOException
 	{
-		final ServerSocket serverSocket = new ServerSocket(0);
-		serverSocket.setSoTimeout(120*1000); //2 min timeout.
-		int remUnknownPort = serverSocket.getLocalPort();
+	    final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+	    final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
+	    serverSocket.setSoTimeout(120*1000); //2 min timeout.
+	    serverSocket.bind(null);
+        int remUnknownPort = serverSocket.getLocalPort();
 		Thread remUnknownThread = new Thread(new Runnable() {
 			public void run() {
 				try{
@@ -130,7 +135,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 			    		attach();
 			    		//getEndpoint().getSyntax().getUuid().toString();
 					}
-					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new RemUnknownObject(),baseIID);
+					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown,ipidOfComponent),baseIID);
 				}catch(SmbAuthException e)
 				{
 					JISystem.getLogger().throwing("JIComOxidRuntimeHelper","startRemUnknown",e);
@@ -168,19 +173,19 @@ final class JIComOxidRuntimeHelper extends Stub {
 		
 		remUnknownThread.setDaemon(true);
 		remUnknownThread.start();
-		return remUnknownPort;
+		return new Object[]{new Integer(remUnknownPort),remUnknownThread};
 	}
 }
 
 //This object should have serialized access only , i.e at a time only 1 read --> write , cycle should happen
 // it is not multithreaded safe.
-class OxidObject extends NdrObject implements IJICOMRuntimeWorker
+class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 {
 	//override read\write\opnum etc. here, use the util apis to decompose this.
 	private int opnum = -1;
 	private NdrBuffer buffer = null;
 	private Properties p = null;
-	public OxidObject(Properties p)
+	public OxidResolverImpl(Properties p)
 	{
 		super();
 		this.p = p;
@@ -406,13 +411,21 @@ class OxidObject extends NdrObject implements IJICOMRuntimeWorker
 //		NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
 //		
 		
+		//randomly create IPID and send, this is the ipid of the remunknown, we store it with remunknown object
+        UUID uuid = new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()));
+        
 		//create the bindings for this Java Object.
 		//this port will go in the new bindings sent to the COM client.
 		int port = -1;
 		try {
 			//this is so that repeated calls for Oxid resolution return the same rem unknwon.
 			port = details.getPortForRemUnknown();
-			port = port == -1 ? details.getCOMRuntimeHelper().startRemUnknown(details.getIID()) : port;
+			if (port == -1)
+			{
+			    Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(),uuid.toString(),details.getIpid());
+			    port = ((Integer)portandthread[0]).intValue();
+			    details.setRemUnknownThread((Thread)portandthread[1]);
+			}
 			details.setPortForRemUnknown(port);
 		} catch (IOException e) {
 			
@@ -423,8 +436,6 @@ class OxidObject extends NdrObject implements IJICOMRuntimeWorker
 		//JIDualStringArray.test = true;
 		JIDualStringArray dualStringArray = new JIDualStringArray(port);
 		
-		//randomly create IPID and send, we don't care about this one.
-		UUID uuid = new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()));
 		
 		Integer authnHint = new Integer(details.getProtectionLevel());
 		
@@ -470,6 +481,12 @@ class OxidObject extends NdrObject implements IJICOMRuntimeWorker
 	public void setCurrentIID(String iid) {
 		//does nothing
 	}
+
+    public boolean workerOver()
+    {
+        //oxid resolver gets over when the client connected to it releases socket.
+        return false;
+    }
 }
 
 //This object should have serialized access only , i.e at a time only 1 read --> write , cycle should happen
@@ -489,12 +506,18 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 	//ObjectID tells you the IPID to act on, sent via the Request calls
 	private UUID objectId = null;
 	
-	//this would be the ipid of this RemUnknownObject, it will come when the component == null;
-	private String selfIPID = null;
+	//this would be the ipid of this RemUnknownObject
+	private final String selfIPID;
 	
 	private String currentIID = null;
 	
 	private List listOfIIDsQIed = new ArrayList();
+	
+	RemUnknownObject(String ipidOfme, String ipidOfComponent)
+	{
+	    selfIPID = ipidOfme;
+	    mapOfIpidsVsRef.put(ipidOfComponent.toUpperCase(),new Integer(5));
+	}
 	
 	//this list will get cleared after this call.
 	public List getQIedIIDs()
@@ -521,21 +544,43 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 		ndr.setBuffer(buffer); //this buffer is prepared via read.
 	}
 	
+	private static final JIStruct remInterfaceRef = new JIStruct();
+	static
+	{
+	    try
+        {
+            remInterfaceRef.addMember(UUID.class);
+            remInterfaceRef.addMember(Integer.class);
+            remInterfaceRef.addMember(Integer.class);
+        }
+        catch (JIException shouldnothappen)
+        {
+            JISystem.getLogger().throwing("RemUnknownObject", "Static Initialiser", shouldnothappen);
+        }
+	}
+	private static final JIArray remInterfaceRefArray = new JIArray(remInterfaceRef,null,1,true);
+    
+	private Map mapOfIpidsVsRef = new HashMap();
+	private boolean workerOver = false;
+	
 	public void read(NetworkDataRepresentation ndr) 
 	{ 
 		//will read according to the opnum. The setOpnum should have been called before this
 		//call.	
 		String ipid = objectId.toString();
 		
+//		if (!mapOfIpidsVsRef.containsKey(ipid.toUpperCase()))
+//		{
+//		    System.out.println(Thread.currentThread() + " -->> " + ipid.toUpperCase());
+//		    //we always give 5 references
+//		    mapOfIpidsVsRef.put(ipid.toUpperCase(),new Integer(5));
+//		}
+		
 		//this means the call came for IRemUnknown apis, since selfIpid is null or matches the objectID
 		//if (selfIPID == null || selfIPID.equalsIgnoreCase(ipid))
-		if ("00000131-0000-0000-C000-000000000046".equalsIgnoreCase(currentIID))
+//		if ("00000131-0000-0000-C000-000000000046".equalsIgnoreCase(currentIID))
+		if (selfIPID.equalsIgnoreCase(ipid))
 		{
-			if (selfIPID == null)//first time
-			{
-				selfIPID = ipid;
-			}
-			
 			switch(opnum)
 			{
 				case 3: //IRemUnknown QI.
@@ -544,13 +589,38 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 				case 4: //addref
 						JIOrpcThis.decode(ndr);
 						int length = ndr.readUnsignedShort();
+					
+						int[] retvals = new int[length];
+						JIArray array = (JIArray)JIUtil.deSerialize(ndr, remInterfaceRefArray, new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY, new HashMap());
+						//saving the ipids with there references. considering public + private references together for now.
+						JIStruct[] structs = (JIStruct[])array.getArrayInstance();
+						for (int i = 0;i<length;i++)
+                        {
+						    String ipidref = ((UUID)structs[i].getMember(0)).toString().toUpperCase();
+						    int publicRefs = ((Integer)structs[i].getMember(1)).intValue();
+						    int privateRefs = ((Integer)structs[i].getMember(2)).intValue();
+                            
+						    if (!mapOfIpidsVsRef.containsKey(ipidref))
+	                        {
+						        //this would be strange, since all the ipids we give should be part of the map already.
+						        //have to set 0x80000003 (INVALID ARG here)
+						        retvals[i] = 0x80000003;
+						        continue;
+	                        }
+						    
+						    int total = ((Integer)mapOfIpidsVsRef.get(ipidref)).intValue() + publicRefs + privateRefs;
+						    mapOfIpidsVsRef.put(ipidref, new Integer(total));
+						}
+						
+						
+						//preparing the response
 						buffer = new NdrBuffer(new byte[length*4 + 16],0);
 						NetworkDataRepresentation ndr2 = new NetworkDataRepresentation();
 						ndr2.setBuffer(buffer);
 						JIOrpcThat.encode(ndr2);
-						for (int i =0;i<length;i++)
+						for (int i = 0;i<length;i++)
 						{
-							buffer.enc_ndr_long(0);
+							buffer.enc_ndr_long(retvals[i]);
 						}
 						
 						buffer.enc_ndr_long(0);
@@ -558,8 +628,41 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 						
 					break;
 				case 5: //release
-					 //dont' care about these, if the ping does not come will release the java instance
-					 //I have 1 OID == 1 IPID == 1 java instance.
+				    
+				    
+				    JIOrpcThis.decode(ndr);
+                    length = ndr.readUnsignedShort();
+                    array = (JIArray)JIUtil.deSerialize(ndr, remInterfaceRefArray, new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY, new HashMap());
+                    //saving the ipids with there references. considering public + private references together for now.
+                    structs = (JIStruct[])array.getArrayInstance();
+                    for (int i = 0;i<length;i++)
+                    {
+                        String ipidref = ((UUID)structs[i].getMember(0)).toString().toUpperCase();
+                        int publicRefs = ((Integer)structs[i].getMember(1)).intValue();
+                        int privateRefs = ((Integer)structs[i].getMember(2)).intValue();
+                        if (!mapOfIpidsVsRef.containsKey(ipidref))
+                        {
+                            continue;
+                        }
+                        
+                        int total = ((Integer)mapOfIpidsVsRef.get(ipidref)).intValue() - publicRefs - privateRefs;
+                        if (total == 0)
+                        {
+                            mapOfIpidsVsRef.remove(ipidref);
+                        }
+                        else
+                        {
+                            mapOfIpidsVsRef.put(ipidref, new Integer(total));
+                        }
+                    }
+                    
+                    //all references to all IPIDs exported are over, this is now done.
+                    if (mapOfIpidsVsRef.isEmpty())
+                    {
+                        workerOver = true;
+                    }
+				    
+					//I have 1 OID == 1 IPID == 1 java instance.
 					buffer = new NdrBuffer(new byte[32],0);
 					ndr2 = new NetworkDataRepresentation();
 					ndr2.setBuffer(buffer);
@@ -812,6 +915,10 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 				//now generate the IPID and export a java instance with this.
 				JIStdObjRef objRef = new JIStdObjRef(ipid2,details.getOxid(),details.getOid());
 				objRef.encode(ndr2);
+				
+				//add it to the exported Ipids map
+				mapOfIpidsVsRef.put(ipid2.toUpperCase(), new Integer(objRef.getPublicRefs()));
+				 
 				if (JISystem.getLogger().isLoggable(Level.FINEST))
                 {
 					JISystem.getLogger().finest("RemUnknownObject: [QI] for which the stdObjRef is " +  objRef);
@@ -869,4 +976,9 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 		this.currentIID = iid;
 		
 	}
+
+    public boolean workerOver()
+    {
+        return workerOver;
+    }
 }

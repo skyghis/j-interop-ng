@@ -20,6 +20,7 @@ package org.jinterop.dcom.core;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +70,9 @@ final class JIComOxidRuntime {
 	private static HashMap mapOfOxidVsOxidDetails = new HashMap();//java client , com server
 	private static HashMap mapOfOIDVsComponents = new HashMap(); //java client , com server
 	
+	//list of all exported oids per session, all these oids have to be removed.
+	private static HashMap mapOfSessionIdsVsOIDs = new HashMap(); //java server , com client
+    
 	private static HashMap mapOfSetIdVsListOfOIDs = new HashMap(); //com client , java server
 	private static HashMap mapOfSessionVsPingSetHolder = new HashMap(); //com client , java server
 	//private static HashMap mapOfIPIDVsOID = new HashMap(); //com client , java server, //IPID vs JIObjectId, for increasing\decreasing references 
@@ -138,6 +142,9 @@ final class JIComOxidRuntime {
 						listOfExportedJavaComponents.remove(component);
 						itr.remove();
 						
+						//the thread associated with this will also stop.
+						details.interruptRemUnknownThread();
+						
 						component = null;
 						details = null;
 					}
@@ -148,6 +155,41 @@ final class JIComOxidRuntime {
 		}
 	}
 	
+	static void destroySessionOIDs(int sessionId)
+	{
+	    synchronized (mutex2) {
+            
+            if (JISystem.getLogger().isLoggable(Level.INFO))
+            {
+                JISystem.getLogger().info("destroySessionOIDs for session: " + sessionId);
+            }
+            
+            List oids = (ArrayList)mapOfSessionIdsVsOIDs.remove(new Integer(sessionId));
+            if (oids == null || oids.isEmpty())
+            {
+                return;
+            }
+            
+            for (int i = 0 ; i < oids.size(); i++)
+            {
+                JIObjectId oid = (JIObjectId)oids.get(i);
+                //remove all
+                JIJavaCoClass component = (JIJavaCoClass)mapOfOIDVsComponents.get(oid);
+                JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
+                mapOfOxidVsOxidDetails.remove(details.getOxid());
+                mapOfIPIDVsComponent.remove(details.getIpid());
+                mapOfJavaVsOxidDetails.remove(component);
+                listOfExportedJavaComponents.remove(component);
+                //the thread associated with this will also stop.
+                details.interruptRemUnknownThread();
+                component = null;
+                details = null;
+                oid = null;
+            }
+        
+            oids.clear();
+        }
+	}
 	
 	private static class ClientPingTimerTask extends TimerTask
 	{
@@ -409,8 +451,9 @@ final class JIComOxidRuntime {
 			public void run() {
 				
 				try {
-					
-					serverSocket = new ServerSocket(0); //bind on any free port
+				    final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+			        serverSocket = serverSocketChannel.socket();//new ServerSocket(0); //bind on any free port
+			        serverSocket.bind(null);
 					oxidResolverPort = serverSocket.getLocalPort();
 					//System.err.println("VIKRAM: oxidResolverPort: " + oxidResolverPort);
 				    // server infinite loop
@@ -495,7 +538,7 @@ final class JIComOxidRuntime {
 				return details.getInterfacePtr();
 			}
 			
-			//as the ID could be repeated
+			//as the ID could be repeated, this is the ipid of the interface being requested.
 			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
 			String iid = component.isCoClassUnderRealIID() ? component.getComponentID() : IJIUnknown.IID;//has to be IUnknown's IID.
 			byte[] bytes = new byte[8];
@@ -551,6 +594,15 @@ final class JIComOxidRuntime {
 		
 			mapOfIPIDVsComponent.put(ipid,details); //this is the ipid of the component.
 			
+			List oids = (ArrayList)mapOfSessionIdsVsOIDs.get(new Integer(session.getSessionIdentifier()));
+			if (oids == null)
+			{
+			    oids = new ArrayList();
+			    mapOfSessionIdsVsOIDs.put(new Integer(session.getSessionIdentifier()),oids);
+			}
+			oids.add(oid);
+			
+			
 			if (component.getAssociatedInterfacePointer() != null)
 			{
 				throw new JIException(JIErrorCodes.JI_JAVACOCLASS_ALREADY_EXPORTED);
@@ -560,7 +612,7 @@ final class JIComOxidRuntime {
 		return ptr;
 	}
 	
-	//will get called from OxidObject only
+	//will get called from OxidResolverImpl only
 	static JIComOxidDetails getOxidDetails(JIOxid oxid) 
 	{
 		synchronized (mutex2) {
