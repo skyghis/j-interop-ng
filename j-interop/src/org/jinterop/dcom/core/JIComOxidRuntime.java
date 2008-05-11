@@ -174,7 +174,7 @@ final class JIComOxidRuntime {
             {
                 JIObjectId oid = (JIObjectId)oids.get(i);
                 //remove all
-                JIJavaCoClass component = (JIJavaCoClass)mapOfOIDVsComponents.get(oid);
+                JIJavaCoClass component = (JIJavaCoClass)mapOfOIDVsComponents.remove(oid);
                 JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
                 mapOfOxidVsOxidDetails.remove(details.getOxid());
                 mapOfIPIDVsComponent.remove(details.getIpid());
