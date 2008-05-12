@@ -789,7 +789,7 @@ public class JICallObject extends NdrObject implements Serializable {
 	 */
 	public Integer[] getOutparamFlags()
 	{
-		return (Integer[])outparamFlags.toArray(new Integer[0]);;
+		return (Integer[])outparamFlags.toArray(new Integer[0]);
 	}
 	
 	/** Returns the opnum of the API which will be invoked at the <code>COM</code> server. 
