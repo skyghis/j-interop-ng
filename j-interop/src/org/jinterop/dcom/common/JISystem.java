@@ -57,7 +57,7 @@ public final class JISystem {
 	private static JIComVersion comVersion = new JIComVersion();
 	private static boolean autoRegister = false;
 	private static boolean autoCollection = true;
-	private static Logger logger = Logger.getLogger("org.jinterop");
+	private static final Logger logger = Logger.getLogger("org.jinterop");
 
 	/** Returns the j-Interop logger identified by the name "org.jinterop".
 	 * 
