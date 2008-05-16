@@ -247,7 +247,7 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 					listOfPositions.add(new Integer(i));//for position array
 					//now replace with Empty.
 					//variants[i] = new JIVariant(JIVariant.POINTER);
-					variants[i] = JIVariant.EMPTY;
+					variants[i] = JIVariant.EMPTY();
 				}
 			}
 		}

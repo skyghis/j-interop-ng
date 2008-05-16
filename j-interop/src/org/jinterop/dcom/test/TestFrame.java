@@ -22,17 +22,17 @@ public class TestFrame {
 		session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIClsid.valueOf("00020820-0000-0000-C000-000000000046"),address,session);
 		ieObject = comServer.createInstance();
-		//ieObject2 = (IJIComObject)ieObject.queryInterface(""); 
-		
+		//ieObject2 = (IJIComObject)ieObject.queryInterface("");
+
 	}
-	
+
 	void tryme() throws JIException
 	{
 		JIOleFrame frame = new JIOleFrame(session, 1,ieObject);
 		frame.testShowWindow();
 		//frame.
 	}
-	
+
 	public static void main(String[] args) {
 		try{
 			if (args.length < 4)

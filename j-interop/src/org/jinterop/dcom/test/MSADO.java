@@ -20,24 +20,24 @@ public class MSADO {
 
 	private JIComServer comServer = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
-	private JISession session = null; 
+	private IJIComObject unknown = null;
+	private JISession session = null;
 	public MSADO(String address, String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIProgId.valueOf(session,"ADODB.Connection"),address,session);
 	}
-	
-	
+
+
 	public void performOp() throws JIException, InterruptedException
 	{
 		unknown = comServer.createInstance();
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
 		IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
 		typeInfo.getFuncDesc(0);
-		
-		dispatch.callMethod("Open",new Object[]{new JIString("driver=Microsoft Access Driver (*.mdb);dbq=C:\\temp\\products.mdb"),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,new Integer(-1)});
-		
+
+		dispatch.callMethod("Open",new Object[]{new JIString("driver=Microsoft Access Driver (*.mdb);dbq=C:\\temp\\products.mdb"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(-1)});
+
 		JIVariant variant[] = dispatch.callMethodA("Execute",new Object[]{new JIString("SELECT * FROM Products"),new Integer(-1)});
 		if (variant[0].isNull())
 		{
@@ -66,17 +66,17 @@ public class MSADO {
 					{
 						val = new Integer(variant2.getObjectAsInt());
 					}
-					System.out.println(field.get("Name").getObjectAsString().getString() + " = " + val + "[" + variant2.getType() + "]");	
+					System.out.println(field.get("Name").getObjectAsString().getString() + " = " + val + "[" + variant2.getType() + "]");
 				}
 				resultSet.callMethod("MoveNext");
 			}
-			
-			
+
+
 		}
-		
+
 		JISession.destroySession(session);
 	}
-	
+
 	public static void main(String[] args) {
 
 		try {
@@ -93,9 +93,9 @@ public class MSADO {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

@@ -21,35 +21,35 @@ public class MSPowerPoint2 {
 
 	private JIComServer comStub = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
-	
+	private IJIComObject unknown = null;
+
 	public MSPowerPoint2(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		comStub = new JIComServer(JIProgId.valueOf(session,"PowerPoint.Application"),address,session);
 	}
-	
+
 	public void startPowerPoint() throws JIException
 	{
 		unknown = comStub.createInstance();
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
 	}
-	
+
 	public void showPowerPoint() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
 		JIVariant variant = new JIVariant(-1);
 		dispatch.put(dispId,variant);
 	}
-	
-	
+
+
 	public IJIDispatch openPresentation(String fullEscapedPath) throws JIException, InterruptedException
 	{
 		IJIDispatch presentations = (IJIDispatch)dispatch.get("Presentations").getObjectAsComObject(unknown);
-		JIVariant[] result = presentations.callMethodA("Open",new Object[]{new JIString(fullEscapedPath),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		JIVariant[] result = presentations.callMethodA("Open",new Object[]{new JIString(fullEscapedPath),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		return (IJIDispatch)result[0].getObjectAsComObject(dispatch);
 	}
-	
+
 	public IJIDispatch runPresentation(IJIDispatch activePresentation) throws JIException
 	{
 		IJIDispatch slideShowSettings = (IJIDispatch)activePresentation.get("SlideShowSettings").getObjectAsComObject(unknown);
@@ -58,50 +58,50 @@ public class MSPowerPoint2 {
 		IJIDispatch slideShowView = (IJIDispatch)slideShowWindow.get("View").getObjectAsComObject(unknown);
 		return slideShowView;
 	}
-	
+
 	public void quitPowerPoint() throws JIException
 	{
 		dispatch.callMethod("Quit");
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
-	
+
 	public void closePresentation(IJIDispatch presentation) throws JIException
 	{
 		presentation.callMethod("Close");
 	}
-	
+
 	public void savePresentationAs(IJIDispatch presentation, String fullEscapedPath) throws JIException
 	{
-		presentation.callMethod("SaveAs", new Object[]{new JIString(fullEscapedPath).Variant,JIVariant.OPTIONAL_PARAM,new Integer(-1)});
+		presentation.callMethod("SaveAs", new Object[]{new JIString(fullEscapedPath).Variant,JIVariant.OPTIONAL_PARAM(),new Integer(-1)});
 	}
-	
+
 	public void goto_First_Slide(IJIDispatch view) throws JIException
 	{
 		view.callMethod("First");
 	}
-	
+
 	public void goto_Last_Slide(IJIDispatch view) throws JIException
 	{
 		view.callMethod("Last");
 	}
-	
+
 	public void do_Next_Action(IJIDispatch view) throws JIException
 	{
 		view.callMethod("Next");
 	}
-	
+
 	public void do_Previous_Action(IJIDispatch view) throws JIException
 	{
 		view.callMethod("Previous");
 	}
-	
+
 	public void goto_Numbered_Slide(IJIDispatch view, int index) throws JIException
 	{
-		view.callMethod("GotoSlide", new Object[]{new Integer(index), JIVariant.OPTIONAL_PARAM});
+		view.callMethod("GotoSlide", new Object[]{new Integer(index), JIVariant.OPTIONAL_PARAM()});
 	}
-	
-	
-	
+
+
+
 	public static void main(String[] args) {
 
 		try {
@@ -113,7 +113,7 @@ public class MSPowerPoint2 {
 				MSPowerPoint2 test = new MSPowerPoint2(args[0],args);
 				test.startPowerPoint();
 				test.showPowerPoint();
-				
+
 				System.out.println("Welcome to PowerPoint Manager !");
 				System.out.println("Commands --> ");
 				System.out.println("'O' <path_to_ppt>               Open PPT, ex:- O c:\\temp\\j-Interop.ppt");
@@ -124,22 +124,22 @@ public class MSPowerPoint2 {
 				System.out.println("'F' 							First Slide");
 				System.out.println("'L' 							Last Slide");
 				System.out.println("'Q' 				  			Quit PowerPoint Manager");
-				
+
 				BufferedReader inputreader = new BufferedReader(new InputStreamReader(new BufferedInputStream(System.in)));
-				
-				
+
+
 				final String commands = "OCNPGFLQ";
 				IJIDispatch activePresentation = null;
 				IJIDispatch view = null;
 				boolean over = false;
 				while (!over)
 				{
-					String input = inputreader.readLine().trim();	
+					String input = inputreader.readLine().trim();
 					if (input.equalsIgnoreCase(""))
 						continue;
 					int index = -1;
 					String command = null;
-					
+
 					if (input.length() > 1)
 					{
 						index = input.indexOf(" ");
@@ -149,9 +149,9 @@ public class MSPowerPoint2 {
 					{
 						command = input;
 					}
-					
-					
-					
+
+
+
 					switch(commands.indexOf(command))
 					{
 						case 0:
@@ -176,7 +176,7 @@ public class MSPowerPoint2 {
 								System.out.println("Please open a presentation first !");
 							}else
 							{
-								test.do_Next_Action(view);	
+								test.do_Next_Action(view);
 							}
 							break;
 						case 3:
@@ -185,7 +185,7 @@ public class MSPowerPoint2 {
 								System.out.println("Please open a presentation first !");
 							}else
 							{
-								test.do_Previous_Action(view);	
+								test.do_Previous_Action(view);
 							}
 							break;
 						case 4:
@@ -195,9 +195,9 @@ public class MSPowerPoint2 {
 								System.out.println("Please open a presentation first !");
 							}else
 							{
-								test.goto_Numbered_Slide(view,Integer.valueOf(path).intValue());	
+								test.goto_Numbered_Slide(view,Integer.valueOf(path).intValue());
 							}
-							
+
 							break;
 						case 5:
 							if (activePresentation == null)
@@ -226,18 +226,18 @@ public class MSPowerPoint2 {
 						default:
 							System.out.println("Incorrect option !");
 					}
-					
-					
+
+
 				}
-				
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

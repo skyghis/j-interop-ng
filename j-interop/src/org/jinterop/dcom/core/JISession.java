@@ -448,7 +448,7 @@ public final class JISession {
 		synchronized (mutex) {
 			try{
 				//session may have been destroyed and this call is from finalize.
-				if (session.stub == null)
+				if (session == null || session.stub == null)
 				{
 					return;
 				}

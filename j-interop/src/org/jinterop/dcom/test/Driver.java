@@ -55,18 +55,18 @@ class Driver {
 			  {
 				  System.arraycopy(toSend2.getBytes(),0,lowbuffer,0,8);
 			  }
-			  
+
 //			  double d = -125;
 //			  Double.
 //			  d = 0xf;
 //			  long va = d & 0xF;
-			  
+
 			  byte[] buffer = new byte[1148];//1144
 				FileInputStream inputStream;
 				try {
 					inputStream = new FileInputStream("c:/temp/webbrowserevent3"); //change the 32nd member to 106 byte value , in inspect and change
 					inputStream.read(buffer,0,1148);//1144
-					
+
 //					FileOutputStream outputStream = new FileOutputStream("c:/temp/webbrowserevent3");
 //					outputStream.write(buffer,0,544);
 //					outputStream.write(buffer,548,1148 - 548);
@@ -76,9 +76,9 @@ class Driver {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
-			  
+
+
+
 //			  	Integer iarray[][] = new Integer[5][6];
 //			  	System.out.println(((Object[])iarray).length);
 //			  	Object r = Array.get(iarray,0);
@@ -87,8 +87,8 @@ class Driver {
 //			  	Class c = flt.getClass();
 //			  	if (c.equals(Float[].class))
 //			  		System.out.println(true);
-//			  	
-//			  	
+//
+//
 //			  	Float f[][][] = new Float[][][]{new Float[][]{{new Float(1),new Float(2)},{new Float(3),new Float(4)},{new Float(13),new Float(14)},{new Float(113),new Float(114)}},new Float[][]{{new Float(1),new Float(2)},{new Float(1234),new Float(123)},{new Float(999),new Float(555)},{new Float(345),new Float(123)}}};
 //				computeLengthArray(f);
 			  	Integer yx[] = new Integer[]{new Integer(19),new Integer(20),new Integer(22),new Integer(23)};
@@ -96,10 +96,10 @@ class Driver {
 				Double yx2[][] = new Double[][]{new Double[]{}, new Double[]{new Double(123.3),new Double(123.4),new Double(123.5)}, new Double[]{}};
 				computeLengthArray(yx2);
 //				serializeArray(yx);
-//			  	
+//
 			  	Object array = deSerializeArray(Float.class,new int[]{10,20},2);
 //			  	//Object o3 = Array.get(f,0);
-//			  	
+//
 //			  	//Object[] o = f[0];
 //			  	//System.out.println(o[0]);
 //			  	c = new Float[10][10].getClass();
@@ -137,15 +137,15 @@ class Driver {
 				//test.setAddress("ncacn_ip_tcp:127.0.0.1[135]");
 				//test.setObject("4d9f4ab8-7d1c-11cf-861e-0020af6e7c57");
 				//test.setObject(UUID.NIL_UUID);
-				test.obtainReference(); 
+				test.obtainReference();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	}
 
-	
-	
+
+
 	static void serializeArray(Object array)
 	{
 		String name = array.getClass().getName();
@@ -163,9 +163,9 @@ class Driver {
 			}
 			serializeArray(Array.get(array,i));
 		}
-		 
+
 	}
-	
+
 	static int computeLengthArray(Object array)
 	{
 		int length = 0;
@@ -181,10 +181,10 @@ class Driver {
 			}
 			length = length + computeLengthArray(Array.get(array,i));
 		}
-		 
+
 		return length;
 	}
-	
+
 	static Object deSerializeArray(Class arrayType,int[] upperBounds,int dimension)
 	{
 		Object array = null;
@@ -194,7 +194,7 @@ class Driver {
 			array = Array.newInstance(c, upperBounds[upperBounds.length - j - 1]);
 			c = array.getClass();
 		}
-		
+
 		for (int i = 0; i < upperBounds[upperBounds.length - dimension] ; i++)
 		{
 			if(dimension == 1)
@@ -206,15 +206,15 @@ class Driver {
 			{
 				Array.set(array,i,deSerializeArray(arrayType,upperBounds,dimension - 1));
 			}
-			
+
 		}
-		
+
 		return array;
 	}
-	
-		
-	
-	
-	
-	
+
+
+
+
+
+
 }

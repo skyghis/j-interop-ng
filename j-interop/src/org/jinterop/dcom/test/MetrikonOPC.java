@@ -17,23 +17,23 @@ import org.jinterop.dcom.core.JISession;
 public class MetrikonOPC {
 
 	private JIComServer comStub = null;
-	private IJIComObject unknown = null; 
-	private IJIComObject opcServer = null; 
-	
+	private IJIComObject unknown = null;
+	private IJIComObject opcServer = null;
+
 	public MetrikonOPC(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		comStub = new JIComServer(JIProgId.valueOf(session,"Matrikon.OPC.Simulation"),address,session);
 	}
-	
+
 	public void getOPC() throws JIException
 	{
 		unknown = comStub.createInstance();
 		opcServer = (IJIComObject)unknown.queryInterface("39C13A4D-011E-11D0-9675-0020AFD8ADB3");
 	}
-	
-	
-	
+
+
+
 	public void performOp() throws JIException, InterruptedException
 	{
 
@@ -51,14 +51,14 @@ public class MetrikonOPC {
         callObject.addOutParamAsType ( Integer.class,JIFlags.FLAG_NULL );
         callObject.addInParamAsUUID( "39C13A50-011E-11D0-9675-0020AFD8ADB3", JIFlags.FLAG_NULL );
         callObject.addOutParamAsType ( JIInterfacePointer.class, JIFlags.FLAG_NULL );
-        
+
         Object[] result = opcServer.call ( callObject );
 
-        
-        
+
+
         JISession.destroySession(unknown.getAssociatedSession());
 	}
-	
+
 	public static void main(String[] args) {
 
 		try {
@@ -75,9 +75,9 @@ public class MetrikonOPC {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

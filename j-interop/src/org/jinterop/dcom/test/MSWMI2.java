@@ -19,14 +19,14 @@ import org.jinterop.dcom.win32.IJIEnumVARIANT;
 import org.jinterop.dcom.win32.JIComFactory;
 
 /** WMI example showing how to use a new logger implementation.
- * 
+ *
  * @since 1.23
  *
  */
 public class MSWMI2 {
 
 	private JIComServer comStub = null;
-	private IJIComObject comObject = null; 
+	private IJIComObject comObject = null;
 	private IJIDispatch dispatch = null;
 	private String address = null;
 	private JISession session = null;
@@ -42,21 +42,21 @@ public class MSWMI2 {
 		//This will obtain the dispatch interface
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,comObject);
 	}
-	
-	
+
+
 	public void performOp() throws JIException, InterruptedException
 	{
-		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM
-				,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,new Integer(0),JIVariant.OPTIONAL_PARAM});
-		
+		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
+				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(0),JIVariant.OPTIONAL_PARAM()});
+
 		IJIDispatch wbemServices_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
-		results = wbemServices_dispatch.callMethodA("ExecQuery", new Object[]{new JIString("select * from Win32_OperatingSystem where Primary=True"), JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		results = wbemServices_dispatch.callMethodA("ExecQuery", new Object[]{new JIString("select * from Win32_OperatingSystem where Primary=True"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
 		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
-		
+
 		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
-		
+
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
 		int count = Count.getObjectAsInt();
 		for (int i = 0; i < count; i++)
@@ -72,15 +72,15 @@ public class MSWMI2 {
 				System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	private void killme() throws JIException
 	{
 		JISession.destroySession(session);
 	}
-	
+
 	public static void main(String[] args) {
 
 		try {
@@ -89,7 +89,7 @@ public class MSWMI2 {
 			    	System.out.println("Please provide address domain username password");
 			    	return;
 			    }
-				
+
 //				JISystem.setInBuiltLogHandler(false);
 				JISystem.getLogger().setLevel(Level.OFF);
 				JISystem.setAutoRegisteration(true);
@@ -105,9 +105,9 @@ public class MSWMI2 {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

@@ -230,23 +230,65 @@ public final class JIVariant implements Serializable {
 	
 	/**
 	 * EMPTY <code>VARIANT</code>
+	 * @deprecated
 	 */
 	public static final JIVariant EMPTY = new JIVariant(new EMPTY());
+
+	/**
+	 * EMPTY <code>VARIANT</code>. This is not Thread Safe , hence a new instance must be taken each time.
+	 * 
+	 */
+	public static JIVariant EMPTY()
+	{
+		return new JIVariant(new EMPTY());
+	}
 	
 	/**
 	 * EMPTY BYREF <code>VARIANT</code>
+	 * @deprecated
 	 */
 	public static final JIVariant EMPTY_BYREF = new JIVariant(EMPTY);
+
+
+	/**
+	 * EMPTY BYREF <code>VARIANT</code>. This is not Thread Safe , hence a new instance must be taken each time.
+	 * 
+	 */
+	public static JIVariant EMPTY_BYREF()
+	{
+		return new JIVariant(EMPTY());
+	}
 	
 	/**
 	 * NULL <code>VARIANT</code>
+	 * @deprecated
 	 */
 	public static final JIVariant NULL = new JIVariant(new NULL());
 	
 	/**
+	 * NULL <code>VARIANT</code> . This is not Thread Safe , hence a new instance must be taken each time.
+	 * 
+	 */
+	public static JIVariant NULL()
+	{
+		return new JIVariant(new NULL());
+	}
+	
+	/**
 	 * OPTIONAL PARAM. Pass this when a parameter is optional for a COM api call.
+	 * @deprecated
 	 */
 	public static final JIVariant OPTIONAL_PARAM = new JIVariant(JIVariant.SCODE,JIErrorCodes.DISP_E_PARAMNOTFOUND);
+	
+	/**
+	 * OPTIONAL PARAM. Pass this when a parameter is optional for a COM api call. This is not Thread Safe , hence a new instance must be taken each time.
+	 * 
+	 */
+	public static JIVariant OPTIONAL_PARAM()
+	{
+		return new JIVariant(JIVariant.SCODE,JIErrorCodes.DISP_E_PARAMNOTFOUND);
+	}
+	
 	
 	/**
 	 * SCODE <code>VARIANT</code>

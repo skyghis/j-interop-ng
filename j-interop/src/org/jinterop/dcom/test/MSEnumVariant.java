@@ -21,16 +21,16 @@ public class MSEnumVariant {
 	private JIComServer comServer = null;
 	private JISession session = null;
 	private IJIDispatch dispatch = null;
-	
+
 	public MSEnumVariant(String address,String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIProgId.valueOf(session,"StdCollection.VBCollection"),address,session);
 		IJIComObject object = comServer.createInstance();
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,object);
-		
+
 	}
-	
+
 	public void performOp() throws JIException
 	{
 		int i = 0;
@@ -38,19 +38,19 @@ public class MSEnumVariant {
 		{
 			dispatch.callMethod("Add", new Object[]{new Integer(i),new JIString("Key-" + i)});
 		}
-		
+
 		for (; i < 10; i++)
 		{
-			dispatch.callMethod("Add", new Object[]{new Integer(i),JIVariant.OPTIONAL_PARAM});
+			dispatch.callMethod("Add", new Object[]{new Integer(i),JIVariant.OPTIONAL_PARAM()});
 		}
-		
+
 		JIVariant variant = dispatch.get("_NewEnum");
-		
+
 		IJIComObject object2 = variant.getObjectAsComObject(dispatch);
 		//IJIComObject enumObject = (IJIComObject)object2.queryInterface(IJIEnumVARIANT.IID);
-		
+
 		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
-		
+
 		for (i = 0; i < 10; i++)
 		{
 			Object[] values = enumVARIANT.next(1);
@@ -58,28 +58,28 @@ public class MSEnumVariant {
 			Object[] arrayObj = (Object[])array.getArrayInstance();
 			for (int j = 0; j < arrayObj.length; j++)
 			{
-				System.out.println(((JIVariant)arrayObj[j]).getObjectAsInt() + "," + ((Integer)values[1]).intValue());	
+				System.out.println(((JIVariant)arrayObj[j]).getObjectAsInt() + "," + ((Integer)values[1]).intValue());
 			}
-			
+
 			int j = 0;
 		}
-		
+
 		enumVARIANT.reset();
 		Object[] values = enumVARIANT.next(5);
-		enumVARIANT.next(1);	
+		enumVARIANT.next(1);
 		enumVARIANT.skip(2);
 		values = enumVARIANT.next(1);
 		IJIEnumVARIANT newenum = enumVARIANT.Clone();
 		newenum.reset();
 		values = newenum.next(10);
-		i = 0; 
-	
+		i = 0;
+
 		JISession.destroySession(session);
 	}
-	
-	
+
+
 	public static void main(String[] args) {
-		
+
 		try{
 		    if (args.length < 4)
 		    {
@@ -95,5 +95,5 @@ public class MSEnumVariant {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

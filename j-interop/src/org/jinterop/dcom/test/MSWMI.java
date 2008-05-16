@@ -26,7 +26,7 @@ import org.jinterop.dcom.win32.JIComFactory;
 public class MSWMI {
 
 	private JIComServer comStub = null;
-	private IJIComObject comObject = null; 
+	private IJIComObject comObject = null;
 	private IJIDispatch dispatch = null;
 	private String address = null;
 	private JISession session = null;
@@ -42,17 +42,17 @@ public class MSWMI {
 		//This will obtain the dispatch interface
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,comObject);
 	}
-	
-	
+
+
 	public void performOp() throws JIException, InterruptedException
 	{
 		System.gc();
-		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM
-				,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,new Integer(0),JIVariant.OPTIONAL_PARAM});
-		
+		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
+				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(0),JIVariant.OPTIONAL_PARAM()});
+
 		//using the dispatch results above you can use the "ConnectServer" api to retrieve a pointer to IJIDispatch
 		//of ISWbemServices
-		
+
 		//OR
 		//Make a direct call like below , in this case you would get back an interface pointer to ISWbemServices , NOT to it's IDispatch
 		JICallObject callObject = new JICallObject(comObject.getIpid());
@@ -75,25 +75,25 @@ public class MSWMI {
 				System.out.println("wbemServices unreferenced... ");
 			}
 		});
-		
+
 		//Lets have a look at both.
 		IJIDispatch wbemServices_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
-		results = wbemServices_dispatch.callMethodA("InstancesOf", new Object[]{new JIString("Win32_Process"), new Integer(0), JIVariant.OPTIONAL_PARAM});
+		results = wbemServices_dispatch.callMethodA("InstancesOf", new Object[]{new JIString("Win32_Process"), new Integer(0), JIVariant.OPTIONAL_PARAM()});
 		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
 		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
-		
+
 		object2.registerUnreferencedHandler(session, new IJIUnreferenced(){
 			public void unReferenced()
 			{
 				System.out.println("object2 unreferenced...");
 			}
 		});
-		
+
 		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
-		
+
 		//This will return back a dispatch of ISWbemObjectSet
-		
+
 		//OR
 		//It returns back the pointer to ISWbemObjectSet
 		callObject = new JICallObject(wbemServices.getIpid());
@@ -104,7 +104,7 @@ public class MSWMI {
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		interfacePointer = (JIInterfacePointer)((Object[])wbemServices.call(callObject))[0];
 		IJIComObject wbemObjectSet = JIComFactory.createCOMInstance(wbemServices,interfacePointer);
-		
+
 		//okay seen enough of the other usage, lets just stick to disptach, it's lot simpler
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
 		int count = Count.getObjectAsInt();
@@ -121,15 +121,15 @@ public class MSWMI {
 				System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	private void killme() throws JIException
 	{
 		JISession.destroySession(session);
 	}
-	
+
 	public static void main(String[] args) {
 
 		try {
@@ -138,7 +138,7 @@ public class MSWMI {
 			    	System.out.println("Please provide address domain username password");
 			    	return;
 			    }
-		
+
 				JISystem.getLogger().setLevel(Level.OFF);
 				JISystem.setInBuiltLogHandler(false);
 				JISystem.setAutoRegisteration(true);
@@ -154,9 +154,9 @@ public class MSWMI {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

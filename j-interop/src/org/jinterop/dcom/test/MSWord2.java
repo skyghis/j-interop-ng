@@ -18,27 +18,27 @@ public class MSWord2 {
 
 	private JIComServer comStub = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
-	
+	private IJIComObject unknown = null;
+
 	public MSWord2(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		comStub = new JIComServer(JIProgId.valueOf(session,"Word.Application"),address,session);
 	}
-	
+
 	public void startWord() throws JIException
 	{
 		unknown = comStub.createInstance();
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
 	}
-	
+
 	public void showWord() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
 		JIVariant variant = new JIVariant(Boolean.TRUE);
 		dispatch.put(dispId,variant);
 	}
-	
+
 	public void performOp() throws JIException, InterruptedException
 	{
 		System.out.println(((JIVariant)dispatch.get("Version")).getObjectAsString().getString());
@@ -48,36 +48,36 @@ public class MSWord2 {
 		//IJIDispatch documents = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
 		IJIDispatch documents = (IJIDispatch)variant.getObjectAsComObject(unknown);
 		JIString filePath = new JIString("c:/temp/test.doc");
-		JIVariant variant2[] = documents.callMethodA("open",new Object[]{filePath.VariantByRef,JIVariant.OPTIONAL_PARAM
-				,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		JIVariant variant2[] = documents.callMethodA("open",new Object[]{filePath.VariantByRef,JIVariant.OPTIONAL_PARAM()
+				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		//IJIDispatch document = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant2[0].getObjectAsInterfacePointer());
 		IJIDispatch document = (IJIDispatch)variant2[0].getObjectAsComObject(unknown);
 		variant = document.get("Content");
 		//IJIDispatch range = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
 		IJIDispatch range = (IJIDispatch)variant.getObjectAsComObject(unknown);
-		
+
 		variant = range.get("Find");
 		IJIDispatch find = (IJIDispatch)variant.getObjectAsComObject(unknown);
-		
-		Thread.sleep(2000); 
+
+		Thread.sleep(2000);
 		JIString findString = new JIString("ow");
 		JIString replaceString = new JIString("igh");
-		find.callMethodA("Execute",new Object[]{findString.VariantByRef,JIVariant.OPTIONAL_PARAM
-				,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,replaceString.VariantByRef,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM});
-		Thread.sleep(5000); 
-		
-		dispatch.callMethod("Quit", new Object[]{new JIVariant(-1,true),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		find.callMethodA("Execute",new Object[]{findString.VariantByRef,JIVariant.OPTIONAL_PARAM()
+				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),replaceString.VariantByRef,JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM()});
+		Thread.sleep(5000);
+
+		dispatch.callMethod("Quit", new Object[]{new JIVariant(-1,true),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
-	
+
 	public static void main(String[] args) {
 
 		try {
@@ -95,9 +95,9 @@ public class MSWord2 {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }

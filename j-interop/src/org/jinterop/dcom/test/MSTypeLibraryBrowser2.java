@@ -25,18 +25,18 @@ import org.jinterop.dcom.win32.TypeDesc;
 import org.jinterop.dcom.win32.VarDesc;
 
 public class MSTypeLibraryBrowser2 {
-	
+
 	private JIComServer comServer = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
-	
+	private IJIComObject unknown = null;
+
 	public MSTypeLibraryBrowser2(String address, String args[]) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf(session,args[4]),address,session);
 	}
-	
+
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
@@ -55,12 +55,12 @@ public class MSTypeLibraryBrowser2 {
 			System.out.println("\n\n-----------------------Member Description--------------------------");
 			result = typeLib.getDocumentation(l);
 			int k = typeLib.getTypeInfoType(l);
-			
-			
+
+
 			System.out.println("Name: " + ((JIString)result[0]).getString());
 			System.out.println("Type: " + g_arrClassification[k]);
-			
-			
+
+
 			IJITypeInfo typeInfo = typeLib.getTypeInfo(l);
 			TypeAttr typeAttr = typeInfo.getTypeAttr();
 			IJITypeInfo ptempInfo = null;
@@ -70,19 +70,19 @@ public class MSTypeLibraryBrowser2 {
 				int p = 0;
 				p++;
 			}
-			
+
 			if(typeAttr.typekind == TYPEKIND.TKIND_COCLASS.intValue())
 			{
-				
+
 				for (int i = 0;i<typeAttr.cImplTypes;i++)
 				{
 					int nFlags = -1;
 					try{
-						nFlags = typeInfo.getImplTypeFlags(i);	
+						nFlags = typeInfo.getImplTypeFlags(i);
 					}catch (JIException e) {
-						continue;	
+						continue;
 					}
-					
+
 					if((nFlags & IMPLETYPEFLAGS.IMPLTYPEFLAG_FDEFAULT) == IMPLETYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
 					{
 						int hRefType = -1;
@@ -92,15 +92,15 @@ public class MSTypeLibraryBrowser2 {
 						{
 							break;
 						}
-						
-						
+
+
 						try{
 							ptempInfo = typeInfo.getRefTypeInfo(hRefType);
 						}catch(JIException e)
 						{
 							break;
 						}
-						
+
 						try{
 							pTempAttr = ptempInfo.getTypeAttr();
 						}catch(JIException e)
@@ -110,26 +110,26 @@ public class MSTypeLibraryBrowser2 {
 						}
 					}
 				}
-	
+
 			}
-			
+
 			if (pTempAttr != null)
 			{
 				typeInfo = ptempInfo;
 				typeAttr = pTempAttr;
 			}
-			
+
 			int m_nMethodCount = typeAttr.cFuncs;
 			int m_nVarCount = typeAttr.cVars;
 			int m_nDispInfoCount = m_nMethodCount+2*m_nVarCount;
 			System.out.println("Method and variable count = " + m_nMethodCount + m_nVarCount + "\n\n");
-			
-			
+
+
 			for(int i = 0;i < m_nMethodCount; i++)
 			{
-				System.out.println("************Method Seperator*****************");	
+				System.out.println("************Method Seperator*****************");
 				FuncDesc pFuncDesc ;
-				
+
 				try{
 					pFuncDesc = typeInfo.getFuncDesc(i);
 				}catch(JIException e)
@@ -137,9 +137,9 @@ public class MSTypeLibraryBrowser2 {
 					e.printStackTrace();
 					return;
 				}
-				
+
 				System.out.println(i + ": DispID = " + pFuncDesc.memberId);
-	
+
 				int nCount;
 				try{
 					Object[] ret = typeInfo.getNames(pFuncDesc.memberId ,1);
@@ -150,10 +150,10 @@ public class MSTypeLibraryBrowser2 {
 					System.out.println("GetNames failed.");
 					return;
 				}
-				
+
 				switch(pFuncDesc.invokeKind)
 				{
-				
+
 				case 2://INVOKEKIND.INVOKE_PROPERTYGET.intValue():
 					System.out.println("PropertyGet");
 					break;
@@ -169,7 +169,7 @@ public class MSTypeLibraryBrowser2 {
 				default:
 					break;
 				}
-				
+
 				System.out.println("VTable offset: " + pFuncDesc.oVft);
 				System.out.println("Calling convention: " + pFuncDesc.callConv);
 				//TODO need to return a string representation of this.
@@ -186,10 +186,10 @@ public class MSTypeLibraryBrowser2 {
 						types[k1] = new ElemDesc((JIStruct)temp[k1]);
 					}
 				}
-				
+
 				for(int j = 0;j < pFuncDesc.cParams; j++)
 				{
-					
+
 					if(((ElemDesc)types[j]).typeDesc.vt == TypeDesc.VT_SAFEARRAY.shortValue())
 					{
 						System.out.println("Param(" + j + ") type = SafeArray" );
@@ -204,11 +204,11 @@ public class MSTypeLibraryBrowser2 {
 					}
 				}
 			}
-				
-			
+
+
 			for(int i = m_nMethodCount; i < m_nMethodCount + m_nVarCount; i++)
 			{
-				System.out.println("************Variable Seperator*****************");	
+				System.out.println("************Variable Seperator*****************");
 				VarDesc pVarDesc;
 				try{
 					pVarDesc = typeInfo.getVarDesc(i - m_nMethodCount);
@@ -217,9 +217,9 @@ public class MSTypeLibraryBrowser2 {
 					System.out.println("GetVarDesc failed.");
 					return;
 				}
-				
+
 				System.out.println(i + ": DispID = " + pVarDesc.memberId);
-	
+
 				int nCount;
 				try{
 					Object[] ret = typeInfo.getNames(pVarDesc.memberId ,1);
@@ -230,7 +230,7 @@ public class MSTypeLibraryBrowser2 {
 					System.out.println("GetNames failed.");
 					return;
 				}
-				
+
 				switch(pVarDesc.varkind)
 				{
 				case VarDesc.VAR_DISPATCH:
@@ -244,11 +244,11 @@ public class MSTypeLibraryBrowser2 {
 				}
 			}
 		}
-		
+
 		System.out.println("########################Execution complete#########################");
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			if (args.length < 5)
@@ -264,7 +264,7 @@ public class MSTypeLibraryBrowser2 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

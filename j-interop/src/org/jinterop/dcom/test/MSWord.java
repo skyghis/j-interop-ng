@@ -40,14 +40,14 @@ public class MSWord {
 	}
 
 	public void performOp() throws JIException, InterruptedException {
-		
+
 		/* JISystem config *
-		 * 
+		 *
 		 */
 		JISystem.setJavaCoClassAutoCollection(true);
-		
-		
-		
+
+
+
 		System.out.println(((JIVariant) dispatch.get("Version")).getObjectAsString().getString());
 		System.out.println(((JIVariant) dispatch.get("Path")).getObjectAsString().getString());
 		JIVariant variant = dispatch.get("Documents");
@@ -55,17 +55,17 @@ public class MSWord {
 		System.out.println("Open document...");
 		IJIDispatch documents = (IJIDispatch) variant.getObjectAsComObject(unknown);
 		JIString filePath = new JIString("c:\\temp\\test.doc");
-		JIVariant variant2[] = documents.callMethodA("open", new Object[] { filePath, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM ,JIVariant.OPTIONAL_PARAM , JIVariant.OPTIONAL_PARAM });
+		JIVariant variant2[] = documents.callMethodA("open", new Object[] { filePath, JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() ,JIVariant.OPTIONAL_PARAM() , JIVariant.OPTIONAL_PARAM() });
 
 		System.out.println("doc opened");
 		//10
-		sleep(10); 
-		
+		sleep(10);
+
 		System.out.println("Get content...");
 		IJIDispatch document = (IJIDispatch) variant2[0].getObjectAsComObject(unknown);
 		variant = document.get("Content");
 		IJIDispatch range = (IJIDispatch) variant.getObjectAsComObject(unknown);
-		
+
 		//10
 		sleep(10);
 		System.out.println("Running find...");
@@ -73,22 +73,22 @@ public class MSWord {
 		IJIDispatch find = (IJIDispatch) variant.getObjectAsComObject(unknown);
 
 		//2
-		sleep(5); 
-		
+		sleep(5);
+
 		System.out.println("Running execute...");
 		JIString findString = new JIString("ow");
 		JIString replaceString = new JIString("igh");
-		find.callMethodA("Execute", new Object[] { findString.VariantByRef, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM,
-				replaceString.VariantByRef, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM,
-				JIVariant.OPTIONAL_PARAM });
-		
+		find.callMethodA("Execute", new Object[] { findString.VariantByRef, JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
+				replaceString.VariantByRef, JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
+				JIVariant.OPTIONAL_PARAM() });
+
 		//1
-		sleep(2); 
+		sleep(2);
 
 		System.out.println("Closing document...");
 		document.callMethod("Close");
-		
+
 	}
 
 	private void sleep(int minutes) throws InterruptedException {
@@ -101,7 +101,7 @@ public class MSWord {
 	 */
 	private void quitAndDestroy() throws JIException {
 		System.out.println("Quit...");
-		dispatch.callMethod("Quit", new Object[] { new JIVariant(-1, true), JIVariant.OPTIONAL_PARAM, JIVariant.OPTIONAL_PARAM });
+		dispatch.callMethod("Quit", new Object[] { new JIVariant(-1, true), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM() });
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
 
@@ -112,17 +112,17 @@ public class MSWord {
 				System.out.println("Please provide address domain username password");
 				return;
 			}
-			
+
 			JISystem.getLogger().setLevel(Level.INFO);
 			JISystem.setInBuiltLogHandler(false);
 			MSWord test = new MSWord(args[0], args);
 			test.startWord();
 			test.showWord();
-			
+
 //			for (int i = 0; i < 10; i++) {
 				test.performOp();
 //			}
-			
+
 			test.quitAndDestroy();
 
 		} catch (Exception e) {

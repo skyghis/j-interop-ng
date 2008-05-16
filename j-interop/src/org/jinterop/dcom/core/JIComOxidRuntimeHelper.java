@@ -725,7 +725,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 				
 				if (result2 == null)
 				{
-					((Object[])result)[0] = JIVariant.EMPTY;
+					((Object[])result)[0] = JIVariant.EMPTY();
 				}
 				else
 				{
@@ -736,7 +736,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 						if (variant.isByRefFlagSet())
 						{
 							//add empty inplace of this.
-							((Object[])result)[0] = JIVariant.EMPTY;
+							((Object[])result)[0] = JIVariant.EMPTY();
 							//now update the array at the end.
 							((Object[])result)[3] = new JIArray(new JIVariant[]{variant},true);
 								

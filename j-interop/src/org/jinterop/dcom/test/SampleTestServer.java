@@ -20,8 +20,8 @@ import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.win32.IJIDispatch;
 
 /** Contributed Code sample. Works in conjunction with SampleTestServers.zip
- * 
- * 
+ *
+ *
  *
  */
 public class SampleTestServer {
@@ -74,7 +74,7 @@ public class SampleTestServer {
         System.out.println(arrayOfBytes[i].byteValue());
       }
   }
-  
+
 
   public void setTCharArray()
       throws JIException, InterruptedException, UnknownHostException {
@@ -127,7 +127,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
         JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-        callObject.setOpnum(10); //obtained from the IDL or TypeLib. //    
+        callObject.setOpnum(10); //obtained from the IDL or TypeLib. //
         Object results[];
 
         // change the struct to have the array as the last item
@@ -135,7 +135,7 @@ public class SampleTestServer {
         JIArray longArray = new JIArray(Integer.class, new int[]{50},1,false);
         struct.addMember(Integer.class);
         struct.addMember(Float.class);
-        struct.addMember(longArray); 
+        struct.addMember(longArray);
         callObject.addOutParamAsObject(new JIPointer(struct), JIFlags.FLAG_NULL);
 
         results = comObject.call(callObject);
@@ -146,7 +146,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
         JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-        callObject.setOpnum(12); //obtained from the IDL or TypeLib. //    
+        callObject.setOpnum(12); //obtained from the IDL or TypeLib. //
         Object results[];
 
         JIStruct struct = new JIStruct();
@@ -176,7 +176,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
         JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-        callObject.setOpnum(13); //obtained from the IDL or TypeLib. //    
+        callObject.setOpnum(13); //obtained from the IDL or TypeLib. //
         Object results[];
 
         callObject.addOutParamAsType(JIUnsignedShort.class, JIFlags.FLAG_NULL);
@@ -186,7 +186,7 @@ public class SampleTestServer {
         struct.addMember(Double.class);
         struct.addMember(Float.class);
         JIArray DataArray = new JIArray(struct, null, 1, true);
-        callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL); 
+        callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
         results = comObject.call(callObject);
         System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
     }
@@ -195,7 +195,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
         JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-        callObject.setOpnum(14); //obtained from the IDL or TypeLib. //    
+        callObject.setOpnum(14); //obtained from the IDL or TypeLib. //
         Object results[];
 
         JIStruct struct = new JIStruct();
@@ -215,7 +215,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
       JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-      callObject.setOpnum(17); //obtained from the IDL or TypeLib. //    
+      callObject.setOpnum(17); //obtained from the IDL or TypeLib. //
       Object results[];
 
       JIStruct struct = new JIStruct();
@@ -237,12 +237,12 @@ public class SampleTestServer {
 
     }
 
-    
+
     public void GetStructStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
       JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-      callObject.setOpnum(18); //obtained from the IDL or TypeLib. //    
+      callObject.setOpnum(18); //obtained from the IDL or TypeLib. //
       Object results[];
 
       JIStruct struct = new JIStruct();
@@ -259,7 +259,7 @@ public class SampleTestServer {
 
       JIArray DataArray = new JIArray(StructStruct, null, 1, true);
       callObject.addOutParamAsType(JIUnsignedShort.class, JIFlags.FLAG_NULL);
-      callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL); 
+      callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
       results = comObject.call(callObject);
       System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
@@ -270,7 +270,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
       JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-      callObject.setOpnum(19); //obtained from the IDL or TypeLib. //    
+      callObject.setOpnum(19); //obtained from the IDL or TypeLib. //
       Object results[];
 
       JIStruct simpleStruct = new JIStruct();
@@ -298,7 +298,7 @@ public class SampleTestServer {
         throws JIException, InterruptedException, UnknownHostException {
 
       JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-      callObject.setOpnum(20); //obtained from the IDL or TypeLib. //    
+      callObject.setOpnum(20); //obtained from the IDL or TypeLib. //
       Object results[];
 
       JIStruct simpleStruct = new JIStruct();
@@ -315,14 +315,14 @@ public class SampleTestServer {
 
       JIArray DataArray = new JIArray(simpleArrayStruct, null, 1, true);
       callObject.addOutParamAsType(JIUnsignedShort.class, JIFlags.FLAG_NULL);
-      callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL); 
+      callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
       results = comObject.call(callObject);
       System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
 
     }
 
-    
+
     public void SetSimpleArrayStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
@@ -353,14 +353,14 @@ public class SampleTestServer {
         System.out.println("SetSimpleArrayStructArray worked!");
     }
 
-    
+
 
   // Index out of bound exception
   public void GetStaticStruct(String[] args)
       throws JIException, InterruptedException, UnknownHostException {
-      
+
        JICallObject callObject = new JICallObject(comObject.getIpid(), true);
-      callObject.setOpnum(15); //obtained from the IDL or TypeLib. //    
+      callObject.setOpnum(15); //obtained from the IDL or TypeLib. //
       Object results[];
 
       JIStruct varStruct = new JIStruct();
@@ -443,7 +443,7 @@ public class SampleTestServer {
       test.performCallback(args);
       test.performSquare(args);
       test.setTCharArray();
-      test.getTCharArray(); 
+      test.getTCharArray();
       test.setConformantIntArray();
       test.getConformantIntArray();
       test.GetStruct(args);
@@ -456,8 +456,8 @@ public class SampleTestServer {
 //
       test.GetSimpleArrayStructArray(args);
       test.SetSimpleArrayStructArray(args);
-      test.GetStaticStruct(args); 
-      test.SetStaticStruct(args); 
+      test.GetStaticStruct(args);
+      test.SetStaticStruct(args);
     }
     catch (Exception e) {
       // TODO Auto-generated catch block

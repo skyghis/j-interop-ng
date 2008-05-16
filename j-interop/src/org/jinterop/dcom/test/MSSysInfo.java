@@ -23,7 +23,7 @@ public class MSSysInfo {
 	IJIComObject sysInfoServer = null;
 	IJIDispatch dispatch = null;
 	String identifier = null;
-	MSSysInfo(String[] args) throws JIException, UnknownHostException 
+	MSSysInfo(String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
 		session.useSessionSecurity(true);
@@ -31,7 +31,7 @@ public class MSSysInfo {
 		sysInfoServer = comServer.createInstance();
 		sysInfoObject = (IJIComObject)sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,sysInfoObject);
-		
+
 	}
 	void displayValues() throws JIException
 	{
@@ -42,9 +42,9 @@ public class MSSysInfo {
 		System.out.println("BatteryStatus: " + dispatch.get("BatteryStatus").getObjectAsShort());
 		System.out.println("OSVersion: " + dispatch.get("OSVersion").getObjectAsFloat());
 		//dispatch.callMethod("AboutBox");
-		
+
 	}
-	
+
 	void AttachEventListener() throws JIException
 	{
 		//6FBA474D-43AC-11CE-9A0E-00AA0062BB4C
@@ -60,13 +60,13 @@ public class MSSysInfo {
 			e.printStackTrace();
 		} //for call backs
 	}
-	
+
 	void DetachEventListener() throws JIException
 	{
 		JIComFactory.detachEventHandler(sysInfoServer,identifier);
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
-	
+
 	public static void main(String[] args) {
 		try{
 			if (args.length < 4)
@@ -88,6 +88,6 @@ public class MSSysInfo {
 
 	}
 
-	
+
 }
 

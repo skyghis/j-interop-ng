@@ -17,17 +17,17 @@ import org.jinterop.dcom.win32.TypeAttr;
 import org.jinterop.dcom.win32.VarDesc;
 
 public class MSTypeLibraryBrowser {
-	
+
 	private JIComServer comServer = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
-	
+	private IJIComObject unknown = null;
+
 	public MSTypeLibraryBrowser(String address, String args[]) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
 	}
-	
+
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
@@ -47,15 +47,15 @@ public class MSTypeLibraryBrowser {
 		{
 			result = typeLib.getDocumentation(i);
 			int j = typeLib.getTypeInfoType(i);
-			
-			
+
+
 			System.out.println(((JIString)result[0]).getString());
 			System.out.println(((JIString)result[1]).getString());
 			System.out.println(((JIString)result[3]).getString());
 			System.out.println(g_arrClassification[j]);
-			
+
 			IJITypeInfo typeInfo2 = typeLib.getTypeInfo(i);
-			TypeAttr typeAttr =  typeInfo2.getTypeAttr();	
+			TypeAttr typeAttr =  typeInfo2.getTypeAttr();
 			for(j = 0;j < typeAttr.cFuncs;j++)
 			{
 				FuncDesc funcDesc = typeInfo2.getFuncDesc(j);
@@ -64,7 +64,7 @@ public class MSTypeLibraryBrowser {
 				System.out.println(((JIString)result[1]).getString());
 				System.out.println(((JIString)result[3]).getString());
 			}
-			
+
 			for(j = 0;j < typeAttr.cVars;j++)
 			{
 				if(j == 77)
@@ -78,13 +78,13 @@ public class MSTypeLibraryBrowser {
 				System.out.println(((JIString)result[3]).getString());
 				//System.out.println(j);
 			}
-			
-			
+
+
 			System.out.println("***************************************");
 		}
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			if (args.length < 4)
@@ -98,7 +98,7 @@ public class MSTypeLibraryBrowser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 }

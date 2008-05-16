@@ -23,7 +23,7 @@ public class MSExcel2 {
 
 	private JIComServer comServer = null;
 	private IJIDispatch dispatch = null;
-	private IJIComObject unknown = null; 
+	private IJIComObject unknown = null;
 	private IJIDispatch dispatchOfWorkSheets = null;
 	private IJIDispatch dispatchOfWorkBook = null;
 	private IJIDispatch dispatchOfWorkSheet = null;
@@ -34,40 +34,40 @@ public class MSExcel2 {
 		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf(session,"Excel.Application"),address,session);
 	}
-	
+
 	public void startExcel() throws JIException
 	{
 		unknown = comServer.createInstance();
 		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
 	}
-	
+
 	public void showExcel() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
 		JIVariant variant = new JIVariant(Boolean.TRUE);
 		dispatch.put(dispId,variant);
 	}
-	
+
 	public void createWorkSheet() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Workbooks");
-		
+
 		JIVariant outVal = dispatch.get(dispId);
-		
+
 		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)outVal.getObjectAsComObject(unknown);
-		
-		
-		JIVariant[] outVal2 = dispatchOfWorkBooks.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM});
+
+
+		JIVariant[] outVal2 = dispatchOfWorkBooks.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM()});
 		dispatchOfWorkBook =(IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
-		
+
 		outVal = dispatchOfWorkBook.get("Worksheets");
-		
+
 		dispatchOfWorkSheets = (IJIDispatch)outVal.getObjectAsComObject(unknown);
-				
-		outVal2 = dispatchOfWorkSheets.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+
+		outVal2 = dispatchOfWorkSheets.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		dispatchOfWorkSheet =(IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
 	}
-	
+
 	public void pasteArrayToWorkSheet() throws JIException
 	{
 		int dispId = dispatchOfWorkSheet.getIDsOfNames("Range");
@@ -75,8 +75,8 @@ public class MSExcel2 {
 		Object[] out = new Object[]{JIVariant.class};
 		JIVariant[] outVal2 = dispatchOfWorkSheet.get(dispId, new Object[]{variant});
 		IJIDispatch dispRange = (IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
-		
-		
+
+
 	      JIVariant[][] newValue = {
 	    	        { new JIVariant(new JIString("defe")), new JIVariant(new Boolean(false)), new JIVariant(new Double(98765.0 / 12345.0))},
 	    	        { new JIVariant(new Date()), new JIVariant(new Integer(5454)),new JIVariant(new Float(22.0 / 7.0) )       },
@@ -84,15 +84,15 @@ public class MSExcel2 {
 	    	      };
 
 	     // implement safe array XxX dimension
-		
+
 		dispRange.put("Value2", new JIVariant(new JIArray(newValue)));
-		
+
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		JIVariant variant2 = dispRange.get("Value2");
 		JIArray newValue2 = variant2.getObjectAsArray();
 		newValue = (JIVariant[][])newValue2.getArrayInstance();
@@ -103,12 +103,12 @@ public class MSExcel2 {
 	        System.out.println();
 		}
 
-		dispatchOfWorkBook.callMethod("close",new Object[]{Boolean.FALSE,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM});
+		dispatchOfWorkBook.callMethod("close",new Object[]{Boolean.FALSE,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		dispatch.callMethod("Quit");
 		JISession.destroySession(session);
 	}
 
-		
+
 	public static void main(String[] args) {
 
 		try {
@@ -130,9 +130,9 @@ public class MSExcel2 {
 				e.printStackTrace();
 			}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }
