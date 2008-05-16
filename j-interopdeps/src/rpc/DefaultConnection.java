@@ -36,7 +36,7 @@ public class DefaultConnection implements Connection {
 
     protected int contextId;
 
-    private final Logger logger; 
+    private static final Logger logger = Logger.getLogger("org.jinterop"); 
     
     public DefaultConnection() {
         this(ConnectionOrientedPdu.MUST_RECEIVE_FRAGMENT_SIZE,
@@ -47,7 +47,6 @@ public class DefaultConnection implements Connection {
         ndr = new NetworkDataRepresentation();
         transmitBuffer = new NdrBuffer(new byte[transmitLength], 0);
         receiveBuffer = new NdrBuffer(new byte[receiveLength], 0);
-        logger = Logger.getLogger("org.jinterop");
     }
 
     public void transmit(ConnectionOrientedPdu pdu, Transport transport)

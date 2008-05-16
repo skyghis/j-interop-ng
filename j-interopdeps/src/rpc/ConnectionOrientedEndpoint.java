@@ -62,7 +62,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
     
     private int contextIdToUse = contextIdCounter;
     
-    private final Logger logger ;
+    private static final Logger logger = Logger.getLogger("org.jinterop");
 
     //This is so as to reuse the contextids for already exported contexts.
     private Map uuidsVsContextIds = new HashMap();
@@ -71,7 +71,6 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             PresentationSyntax syntax) {
         this.transport = transport;
         this.syntax = syntax;
-        logger = Logger.getLogger("org.jinterop");
     }
 
     public Transport getTransport() {
