@@ -160,13 +160,22 @@ public class JIComServer extends Stub {
 				if (index != -1)
 				{
 					try{
-						//Integer.parseInt(binding.getNetworkAddress().substring(0,index));
+
+						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+						{
+							nameBinding = null;
+							break;	
+						}
+						
+						//now check for the one with port
 						index = binding.getNetworkAddress().indexOf("[");//this contains the port
 						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
 						{
 							nameBinding = null;
 							break;	
 						}
+						
+						
 					}catch(NumberFormatException e)
 					{
 					
@@ -250,7 +259,14 @@ public class JIComServer extends Stub {
 				if (index != -1)
 				{
 					try{
-						//Integer.parseInt(binding.getNetworkAddress().substring(0,index));
+						
+						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+						{
+							nameBinding = null;
+							break;	
+						}
+						
+						//now check for the one with port
 						index = binding.getNetworkAddress().indexOf("[");//this contains the port
 						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
 						{
