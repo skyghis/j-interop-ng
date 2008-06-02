@@ -167,6 +167,15 @@ public final class JIInterfacePointer implements Serializable {
      * @exclude
      * @return
      */
+    public byte[] getOXID()
+    {
+    	return ((JIStdObjRef)((JIInterfacePointerBody)(member.getReferent())).getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getOxid();
+    }
+    
+    /**
+     * @exclude
+     * @return
+     */
     JIDualStringArray getStringBindings()
     {
     	return ((JIInterfacePointerBody)(member.getReferent())).getStringBindings();
