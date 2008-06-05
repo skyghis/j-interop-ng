@@ -26,8 +26,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -75,7 +77,8 @@ public final class JISession {
 	private Map mapOfUnreferencedHandlers = new HashMap();
 	private int timeout = 0;
 	private boolean useSessionSecurity = false;
-//	private boolean useNTLMv2 = false;
+	private ArrayList links = new ArrayList();
+	private static final Map mapOfOxidsVsJISessions = new HashMap();
 	
 	private static class IPID_SessionID_Holder
 	{
@@ -439,6 +442,8 @@ public final class JISession {
 	/**<p>Used to destroy the session, this release all references of the <code>COM</code> server and it's interfaces. 
 	 * It should be called once the developer is done with the usage of a <code>COM</code> object, it is required so as to close all open sockets
 	 * with the COM server. The references to COM interfaces are discarded from time to time when a random GC is done or when the system shuts down.<br>
+	 * Please note that all interface pointers belonging to sessions linked to this session (refer the JIComFactory.createCOMInstance API) will also be 
+	 * destroyed.
 	 * </p>
 	 * @param session
 	 * @throws JIException
@@ -486,6 +491,8 @@ public final class JISession {
 				{
 					//session.releaseRef(session.stub.getActivated().getMInterfacePointer().getIPID());
 					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
+					// and remove its entry from the map
+					mapOfOxidsVsJISessions.remove(new JIOxid(session.stub.getServerInterfacePointer().getOXID()));
 				}
 				
 				//release is performed if only something is in the session.
@@ -516,6 +523,18 @@ public final class JISession {
 				mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
 				listOfSessions.remove(session);
 			}
+			
+			//now destroy all linked sessions
+			if (JISystem.getLogger().isLoggable(Level.INFO))
+			{
+				JISystem.getLogger().info("About to destroy links for Session: " + session.getSessionIdentifier() + " , size of which is " + session.links.size());
+			}
+			
+			for (int i = 0; i < session.links.size();i++)
+			{
+				JISession.destroySession((JISession)session.links.get(i));
+			}
+			session.links.clear();
 		}
 		
 		//finally any oids exported by this session.
@@ -527,6 +546,9 @@ public final class JISession {
 	void setStub(JIComServer stub)
 	{
 		this.stub = stub;
+		synchronized (mutex) {
+			mapOfOxidsVsJISessions.put(new JIOxid(stub.getServerInterfacePointer().getOXID()),this);
+		}
 	}
 	
 	JIComServer getStub()
@@ -775,5 +797,55 @@ public final class JISession {
 		return useSessionSecurity;
 	}
 	
+	
+	/**<p> Links the src with target. These two sessions can now be destroyed in a cascade effect.
+	 * </p>
+	 * 
+	 * @param session
+	 */
+	static void linkTwoSessions(JISession src, JISession target)
+	{
+		if (src.equals(target))
+			return;
+		
+		synchronized (mutex) {
+			if (!src.links.contains(target))
+			{
+				src.links.add(target);
+			}
+		}
+	}
+	
+	/** Removes session from src sessions list.
+	 * 
+	 */
+	static void unLinkSession(JISession src, JISession tobeunlinked)
+	{
+		if (src.equals(tobeunlinked))
+			return;
+		
+		synchronized (mutex) {
+			src.links.remove(tobeunlinked);
+		}	
+	}
+	
+	
+	
+	/** Based on the oxid returns the JISession (and thus the COM Server) associated with it. This is required, since there are
+	 * cases where a different JISession may be passed in JIComFactory for an JIInterfacePointer which does not belong to this JISession.
+	 * Under those scenarios, the COM factory will create a new instance of a JISession and associate that Interface pointer with the session.
+	 * But that is not the right approach as a COM Server for that interface and thus a session might already exist and these have to be tied together.
+	 * 
+	 * @exclude
+	 */
+	static JISession resolveSessionForOxid(JIOxid oxid)
+	{
+		synchronized (mutex) {
+			return (JISession)mapOfOxidsVsJISessions.get(oxid);	
+		}
+	}
+	
+	
+   
 	
 }

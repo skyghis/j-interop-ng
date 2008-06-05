@@ -115,7 +115,7 @@ public class MSWMI {
 			Object[] arrayObj = (Object[])array.getArrayInstance();
 			for (int j = 0; j < arrayObj.length; j++)
 			{
-				IJIDispatch wbemObject_dispatch = (IJIDispatch)JIComFactory.createCOMInstance(wbemObjectSet_dispatch,((JIVariant)arrayObj[j]).getObjectAsInterfacePointer());
+				IJIDispatch wbemObject_dispatch = (IJIDispatch)((JIVariant)arrayObj[j]).getObjectAsComObject(session);
 				JIVariant variant2 = (JIVariant)(wbemObject_dispatch.callMethodA("GetObjectText_",new Object[]{new Integer(1)}))[0];
 				System.out.println(variant2.getObjectAsString().getString());
 				System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");

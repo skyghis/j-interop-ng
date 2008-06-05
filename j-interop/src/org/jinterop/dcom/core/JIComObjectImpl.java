@@ -46,9 +46,9 @@ public final class JIComObjectImpl implements IJIComObject {
 	private Map connectionPointInfo = null;
 	private int timeout = 0;
 	
-	public JIComObjectImpl(JISession session,IJIComObject template,JIInterfacePointer ptr) 
+	public JIComObjectImpl(JISession session,JIInterfacePointer ptr) 
 	{
-		this(template.getAssociatedComServer(),ptr.getIPID(),ptr.getIID(),session);
+		this(session.getStub(),ptr.getIPID(),ptr.getIID(),session);
 		this.ptr = ptr;
 	}
 	

@@ -55,8 +55,7 @@ public class KainTest {
 		System.out.println(((JIVariant)dispatch.get("Path")).getObjectAsString().getString());
 
 		JIVariant variant = dispatch.get("Documents");
-		JIInterfacePointer ptr = variant.getObjectAsInterfacePointer();
-		IJIDispatch documents = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
+		IJIDispatch documents = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		//String has to be a JIString.
 		JIString filePath = new JIString(sInputDoc);
 		//this "open" is of Word 2003
@@ -67,12 +66,12 @@ public class KainTest {
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 
-		IJIDispatch document = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant2[0].getObjectAsInterfacePointer());
+		IJIDispatch document = (IJIDispatch)variant2[0].getObjectAsComObject(dispatch.getAssociatedSession());
 		variant = dispatch.get("Selection");
-		IJIDispatch selection = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch selection = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 
 		variant = selection.get("Find");
-		IJIDispatch find = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch find = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 
 		Thread.sleep(2000);
 
@@ -92,13 +91,13 @@ public class KainTest {
 		selection.put("Text",new JIVariant(new JIString("\nSo we got the next line including BR.\n")));
 
 		variant = selection.get("Font");
-		IJIDispatch font = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch font = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		font.put("Bold",new JIVariant(1));
 		font.put("Italic",new JIVariant(1));
 		font.put("Underline",new JIVariant(0));
 
 		variant = selection.get("ParagraphFormat");
-		IJIDispatch align = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch align = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		align.put("Alignment",new JIVariant(3));
 
 		Thread.sleep(5000);
@@ -107,20 +106,20 @@ public class KainTest {
 		selection.callMethodA("MoveDown",new Object[]{JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 					,JIVariant.OPTIONAL_PARAM()});
 		variant = selection.get("InLineShapes");
-		IJIDispatch image = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch image = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		image.callMethodA("AddPicture",new Object[]{new JIVariant(sImgFile),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM()});
 
 		JIString sHyperlink = new JIString("http://www.google.com");
 		selection.put("Text",new JIVariant(new JIString("Text for the link to Google")));
 		variant = selection.get("Range");
-		IJIDispatch range = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch range = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		variant = document.get("Hyperlinks");
-		IJIDispatch link = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch link = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		link.callMethod("Add",new Object[]{range,sHyperlink,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 
 		variant = dispatch.get("WordBasic");
-		IJIDispatch wordBasic = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		IJIDispatch wordBasic = (IJIDispatch)variant.getObjectAsComObject(dispatch.getAssociatedSession());
 		wordBasic.callMethod("FileSaveAs",new Object[]{new JIString(sOutputDoc)});
 
 		dispatch.callMethod("Quit", new Object[]{new JIVariant(-1,true),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});

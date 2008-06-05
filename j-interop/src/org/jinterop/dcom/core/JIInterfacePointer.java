@@ -19,6 +19,7 @@ package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,7 +168,7 @@ public final class JIInterfacePointer implements Serializable {
      * @exclude
      * @return
      */
-    public byte[] getOXID()
+    byte[] getOXID()
     {
     	return ((JIStdObjRef)((JIInterfacePointerBody)(member.getReferent())).getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getOxid();
     }
@@ -231,7 +232,16 @@ public final class JIInterfacePointer implements Serializable {
 		return retVal;
 	}
 
-
+    public static boolean isOxidEqual(JIInterfacePointer src, JIInterfacePointer target)
+    {
+    	if (src == null || target == null)
+    	{
+    		throw new NullPointerException();
+    	}
+    	
+    	return Arrays.equals(src.getOXID(), target.getOXID());
+    }
+    
 //    public static void main(String[] args) {
 //    	
 //    	

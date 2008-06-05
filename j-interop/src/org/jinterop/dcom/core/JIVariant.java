@@ -1053,17 +1053,17 @@ public final class JIVariant implements Serializable {
 	}
 	
 
-	/**Retrieves the contained object as JIInterfacePointer.
-	 * 
-	 * @return
-	 * @throws JIException
-	 * @deprecated Please use getObjectAsComObject instead.
-	 */
-	public JIInterfacePointer getObjectAsInterfacePointer() throws JIException
-	{
-		checkValidity();
-		return  ((VariantBody)member.getReferent()).getObjectAsInterfacePointer();
-	}
+//	/**Retrieves the contained object as JIInterfacePointer.
+//	 * 
+//	 * @return
+//	 * @throws JIException
+//	 * @deprecated Please use getObjectAsComObject instead.
+//	 */
+//	public JIInterfacePointer getObjectAsInterfacePointer() throws JIException
+//	{
+//		checkValidity();
+//		return  ((VariantBody)member.getReferent()).getObjectAsInterfacePointer();
+//	}
 	
 	/**Retrieves the contained object as IJIComObject. Return value can be safely typecasted to the expected type. for e.g. :- If expected type is an IJIDispatch , 
 	 * then the return value can be safely type casted to it.
@@ -1071,13 +1071,26 @@ public final class JIVariant implements Serializable {
 	 * @param template <code>IJIComObject</code> whose basic parameters such as <code>JIComServer</code> will be used while creating the new Instance.
 	 * @return
 	 * @throws JIException
+	 * @deprecated
 	 */
 	public IJIComObject getObjectAsComObject(IJIComObject template) throws JIException
 	{
 		checkValidity();
 		return JIComFactory.createCOMInstance(template,((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
 	}
-	
+
+	/**Retrieves the contained object as IJIComObject. Return value can be safely typecasted to the expected type. for e.g. :- If expected type is an IJIDispatch , 
+	 * then the return value can be safely type casted to it.
+	 * 
+	 * @param session session to which this object will belong.
+	 * @return
+	 * @throws JIException
+	 */
+	public IJIComObject getObjectAsComObject(JISession session) throws JIException
+	{
+		checkValidity();
+		return JIComFactory.createCOMInstance(session, ((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
+	}
 	
 	/**Retrieves the contained object as JIVariant.
 	 * 

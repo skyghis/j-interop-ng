@@ -208,7 +208,6 @@ public class JIComServer extends Stub {
 		}
 		super.setAddress("ncacn_ip_tcp:" + address);
 		this.session = session;
-		this.session.setStub(this);
 		this.session.setTargetServer(getAddress().substring(getAddress().indexOf(":") + 1,getAddress().indexOf("[")));
 		oxidResolver = new JIOxidResolver(((JIStdObjRef)interfacePointer.getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getOxid());
 		try {
@@ -308,7 +307,9 @@ public class JIComServer extends Stub {
 		//and currently only TCPIP is supported.
 		setAddress("ncacn_ip_tcp:" + binding.getNetworkAddress());
 		remunknownIPID = oxidResolver.getIPID();
-		interfacePtrCtor = interfacePointer;	
+		interfacePtrCtor = interfacePointer;
+		this.session.setStub(this);
+		
 	}
 	
 	
@@ -464,7 +465,6 @@ public class JIComServer extends Stub {
 //		}
 		this.clsid = clsid.getCLSID().toUpperCase();
 		this.session = session;
-		this.session.setStub(this);
 		this.session.setTargetServer(address.substring(address.indexOf(":") + 1,address.indexOf("[")));
 		try{
 			init();
@@ -487,15 +487,7 @@ public class JIComServer extends Stub {
 					//first create the registry entries.
 					try {
 						IJIWinReg registry = null;
-//						try {
-							registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),session.getTargetServer(),true);
-//						} catch (UnsupportedEncodingException e2) {
-//							try {
-//								registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),URLEncoder.encode(session.getPassword(),System.getProperty("file.encoding"))),session.getTargetServer(),true);
-//							} catch (UnsupportedEncodingException e1) {
-//								throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION2);
-//							}
-//						}
+						registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),session.getTargetServer(),true);
 						JIPolicyHandle hkcr = registry.winreg_OpenHKCR();
 						JIPolicyHandle key = registry.winreg_CreateKey(hkcr,"CLSID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
 						registry.winreg_SetValue(key,"AppID",("{" + this.clsid + "}").getBytes(),false,false);
@@ -524,6 +516,9 @@ public class JIComServer extends Stub {
 			}
 			
 		}
+		
+		this.session.setStub(this);
+		
 	}
 	
 	
