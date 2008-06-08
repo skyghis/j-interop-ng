@@ -7,7 +7,6 @@ import java.net.UnknownHostException;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;

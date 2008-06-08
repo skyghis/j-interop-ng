@@ -17,7 +17,6 @@
 
 package org.jinterop.dcom.win32;
 
-import java.util.Arrays;
 import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIErrorCodes;
