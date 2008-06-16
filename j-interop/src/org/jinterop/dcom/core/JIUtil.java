@@ -338,7 +338,7 @@ final class JIUtil {
 		{
 			if (((SerializerDeserializer)mapOfSerializers.get(c)) == null)
 			{
-				throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{obj.toString()}));
+				throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{c.toString()}));
 			}
 			return ((SerializerDeserializer)mapOfSerializers.get(c)).getLengthInBytes(obj,FLAG);
 		}
