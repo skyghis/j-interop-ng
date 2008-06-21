@@ -6,14 +6,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIParameterObject;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
@@ -36,7 +35,7 @@ public class MSInternetExplorer {
 		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
 		IJIComObject ieObjectWebBrowser2 = (IJIComObject)ieObject.queryInterface("D30C1661-CDAF-11D0-8A3E-00C04FC9E26E");
-		ieObjectDispatch = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,ieObject);
+		ieObjectDispatch = (IJIDispatch)JIComFactory.narrowInstance((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));
 
 	}
 
@@ -113,7 +112,7 @@ public class MSInternetExplorer {
 
 
 		JIParameterObject navigateObject = new JIParameterObject();
-		navigateObject.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		navigateObject.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
@@ -160,13 +159,13 @@ public class MSInternetExplorer {
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 		JIParameterObject NavigateComplete2 = new JIParameterObject();
-		NavigateComplete2.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		NavigateComplete2.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		NavigateComplete2.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		methodDescriptor = new JIMethodDescriptor("NavigateComplete2",0xfc,NavigateComplete2);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 		JIParameterObject DocumentComplete = new JIParameterObject();
-		DocumentComplete.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		DocumentComplete.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		DocumentComplete.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		methodDescriptor = new JIMethodDescriptor("DocumentComplete",0x103,DocumentComplete);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
@@ -254,7 +253,7 @@ public class MSInternetExplorer {
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 		JIParameterObject NavigateError = new JIParameterObject();
-		NavigateError.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		NavigateError.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
@@ -272,12 +271,12 @@ public class MSInternetExplorer {
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 		JIParameterObject PrintTemplateInstantiation = new JIParameterObject();
-		PrintTemplateInstantiation.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		PrintTemplateInstantiation.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		methodDescriptor = new JIMethodDescriptor("PrintTemplateInstantiation",0xe1,PrintTemplateInstantiation);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 		JIParameterObject PrintTemplateTeardown = new JIParameterObject();
-		PrintTemplateTeardown.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		PrintTemplateTeardown.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		methodDescriptor = new JIMethodDescriptor("PrintTemplateTeardown",0xe2,PrintTemplateTeardown);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
@@ -294,7 +293,7 @@ public class MSInternetExplorer {
 
 
 		JIParameterObject UpdatePageStatus = new JIParameterObject();
-		UpdatePageStatus.addInParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		UpdatePageStatus.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		UpdatePageStatus.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		UpdatePageStatus.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		methodDescriptor = new JIMethodDescriptor("UpdatePageStatus",0xe3,UpdatePageStatus);
@@ -312,7 +311,7 @@ public class MSInternetExplorer {
 
 
 
-		identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIInterfacePointer.getInterfacePointer(session,javaComponent));
+		identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIComFactory.buildInstance(session,javaComponent));
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -337,9 +336,10 @@ public class MSInternetExplorer {
 			    	System.out.println("Please provide address domain username password");
 			    	return;
 			    }
-				JISystem.setInBuiltLogHandler(false);
+				
+			 	JISystem.setInBuiltLogHandler(false);
 				Logger l = Logger.getLogger("org.jinterop");
-				l.setLevel(Level.OFF);
+				l.setLevel(Level.INFO);
 				MSInternetExplorer internetExplorer = new MSInternetExplorer(args[0],args);
 				internetExplorer.setVisible();
 				internetExplorer.attachCallBack();

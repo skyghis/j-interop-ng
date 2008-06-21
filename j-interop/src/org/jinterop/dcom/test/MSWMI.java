@@ -13,7 +13,6 @@ import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
@@ -40,7 +39,7 @@ public class MSWMI {
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,comObject);
 	}
 
 
@@ -67,7 +66,7 @@ public class MSWMI {
 		callObject.setOpnum(0);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		JIInterfacePointer interfacePointer = (JIInterfacePointer)((Object[])comObject.call(callObject))[0];
-		IJIComObject wbemServices = JIComFactory.createCOMInstance(comObject,interfacePointer);
+		IJIComObject wbemServices = JIComFactory.instantiateComObject(comObject,interfacePointer);
 		wbemServices.setInstanceLevelSocketTimeout(1000);
 		wbemServices.registerUnreferencedHandler(session, new IJIUnreferenced(){
 			public void unReferenced()
@@ -90,7 +89,7 @@ public class MSWMI {
 			}
 		});
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
 
 		//This will return back a dispatch of ISWbemObjectSet
 
@@ -103,7 +102,7 @@ public class MSWMI {
 		callObject.setOpnum(4);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		interfacePointer = (JIInterfacePointer)((Object[])wbemServices.call(callObject))[0];
-		IJIComObject wbemObjectSet = JIComFactory.createCOMInstance(wbemServices,interfacePointer);
+		IJIComObject wbemObjectSet = JIComFactory.instantiateComObject(wbemServices,interfacePointer);
 
 		//okay seen enough of the other usage, lets just stick to disptach, it's lot simpler
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");

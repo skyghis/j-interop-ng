@@ -20,20 +20,26 @@ package org.jinterop.dcom.core;
 import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIException;
 
-/**
+/** Internal Framework class.
+ * 
  * @exclude 
  * @since 1.0
  **/
-public class JIDefaultComObjectImpl implements IJIComObject {
+public class JIComObjectImplWrapper implements IJIComObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6142976024482507753L;
 	protected IJIComObject comObject = null;
-	protected JIDefaultComObjectImpl(IJIComObject comObject)
+	
+	protected JIComObjectImplWrapper(IJIComObject comObject)
 	{
 		this.comObject = comObject;
 	}
 	
 
-	public IJIUnknown queryInterface(String iid) throws JIException {
+	public IJIComObject queryInterface(String iid) throws JIException {
 		
 		return comObject.queryInterface(iid);
 	}
@@ -77,13 +83,13 @@ public class JIDefaultComObjectImpl implements IJIComObject {
 		return comObject.getInterfaceIdentifier();
 	}
 	
-	/**
-	 * @exclude
-	 */
-	public JIComServer getAssociatedComServer()
-	{
-		return comObject.getAssociatedComServer();
-	}
+//	/**
+//	 * @exclude
+//	 */
+//	public JIComServer getAssociatedComServer()
+//	{
+//		return comObject.getAssociatedComServer();
+//	}
 	
 	public boolean isDispatchSupported()
 	{
@@ -91,18 +97,18 @@ public class JIDefaultComObjectImpl implements IJIComObject {
 	}
 
 
-	public String setConnectionInfo(IJIComObject connectionPoint, Integer cookie) {
-		return comObject.setConnectionInfo(connectionPoint,cookie);
+	public String internal_setConnectionInfo(IJIComObject connectionPoint, Integer cookie) {
+		return comObject.internal_setConnectionInfo(connectionPoint,cookie);
 	}
 
 
-	public Object[] getConnectionInfo(String identifier) {
-		return comObject.getConnectionInfo(identifier);
+	public Object[] internal_getConnectionInfo(String identifier) {
+		return comObject.internal_getConnectionInfo(identifier);
 	}
 
 
-	public Object[] removeConnectionInfo(String identifier) {
-		return comObject.removeConnectionInfo(identifier);
+	public Object[] internal_removeConnectionInfo(String identifier) {
+		return comObject.internal_removeConnectionInfo(identifier);
 	}
 
 
@@ -136,5 +142,15 @@ public class JIDefaultComObjectImpl implements IJIComObject {
 	public void setInstanceLevelSocketTimeout(int timeout)
 	{
 		comObject.setInstanceLevelSocketTimeout(timeout);
+	}
+
+
+	public void internal_setDeffered(boolean deffered) {
+		comObject.internal_setDeffered(deffered);
+	}
+
+
+	public boolean isLocalReference() {
+		return comObject.isLocalReference();
 	}
 }

@@ -34,8 +34,6 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.win32.IJIDispatch;
-import org.jinterop.dcom.win32.JIComFactory;
-import org.jinterop.dcom.win32.JIDispatchImpl;
 
 /**<p>Class representing the <code>VARIANT</code> datatype. Please use the <code>byRef</code> flag based CTORs for constructing "by reference"
  * parameters in COM calls. Also note that the library is unaware of <code>[OPTIONAL]</code> parameters , hence they have to be sent as 
@@ -134,8 +132,8 @@ public final class JIVariant implements Serializable {
 		supportedTypes.put(Character.class,new Integer(VT_I1));
 		supportedTypes.put(JIUnsignedByte.class,new Integer(VT_UI1));
 		supportedTypes.put(JIString.class,new Integer(VT_BSTR));
-		supportedTypes.put(IJIUnknown.class,new Integer(VT_UNKNOWN));
-		supportedTypes.put(IJIDispatch.class,new Integer(VT_DISPATCH));
+//		supportedTypes.put(IJIUnknown.class,new Integer(VT_UNKNOWN));
+//		supportedTypes.put(IJIDispatch.class,new Integer(VT_DISPATCH));
 		supportedTypes.put(JIVariant.SCODE.class,new Integer(VT_ERROR));
 		supportedTypes.put(JIVariant.EMPTY.class,new Integer(VT_EMPTY));
 		supportedTypes.put(JIVariant.NULL.class,new Integer(VT_NULL));
@@ -143,8 +141,8 @@ public final class JIVariant implements Serializable {
 		supportedTypes.put(VariantBody.EMPTY.class,new Integer(VT_EMPTY));
 		supportedTypes.put(VariantBody.NULL.class,new Integer(VT_NULL));
 		supportedTypes.put(JIArray.class,new Integer(VT_ARRAY));
-		supportedTypes.put(JIComObjectImpl.class,new Integer(VT_UNKNOWN));
-		supportedTypes.put(JIDispatchImpl.class,new Integer(VT_DISPATCH));
+//		supportedTypes.put(JIComObjectImpl.class,new Integer(VT_UNKNOWN));
+//		supportedTypes.put(JIDispatchImpl.class,new Integer(VT_DISPATCH));
 		supportedTypes.put(Date.class,new Integer(VT_DATE));
 		supportedTypes.put(JICurrency.class,new Integer(VT_CY));
 		supportedTypes.put(Long.class,new Integer(VT_I8));
@@ -168,8 +166,8 @@ public final class JIVariant implements Serializable {
 		supportedTypes_classes.put(new Integer(VT_EMPTY),EMPTY.class);
 		supportedTypes_classes.put(new Integer(VT_NULL),NULL.class);
 		supportedTypes_classes.put(new Integer(VT_ARRAY),JIArray.class);
-		supportedTypes_classes.put(new Integer(VT_UNKNOWN),JIComObjectImpl.class);
-		supportedTypes_classes.put(new Integer(VT_DISPATCH),JIDispatchImpl.class);
+		supportedTypes_classes.put(new Integer(VT_UNKNOWN),IJIComObject.class);
+		supportedTypes_classes.put(new Integer(VT_DISPATCH),IJIComObject.class);
 		supportedTypes_classes.put(new Integer(VT_I8),Long.class);
 		
 		//for by ref types, do it at runtime.
@@ -206,17 +204,17 @@ public final class JIVariant implements Serializable {
 	static Integer getSupportedType(Object o, int defaultType)
 	{
 		Class c = o.getClass();
-		if(o instanceof JIInterfacePointer)
+		if(o instanceof IJIComObject)
 		{
 			String IID = "";
 			try{
-				IID = ((JIInterfacePointer)o).getIID();
+				IID = ((IJIComObject)o).getInterfaceIdentifier();
 			}catch(NullPointerException npe) //this will come if the MIP is not fully done yet i.e deffered.
 			{
 				return new Integer(defaultType); //this will only be sent properly incase of JIInterfacePointer
 			}
 			
-			if (IID.equals(IJIUnknown.IID))
+			if (IID.equals(IJIComObject.IID))
 			{
 				return new Integer(VT_UNKNOWN);
 			}
@@ -525,22 +523,23 @@ public final class JIVariant implements Serializable {
 		this(new JIString(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a IJIDispatch. Used via serializing the <code>VARIANT</code>.
-	 * 
-	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. IJIDispatch**
-	 */
-	public JIVariant(IJIDispatch value, boolean isByRef)
-	{
-		this((Object)value,isByRef);
-	}
+//	/**Setting up a <code>VARIANT</code> with a IJIDispatch. Used via serializing the <code>VARIANT</code>.
+//	 * 
+//	 * @param value
+//	 * @param isByRef true if the value is to be represented as a pointer. IJIDispatch**
+//	 */
+//	public JIVariant(IJIDispatch value, boolean isByRef)
+//	{
+//		this((Object)value,isByRef);
+//	}
 	
-	/**Setting up a <code>VARIANT</code> with an IJIUnknown. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an IJIComObject. Used via serializing the <code>VARIANT</code>. If the IID of this reference is IDispatch then 
+	 * VT_DISPATCH is sent otherwise VT_UNKNOWN is sent.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. IJIUnknown**
+	 * @param isByRef true if the value is to be represented as a pointer. IJIComObject**
 	 */
-	public JIVariant(IJIUnknown value, boolean isByRef)
+	public JIVariant(IJIComObject value, boolean isByRef)
 	{
 		this((Object)value,isByRef);
 	}
@@ -624,20 +623,21 @@ public final class JIVariant implements Serializable {
 		this((Object)value);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a IJIDispatch. Used via serializing the <code>VARIANT</code>.
-	 * 
-	 * @param value
-	 */
-	public JIVariant(IJIDispatch value)
-	{
-		this((Object)value);
-	}
+//	/**Setting up a <code>VARIANT</code> with a IJIDispatch. Used via serializing the <code>VARIANT</code>.
+//	 * 
+//	 * @param value
+//	 */
+//	public JIVariant(IJIDispatch value)
+//	{
+//		this((Object)value);
+//	}
 	
-	/**Setting up a <code>VARIANT</code> with an IJIUnknown. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an IJIComObject. Used via serializing the <code>VARIANT</code>. If the IID of this reference is IDispatch then 
+	 * VT_DISPATCH is sent otherwise VT_UNKNOWN is sent.
 	 * 
 	 * @param value
 	 */
-	public JIVariant(IJIUnknown value)
+	public JIVariant(IJIComObject value)
 	{
 		this((Object)value);
 	}
@@ -743,6 +743,17 @@ public final class JIVariant implements Serializable {
 		initArrays(array, isByRef, JIFlags.FLAG_NULL);
 	}
 	
+	private final static List arryInits = new ArrayList();
+	static
+	{
+		arryInits.add(JIString.class);
+		arryInits.add(JIPointer.class);
+//		arryInits.add(JIComObjectImpl.class);
+//		arryInits.add(JIDispatchImpl.class);
+//		arryInits.add(IJIUnknown.class);
+		arryInits.add(IJIComObject.class);
+		arryInits.add(IJIDispatch.class); //this can only happen in case of an array
+	}
 	private void initArrays(JIArray array, boolean isByRef, int FLAG)
 	{
 		VariantBody variant2 = null;
@@ -808,19 +819,18 @@ public final class JIVariant implements Serializable {
 				elementSize = 16; //(Variant is pointer whose size is 16)
 			}
 			else
-			if (c.equals(JIString.class) || c.equals(JIPointer.class) 
-					|| c.equals(JIComObjectImpl.class) || c.equals(JIDispatchImpl.class))
+			if (arryInits.contains(c))
 			{
 				if (c.equals(JIString.class))
 				{
 					flags = (short)(flags | JIVariant.FADF_BSTR);
 				}
 				else
-				if (c.equals(JIComObjectImpl.class))
+				if (c.equals(IJIComObject.class))
 				{
 					flags = (short)(flags | JIVariant.FADF_UNKNOWN);
 				}else
-				if (c.equals(JIDispatchImpl.class))
+				if (c.equals(IJIDispatch.class))
 				{
 					flags = (short)(flags | JIVariant.FADF_DISPATCH);
 				}
@@ -829,7 +839,7 @@ public final class JIVariant implements Serializable {
 			else
 			{
 				//JStruct and JIUnions are expected to be encapsulated within pointers...they usually are :)
-				elementSize = JIUtil.getLengthInBytes(c, null, c == Boolean.class ? JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL : JIFlags.FLAG_NULL); //All other types, basic types 
+				elementSize = JIMarshalUnMarshalHelper.getLengthInBytes(c, null, c == Boolean.class ? JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL : JIFlags.FLAG_NULL); //All other types, basic types 
 			}
 			
 			
@@ -854,7 +864,7 @@ public final class JIVariant implements Serializable {
 			}
 			else 
 			{
-				elementSize = JIUtil.getLengthInBytes(c, null, FLAG);
+				elementSize = JIMarshalUnMarshalHelper.getLengthInBytes(c, null, FLAG);
 				safeArray.addMember(new Integer(elementSize));//size
 			}
 			
@@ -1065,31 +1075,31 @@ public final class JIVariant implements Serializable {
 //		return  ((VariantBody)member.getReferent()).getObjectAsInterfacePointer();
 //	}
 	
-	/**Retrieves the contained object as IJIComObject. Return value can be safely typecasted to the expected type. for e.g. :- If expected type is an IJIDispatch , 
-	 * then the return value can be safely type casted to it.
-	 * 
-	 * @param template <code>IJIComObject</code> whose basic parameters such as <code>JIComServer</code> will be used while creating the new Instance.
-	 * @return
-	 * @throws JIException
-	 * @deprecated
-	 */
-	public IJIComObject getObjectAsComObject(IJIComObject template) throws JIException
-	{
-		checkValidity();
-		return JIComFactory.createCOMInstance(template,((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
-	}
+//	/**Retrieves the contained object as IJIComObject. Return value can be safely typecasted to the expected type. for e.g. :- If expected type is an IJIDispatch , 
+//	 * then the return value can be safely type casted to it.
+//	 * 
+//	 * @param template <code>IJIComObject</code> whose basic parameters such as <code>JIComServer</code> will be used while creating the new Instance.
+//	 * @return
+//	 * @throws JIException
+//	 * @deprecated
+//	 */
+//	public IJIComObject getObjectAsComObject(IJIComObject template) throws JIException
+//	{
+//		checkValidity();
+//		return JIComFactory.createCOMInstance(template,((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
+//	}
 
-	/**Retrieves the contained object as IJIComObject. Return value can be safely typecasted to the expected type. for e.g. :- If expected type is an IJIDispatch , 
-	 * then the return value can be safely type casted to it.
+	/**Retrieves the contained object as IJIComObject. Return value must be "narrowed" to get the expected type. for e.g. :- If expected type is an IJIDispatch , 
+	 * then the return value must pass through JIComFactory.narrowInstance(IJIComObject) to get to the right type.
 	 * 
 	 * @param session session to which this object will belong.
 	 * @return
 	 * @throws JIException
 	 */
-	public IJIComObject getObjectAsComObject(JISession session) throws JIException
+	public IJIComObject getObjectAsComObject() throws JIException
 	{
 		checkValidity();
-		return JIComFactory.createCOMInstance(session, ((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
+		return ((VariantBody)member.getReferent()).getObjectAsComObject();
 	}
 	
 	/**Retrieves the contained object as JIVariant.
@@ -1141,7 +1151,7 @@ public final class JIVariant implements Serializable {
 	{
 		member.setDeffered(true);//this is since this could be part of an array or a struct...for normal calls
 		//as soon as this call finishes a call will be given from JICallobject for it's variantbody.
-		JIUtil.serialize(ndr,member.getClass(),member,defferedPointers,FLAG);	
+		JIMarshalUnMarshalHelper.serialize(ndr,member.getClass(),member,defferedPointers,FLAG);	
 	}
 	
 	
@@ -1151,7 +1161,7 @@ public final class JIVariant implements Serializable {
 		JIPointer ref = new JIPointer(VariantBody.class);
 		ref.setDeffered(true);//this is since this could be part of an array or a struct...for normal calls
 		//as soon as this call finishes a call will be given from JICallobject for it's variantbody.
-		variant.member = (JIPointer)JIUtil.deSerialize(ndr,ref,defferedPointers,FLAG,additionalData);
+		variant.member = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,ref,defferedPointers,FLAG,additionalData);
 		return variant;
 	}
 	
@@ -1163,7 +1173,7 @@ public final class JIVariant implements Serializable {
 	int getLengthInBytes(int FLAG) throws JIException
 	{
 		checkValidity();
-		return JIUtil.getLengthInBytes(member.getClass(),member,FLAG);
+		return JIMarshalUnMarshalHelper.getLengthInBytes(member.getClass(),member,FLAG);
 	}
 
 	
@@ -1632,10 +1642,10 @@ class VariantBody implements Serializable
 		}
 	}
 	
-	JIInterfacePointer getObjectAsInterfacePointer()
+	IJIComObject getObjectAsComObject()
 	{
 		try{
-			return ((JIInterfacePointer)obj);
+			return ((IJIComObject)obj);
 		}catch(ClassCastException e)
 		{
 			throw new IllegalStateException(e.getMessage());
@@ -1670,8 +1680,9 @@ class VariantBody implements Serializable
 			
 			ndr.writeUnsignedLong(0);
 			
+			
 			//Type
-			int varType = getVarType(obj != null ? obj.getClass():nestedArraysRealClass);
+			int varType = getVarType(obj != null ? obj.getClass() : nestedArraysRealClass, obj);
 			ndr.writeUnsignedShort(varType);
 			
 			//reserved bytes
@@ -1734,7 +1745,7 @@ class VariantBody implements Serializable
 			while (x < varDefferedPointers.size())
 			{
 				ArrayList newList = new ArrayList();
-				JIUtil.serialize(ndr,JIPointer.class,(JIPointer)varDefferedPointers.get(x),newList,FLAG);
+				JIMarshalUnMarshalHelper.serialize(ndr,JIPointer.class,(JIPointer)varDefferedPointers.get(x),newList,FLAG);
 				x++; //incrementing index
 				varDefferedPointers.addAll(x,newList);
 			}
@@ -1837,7 +1848,7 @@ class VariantBody implements Serializable
 			
 			
 		}else // for Interface pointers without  
-		if(c.equals(JIDispatchImpl.class) || c.equals(JIComObjectImpl.class))
+		if((obj instanceof IJIComObject))
 		{
 			double value = ((IJIComObject)obj).getInterfacePointer().getLength();
 			if (isByRef)
@@ -1873,7 +1884,7 @@ class VariantBody implements Serializable
 		//and not simple types like Integer, JIUnsignedXXX or Float etc. 
 		if (type3.contains(c))
 		{
-			length = JIUtil.getLengthInBytes(c, obj, FLAG);
+			length = JIMarshalUnMarshalHelper.getLengthInBytes(c, obj, FLAG);
 		}
 		else
 		if(c.equals(Long.class) || c.equals(Double.class) || c.equals(Date.class) || c.equals(JICurrency.class))
@@ -1883,9 +1894,9 @@ class VariantBody implements Serializable
 		else
 		if(c.equals(JIString.class))
 		{
-			length = JIUtil.getLengthInBytes(c, obj, FLAG);
+			length = JIMarshalUnMarshalHelper.getLengthInBytes(c, obj, FLAG);
 		}else // for Interface pointers without  
-		if(c.equals(JIDispatchImpl.class) || c.equals(JIComObjectImpl.class))
+		if(obj instanceof IJIComObject)
 		{
 			double value = ((IJIComObject)obj).getInterfacePointer().getLength();
 			value = value + 4 + 4 + 4; //20 of variant , 4 of the ptr, 4 of max count, 4 of actual count
@@ -2053,7 +2064,7 @@ class VariantBody implements Serializable
 		{
 			
 			ArrayList newList = new ArrayList();
-			JIPointer replacement = (JIPointer)JIUtil.deSerialize(ndr,(JIPointer)varDefferedPointers.get(x),newList,FLAG,additionalData);
+			JIPointer replacement = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,(JIPointer)varDefferedPointers.get(x),newList,FLAG,additionalData);
 			((JIPointer)varDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.	
 			x++;
 			varDefferedPointers.addAll(x,newList);
@@ -2153,21 +2164,34 @@ class VariantBody implements Serializable
 	}
 
 	
-	private int getVarType(Class c)
+	private int getVarType(Class c, Object obj)
 	{
 		int type = 0; //EMPTY
+		
+		if (obj instanceof IJIComObject)
+		{
+			if (((IJIComObject)obj).getInterfaceIdentifier().equalsIgnoreCase(JIRemUnknown.IID_IUnknown))
+			{
+				type = JIVariant.VT_UNKNOWN;
+			}
+			else
+			{
+				type = JIVariant.VT_DISPATCH;
+			}
+			return type;
+		}
+		
 		if (c != null)
 		{
 			Integer type2 = (Integer)JIVariant.getSupportedType(c,FLAG);
 			
-			//TODO log this...what type has come that I don't support ???
 			if (type2 != null)
 			{
 				type = type2.intValue();
 			}
 			else
 			{
-				//TODO log this...what type has come that I don't support ???
+				JISystem.getLogger().warning("In getVarType: Unsupported Type found ! " + c + " , please add this to the supportedType map ! ");
 				//make that an array of variants
 				type2 = (Integer)JIVariant.getSupportedType(JIVariant.class,FLAG);
 			}
@@ -2208,14 +2232,14 @@ class VariantBody implements Serializable
 			
 			if (c.equals(VariantBody.SCODE.class))
 			{
-				obj = JIUtil.deSerialize(ndr,Integer.class,null,FLAG,additionalData);
+				obj = JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,FLAG,additionalData);
 				obj = new SCODE(((Integer)obj).intValue());
 				type = JIVariant.VT_ERROR;
 			}else
 			if (c.equals(VariantBody.NULL.class))
 			{
 				//have read 20 bytes
-				//JIUtil.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL);//read the last 4 bytes, since there could be parameters before this.
+				//JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL);//read the last 4 bytes, since there could be parameters before this.
 				obj = NULL;
 				type = JIVariant.VT_NULL;
 			}else
@@ -2232,11 +2256,11 @@ class VariantBody implements Serializable
 			else
 				if (c.equals(Boolean.class))
 				{
-					obj = JIUtil.deSerialize(ndr,c,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL,additionalData);
+					obj = JIMarshalUnMarshalHelper.deSerialize(ndr,c,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL,additionalData);
 				}
 			else
 				{
-					obj = JIUtil.deSerialize(ndr,c,defferedPointers,FLAG,additionalData);
+					obj = JIMarshalUnMarshalHelper.deSerialize(ndr,c,defferedPointers,FLAG,additionalData);
 				}
 		}
 		
@@ -2311,7 +2335,7 @@ class VariantBody implements Serializable
 			
 			safeArray.addMember(new JIArray(safeArrayBound,null,1,true));
 			
-			safeArray = (JIStruct)JIUtil.deSerialize(ndr,safeArray,defferedPointers,FLAG,additionalData);
+			safeArray = (JIStruct)JIMarshalUnMarshalHelper.deSerialize(ndr,safeArray,defferedPointers,FLAG,additionalData);
 			
 			//now set the right class after examining the flags , only set for JIVariant.class now., the BSTR would already be set previously. 
 			Short features = (Short)safeArray.getMember(1);
@@ -2324,7 +2348,7 @@ class VariantBody implements Serializable
 			else if (((features.shortValue() & JIVariant.FADF_DISPATCH) == JIVariant.FADF_DISPATCH) ||
 					((features.shortValue() & JIVariant.FADF_UNKNOWN) == JIVariant.FADF_UNKNOWN))
 			{
-				values.updateClazz(JIInterfacePointer.class);
+				values.updateClazz(IJIComObject.class);
 			}
 			//For JIStrings , it will be done before these above conditions are examined.
 			
@@ -2360,7 +2384,11 @@ class VariantBody implements Serializable
 //				}
 				else
 				{
-					JIUtil.serialize(ndr,c,obj,defferedPointers,FLAG);
+					if(obj instanceof IJIComObject)
+					{
+						c = IJIComObject.class;
+					}
+					JIMarshalUnMarshalHelper.serialize(ndr,c,obj,defferedPointers,FLAG);
 				}
 		}
 		else
@@ -2369,7 +2397,7 @@ class VariantBody implements Serializable
 			ndr.writeUnsignedLong(new Object().hashCode());//pointer referentId
 			ndr.writeUnsignedLong(1);
 
-			JIUtil.serialize(ndr,JIStruct.class,safeArrayStruct,defferedPointers,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,JIStruct.class,safeArrayStruct,defferedPointers,FLAG);
 			
 			
 			
@@ -2398,7 +2426,7 @@ class VariantBody implements Serializable
 //			for (int i = 0; i < array.length; i++)
 //			{
 //				Class c = array[i].getClass();
-//				length = length + JIUtil.getLengthInBytes(c,array[i],FLAG);
+//				length = length + JIMarshalUnMarshalHelper.getLengthInBytes(c,array[i],FLAG);
 //			}
 //			return length;
 			try {
@@ -2411,7 +2439,12 @@ class VariantBody implements Serializable
 		}
 		else
 		{
-			return JIUtil.getLengthInBytes(obj.getClass(),obj,FLAG);
+			Class c = obj.getClass();
+			if(obj instanceof IJIComObject)
+			{
+				c = IJIComObject.class;
+			}
+			return JIMarshalUnMarshalHelper.getLengthInBytes(c,obj,FLAG);
 		}
 	}
 	

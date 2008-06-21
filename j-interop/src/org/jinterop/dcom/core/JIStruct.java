@@ -28,7 +28,6 @@ import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.win32.JIDispatchImpl;
 
 /** This class represents the <code>Struct</code> data type. <br>
  * 
@@ -157,21 +156,24 @@ public final class JIStruct implements Serializable {
 			((JIString)member).setDeffered(true);
 		}
 		else
-		if (memberClass.equals(JIInterfacePointer.class))
+//		if (memberClass.equals(JIInterfacePointer.class))
+//		{
+//			((JIInterfacePointer)member).setDeffered(true);
+//		}
+//		else
+//		if (memberClass.equals(JIDispatchImpl.class))
+//		{
+//			((JIComObjectImplWrapper)member).getInterfacePointer().setDeffered(true);
+//		}
+//		else
+//		if (memberClass.equals(JIComObjectImpl.class))
+//		{
+//			((IJIComObject)member).getInterfacePointer().setDeffered(true);
+//		}
+		if (memberClass.equals(IJIComObject.class))
 		{
-			((JIInterfacePointer)member).setDeffered(true);
+			((IJIComObject)member).internal_setDeffered(true);
 		}
-		else
-		if (memberClass.equals(JIDispatchImpl.class))
-		{
-			((JIDefaultComObjectImpl)member).getInterfacePointer().setDeffered(true);
-		}
-		else
-		if (memberClass.equals(JIComObjectImpl.class))
-		{
-			((IJIComObject)member).getInterfacePointer().setDeffered(true);
-		}
-		
 		//else the pointer will be serialized "inplace". 
 		
 		listOfMembers.add(position,member);
@@ -237,7 +239,7 @@ public final class JIStruct implements Serializable {
 		//first write all Max counts and then the rest of the structs
 		for (int i = 0;i < listOfMaxCounts.size();i++)
 		{
-			JIUtil.serialize(ndr,Integer.class,(Integer)listOfMaxCounts.get(i),null,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,(Integer)listOfMaxCounts.get(i),null,FLAG);
 		}
 		
 		int i = 0;
@@ -251,7 +253,7 @@ public final class JIStruct implements Serializable {
 					//written before.
 					((JIArray)o).setConformant(false);
 				}
-				JIUtil.serialize(ndr,o.getClass(),o,defferedPointers,FLAG);
+				JIMarshalUnMarshalHelper.serialize(ndr,o.getClass(),o,defferedPointers,FLAG);
 				if (o instanceof JIArray)
 				{
 					//noew reset this, so that next time when the same struct is written everything goes proper.
@@ -271,7 +273,7 @@ public final class JIStruct implements Serializable {
 		{
 			for (int j = 0;j < ((Integer)listOfDimensions.get(i)).intValue();j++)
 			{
-				listOfMaxCounts2.add(JIUtil.deSerialize(ndr,Integer.class,null,FLAG,additionalData));
+				listOfMaxCounts2.add(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,FLAG,additionalData));
 			}
 		}
 		
@@ -294,7 +296,7 @@ public final class JIStruct implements Serializable {
 					j++;
 				}
 			}
-			Object o1 = JIUtil.deSerialize(ndr,o,defferedPointers,FLAG,additionalData);
+			Object o1 = JIMarshalUnMarshalHelper.deSerialize(ndr,o,defferedPointers,FLAG,additionalData);
 			if (o instanceof JIArray)
 			{
 				if (((JIArray)o).isConformant() || ((JIArray)o).isVarying())
@@ -326,11 +328,11 @@ public final class JIStruct implements Serializable {
 			Object o = listOfMembers.get(i);
 			if (o instanceof Class)
 			{
-				length += JIUtil.getLengthInBytes((Class)o,o,JIFlags.FLAG_NULL);	
+				length += JIMarshalUnMarshalHelper.getLengthInBytes((Class)o,o,JIFlags.FLAG_NULL);	
 			}
 			else
 			{
-				length += JIUtil.getLengthInBytes(o.getClass(),o,JIFlags.FLAG_NULL);
+				length += JIMarshalUnMarshalHelper.getLengthInBytes(o.getClass(),o,JIFlags.FLAG_NULL);
 			}
 			i++;
 		}

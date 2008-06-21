@@ -126,13 +126,13 @@ final class JIOrpcThis implements Serializable {
 	{
 		JIOrpcThis retval = new JIOrpcThis();
 		Map map = new HashMap();
-		int majorVersion = ((Short)(JIUtil.deSerialize(ndr,Short.class,null, JIFlags.FLAG_NULL,map))).intValue();
-		int minorVersion = ((Short)(JIUtil.deSerialize(ndr,Short.class,null, JIFlags.FLAG_NULL,map))).intValue();
+		int majorVersion = ((Short)(JIMarshalUnMarshalHelper.deSerialize(ndr,Short.class,null, JIFlags.FLAG_NULL,map))).intValue();
+		int minorVersion = ((Short)(JIMarshalUnMarshalHelper.deSerialize(ndr,Short.class,null, JIFlags.FLAG_NULL,map))).intValue();
 		
 		retval.version = new JIComVersion(majorVersion,minorVersion);
-		retval.flags =  ((Integer)(JIUtil.deSerialize(ndr,Integer.class,null, JIFlags.FLAG_NULL,map))).intValue();
+		retval.flags =  ((Integer)(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null, JIFlags.FLAG_NULL,map))).intValue();
 		
-		JIUtil.deSerialize(ndr,Integer.class,null, JIFlags.FLAG_NULL,map);//reserved.
+		JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null, JIFlags.FLAG_NULL,map);//reserved.
 		
 		rpc.core.UUID uuid = new rpc.core.UUID();
 		try{
@@ -182,13 +182,13 @@ final class JIOrpcThis implements Serializable {
 		}
 		
 		List listOfDefferedPointers = new ArrayList();
-		JIPointer orpcextentarrayptr = (JIPointer)JIUtil.deSerialize(ndr,new JIPointer(orpcextentarray),listOfDefferedPointers,JIFlags.FLAG_NULL,map);
+		JIPointer orpcextentarrayptr = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,new JIPointer(orpcextentarray),listOfDefferedPointers,JIFlags.FLAG_NULL,map);
 		int x = 0;
 
 		while (x < listOfDefferedPointers.size())
 		{
 			ArrayList newList = new ArrayList();
-			JIPointer replacement = (JIPointer)JIUtil.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,JIFlags.FLAG_NULL,map);
+			JIPointer replacement = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,JIFlags.FLAG_NULL,map);
 			((JIPointer)listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.	
 			x++;
 			listOfDefferedPointers.addAll(x,newList);

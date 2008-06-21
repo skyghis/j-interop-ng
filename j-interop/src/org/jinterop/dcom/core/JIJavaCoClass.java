@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.common;
+package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -29,14 +29,9 @@ import java.util.logging.Level;
 
 import ndr.NetworkDataRepresentation;
 
-import org.jinterop.dcom.core.JIArray;
-import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
-import org.jinterop.dcom.core.JIParameterObject;
-import org.jinterop.dcom.core.JIPointer;
-import org.jinterop.dcom.core.JIString;
-import org.jinterop.dcom.core.JIStruct;
-import org.jinterop.dcom.core.JIVariant;
+import org.jinterop.dcom.common.JIErrorCodes;
+import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.common.JISystem;
 
 import rpc.core.UUID;
 
@@ -70,6 +65,8 @@ public final class JIJavaCoClass implements Serializable
 	private ArrayList listOfSupportedEventInterfaces = new ArrayList();
 	
 	private HashMap mapOfIIDsToInterfaceDefinitions = new HashMap();
+	
+	private JISession session = null;
 	
 	private boolean realIID = false;
 	
@@ -238,7 +235,7 @@ public final class JIJavaCoClass implements Serializable
 	/**
 	 * @exclude
 	 */
-	public void setObjectId(byte[] objectId)
+	void setObjectId(byte[] objectId)
 	{
 		this.objectID = objectId;
 	}
@@ -246,7 +243,7 @@ public final class JIJavaCoClass implements Serializable
 	/**
 	 * @exclude
 	 */
-	public void setAssociatedInterfacePointer(JIInterfacePointer interfacePointer)
+	 void setAssociatedInterfacePointer(JIInterfacePointer interfacePointer)
 	{
 		this.interfacePointer = interfacePointer;
 		String ipid = interfacePointer.getIPID().toUpperCase();
@@ -258,7 +255,7 @@ public final class JIJavaCoClass implements Serializable
 	/**
 	 * @exclude
 	 */
-	public JIInterfacePointer getAssociatedInterfacePointer()
+	 JIInterfacePointer getAssociatedInterfacePointer()
 	{
 		return this.interfacePointer;
 	}
@@ -267,7 +264,7 @@ public final class JIJavaCoClass implements Serializable
 	/**
 	 * @exclude
 	 */
-	public byte[] getObjectId()
+	 byte[] getObjectId()
 	{
 		return objectID;
 	}
@@ -277,7 +274,7 @@ public final class JIJavaCoClass implements Serializable
 	 * @param iid
 	 * @return
 	 */
-	public boolean isPresent(String iid)
+	 boolean isPresent(String iid)
 	{
 		iid = iid.toUpperCase();
 		return listOfSupportedInterfaces.contains(iid);
@@ -291,7 +288,7 @@ public final class JIJavaCoClass implements Serializable
 	 * @throws IllegalAccessException
 	 */
 	//advances the index...it cannot be reversed.
-	public synchronized boolean exportInstance(String uniqueIID,String IPID) throws InstantiationException, IllegalAccessException
+	 synchronized boolean exportInstance(String uniqueIID,String IPID) throws InstantiationException, IllegalAccessException
 	{
 		//Object retval = null;
 		IPID = IPID.toUpperCase();
@@ -325,7 +322,7 @@ public final class JIJavaCoClass implements Serializable
 	 */
 	//This will invoke the API via reflection and return the results of the call back to the
 	//actual COM object. This API is to be invoked via the RemUnknown Object 
-	public Object[] invokeMethod(String IPID,int Opnum ,NetworkDataRepresentation ndr) throws JIException
+	Object[] invokeMethod(String IPID,int Opnum ,NetworkDataRepresentation ndr) throws JIException
 	{
 		IPID = IPID.toUpperCase();
 		//somehow identify the method from the Opnum
@@ -406,6 +403,7 @@ public final class JIJavaCoClass implements Serializable
 				case 6: //invoke of IDispatch
 	
 					paramObject = new JIParameterObject();
+					paramObject.setSession(session);
 					paramObject.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 					paramObject.addInParamAsType(UUID.class,JIFlags.FLAG_NULL);
 					paramObject.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -500,6 +498,7 @@ public final class JIJavaCoClass implements Serializable
 			{
 				throw new JIException(JIErrorCodes.RPC_S_PROCNUM_OUT_OF_RANGE);
 			}
+			methodDescriptor.getParameterObject().setSession(session);
 			params = methodDescriptor.getParameterObject().read(ndr);	
 			execute = true;
 		}
@@ -607,14 +606,14 @@ public final class JIJavaCoClass implements Serializable
 	 * @param IPID
 	 * @return
 	 */
-	public JIInterfaceDefinition getInterfaceDefinitionFromIPID(String IPID)
+	 JIInterfaceDefinition getInterfaceDefinitionFromIPID(String IPID)
 	{
 		return (JIInterfaceDefinition)mapOfIIDsToInterfaceDefinitions.get((String)ipidVsIID.get(IPID.toUpperCase()));
 	}
 	/**
 	 * @exclude
 	 */
-	public String getIpidFromIID(String uniqueIID)
+	 String getIpidFromIID(String uniqueIID)
 	{
 		return (String)IIDvsIpid.get(uniqueIID.toUpperCase());
 	}
@@ -624,7 +623,7 @@ public final class JIJavaCoClass implements Serializable
 	 * @param uniqueIID
 	 * @return
 	 */		
-	public String getIIDFromIpid(String ipid)
+	 String getIIDFromIpid(String ipid)
 	{
 		return (String)ipidVsIID.get(ipid.toUpperCase());
 	}
@@ -637,5 +636,22 @@ public final class JIJavaCoClass implements Serializable
 	public boolean isCoClassUnderRealIID()
 	{
 		return realIID;
+	}
+
+	/**
+	 * Associate the Session with this CoClass. Called by the framework.
+	 * @exclude
+	 * @param session
+	 */
+	void setSession(JISession session) {
+		this.session = session;
+	}
+
+	/**
+	 * Returns the session associated with this CoClass.
+	 * @return
+	 */
+	JISession getSession() {
+		return session;
 	}
 }

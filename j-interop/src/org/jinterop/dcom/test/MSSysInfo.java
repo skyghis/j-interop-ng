@@ -4,13 +4,12 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.win32.IJIDispatch;
@@ -30,7 +29,7 @@ public class MSSysInfo {
 		JIComServer comServer = new JIComServer(JIProgId.valueOf(session,"SYSINFO.SysInfo"),args[0],session);
 		sysInfoServer = comServer.createInstance();
 		sysInfoObject = (IJIComObject)sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,sysInfoObject);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,sysInfoObject);
 
 	}
 	void displayValues() throws JIException
@@ -49,7 +48,7 @@ public class MSSysInfo {
 	{
 		//6FBA474D-43AC-11CE-9A0E-00AA0062BB4C
 
-		JIJavaCoClass javaComponent = new JIJavaCoClass(new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
+		JIJavaCoClass javaComponent = new JIJavaCoClass(session,new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("PowerStatusChanged",8,null));
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("TimeChanged",3,null));
 		identifier = JIComFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIInterfacePointer.getInterfacePointer(session,javaComponent));

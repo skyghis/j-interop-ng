@@ -1,9 +1,10 @@
 package org.jinterop.dcom.test;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
+import org.jinterop.dcom.win32.JIComFactory;
 
 public class DWebBrowserEvents2 {
 
@@ -30,9 +31,10 @@ public class DWebBrowserEvents2 {
 //	                 [in] VARIANT* Headers, 
 //	                 [in, out] VARIANT_BOOL* Cancel);
 
-	public JIVariant BeforeNavigate2(JIInterfacePointer dispatch,JIVariant URL,JIVariant Flags,JIVariant TargetFrameName,
+	public JIVariant BeforeNavigate2(IJIComObject dispatch,JIVariant URL,JIVariant Flags,JIVariant TargetFrameName,
 										JIVariant PostData, JIVariant Headers, JIVariant Cancel) throws JIException 
 	{
+		dispatch = JIComFactory.narrowInstance(dispatch);
 		JIVariant realURL = URL;
 		while (realURL.isByRefFlagSet())
 		{
@@ -97,24 +99,25 @@ public class DWebBrowserEvents2 {
     
     //[id(0x000000fc), helpstring("Fired when the document being navigated to becomes visible and enters the navigation stack.")]
     public void NavigateComplete2(
-                         JIInterfacePointer pDisp, 
+                         IJIComObject pDisp, 
                         JIVariant URL) throws JIException
     {
+    	pDisp = JIComFactory.narrowInstance(pDisp);
 		JIVariant realURL = URL;
 		while (realURL.isByRefFlagSet())
 		{
 			realURL = realURL.getObjectAsVariant();
 		}
 
-    	System.out.println("NavigateComplete2 -> " + pDisp.getIID() + " , "  + realURL.getObjectAsString().getString());
+    	System.out.println("NavigateComplete2 -> " + pDisp.getInterfaceIdentifier() + " , "  + realURL.getObjectAsString().getString());
     }
     
     //[id(0x00000103), helpstring("Fired when the document being navigated to reaches ReadyState_Complete.")]
     public void DocumentComplete(
-                        JIInterfacePointer pDisp, 
+                        IJIComObject pDisp, 
                         JIVariant URL) throws JIException
     {
-    	System.out.println("DocumentComplete -> " + pDisp.getIID() + " , "  + URL);
+    	System.out.println("DocumentComplete -> " + pDisp.getInterfaceIdentifier() + " , "  + URL);
     }
     
     //[id(0x000000fd), helpstring("Fired when application is quiting.")]
@@ -222,7 +225,7 @@ public class DWebBrowserEvents2 {
    
     //[id(0x0000010f), helpstring("Fired when a binding error occurs (window or frameset element).")]
     public JIVariant  NavigateError(
-                        JIInterfacePointer pDisp, 
+                        IJIComObject pDisp, 
                         JIVariant URL, 
                         JIVariant Frame, 
                         JIVariant StatusCode, 
@@ -233,24 +236,24 @@ public class DWebBrowserEvents2 {
     }
     
    //[id(0x000000e1), helpstring("Fired when a print template is instantiated.")]
-   public void PrintTemplateInstantiation(JIInterfacePointer pDisp)
+   public void PrintTemplateInstantiation(IJIComObject pDisp)
    {
-	   System.out.println("PrintTemplateInstantiation - > " + pDisp.getIID());
+	   System.out.println("PrintTemplateInstantiation - > " + pDisp.getInterfaceIdentifier());
    }
    
    //[id(0x000000e2), helpstring("Fired when a print template destroyed.")]
-   public void PrintTemplateTeardown(JIInterfacePointer pDisp)
+   public void PrintTemplateTeardown(IJIComObject pDisp)
    {
-	   System.out.println("PrintTemplateTeardown - > " + pDisp.getIID());
+	   System.out.println("PrintTemplateTeardown - > " + pDisp.getInterfaceIdentifier());
    }
    
    //[id(0x000000e3), helpstring("Fired when a page is spooled. When it is fired can be changed by a custom template.")]
    public void UpdatePageStatus(
-                        JIInterfacePointer pDisp, 
+                        IJIComObject pDisp, 
                         JIVariant nPage, 
                         JIVariant fDone)
    {
-	   System.out.println("UpdatePageStatus - > " + pDisp.getIID());
+	   System.out.println("UpdatePageStatus - > " + pDisp.getInterfaceIdentifier());
    }
 
    //[id(0x00000110), helpstring("Fired when the global privacy impacted state changes")]

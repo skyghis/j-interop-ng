@@ -49,7 +49,8 @@ import ndr.NetworkDataRepresentation;
  * @since 1.0
  *
  */
-public final class JIParameterObject implements Serializable{
+public final class JIParameterObject implements Serializable
+{
 
 	private JICallObject callObject = new JICallObject(null); 
 	private static final long serialVersionUID = -4274963180104543505L;
@@ -59,7 +60,7 @@ public final class JIParameterObject implements Serializable{
 	 * @param ndr
 	 * @return
 	 */
-	public Object[] read(NetworkDataRepresentation ndr)
+	Object[] read(NetworkDataRepresentation ndr)
 	{
 		callObject.read2(ndr);
 		return callObject.getResults();
@@ -92,7 +93,7 @@ public final class JIParameterObject implements Serializable{
 	 * @param params
 	 * @param FLAGS
 	 */
-	public void setInParams(Object[] params, int FLAGS)
+	void setInParams(Object[] params, int FLAGS)
 	{
 		callObject.setOutParams(params,FLAGS);
 	}
@@ -111,9 +112,14 @@ public final class JIParameterObject implements Serializable{
 	 * @exclude
 	 * @return
 	 */
-	public Object[] getInParams()
+	Object[] getInParams()
 	{
 		return callObject.getOutParams();
+	}
+	
+	void setSession(JISession session)
+	{
+		callObject.attachSession(session);
 	}
 	
 }

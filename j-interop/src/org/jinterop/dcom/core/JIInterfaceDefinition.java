@@ -15,11 +15,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.common;
+package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jinterop.dcom.common.JIErrorCodes;
+import org.jinterop.dcom.common.JISystem;
 
 
 /**<p>Forms the definition of a Java Interface. Please note that Overloads not allowed.  

@@ -40,7 +40,7 @@ public class MSWMI2 {
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,comObject);
 	}
 
 
@@ -55,7 +55,7 @@ public class MSWMI2 {
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
 		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
 
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
 		int count = Count.getObjectAsInt();

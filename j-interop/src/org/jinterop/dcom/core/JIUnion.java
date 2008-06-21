@@ -172,7 +172,7 @@ public final class JIUnion implements Serializable {
 		
 		//first write the discriminant and then the member
 		Iterator keys = dsVsMember.keySet().iterator();
-		JIUtil.serialize(ndr,discriminantClass,keys.next(),listOfDefferedPointers,FLAGS);
+		JIMarshalUnMarshalHelper.serialize(ndr,discriminantClass,keys.next(),listOfDefferedPointers,FLAGS);
 		
 		keys = dsVsMember.values().iterator();
 		Object value = keys.next();
@@ -180,7 +180,7 @@ public final class JIUnion implements Serializable {
 		//will not write empty union members
 		if (!value.equals(JIStruct.MEMBER_IS_EMPTY))
 		{
-			JIUtil.serialize(ndr,value.getClass(),value,listOfDefferedPointers,FLAGS);
+			JIMarshalUnMarshalHelper.serialize(ndr,value.getClass(),value,listOfDefferedPointers,FLAGS);
 		}
 		
 	}
@@ -198,7 +198,7 @@ public final class JIUnion implements Serializable {
 		JIUnion retVal = new JIUnion();
 		retVal.discriminantClass = discriminantClass;
 		
-		Object key = JIUtil.deSerialize(ndr,discriminantClass,listOfDefferedPointers,FLAGS,additionalData);
+		Object key = JIMarshalUnMarshalHelper.deSerialize(ndr,discriminantClass,listOfDefferedPointers,FLAGS,additionalData);
 		
 		//next thing to be deserialized is the member
 		Object value = dsVsMember.get(key);
@@ -212,7 +212,7 @@ public final class JIUnion implements Serializable {
 		//will not write empty union members
 		if (!value.equals(JIStruct.MEMBER_IS_EMPTY))
 		{
-			retVal.dsVsMember.put(key,JIUtil.deSerialize(ndr,value,listOfDefferedPointers,FLAGS,additionalData));
+			retVal.dsVsMember.put(key,JIMarshalUnMarshalHelper.deSerialize(ndr,value,listOfDefferedPointers,FLAGS,additionalData));
 		}
 		else
 		{
@@ -229,11 +229,11 @@ public final class JIUnion implements Serializable {
 		while (itr.hasNext())
 		{
 			Object o = itr.next();
-			int temp = JIUtil.getLengthInBytes(o.getClass(),o,JIFlags.FLAG_NULL);
+			int temp = JIMarshalUnMarshalHelper.getLengthInBytes(o.getClass(),o,JIFlags.FLAG_NULL);
 			length = length > temp ? length : temp; //length of the largest member
 		}
 				
-		return length + JIUtil.getLengthInBytes(discriminantClass,null,JIFlags.FLAG_NULL);
+		return length + JIMarshalUnMarshalHelper.getLengthInBytes(discriminantClass,null,JIFlags.FLAG_NULL);
 	}
 	
 	int getAlignment() 

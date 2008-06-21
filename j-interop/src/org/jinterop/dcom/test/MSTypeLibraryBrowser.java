@@ -31,7 +31,7 @@ public class MSTypeLibraryBrowser {
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
 		IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
 		IJITypeLib typeLib = (IJITypeLib)((Object[])typeInfo.getContainingTypeLib())[0];
 		Object[] result = typeLib.getDocumentation(-1);

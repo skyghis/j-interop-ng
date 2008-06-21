@@ -7,16 +7,15 @@ import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIParameterObject;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIProgId;
@@ -91,7 +90,7 @@ public class SampleTestServerCallback {
           JIInterfaceDefinition interfaceDefinition = registerInterface();
           if (StaticSinkJavaCoClass == null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
-          IJIComObject iStaticSink = JIComFactory.createCOMInstance( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIComFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
 
           Object[] results = new Object[1];
           // Create the session
@@ -156,7 +155,7 @@ public class SampleTestServerCallback {
           if (StaticSinkJavaCoClass != null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
 
-          IJIComObject iStaticSink = JIComFactory.createCOMInstance( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIComFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
 
           Object[] results = new Object[1];
           // Create the session

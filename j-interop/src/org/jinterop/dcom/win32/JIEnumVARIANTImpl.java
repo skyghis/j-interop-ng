@@ -21,9 +21,8 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallObject;
-import org.jinterop.dcom.core.JIDefaultComObjectImpl;
+import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIVariant;
 
 /**
@@ -31,9 +30,14 @@ import org.jinterop.dcom.core.JIVariant;
  * @since 1.0
  *
  */
-final class JIEnumVARIANTImpl extends JIDefaultComObjectImpl implements IJIEnumVARIANT {
+final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumVARIANT {
 
 	//IJIComObject comObject = null;
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8405188611519724869L;
 
 	JIEnumVARIANTImpl(IJIComObject comObject)
 	{
@@ -70,10 +74,9 @@ final class JIEnumVARIANTImpl extends JIDefaultComObjectImpl implements IJIEnumV
     {
     	JICallObject callObject = new JICallObject(comObject.getIpid(),true);
 		callObject.setOpnum(3);
-		callObject.addOutParamAsObject(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		JIInterfacePointer ptr = (JIInterfacePointer)result[0];
-		return (IJIEnumVARIANT)JIComFactory.createCOMInstance(comObject,ptr);
+		return (IJIEnumVARIANT)JIComFactory.narrowInstance((IJIComObject)result[0]);
     }
 
 	

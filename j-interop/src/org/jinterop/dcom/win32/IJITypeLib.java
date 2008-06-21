@@ -18,7 +18,7 @@
 package org.jinterop.dcom.win32;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.core.IJIUnknown;
+import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 
 /**From MSDN:-
@@ -35,7 +35,7 @@ import org.jinterop.dcom.core.JIString;
  * @since 1.0
  *
  */
-public interface IJITypeLib extends IJIUnknown {
+public interface IJITypeLib extends IJIComObject {
 	
 	/**
 	 * IID representing the COM <code>ITypeLib</code>.

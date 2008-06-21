@@ -17,6 +17,9 @@
 
 package org.jinterop.dcom.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
@@ -29,27 +32,23 @@ import rpc.core.UUID;
 
 final class JIRemUnknown extends NdrObject {
 
-	public static final String IID = "00000143-0000-0000-c000-000000000046"; 
+	public static final String IID_IUnknown = "00000143-0000-0000-c000-000000000046"; 
+	public static final String IID_IDispatch = "00020400-0000-0000-c000-000000000046"; 
 	private String ipidOfIUnknown = null;
 	private String requestedIID = null;
-	private int requestedPublicRefs = 5;
+	private JIInterfacePointer iidPtr = null;
 	
-	private JIOrpcThat orpcthat = null;
-	private int hresult = -1;
-	private JIStdObjRef stdObjRef = null;
-	private boolean isSuccessful = false;
-	
-	JIRemUnknown(String ipidOfIUnknown,String requestedIID, int requestedPublicRefs)
+
+	JIRemUnknown(String ipidOfIUnknown,String requestedIID)
 	{
 		this.ipidOfIUnknown = ipidOfIUnknown;
 		this.requestedIID = requestedIID;
-		this.requestedPublicRefs = requestedPublicRefs;
 	}
 	
 	public int getOpnum() {
 		//opnum is 3 as this is a COM interface and 0,1,2 are occupied by IUnknown
-		//TODO remember this for extending com components also.
-		return 3;
+		//3,4,5 by IRemUnknown and we are going to call IRemUnknown2.QI so that we get MIPs.
+		return 6;
 	}
 	
 	public void write(NetworkDataRepresentation ndr) 
@@ -60,8 +59,6 @@ final class JIRemUnknown extends NdrObject {
 		orpcthis.encode(ndr);
 		
 		//now write the IPID
-		
-		
 		UUID uuid = new UUID(ipidOfIUnknown);
 		try {
 			uuid.encode(ndr,ndr.buf);
@@ -70,8 +67,7 @@ final class JIRemUnknown extends NdrObject {
 			JISystem.getLogger().throwing("JIRemUnknown","write",e);  
 		}
 		
-		ndr.writeUnsignedLong(requestedPublicRefs); //crefs 5
-		ndr.writeUnsignedShort(1);//1 interface.
+		ndr.writeUnsignedShort(1);//1 interfaces. (requested IID)
 		ndr.writeUnsignedShort(0);//byte alignment
 		ndr.writeUnsignedLong(1);//length of the array
 		uuid = new UUID(requestedIID);
@@ -79,8 +75,9 @@ final class JIRemUnknown extends NdrObject {
 			uuid.encode(ndr,ndr.buf);
 		} catch (NdrException e) {
 			
-			JISystem.getLogger().throwing("JIRemUnknown","write",e);  
+			JISystem.getLogger().throwing("JIRemUnknown","Performing a QueryInterface for " + requestedIID,e);  
 		}
+		
 		ndr.writeUnsignedLong(0); //TODO Index Matching , there seems to be a bug in 
 									// the jarapac system, it only reads upto (length - 6) bytes and one has to have another
 									// call after that or incomplete request will go. in case no param is present just put an unsigned long = 0.
@@ -88,44 +85,36 @@ final class JIRemUnknown extends NdrObject {
 	
 	public void read(NetworkDataRepresentation ndr)
 	{
-		orpcthat = JIOrpcThat.decode(ndr);
-		int ptr = ndr.readUnsignedLong(); 
-		if (ptr == 0)
+		JIOrpcThat.decode(ndr);
+		ndr.readUnsignedLong(); //size will be one
+		int hresult1 = ndr.readUnsignedLong();
+		if (hresult1 != 0)
 		{
 			//something happened.
-			hresult = ndr.readUnsignedLong();//read hresult
-			isSuccessful = false;
-			throw new JIRuntimeException(hresult);
+			throw new JIRuntimeException(hresult1);
 		}
-		int length = ndr.readUnsignedLong(); //will be 1 only 
-		hresult = ndr.readUnsignedLong();//read hresult , only 1 will be present.
-		if (hresult != 0)
-		{
-			isSuccessful = false;
-			throw new JIRuntimeException(hresult);
-		}
+		
+		//array length
 		ndr.readUnsignedLong(); 
-		stdObjRef = JIStdObjRef.decode(ndr);
-		isSuccessful = true;
+		
+		//and now the JIInterfacePointer itself.
+		iidPtr = JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_NULL, new HashMap());
+		//final hresult
+		hresult1 = ndr.readUnsignedLong(); 
+		if (hresult1 != 0)
+		{
+			//something happened.
+			throw new JIRuntimeException(hresult1);
+		}	
 	}
 	
-	public JIOrpcThat getORPCThat()
-	{
-		return orpcthat;
-	}
 	
-	public int getHresult()
-	{
-		return hresult;
-	}
 	
-	public JIStdObjRef getObjectReference()
+	
+	public JIInterfacePointer getInterfacePointer()
     {
-    	return stdObjRef;
+    	return iidPtr;
     }
 	
-	public boolean isSuccessful()
-	{
-		return isSuccessful;
-	}
+	
 }

@@ -152,7 +152,7 @@ final class JIRemActivation extends NdrObject {
 		orpcthat = JIOrpcThat.decode(ndr);
 		
 		//now fill the oxid
-		oxid = JIUtil.readOctetArrayLE(ndr,8);
+		oxid = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8);
 		
 		int skipdual = ndr.readUnsignedLong(); 
 		
@@ -196,14 +196,14 @@ final class JIRemActivation extends NdrObject {
 		
 		JIArray array = new JIArray(JIInterfacePointer.class,null,1,true);
 		ArrayList listOfDefferedPointers = new ArrayList();
-		array = (JIArray)JIUtil.deSerialize(ndr,array,listOfDefferedPointers ,JIFlags.FLAG_NULL,new HashMap());
+		array = (JIArray)JIMarshalUnMarshalHelper.deSerialize(ndr,array,listOfDefferedPointers ,JIFlags.FLAG_NULL,new HashMap());
 		int x = 0;
 
 		while (x < listOfDefferedPointers.size())
 		{
 			
 			ArrayList newList = new ArrayList();
-			JIPointer replacement = (JIPointer)JIUtil.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,JIFlags.FLAG_NULL,null);
+			JIPointer replacement = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,JIFlags.FLAG_NULL,null);
 			((JIPointer)listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.	
 			x++;
 			listOfDefferedPointers.addAll(x,newList);
@@ -223,7 +223,7 @@ final class JIRemActivation extends NdrObject {
 		
 		array = new JIArray(Integer.class,null,1,true);
 		//ignore the retvals
-		JIUtil.deSerialize(ndr,array,null,JIFlags.FLAG_NULL,null);
+		JIMarshalUnMarshalHelper.deSerialize(ndr,array,null,JIFlags.FLAG_NULL,null);
 
 		activationSuccessful = true;
 		

@@ -3,14 +3,12 @@ package org.jinterop.dcom.test;
 import java.net.UnknownHostException;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.IJIUnknown;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIParameterObject;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
@@ -43,7 +41,7 @@ public class Test_ITestServer2_Impl {
 			JISession session2 = JISession.createSession(args[1],args[2],args[3]);
 			JIComServer testServer1 = new JIComServer(JIProgId.valueOf(session1,"TestJavaServer.TestServer1"),args[0],session1);
 			IJIUnknown unkTestServer1 = testServer1.createInstance();
-			IJIDispatch dispatch1 = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,(IJIComObject)unkTestServer1);
+			IJIDispatch dispatch1 = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,(IJIComObject)unkTestServer1);
 			
 			//First lets call the ITestServer1.Call_TestServer2_Java using the Dispatch interface
 			//Acquire a reference to ITestServer2
@@ -67,7 +65,7 @@ public class Test_ITestServer2_Impl {
 			//Create the Java Server class. This contains the instance to be called by the COM Server ITestServer1.
 			JIJavaCoClass _testServer2 = new JIJavaCoClass(interfaceDefinition,new Test_ITestServer2_Impl());
 			//Get a interface pointer to the Java CO Class. The template could be any IJIComObject since only the session is reused.
-			IJIComObject __testServer2 = JIComFactory.createCOMInstance((IJIComObject)unkTestServer2,JIInterfacePointer.getInterfacePointer(session1,_testServer2)); 
+			IJIComObject __testServer2 = JIComFactory.instantiateComObject((IJIComObject)unkTestServer2,JIInterfacePointer.getInterfacePointer(session1,_testServer2)); 
 			//Call our Java server. The same message should be printed on the Java console.
 			dispatch1.callMethod("Call_TestServer2_Java", new Object[]{new JIVariant(__testServer2)});
 			

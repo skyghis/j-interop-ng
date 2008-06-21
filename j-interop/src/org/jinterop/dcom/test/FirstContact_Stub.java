@@ -4,9 +4,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
@@ -14,7 +11,9 @@ import org.jinterop.dcom.core.JICallObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIParameterObject;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIProgId;
@@ -53,11 +52,11 @@ public class FirstContact_Stub implements FirstContact {
 		 //session = JISession.createSession("10.74.85.56","itl-hw-38602a\\Vikram","Infosys@123");
 		//session = JISession.createSession("federation","administrator","enterprise");
 		//stub = new JIComServer(JIClsid.valueOf("8B21775E-717D-11CE-AB5B-D41203C10000"),address,session);
-		stub = new JIComServer(JIProgId.valueOf(session,"TestCOM123.TestServer2"),address,session);
+		//stub = new JIComServer(JIProgId.valueOf(session,"TestCOM123.TestServer2"),address,session);
 		//stub = new JIComServer(JIProgId.valueOf(session,"VirtualServer.Application"),address,session);
 
 		// stub = new JIComServer(JIProgId.valueOf(session,"ArrayTry.myarray"),address,session);
-		//stub = new JIComServer(JIProgId.valueOf(session,"Icecream.IceCreamOrder"),address,session);
+		stub = new JIComServer(JIProgId.valueOf(session,"ATLDemo.TestSafeArray"),address,session);
 		//stub = new JIComServer(JIProgId.valueOf(session,"SafeArrayDemo.SafeArrayTest"),address,session);
 		 //stub = new JIComServer(JIProgId.valueOf(session,"Project1.Class1"),address,session);
 		 //stub = new JIComServer(JIProgId.valueOf(session,"TLI.TLIApplication"),address,session);
@@ -93,15 +92,27 @@ public class FirstContact_Stub implements FirstContact {
 
 			ResourceBundle bundle = JISystem.getErrorMessages();
 			IJIComObject unknown = stub.createInstance();
-			IJIDispatch dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
+			IJIDispatch dispatch = (IJIDispatch)JIComFactory.narrowInstance(unknown.queryInterface(JIComFactory.IID_IDispatch));
+			JIVariant variants = dispatch.callMethodA("GetDispatch");
+			
+//			dispatch.callMethodA("TestVariant1", new Object[]{variants[1]} );
+			
+//			JIStruct struct = new JIStruct();
+//			struct.addMember(Character.class);
+//			struct.addMember(Double.class);
+//			struct.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
+//			
+//			Object[] t1 = dispatch.callMethodA("CreateArray", new Object[]{new JIVariant(10), new JIVariant(new JIArray(struct,null,1,true),true)} );
+//			Object[] t1 = dispatch.callMethodA("GetFlavorsWithPrices", new Object[]{JIVariant.EMPTY_BYREF()} );
+//			t1 = dispatch.callMethodA("GetFlavors", new Object[]{JIVariant.EMPTY_BYREF()} );
 
-			String sXmlEncode = "";
-            for (int i=0; i<10000;i++)
-                    sXmlEncode = sXmlEncode + "P";
-
-            JIVariant psXml = new JIVariant(new JIString(sXmlEncode));
-            JIVariant psError = new JIVariant(new JIString(""), true);
-            Object params[] = new Object[] {psXml, psError};
+//			String sXmlEncode = "";
+//            for (int i=0; i<10000;i++)
+//                    sXmlEncode = sXmlEncode + "P";
+//
+//            JIVariant psXml = new JIVariant(new JIString(sXmlEncode));
+//            JIVariant psError = new JIVariant(new JIString(""), true);
+//            Object params[] = new Object[] {psXml, psError};
 
 //            int id = dispatch.getIDsOfNames("testHresult2");
 //            JIVariant[] rt = dispatch.callMethodA("testSafeArrayOfVariants", new Object[]{JIVariant.EMPTY()_BYREF});
@@ -151,8 +162,7 @@ public class FirstContact_Stub implements FirstContact {
 
 			JIVariant tr = dispatch.callMethodA("testHresult2");
 
-			Object[] t1 = dispatch.callMethodA("GetFlavors", new Object[]{JIVariant.EMPTY_BYREF()} );
-
+			
 			//IJIComObject handle2 = (IJIComObject)unknown.queryInterface("FA11DECE-7660-11D2-9C43-006008AD8BC06");
 
 			//IJIComObject handle2 = (IJIComObject)unknown.queryInterface("A12E7F85-B011-4AB3-A924-215F67A725D5");
@@ -250,7 +260,7 @@ public class FirstContact_Stub implements FirstContact {
 	        callObject.addOutParamAsObject ( new JIPointer(Integer.class,false),JIFlags.FLAG_NULL );
 	        callObject.addOutParamAsObject ( new JIPointer(Integer.class,false),JIFlags.FLAG_NULL );
 	        callObject.addInParamAsUUID ("620012E2-69E3-4DC0-B553-AE252524D2F6", JIFlags.FLAG_NULL );
-	        callObject.addOutParamAsType (JIInterfacePointer.class, JIFlags.FLAG_NULL );
+	        callObject.addOutParamAsType (IJIComObject.class, JIFlags.FLAG_NULL );
 
 	        t2= handle2.call(callObject);
 
@@ -437,18 +447,18 @@ public class FirstContact_Stub implements FirstContact {
 
 			obj.reInit();
 			obj.setOpnum(134);
-			obj.addInParamAsInterfacePointer(dispatch.getInterfacePointer(),JIFlags.FLAG_NULL);
+			obj.addInParamAsComObject(dispatch,JIFlags.FLAG_NULL);
 			handle.call(obj);
 
 			obj.reInit();
 			obj.setOpnum(135);
-			obj.addInParamAsInterfacePointer(dispatch.getInterfacePointer(),JIFlags.FLAG_NULL);
-			obj.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+			obj.addInParamAsComObject(dispatch,JIFlags.FLAG_NULL);
+			obj.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 			handle.call(obj);
 
 			obj.reInit();
 			obj.setOpnum(136);
-			obj.addInParamAsInterfacePointer(dispatch.getInterfacePointer(),JIFlags.FLAG_NULL);
+			obj.addInParamAsComObject(dispatch,JIFlags.FLAG_NULL);
 			handle.call(obj);
 
 			obj.reInit();
@@ -540,7 +550,7 @@ public class FirstContact_Stub implements FirstContact {
 			JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("test",1,runtimeObject);
 			interfaceDefinition.addMethodDescriptor(methodDescriptor);
 
-			IJIComObject objMyCOM = JIComFactory.createCOMInstance(handle,JIInterfacePointer.getInterfacePointer(session,component));
+			IJIComObject objMyCOM = JIComFactory.instantiateComObject(handle,JIInterfacePointer.getInterfacePointer(session,component));
 			obj.addInParamAsVariant(new JIVariant(objMyCOM),JIFlags.FLAG_NULL);
 			obj.addOutParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 			result = handle.call(obj);

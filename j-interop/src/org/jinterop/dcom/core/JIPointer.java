@@ -134,7 +134,7 @@ public final class JIPointer implements Serializable {
 		FLAG = FLAG | flags;
 		if (isNull)
 		{
-			JIUtil.serialize(ndr,Integer.class,new Integer(0),defferedPointers,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),defferedPointers,FLAG);
 			return;
 		}
 		//it is deffered or part of an array, this logic will not get called twice since the
@@ -143,7 +143,7 @@ public final class JIPointer implements Serializable {
 					(FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER*/))
 		{
 			int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
-			JIUtil.serialize(ndr,Integer.class,new Integer(referentIdToPut),defferedPointers,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(referentIdToPut),defferedPointers,FLAG);
 			isDeffered = false;
 			isReferenceTypePtr = true;
 //			try{
@@ -158,7 +158,7 @@ public final class JIPointer implements Serializable {
 		if (!isNull && !isReferenceTypePtr)
 		{
 			int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
-			JIUtil.serialize(ndr,Integer.class,new Integer(referentIdToPut),defferedPointers,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(referentIdToPut),defferedPointers,FLAG);
 		}
 		
 		try {
@@ -166,7 +166,7 @@ public final class JIPointer implements Serializable {
 			{
 				//write the length first before all elements
 				//ndr.writeUnsignedLong(((Object[])(((JIVariant)referent).getObject())).length);
-				JIUtil.serialize(ndr,Integer.class,new Integer(((Object[])(((JIVariant)referent).getObject())).length),defferedPointers,FLAG);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(((Object[])(((JIVariant)referent).getObject())).length),defferedPointers,FLAG);
 			}
 		} catch (JIException e) {
 			throw new JIRuntimeException(e.getErrorCode());
@@ -174,7 +174,7 @@ public final class JIPointer implements Serializable {
 		
 		
 		
-		JIUtil.serialize(ndr,referent.getClass(),referent,defferedPointers,FLAG);
+		JIMarshalUnMarshalHelper.serialize(ndr,referent.getClass(),referent,defferedPointers,FLAG);
 		
 		
 	}
@@ -193,7 +193,7 @@ public final class JIPointer implements Serializable {
 		if (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY
 				/*|| (FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER */)
 		{
-			retVal.referentId = ((Integer)JIUtil.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
+			retVal.referentId = ((Integer)JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
 			retVal.referent = referent; //will only be the class or object
 			if (retVal.referentId ==  0)
 			{
@@ -213,7 +213,7 @@ public final class JIPointer implements Serializable {
 		if (!isReferenceTypePtr)
 		{
 			//referentId = ndr.readUnsignedLong();
-			retVal.referentId = ((Integer)JIUtil.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
+			retVal.referentId = ((Integer)JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
 			retVal.referent = referent; //will only be the class or object
 			if (retVal.referentId ==  0)
 			{
@@ -225,7 +225,7 @@ public final class JIPointer implements Serializable {
 		}
 		
 		
-		retVal.referent = JIUtil.deSerialize(ndr,referent,defferedPointers,FLAG,additionalData);
+		retVal.referent = JIMarshalUnMarshalHelper.deSerialize(ndr,referent,defferedPointers,FLAG,additionalData);
 		return retVal;
 	}
 
@@ -275,9 +275,9 @@ public final class JIPointer implements Serializable {
 		//4 for pointer
 		if (referent instanceof Class)
 		{
-			return 4 + JIUtil.getLengthInBytes((Class)referent,referent,JIFlags.FLAG_NULL);	
+			return 4 + JIMarshalUnMarshalHelper.getLengthInBytes((Class)referent,referent,JIFlags.FLAG_NULL);	
 		}
-		return 4 + JIUtil.getLengthInBytes(referent.getClass(),referent,JIFlags.FLAG_NULL);
+		return 4 + JIMarshalUnMarshalHelper.getLengthInBytes(referent.getClass(),referent,JIFlags.FLAG_NULL);
 	}
 	
 

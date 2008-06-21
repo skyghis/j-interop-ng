@@ -28,6 +28,7 @@ import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
 import org.jinterop.dcom.common.JIErrorCodes;
+import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 
@@ -66,6 +67,8 @@ import rpc.core.UUID;
  */
 public class JICallObject extends NdrObject implements Serializable {
 
+	static final String CURRENTSESSION = "CURRENTSESSION";
+	static final String COMOBJECTS = "COMOBJECTS";
 	
 	private static final long serialVersionUID = -2939657500731135110L;
 	private int opnum = -1;
@@ -79,7 +82,7 @@ public class JICallObject extends NdrObject implements Serializable {
 	private int hresult = 0;
 	private boolean executed = false;
 	private Object[] resultsOfException = null;
-	
+	private JISession session = null;
 	
 	/** Creates a JICallObject associated with an Interface Identifier.
 	 * 
@@ -107,10 +110,6 @@ public class JICallObject extends NdrObject implements Serializable {
 	 */
 	public JICallObject(String IPIDofParent)
 	{
-//		if (IPIDofParent == null)
-//		{
-//			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_OBJ_NULL_IPID));
-//		}
 		enclosingParentsIPID = IPIDofParent;
 	}
 	
@@ -142,16 +141,27 @@ public class JICallObject extends NdrObject implements Serializable {
 		return enclosingParentsIPID;
 	}
 
-	/**Add IN parameter as <code>JIInterfacePointer</code> at the end of the Parameter list.
+//	/**Add IN parameter as <code>JIInterfacePointer</code> at the end of the Parameter list.
+//	 * 
+//	 * @param value
+//	 * @param FLAGS from JIFlags (if need be)
+//	 */
+//	public void addInParamAsInterfacePointer(JIInterfacePointer interfacePointer, int FLAGS)
+//	{
+//		insertInParamAsInterfacePointerAt(inParams.size(),interfacePointer,FLAGS);
+//	}
+
+	/**Add IN parameter as <code>IJIComObject</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
 	 */
-	public void addInParamAsInterfacePointer(JIInterfacePointer interfacePointer, int FLAGS)
+	public void addInParamAsComObject(IJIComObject comObject, int FLAGS)
 	{
-		insertInParamAsInterfacePointerAt(inParams.size(),interfacePointer,FLAGS);
+		insertInParamAsComObjectAt(inParams.size(),comObject,FLAGS);
 	}
-
+	
+	
 	/**Add IN parameter as <code>int</code> at the end of the Parameter list.
 	 * 
 	 * @param value
@@ -309,13 +319,13 @@ public class JICallObject extends NdrObject implements Serializable {
 		
 	}
 	
-	/**Add IN parameter as <code>JIInterfacePointer</code> at the specified index in the Parameter list.
+	/**Add IN parameter as <code>IJIComObject</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be). 
 	 */
-	public void insertInParamAsInterfacePointerAt(int index, JIInterfacePointer value, int FLAGS)
+	public void insertInParamAsComObjectAt(int index, IJIComObject value, int FLAGS)
 	{
 		inParams.add(index,value);
 		inparamFlags.add(index,new Integer(FLAGS));
@@ -861,30 +871,35 @@ public class JICallObject extends NdrObject implements Serializable {
 	
 	private void writePacket(NetworkDataRepresentation ndr)
 	{
+		if (session == null)
+		{
+			throw new IllegalStateException("Programming Error ! Session not attached with this call ! ... Please rectify ! ");
+		}
+		
 		Object[] inparams = inParams.toArray(); 
 		
 		int index = 0;
 		if(inparams != null)
 		{
-			if (JISystem.getLogger().isLoggable(Level.FINEST))
-			{
-				String str = "";
-				for (int i = 0;i < inparams.length;i++)
-				{
-					str = str + "In Param:[" + i + "] " + inparams[i] + "\n";
-				}
-				JISystem.getLogger().finest(str);
-			}
+//			if (JISystem.getLogger().isLoggable(Level.FINEST))
+//			{
+//				String str = "";
+//				for (int i = 0;i < inparams.length;i++)
+//				{
+//					str = str + "In Param:[" + i + "] " + inparams[i] + "\n";
+//				}
+//				JISystem.getLogger().finest(str);
+//			}
 			while(index < inparams.length)
 			{
 				List listOfDefferedPointers = new ArrayList();
 				if (inparams[index] == null)
 				{
-					JIUtil.serialize(ndr,Integer.class,new Integer(0),listOfDefferedPointers,JIFlags.FLAG_NULL);
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),listOfDefferedPointers,JIFlags.FLAG_NULL);
 				}
 				else
 				{
-					JIUtil.serialize(ndr,inparams[index].getClass(),inparams[index],listOfDefferedPointers,((Integer)inparamFlags.get(index)).intValue());
+					JIMarshalUnMarshalHelper.serialize(ndr,inparams[index].getClass(),inparams[index],listOfDefferedPointers,((Integer)inparamFlags.get(index)).intValue());
 				}
 				
 				int x = 0;
@@ -911,9 +926,9 @@ public class JICallObject extends NdrObject implements Serializable {
 //					after the pointer 2 referent. But that is what is against the rules of DCERPC, in this case the referent of pointer 1 (struct with the pointer to another struct)
 //					should be serialized in place (following th rules of the struct serialization ofcourse) and should not go to the end of the list.
 					
-					//JIUtil.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),listOfDefferedPointers,inparamFlags);
+					//JIMarshalUnMarshalHelper.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),listOfDefferedPointers,inparamFlags);
 					ArrayList newList = new ArrayList();
-					JIUtil.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),newList,((Integer)inparamFlags.get(index)).intValue());
+					JIMarshalUnMarshalHelper.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),newList,((Integer)inparamFlags.get(index)).intValue());
 					x++; //incrementing index
 					listOfDefferedPointers.addAll(x,newList);
 				}
@@ -970,6 +985,12 @@ public class JICallObject extends NdrObject implements Serializable {
 	
 	private void readPacket(NetworkDataRepresentation ndr)
 	{
+		
+		if (session == null)
+		{
+			throw new IllegalStateException("Programming Error ! Session not attached with this call ! ... Please rectify ! ");
+		}
+		
 		int index = 0;
 		
 		outparams = outParams.toArray();
@@ -985,7 +1006,10 @@ public class JICallObject extends NdrObject implements Serializable {
 			JISystem.getLogger().finest(str);
 		}
 		
+		ArrayList comObjects = new ArrayList();
 		Map additionalData = new HashMap();
+		additionalData.put(CURRENTSESSION, session);
+		additionalData.put(COMOBJECTS, comObjects);
 		ArrayList results = new ArrayList();
 		//user has nothing to return.
 		if (outparams != null && outparams.length > 0)
@@ -993,14 +1017,14 @@ public class JICallObject extends NdrObject implements Serializable {
 			while(index < outparams.length)
 			{
 				List listOfDefferedPointers = new ArrayList();
-				results.add(JIUtil.deSerialize(ndr,outparams[index],listOfDefferedPointers,((Integer)outparamFlags.get(index)).intValue(),additionalData));
+				results.add(JIMarshalUnMarshalHelper.deSerialize(ndr,outparams[index],listOfDefferedPointers,((Integer)outparamFlags.get(index)).intValue(),additionalData));
 				int x = 0;
 
 				while (x < listOfDefferedPointers.size())
 				{
 					
 					ArrayList newList = new ArrayList();
-					JIPointer replacement = (JIPointer)JIUtil.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,((Integer)outparamFlags.get(index)).intValue(),additionalData);
+					JIPointer replacement = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,((Integer)outparamFlags.get(index)).intValue(),additionalData);
 					((JIPointer)listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.	
 					x++;
 					listOfDefferedPointers.addAll(x,newList);
@@ -1009,6 +1033,21 @@ public class JICallObject extends NdrObject implements Serializable {
 			}	
 			
 			
+			//now create the right COM Objects, it is required here only and no place else. 
+			for (int i = 0; i < comObjects.size(); i++)
+			{
+				JIComObjectImpl comObjectImpl = (JIComObjectImpl)comObjects.get(i);
+				try {
+					comObjectImpl.replaceMembers(JISessionHelper.instantiateComObject2(session, comObjectImpl.getInterfacePointer()));
+					JISessionHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
+				} catch (JIException e) {
+					JISystem.getLogger().throwing("JICallObject", "readPacket", e);
+					throw new JIRuntimeException(e.getErrorCode());
+				}
+				//replace the members of the original com objects by the completed ones.
+			}
+			
+			comObjects.clear();
 		}
 		
 		outparams = results.toArray();
@@ -1040,7 +1079,7 @@ public class JICallObject extends NdrObject implements Serializable {
 				length = length + 4;
 				continue;
 			}
-			int length2 = JIUtil.getLengthInBytes(inparams[i].getClass(),inparams[i],JIFlags.FLAG_NULL);
+			int length2 = JIMarshalUnMarshalHelper.getLengthInBytes(inparams[i].getClass(),inparams[i],JIFlags.FLAG_NULL);
 			length = length + length2;
 		}
 		
@@ -1057,4 +1096,13 @@ public class JICallObject extends NdrObject implements Serializable {
 		return hresult != 0;
 	}
 	
+	void attachSession(JISession session)
+	{
+		this.session = session;
+	}
+	
+	JISession getSession()
+	{
+		return session;
+	}
 }

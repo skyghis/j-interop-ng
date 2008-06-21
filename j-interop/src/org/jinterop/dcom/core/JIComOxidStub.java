@@ -159,34 +159,34 @@ class PingObject extends NdrObject
 					JISystem.getLogger().info("listOfDels -> Size : " + listOfDels.size() + " , " + listOfDels);
 				}
 				
-				JIUtil.writeOctetArrayLE(ndr,setId);
+				JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,setId);
 				
-				JIUtil.serialize(ndr,Short.class,new Short((short)seqNum),null,JIFlags.FLAG_NULL);//seq
-				JIUtil.serialize(ndr,Short.class,new Short((short)listOfAdds.size()),null,JIFlags.FLAG_NULL);//add
-				JIUtil.serialize(ndr,Short.class,new Short((short)listOfDels.size()),null,JIFlags.FLAG_NULL);//del
+				JIMarshalUnMarshalHelper.serialize(ndr,Short.class,new Short((short)seqNum),null,JIFlags.FLAG_NULL);//seq
+				JIMarshalUnMarshalHelper.serialize(ndr,Short.class,new Short((short)listOfAdds.size()),null,JIFlags.FLAG_NULL);//add
+				JIMarshalUnMarshalHelper.serialize(ndr,Short.class,new Short((short)listOfDels.size()),null,JIFlags.FLAG_NULL);//del
 				
 				if (listOfAdds.size() > 0)
 				{
-					JIUtil.serialize(ndr,Integer.class,new Integer(new Object().hashCode()),null,JIFlags.FLAG_NULL);//pointer
-					JIUtil.serialize(ndr,Integer.class,new Integer(listOfAdds.size()),null,JIFlags.FLAG_NULL);
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(new Object().hashCode()),null,JIFlags.FLAG_NULL);//pointer
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(listOfAdds.size()),null,JIFlags.FLAG_NULL);
 					
 					
 					for (int i = 0;i < listOfAdds.size();i++)
 					{
 						JIObjectId oid = (JIObjectId)listOfAdds.get(i);
-						JIUtil.writeOctetArrayLE(ndr,oid.getOID());
+						JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,oid.getOID());
 						//JISystem.getLogger().info("[" + oid.toString() + "]");
 					}
 				}
 				else
 				{
-					JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);//null pointer
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);//null pointer
 				}
 				
 				if (listOfDels.size() > 0)
 				{
-					JIUtil.serialize(ndr,Integer.class,new Integer(new Object().hashCode()),null,JIFlags.FLAG_NULL);//pointer
-					JIUtil.serialize(ndr,Integer.class,new Integer(listOfDels.size()),null,JIFlags.FLAG_NULL);
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(new Object().hashCode()),null,JIFlags.FLAG_NULL);//pointer
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(listOfDels.size()),null,JIFlags.FLAG_NULL);
 					
 					//now align for array
 					double index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
@@ -196,26 +196,26 @@ class PingObject extends NdrObject
 					for (int i = 0;i < listOfDels.size();i++)
 					{
 						JIObjectId oid = (JIObjectId)listOfDels.get(i);
-						JIUtil.writeOctetArrayLE(ndr,oid.getOID());
+						JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,oid.getOID());
 						//JISystem.getLogger().info("[" + oid + "]");
 					}
 				}
 				else
 				{
-					JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);//null pointer
+					JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);//null pointer
 				}
 				
-				JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
-				JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
-				JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
-				JIUtil.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),null,JIFlags.FLAG_NULL);
 				break;
 				
 			case 1:// simple ping
 				
 				if(setId != null)
 				{
-					JIUtil.writeOctetArrayLE(ndr,setId);//setid
+					JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,setId);//setid
 				  	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), setId, 0, setId.length);
 				   	if (JISystem.getLogger().isLoggable(Level.INFO))
@@ -244,12 +244,12 @@ class PingObject extends NdrObject
 		{
 			case 2: //complex ping
 				
-				setId = JIUtil.readOctetArrayLE(ndr,8);
+				setId = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8);
 				//ping factor
-				JIUtil.deSerialize(ndr,Short.class,null,JIFlags.FLAG_NULL,null);
+				JIMarshalUnMarshalHelper.deSerialize(ndr,Short.class,null,JIFlags.FLAG_NULL,null);
 				
 				//hresult
-				int hresult = ((Integer)(JIUtil.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL,null))).intValue();
+				int hresult = ((Integer)(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL,null))).intValue();
 				
 				if (hresult != 0)
 				{
@@ -272,7 +272,7 @@ class PingObject extends NdrObject
 			case 1:// simple ping
 				
 				//hresult
-				hresult = ((Integer)(JIUtil.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL,null))).intValue();
+				hresult = ((Integer)(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL,null))).intValue();
 				
 				if (hresult != 0)
 				{

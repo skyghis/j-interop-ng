@@ -385,7 +385,7 @@ public final class JIErrorCodes {
  public static final int JI_AUTH_NOT_SUPPLIED = 0x00001010;
  
  /**
-  *	ptr and template cannot be null.
+  *	Incorrect or Invalid Parameter(s) specified.
   */
  public static final int JI_COMFACTORY_ILLEGAL_ARG = 0x00001011;
  
@@ -582,7 +582,7 @@ public final class JIErrorCodes {
  public static final int JI_JAVACOCLASS_ALREADY_EXPORTED = 0x00001043;
  
  /**
-  * JIInterfacePointer is not a valid parameter, please use JIVariant(IJIComObject,...) or JIVariant(IJIDispatch,...) depending upon the type.   
+  * JIInterfacePointer is not a valid parameter, please use JIVariant(IJIComObject,...).   
   */
  public static final int JI_VARIANT_TYPE_INCORRECT = 0x00001044;
  
@@ -600,5 +600,16 @@ public final class JIErrorCodes {
   * getInstance() cannot be called since the JIComServer(JISession, JIInterfacePointer, String) ctor was NOT used to create this COM server instance, please use createInstance() instead.
   */
  public static final int JI_COMSTUB_WRONGCALLGETINSTANCE = 0x00001047;
+ 
+ /**
+  * A session is already attached with this COM object.
+  */
+ public static final int JI_SESSION_ALREADY_ATTACHED = 0x00001048;
+ 
+ /**
+  * This API cannot be invoked on local references.
+  */
+ public static final int JI_COMOBJ_LOCAL_REF = 0x00001049;
+ 
  
 }

@@ -61,9 +61,9 @@ final class JIStdObjRef implements Serializable {
 		objRef.flags = ndr.readUnsignedLong();
 		objRef.publicRefs = ndr.readUnsignedLong();
 		
-		objRef.oxid = JIUtil.readOctetArrayLE(ndr,8);
+		objRef.oxid = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8);
 		
-		objRef.oid = JIUtil.readOctetArrayLE(ndr,8);
+		objRef.oid = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8);
 		
 		try {
 			rpc.core.UUID ipid2 = new rpc.core.UUID();
@@ -107,8 +107,8 @@ final class JIStdObjRef implements Serializable {
 	{
 		ndr.writeUnsignedLong(flags);
 		ndr.writeUnsignedLong(publicRefs);
-		JIUtil.writeOctetArrayLE(ndr,oxid);
-		JIUtil.writeOctetArrayLE(ndr,oid);
+		JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,oxid);
+		JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr,oid);
 		
 		try {
 			rpc.core.UUID ipid = new rpc.core.UUID(ipidOfthisObjectRef);

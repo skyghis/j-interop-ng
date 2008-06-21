@@ -17,7 +17,6 @@
 
 package org.jinterop.dcom.core;
 
-import org.jinterop.dcom.common.JIJavaCoClass;
 
 /**Stores the oxid details in memory.
  * 
@@ -107,6 +106,9 @@ final class JIComOxidDetails {
 	
 	void interruptRemUnknownThread()
 	{
-	    remUnknownThread.interrupt();
+		if (remUnknownThread != null)
+		{
+			remUnknownThread.interrupt();
+		}
 	}
 }

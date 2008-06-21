@@ -8,7 +8,6 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JICallObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIVariant;
@@ -37,7 +36,7 @@ public class MSOutLookExpressContacts {
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		Object[] res = application.call(callObject);
 
-		IJIComObject namespace = JIComFactory.createCOMInstance(application,(JIInterfacePointer)res[0]);
+		IJIComObject namespace = JIComFactory.instantiateComObject(application,(JIInterfacePointer)res[0]);
 		callObject = new JICallObject(namespace.getIpid());
 		callObject.setOpnum(16);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
@@ -49,7 +48,7 @@ public class MSOutLookExpressContacts {
 			return;
 		}
 
-		IJIComObject folder = JIComFactory.createCOMInstance(application,(JIInterfacePointer)res[0]);
+		IJIComObject folder = JIComFactory.instantiateComObject(application,(JIInterfacePointer)res[0]);
 		callObject = new JICallObject(folder.getIpid());
 		callObject.setOpnum(4);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -71,7 +70,7 @@ public class MSOutLookExpressContacts {
 			return;
 		}
 
-		IJIComObject items = JIComFactory.createCOMInstance(application,(JIInterfacePointer)res[0]);
+		IJIComObject items = JIComFactory.instantiateComObject(application,(JIInterfacePointer)res[0]);
 		callObject = new JICallObject(items.getIpid());
 		callObject.setOpnum(12);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
@@ -85,7 +84,7 @@ public class MSOutLookExpressContacts {
 			}
 
 			String details = null;
-			IJIDispatch contactItem = (IJIDispatch)JIComFactory.createCOMInstance(application,(JIInterfacePointer)res[0]);
+			IJIDispatch contactItem = (IJIDispatch)JIComFactory.instantiateComObject(application,(JIInterfacePointer)res[0]);
 			JIVariant res2 = contactItem.get("FullName");
 //			callObject = new JICallObject(contactItem.getIpid());
 //			callObject.setOpnum(124);

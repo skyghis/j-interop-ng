@@ -186,7 +186,12 @@ public final class JISystem {
 	
 	private static void saveDBPathAndLoadFile()
 	{
-		ClassLoader loader = JISystem.class.getClassLoader();
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		if (loader == null) 
+		{
+			loader = JISystem.class.getClassLoader(); // fallback
+		}
+		
 		Set locations = new HashSet();
 		   if (loader != null) {
 	            try {

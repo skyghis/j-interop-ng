@@ -32,7 +32,7 @@ public class MSPowerPoint2 {
 	public void startPowerPoint() throws JIException
 	{
 		unknown = comStub.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
 	}
 
 	public void showPowerPoint() throws JIException

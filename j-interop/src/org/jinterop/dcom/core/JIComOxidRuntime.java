@@ -34,7 +34,6 @@ import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIJavaCoClass;
 import org.jinterop.dcom.common.JISystem;
 
 import rpc.Security;
@@ -530,6 +529,12 @@ final class JIComOxidRuntime {
 		
 		synchronized (mutex2) 
 		{
+			if (component.getAssociatedInterfacePointer() != null)
+			{
+				throw new JIException(JIErrorCodes.JI_JAVACOCLASS_ALREADY_EXPORTED);
+			}
+
+			component.setSession(session);
 
 			JIComOxidDetails details = 	(JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
 			
@@ -540,7 +545,7 @@ final class JIComOxidRuntime {
 			
 			//as the ID could be repeated, this is the ipid of the interface being requested.
 			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
-			String iid = component.isCoClassUnderRealIID() ? component.getComponentID() : IJIUnknown.IID;//has to be IUnknown's IID.
+			String iid = component.isCoClassUnderRealIID() ? component.getComponentID() : IJIComObject.IID;//has to be IUnknown's IID.
 			byte[] bytes = new byte[8];
 			randomGen.nextBytes(bytes);
 			JIOxid oxid = new JIOxid(bytes);
@@ -602,11 +607,6 @@ final class JIComOxidRuntime {
 			}
 			oids.add(oid);
 			
-			
-			if (component.getAssociatedInterfacePointer() != null)
-			{
-				throw new JIException(JIErrorCodes.JI_JAVACOCLASS_ALREADY_EXPORTED);
-			}
 			component.setAssociatedInterfacePointer(ptr);
 		}
 		return ptr;

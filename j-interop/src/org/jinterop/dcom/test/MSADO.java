@@ -32,7 +32,7 @@ public class MSADO {
 	public void performOp() throws JIException, InterruptedException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
 		IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
 		typeInfo.getFuncDesc(0);
 

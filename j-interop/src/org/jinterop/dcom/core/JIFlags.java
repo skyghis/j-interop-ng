@@ -56,13 +56,13 @@ public final class JIFlags {
 	 * @exclude
 	 */
 	//flag representing that this is a pointer
-	public static final int FLAG_REPRESENTATION_POINTER = 16; 
+	static final int FLAG_REPRESENTATION_POINTER = 16; 
 	
 	/**
 	 * @exclude
 	 */
 	//flag representing that this is a reference
-	public static final int FLAG_REPRESENTATION_REFERENCE = 32; 
+	static final int FLAG_REPRESENTATION_REFERENCE = 32; 
 
 	/**
 	 * @exclude
@@ -74,7 +74,7 @@ public final class JIFlags {
 	 * @exclude
 	 */
 	//flag representing that this is a IDispatch invoke call
-	public static final int FLAG_REPRESENTATION_NESTED_POINTER = 128;
+	static final int FLAG_REPRESENTATION_NESTED_POINTER = 128;
 	
 	/**
 	 * Flag representing unsigned byte.

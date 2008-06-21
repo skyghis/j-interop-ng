@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JIInterfaceDefinition;
-import org.jinterop.dcom.common.JIJavaCoClass;
-import org.jinterop.dcom.common.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIFlags;
+import org.jinterop.dcom.core.JIInterfaceDefinition;
+import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIParameterObject;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;

@@ -20,7 +20,7 @@ package org.jinterop.dcom.win32;
 /**
  * Rectangle boundaries in pix.
  * @since 1.0
- *
+ *@exclude
  */
 public final class JIRect
 {

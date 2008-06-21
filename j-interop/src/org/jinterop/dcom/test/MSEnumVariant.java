@@ -27,7 +27,7 @@ public class MSEnumVariant {
 		session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIProgId.valueOf(session,"StdCollection.VBCollection"),address,session);
 		IJIComObject object = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(IJIDispatch.IID,object);
+		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,object);
 
 	}
 
@@ -49,7 +49,7 @@ public class MSEnumVariant {
 		IJIComObject object2 = variant.getObjectAsComObject(dispatch);
 		//IJIComObject enumObject = (IJIComObject)object2.queryInterface(IJIEnumVARIANT.IID);
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
 
 		for (i = 0; i < 10; i++)
 		{

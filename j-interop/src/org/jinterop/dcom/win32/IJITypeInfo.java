@@ -18,7 +18,7 @@
 package org.jinterop.dcom.win32;
 
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.core.IJIUnknown;
+import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 
 
@@ -40,7 +40,7 @@ import org.jinterop.dcom.core.JIString;
  *
  */
 //TODO add APIs here
-public interface IJITypeInfo extends IJIUnknown {
+public interface IJITypeInfo extends IJIComObject {
 	
 	/**
 	 * IID representing the COM <code>IEnumVARIANT</code>.
@@ -140,7 +140,7 @@ public interface IJITypeInfo extends IJIUnknown {
      * @return
      * @throws JIException
      */
-    public IJIUnknown createInstance(String riid) throws JIException;
+    public IJIComObject createInstance(String riid) throws JIException;
     
     /**Retrieves marshaling information.
      * 

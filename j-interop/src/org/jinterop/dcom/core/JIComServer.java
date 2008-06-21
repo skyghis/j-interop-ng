@@ -114,7 +114,7 @@ public class JIComServer extends Stub {
 	 * 						  The developer can send in the valid IP and if found in the interface pointer list will be used to talk to the target machine, overriding the other IP addresses present in the interface pointer. 
 	 * 						  If this IP is not found then the "machine name" binding will be used. If this param is <code>null</code> then the first binding obtained from the interface pointer is used. 
 	 */
-	public JIComServer(JISession session, JIInterfacePointer interfacePointer,String ipAddress) throws JIException
+	JIComServer(JISession session, JIInterfacePointer interfacePointer,String ipAddress) throws JIException
 	{
 		super();
 		
@@ -635,7 +635,6 @@ public class JIComServer extends Stub {
 	IJIComObject getInterface(String iid,String ipidOfTheTargetUnknown) throws JIException 
 	{
 		IJIComObject retval = null;
-		byte[] oid = null;
 		//this is still essentially serial, since all threads will have to wait for mutex before 
 		//entering addToSession.
 		synchronized (mutex) {
@@ -644,7 +643,7 @@ public class JIComServer extends Stub {
 			//setObject(ipid);
 			
 			//JIRemUnknown reqUnknown = new JIRemUnknown(unknownIPID,iid,5);
-			JIRemUnknown reqUnknown = new JIRemUnknown(ipidOfTheTargetUnknown,iid,5);
+			JIRemUnknown reqUnknown = new JIRemUnknown(ipidOfTheTargetUnknown,iid);
 			try {
 				call(Endpoint.IDEMPOTENT,reqUnknown);
 			}catch(FaultException e)
@@ -659,14 +658,16 @@ public class JIComServer extends Stub {
 				throw new JIException(e1);
 			}
 			
-			retval = getObject(reqUnknown.getObjectReference().getIpid(),iid);
-			oid = reqUnknown.getObjectReference().getObjectId();
+			retval = JISessionHelper.instantiateComObject(session, reqUnknown.getInterfacePointer());
+			
 			//for querying dispatch we can't send another call
 			if (!iid.equalsIgnoreCase("00020400-0000-0000-c000-000000000046"))
 			{
+				boolean success = true;
+				((JIComObjectImpl)retval).isDual = true;
 				//now to check whether it supports IDispatch
 				//IDispatch 00020400-0000-0000-c000-000000000046
-				JIRemUnknown dispatch = new JIRemUnknown(reqUnknown.getObjectReference().getIpid(),"00020400-0000-0000-c000-000000000046",5);
+				JIRemUnknown dispatch = new JIRemUnknown(retval.getIpid(),"00020400-0000-0000-c000-000000000046");
 				try {
 					call(Endpoint.IDEMPOTENT,dispatch);
 				}catch(FaultException e)
@@ -676,33 +677,25 @@ public class JIComServer extends Stub {
 					throw new JIException(JIErrorCodes.RPC_E_UNEXPECTED,e);
 				}catch (JIRuntimeException e1)
 				{
-					//will eat this exception here. Since the successful flag will be checked.
-					//throw new JIException(e1);
+					//will eat this exception here. 
+					((JIComObjectImpl)retval).isDual = false;
+					success = false;
 				}
 				
-				if (dispatch.isSuccessful() && dispatch.getHresult() == 0)
+				if (success)
 				{
 					//which means that IDispatch is supported
-					((JIComObjectImpl)retval).isDual = true;
-					//session.addToSession(dispatch.getObjectReference().getIpid(),dispatch.getObjectReference().getObjectId());
-					session.releaseRef(dispatch.getObjectReference().getIpid());
+					session.releaseRef(dispatch.getInterfacePointer().getIPID());
 				}
 			}
-			
-		//session.addToSession(retval.getIpid(),oid);
-			
 		}
 	
-		session.addToSession(retval,oid);
 		return retval;
 		
 	}
 	
 	
-	private IJIComObject getObject(String ipid,String iid)
-	{
-		return new JIComObjectImpl(this,ipid,iid,session);
-	}
+	
 	
 	
 	/** Returns a <code>IJIComObject</code> representing the <code>COM</code> Server. Not to be used with <code>JIComServer(JISession,JIInterfacePointer,String)</code> ctor,
@@ -718,7 +711,7 @@ public class JIComServer extends Stub {
 			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMSTUB_WRONGCALLCREATEINSTANCE));
 		}
 		IJIComObject comObject = null;
-		byte[] oid = null;
+		
 		//This method is still essentially serial, since all threads will have to stop at mutex and then 
 		//go to addToSession after it (since there is no condition).
 		synchronized (mutex) {
@@ -726,9 +719,9 @@ public class JIComServer extends Stub {
 			{
 				throw new JIException(JIErrorCodes.JI_OBJECT_ALREADY_INSTANTIATED,(Throwable)null); 
 			}
-			JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
-			comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
-			oid = objRef.getObjectId();
+//			JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
+//			comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
+			comObject = JISessionHelper.instantiateComObject(session, remoteActivation.getMInterfacePointer());
 			if (remoteActivation.isDual)
 			{
 				//IJIComObject comObject2 = getObject(remoteActivation.dispIpid,"00020400-0000-0000-c000-000000000046");
@@ -741,7 +734,6 @@ public class JIComServer extends Stub {
 			serverInstantiated = true;
 		}
 		
-		session.addToSession(comObject,oid);
 		return comObject;
 	}
 
@@ -751,7 +743,7 @@ public class JIComServer extends Stub {
 	 * @return
 	 * @throws JIException
 	 */
-	public IJIComObject getInstance() throws JIException
+	IJIComObject getInstance() throws JIException
 	{
 		if (interfacePtrCtor == null)
 		{
@@ -767,12 +759,12 @@ public class JIComServer extends Stub {
 				throw new JIException(JIErrorCodes.JI_OBJECT_ALREADY_INSTANTIATED,(Throwable)null); 
 			}
 			
-			JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
-			comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
+//			JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
+//			comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
+			comObject = JISessionHelper.instantiateComObject(session,interfacePtrCtor);
 			serverInstantiated = true;
 		}
 		
-		session.addToSession(comObject,interfacePtrCtor.getOID());
 		return comObject;
 	}
 
@@ -883,9 +875,9 @@ public class JIComServer extends Stub {
 			}
 			//now also set the Object ID for IRemUnknown call this will be the IPID of the returned JIRemActivation or IOxidResolver
 			obj.setParentIpid(remunknownIPID);
-			
+			obj.attachSession(session);
 			try {
-				call(obj,JIRemUnknown.IID);
+				call(obj,JIRemUnknown.IID_IUnknown);
 			} catch (JIRuntimeException e1)
 			{
 				throw new JIException(e1);

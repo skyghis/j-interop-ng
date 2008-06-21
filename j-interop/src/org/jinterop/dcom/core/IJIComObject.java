@@ -17,6 +17,8 @@
 
 package org.jinterop.dcom.core;
 
+import java.io.Serializable;
+
 import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIException;
 
@@ -44,8 +46,39 @@ import org.jinterop.dcom.common.JIException;
  */
 
 //All IIDs Interfaces will be extending this interface
-public interface IJIComObject extends IJIUnknown {
+public interface IJIComObject extends Serializable {
 
+	/**
+	 * IID representing the <code>IUnknown</code>
+	 */
+	public final String IID = "00000000-0000-0000-c000-000000000046";
+	
+	/** Used to retrieve interface pointers based on <code>iid</code>. <br>
+	 * 
+	 * @param iid String representation of the IID (clsid).
+	 * @return reference to the requested unknown.
+	 * @throws JIException
+	 */
+	public IJIComObject queryInterface(String iid) throws JIException;
+	
+	/** <P>Increases the reference count on the actual <code>COM</code> server by 5 (currently hardcoded). 
+	 * The developer should refrain from calling this API, as referencing is maintained internally by the 
+	 * system. If the <code>release</code> is not called in conjunction with <code>addRef</code> then the 
+	 * COM Instance will not get garbage collected at the server. <br>
+	 * </P>
+	 * @throws JIException
+	 */
+	public void addRef() throws JIException;
+	
+	/**<P> Decreases the reference count on the actual <code>COM</code> server by 5 (currently hardcoded).  
+	 * The developer should refrain from calling this API, as referencing is maintained internally by the 
+	 * system. If the <code>release</code> is not called in conjunction with <code>addRef</code> then the 
+	 * COM Instance will not get garbage collected at the server. <br>
+	 * </P>
+	 * @throws JIException
+	 */	
+	public void release() throws JIException;
+	
 	/**Unique 128 bit uuid representing the interface on the <code>COM</code> server. <br>
 	 * 
 	 * @return
@@ -143,11 +176,11 @@ public interface IJIComObject extends IJIUnknown {
 	 */
 	public String getInterfaceIdentifier();
 	
-	/**
-	 * @exclude
-	 * @return
-	 */
-	public JIComServer getAssociatedComServer();
+//	/**
+//	 * @exclude
+//	 * @return
+//	 */
+//	public JIComServer getAssociatedComServer();
 	
 	/**Returns true if <code>IJIDispatch</code> is supported by this interface.
 	 * 
@@ -156,27 +189,32 @@ public interface IJIComObject extends IJIUnknown {
 	public boolean isDispatchSupported();
 	
 	/**Adds a connection point information and it's cookie to the connectionPointMap internally.
+	 * To be called only by the framework.
 	 * 
 	 * @exclude
 	 * @param connectionPoint
 	 * @param cookie
 	 * @return unique identifier for the combination.
 	 */
-	public String setConnectionInfo(IJIComObject connectionPoint,Integer cookie);
+	public String internal_setConnectionInfo(IJIComObject connectionPoint,Integer cookie);
 	
 	/**Returns the ConnectionPoint (IJIComObject) and it's Cookie.
+	 * To be called only by the framework.
+	 * 
 	 * @exclude
 	 * @param identifier
 	 * @return
 	 */
-	public Object[] getConnectionInfo(String identifier);
+	public Object[] internal_getConnectionInfo(String identifier);
 	
 	/**Returns and Removes the connection info from the internal map. 
+	 * To be called only by the framework.
 	 * 
+	 * @exclude
 	 * @param identifier
 	 * @return
 	 */
-	public Object[] removeConnectionInfo(String identifier);
+	public Object[] internal_removeConnectionInfo(String identifier);
 	
 	/**Adds a IJIUnreferenced handler , the handler will be invoked when this comObject goes out of reference
 	 * and is removed from the session by the library. 
@@ -198,4 +236,18 @@ public interface IJIComObject extends IJIUnknown {
 	 * @param session
 	 */
 	public void unregisterUnreferencedHandler(JISession session);
+	
+	
+	/** <b>INTERNAL METHOD</b> Must not be called by the users. This is internally called by the framework.
+	 * 
+	 * @exclude
+	 * @param deffered
+	 */
+	public void internal_setDeffered(boolean deffered);
+	
+	/** Returns true if this COM object represents a local Java reference obtained by JIComFactory.createLocalInstance(...)
+	 * 
+	 * @return
+	 */
+	public boolean isLocalReference();
 }

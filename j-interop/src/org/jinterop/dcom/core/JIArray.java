@@ -379,7 +379,7 @@ public final class JIArray implements Serializable{
 				Object o1[] = (Object[])array;
 				for (int j = 0;j < o1.length; j++)
 				{
-					length = length + JIUtil.getLengthInBytes(o1.getClass().getComponentType(),o1[j],JIFlags.FLAG_NULL);
+					length = length + JIMarshalUnMarshalHelper.getLengthInBytes(o1.getClass().getComponentType(),o1[j],JIFlags.FLAG_NULL);
 				}
 				return length;
 			}
@@ -427,7 +427,7 @@ public final class JIArray implements Serializable{
 	
 	int getSizeOfAllElementsInBytes()
 	{
-//		int length = numElementsInAllDimensions * JIUtil.getLengthInBytes(clazz,((Object[])memberArray)[0],JIFlags.FLAG_NULL);
+//		int length = numElementsInAllDimensions * JIMarshalUnMarshalHelper.getLengthInBytes(clazz,((Object[])memberArray)[0],JIFlags.FLAG_NULL);
 		
 		//this means that decode has created this array, and we need to compute the size to stay consistent.
 		if (sizeOfNestedArrayInBytes == -1)
@@ -449,7 +449,7 @@ public final class JIArray implements Serializable{
 			int i = 0;
 			while (i < conformantMaxCounts.size())
 			{
-				JIUtil.serialize(ndr,Integer.class,conformantMaxCounts.get(i),defferedPointers,FLAG);
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,conformantMaxCounts.get(i),defferedPointers,FLAG);
 				i++;
 			}
 			
@@ -462,8 +462,8 @@ public final class JIArray implements Serializable{
 			int i = 0;
 			while (i < conformantMaxCounts.size())
 			{
-				JIUtil.serialize(ndr,Integer.class,new Integer(0),defferedPointers,FLAG);//offset
-				JIUtil.serialize(ndr,Integer.class,conformantMaxCounts.get(i),defferedPointers,FLAG);//actual count
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),defferedPointers,FLAG);//offset
+				JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,conformantMaxCounts.get(i),defferedPointers,FLAG);//actual count
 				i++;
 			}
 			
@@ -480,7 +480,7 @@ public final class JIArray implements Serializable{
 				Object o1[] = (Object[])array;
 				for (int j = 0;j < o1.length; j++)
 				{
-					JIUtil.serialize(ndr,clazz,o1[j],defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY);
+					JIMarshalUnMarshalHelper.serialize(ndr,clazz,o1[j],defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY);
 				}
 				return;
 			}
@@ -520,7 +520,7 @@ public final class JIArray implements Serializable{
 			int i = 0;
 			while (i < dimension)
 			{
-				retVal.conformantMaxCounts.add(JIUtil.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData));
+				retVal.conformantMaxCounts.add(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData));
 				i++;
 			}
 			
@@ -562,8 +562,8 @@ public final class JIArray implements Serializable{
 			
 			while (i < dimension)
 			{
-				JIUtil.deSerialize(ndr,Integer.class,defferedPointers,FLAG,null);///offset
-				retVal.conformantMaxCounts.add(JIUtil.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData));//actual count
+				JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,null);///offset
+				retVal.conformantMaxCounts.add(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData));//actual count
 				i++;
 			}
 			
@@ -618,11 +618,11 @@ public final class JIArray implements Serializable{
 				//Array.set(array,i,new Float(i));
 				if (template == null)
 				{
-					Array.set(array,i,JIUtil.deSerialize(ndr,c.getComponentType() == null ? c : c.getComponentType(),defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
+					Array.set(array,i,JIMarshalUnMarshalHelper.deSerialize(ndr,c.getComponentType() == null ? c : c.getComponentType(),defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
 				}
 				else
 				{
-					Array.set(array,i,JIUtil.deSerialize(ndr,template,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
+					Array.set(array,i,JIMarshalUnMarshalHelper.deSerialize(ndr,template,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
 				}
 			}
 			else

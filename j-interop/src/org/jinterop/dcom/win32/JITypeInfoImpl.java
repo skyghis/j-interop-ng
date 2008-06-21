@@ -20,12 +20,10 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.IJIUnknown;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallObject;
-import org.jinterop.dcom.core.JIDefaultComObjectImpl;
+import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
@@ -40,8 +38,13 @@ import rpc.core.UUID;
  * @since 1.0
  *
  */
-final class JITypeInfoImpl extends JIDefaultComObjectImpl implements IJITypeInfo {
+final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 693590689068822035L;
+
 	//IJIComObject comObject = null;
 	//JIRemUnknown unknown = null;
 	JITypeInfoImpl(IJIComObject comObject/*, JIRemUnknown unknown*/)
@@ -237,12 +240,12 @@ final class JITypeInfoImpl extends JIDefaultComObjectImpl implements IJITypeInfo
 	public Object[] getContainingTypeLib() throws JIException
 	{
 		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
-		callObject.addOutParamAsObject(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
 		callObject.setOpnum(15);
 		Object[] result = comObject.call(callObject);
 		Object[] retVal = new Object[2];
-		retVal[0] = (IJITypeLib) JIComFactory.createCOMInstance(comObject,(JIInterfacePointer)result[0]);
+		retVal[0] = (IJITypeLib) JIComFactory.narrowInstance((IJIComObject)result[0]);
 		retVal[1] = result[1];
 		return retVal;
 	}
@@ -417,9 +420,9 @@ final class JITypeInfoImpl extends JIDefaultComObjectImpl implements IJITypeInfo
 		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
 		callObject.setOpnum(11);
 		callObject.addInParamAsInt(hrefType,JIFlags.FLAG_NULL);
-		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJITypeInfo) JIComFactory.createCOMInstance(comObject,(JIInterfacePointer)result[0]);
+		return (IJITypeInfo) JIComFactory.narrowInstance((IJIComObject)result[0]);
 	}
 	
 //	public int[] getIdOfNames(String[] names) throws JIException
@@ -461,15 +464,15 @@ final class JITypeInfoImpl extends JIDefaultComObjectImpl implements IJITypeInfo
 //
 //	}
 	
-	public IJIUnknown createInstance(String riid) throws JIException
+	public IJIComObject createInstance(String riid) throws JIException
 	{
 		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
 		callObject.setOpnum(13);
 		
 		callObject.addInParamAsUUID(riid,JIFlags.FLAG_NULL);
-		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return JIComFactory.createCOMInstance(comObject,(JIInterfacePointer)result[0]);
+		return JIComFactory.narrowInstance((IJIComObject)result[0]);
 	}
 	
 	public JIString getMops(int memberId) throws JIException

@@ -15,9 +15,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.common;
+package org.jinterop.dcom.core;
 
-import org.jinterop.dcom.core.JIParameterObject;
 
 /**<p> This class describes an IDL Method. Please remember to keep the Java implementation class(s) Method(s) 
  * conforming to exactly as they are described by this object. j-Interop Library uses Java reflection to 

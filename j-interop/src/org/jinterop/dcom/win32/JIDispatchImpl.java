@@ -28,9 +28,8 @@ import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallObject;
-import org.jinterop.dcom.core.JIDefaultComObjectImpl;
+import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfacePointer;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
@@ -42,7 +41,12 @@ import rpc.core.UUID;
  * @since 1.0
  *
  */
-public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJIDispatch { 
+final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch { 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4908149252176353846L;
 
 	//IJIComObject comObject = null;
 	private Map cacheOfDispIds = new HashMap(); 
@@ -206,10 +210,10 @@ public final class JIDispatchImpl extends JIDefaultComObjectImpl implements IJID
 		obj.setOpnum(1);	
 		obj.addInParamAsInt(typeInfo,JIFlags.FLAG_NULL);
 		obj.addInParamAsInt(0x400,JIFlags.FLAG_NULL);
-		obj.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+		obj.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		//obj.setUpParams(new Object[]{new Integer(typeInfo),new Integer(0x400)},new Object[]{MInterfacePointer.class},JIFlags.FLAG_NULL,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(obj);
-		return (IJITypeInfo)JIComFactory.createCOMInstance(comObject,(JIInterfacePointer)result[0]);
+		return (IJITypeInfo)JIComFactory.narrowInstance((IJIComObject)result[0]);
 	}
 	
 //	//First inparams[0] will always be variant and the inparams[1] is expected to be an JIArray

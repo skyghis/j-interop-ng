@@ -38,7 +38,7 @@ public class MSExcel2 {
 	public void startExcel() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIComFactory.narrowInstance(unknown.queryInterface(JIComFactory.IID_IDispatch));
 	}
 
 	public void showExcel() throws JIException
@@ -54,18 +54,18 @@ public class MSExcel2 {
 
 		JIVariant outVal = dispatch.get(dispId);
 
-		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)outVal.getObjectAsComObject(unknown);
+		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIComFactory.narrowInstance(outVal.getObjectAsComObject());
 
 
 		JIVariant[] outVal2 = dispatchOfWorkBooks.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM()});
-		dispatchOfWorkBook =(IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
+		dispatchOfWorkBook =(IJIDispatch)JIComFactory.narrowInstance(outVal2[0].getObjectAsComObject());
 
 		outVal = dispatchOfWorkBook.get("Worksheets");
 
-		dispatchOfWorkSheets = (IJIDispatch)outVal.getObjectAsComObject(unknown);
+		dispatchOfWorkSheets = (IJIDispatch)JIComFactory.narrowInstance(outVal.getObjectAsComObject());
 
 		outVal2 = dispatchOfWorkSheets.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
-		dispatchOfWorkSheet =(IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
+		dispatchOfWorkSheet =(IJIDispatch)JIComFactory.narrowInstance(outVal2[0].getObjectAsComObject());
 	}
 
 	public void pasteArrayToWorkSheet() throws JIException
@@ -74,7 +74,7 @@ public class MSExcel2 {
 		JIVariant variant = new JIVariant(new JIString("A1:C3"));
 		Object[] out = new Object[]{JIVariant.class};
 		JIVariant[] outVal2 = dispatchOfWorkSheet.get(dispId, new Object[]{variant});
-		IJIDispatch dispRange = (IJIDispatch)outVal2[0].getObjectAsComObject(unknown);
+		IJIDispatch dispRange = (IJIDispatch)JIComFactory.narrowInstance(outVal2[0].getObjectAsComObject());
 
 
 	      JIVariant[][] newValue = {

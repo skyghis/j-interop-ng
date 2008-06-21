@@ -7,18 +7,23 @@ import java.rmi.server.UID;
 import jcifs.util.Encdec;
 
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.win32.IJIDispatch;
 
 import rpc.core.UUID;
 
 //import com.iwombat.foundation.ObjectId;
 
-class Driver {
+class Driver implements iota {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		  try {
+			  Object o = Array.newInstance(IJIDispatch.class,10);
+			  
+			  iota[] s = new Driver[100];
+			  System.out.println(s.getClass().getComponentType());
 			  JISystem.getErrorMessages();
 			  Byte[][] bgh = new Byte[10][0];
 			  long jj = 2147483670L;
@@ -132,7 +137,7 @@ class Driver {
 			  	//FirstContact_Stub test = new FirstContact_Stub("itl-hw-38602a");
 			  	//FirstContact_Stub test = new FirstContact_Stub("20.0.0.1");
 			  	JISystem.setInBuiltLogHandler(false);
-			  	FirstContact_Stub test = new FirstContact_Stub("10.1.253.136");
+			  	FirstContact_Stub test = new FirstContact_Stub("estroopchandxp");
 			  	//FirstContact_Stub test = new FirstContact_Stub("ncacn_ip_tcp:10.74.2.87[135]");
 				//test.setAddress("ncacn_ip_tcp:127.0.0.1[135]");
 				//test.setObject("4d9f4ab8-7d1c-11cf-861e-0020af6e7c57");
@@ -213,8 +218,13 @@ class Driver {
 	}
 
 
+public void v(){}
 
 
 
+}
 
+interface iota
+{
+	public void v();
 }
