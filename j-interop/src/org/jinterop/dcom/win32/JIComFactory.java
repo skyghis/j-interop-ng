@@ -17,14 +17,10 @@
 
 package org.jinterop.dcom.win32;
 
-import java.util.logging.Level;
-
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
-import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIJavaCoClass;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JISessionHelper;
