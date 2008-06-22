@@ -78,7 +78,7 @@ public class WshShell {
 
             unknown = comServer.createInstance();
 
-            dispatch = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)unknown.queryInterface(JIObjectFactory.IID_IDispatch));
+            dispatch = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)unknown.queryInterface(IJIDispatch.IID));
 
      
 

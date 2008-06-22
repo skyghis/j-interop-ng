@@ -39,7 +39,7 @@ public class MSWMI {
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));
 	}
 
 
@@ -64,9 +64,8 @@ public class MSWMI {
 		callObject.addInParamAsInt(0,JIFlags.FLAG_NULL);
 		callObject.addInParamAsPointer(null,JIFlags.FLAG_NULL);
 		callObject.setOpnum(0);
-		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
-		JIInterfacePointer interfacePointer = (JIInterfacePointer)((Object[])comObject.call(callObject))[0];
-		IJIComObject wbemServices = JIObjectFactory.instantiateComObject(comObject,interfacePointer);
+		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
+		IJIComObject wbemServices = JIObjectFactory.narrowObject((IJIComObject)((Object[])comObject.call(callObject))[0]);
 		wbemServices.setInstanceLevelSocketTimeout(1000);
 		wbemServices.registerUnreferencedHandler(session, new IJIUnreferenced(){
 			public void unReferenced()
@@ -76,11 +75,11 @@ public class MSWMI {
 		});
 
 		//Lets have a look at both.
-		IJIDispatch wbemServices_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
+		IJIDispatch wbemServices_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
 		results = wbemServices_dispatch.callMethodA("InstancesOf", new Object[]{new JIString("Win32_Process"), new Integer(0), JIVariant.OPTIONAL_PARAM()});
-		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
+		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
-		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
+		IJIComObject object2 = variant.getObjectAsComObject();
 
 		object2.registerUnreferencedHandler(session, new IJIUnreferenced(){
 			public void unReferenced()
@@ -89,7 +88,7 @@ public class MSWMI {
 			}
 		});
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVARIANT.IID));
 
 		//This will return back a dispatch of ISWbemObjectSet
 
@@ -100,9 +99,8 @@ public class MSWMI {
 		callObject.addInParamAsInt(0,JIFlags.FLAG_NULL);
 		callObject.addInParamAsPointer(null,JIFlags.FLAG_NULL);
 		callObject.setOpnum(4);
-		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
-		interfacePointer = (JIInterfacePointer)((Object[])wbemServices.call(callObject))[0];
-		IJIComObject wbemObjectSet = JIObjectFactory.instantiateComObject(wbemServices,interfacePointer);
+		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
+		IJIComObject wbemObjectSet = JIObjectFactory.narrowObject((IJIComObject)((Object[])wbemServices.call(callObject))[0]);
 
 		//okay seen enough of the other usage, lets just stick to disptach, it's lot simpler
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
@@ -114,7 +112,7 @@ public class MSWMI {
 			Object[] arrayObj = (Object[])array.getArrayInstance();
 			for (int j = 0; j < arrayObj.length; j++)
 			{
-				IJIDispatch wbemObject_dispatch = (IJIDispatch)((JIVariant)arrayObj[j]).getObjectAsComObject(session);
+				IJIDispatch wbemObject_dispatch = (IJIDispatch)JIObjectFactory.narrowObject(((JIVariant)arrayObj[j]).getObjectAsComObject());
 				JIVariant variant2 = (JIVariant)(wbemObject_dispatch.callMethodA("GetObjectText_",new Object[]{new Integer(1)}))[0];
 				System.out.println(variant2.getObjectAsString().getString());
 				System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");

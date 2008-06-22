@@ -29,7 +29,7 @@ public class MSWord2 {
 	public void startWord() throws JIException
 	{
 		unknown = comStub.createInstance();
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 	}
 
 	public void showWord() throws JIException
@@ -46,7 +46,7 @@ public class MSWord2 {
 		JIVariant variant = dispatch.get("Documents");
 		//JIInterfacePointer ptr = variant.getObjectAsInterfacePointer();
 		//IJIDispatch documents = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
-		IJIDispatch documents = (IJIDispatch)variant.getObjectAsComObject(unknown);
+		IJIDispatch documents = (IJIDispatch)JIObjectFactory.narrowObject(variant.getObjectAsComObject());
 		JIString filePath = new JIString("c:/temp/test.doc");
 		JIVariant variant2[] = documents.callMethodA("open",new Object[]{filePath.VariantByRef,JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
@@ -55,13 +55,13 @@ public class MSWord2 {
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
 		//IJIDispatch document = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,variant2[0].getObjectAsInterfacePointer());
-		IJIDispatch document = (IJIDispatch)variant2[0].getObjectAsComObject(unknown);
+		IJIDispatch document = (IJIDispatch)JIObjectFactory.narrowObject(variant2[0].getObjectAsComObject());
 		variant = document.get("Content");
 		//IJIDispatch range = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
-		IJIDispatch range = (IJIDispatch)variant.getObjectAsComObject(unknown);
+		IJIDispatch range = (IJIDispatch)JIObjectFactory.narrowObject(variant.getObjectAsComObject());
 
 		variant = range.get("Find");
-		IJIDispatch find = (IJIDispatch)variant.getObjectAsComObject(unknown);
+		IJIDispatch find = (IJIDispatch)JIObjectFactory.narrowObject(variant.getObjectAsComObject());
 
 		Thread.sleep(2000);
 		JIString findString = new JIString("ow");

@@ -130,7 +130,7 @@ public class TestJIThreading  {
 
 				IJIComObject baseComObject = (IJIComObject) unknown.queryInterface( comObjectId );
 
-				IJIDispatch baseDispatch = (IJIDispatch) JIObjectFactory.instantiateComObject( JIObjectFactory.IID_IDispatch, baseComObject );
+				IJIDispatch baseDispatch = (IJIDispatch) JIObjectFactory.narrowObject( baseComObject.queryInterface(IJIDispatch.IID) );
 
 				JIVariant connectServer = (JIVariant)
 				baseDispatch.callMethodA(

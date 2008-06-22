@@ -558,7 +558,7 @@ public final class JISession {
 	 * @exclude
 	 * @param IPID
 	 */
-	public void addToSession(IJIComObject comObject, byte[] oid)
+	void addToSession(IJIComObject comObject, byte[] oid)
 	{
 		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(),getSessionIdentifier(),false,oid);
 		//mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);

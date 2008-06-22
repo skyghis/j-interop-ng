@@ -38,7 +38,7 @@ public class MSExcel2 {
 	public void startExcel() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 	}
 
 	public void showExcel() throws JIException

@@ -40,7 +40,7 @@ public class MSWMI2 {
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));
 	}
 
 
@@ -49,13 +49,13 @@ public class MSWMI2 {
 		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(0),JIVariant.OPTIONAL_PARAM()});
 
-		IJIDispatch wbemServices_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
+		IJIDispatch wbemServices_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
 		results = wbemServices_dispatch.callMethodA("ExecQuery", new Object[]{new JIString("select * from Win32_OperatingSystem where Primary=True"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
-		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)(results[0]).getObjectAsComObject(comObject);
+		IJIDispatch wbemObjectSet_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
-		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
+		IJIComObject object2 = variant.getObjectAsComObject();
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVARIANT.IID));
 
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
 		int count = Count.getObjectAsInt();
@@ -66,7 +66,7 @@ public class MSWMI2 {
 			Object[] arrayObj = (Object[])array.getArrayInstance();
 			for (int j = 0; j < arrayObj.length; j++)
 			{
-				IJIDispatch wbemObject_dispatch = (IJIDispatch)((JIVariant)arrayObj[j]).getObjectAsComObject(session);
+				IJIDispatch wbemObject_dispatch = (IJIDispatch)JIObjectFactory.narrowObject(((JIVariant)arrayObj[j]).getObjectAsComObject());
 				JIVariant variant2 = (JIVariant)(wbemObject_dispatch.callMethodA("GetObjectText_",new Object[]{new Integer(1)}))[0];
 				System.out.println(variant2.getObjectAsString().getString());
 				System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -96,7 +96,7 @@ public class MSWMI2 {
 				MSWMI2 test = new MSWMI2(args[0],args);
 				for (int i = 0 ; i < 2; i++)
 				{
-					System.out.println("Vikram i: " + i);
+					System.out.println("Index i: " + i);
 					test.performOp();
 				}
 				test.killme();

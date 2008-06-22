@@ -32,7 +32,7 @@ public class MSADO {
 	public void performOp() throws JIException, InterruptedException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 		IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
 		typeInfo.getFuncDesc(0);
 
@@ -45,17 +45,17 @@ public class MSADO {
 		}
 		else
 		{
-			IJIDispatch resultSet = (IJIDispatch)variant[0].getObjectAsComObject(dispatch);
+			IJIDispatch resultSet = (IJIDispatch)JIObjectFactory.narrowObject(variant[0].getObjectAsComObject());
 			//variant = resultSet.get("EOF");
 			while(!resultSet.get("EOF").getObjectAsBoolean())
 			{
 				JIVariant variant2 = resultSet.get("Fields");
-				IJIDispatch fields = (IJIDispatch)variant2.getObjectAsComObject(dispatch);
+				IJIDispatch fields = (IJIDispatch)JIObjectFactory.narrowObject(variant2.getObjectAsComObject());
 				int count = fields.get("Count").getObjectAsInt();
 				for (int i = 0;i < count;i++)
 				{
 					variant = fields.get("Item",new Object[]{new Integer(i)});
-					IJIDispatch field = (IJIDispatch)variant[0].getObjectAsComObject(dispatch);
+					IJIDispatch field = (IJIDispatch)JIObjectFactory.narrowObject(variant[0].getObjectAsComObject());
 					variant2 = field.get("Value");
 					Object val = null;
 					if (variant2.getType() == JIVariant.VT_BSTR)

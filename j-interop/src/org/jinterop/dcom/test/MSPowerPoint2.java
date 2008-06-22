@@ -32,7 +32,7 @@ public class MSPowerPoint2 {
 	public void startPowerPoint() throws JIException
 	{
 		unknown = comStub.createInstance();
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 	}
 
 	public void showPowerPoint() throws JIException
@@ -45,17 +45,17 @@ public class MSPowerPoint2 {
 
 	public IJIDispatch openPresentation(String fullEscapedPath) throws JIException, InterruptedException
 	{
-		IJIDispatch presentations = (IJIDispatch)dispatch.get("Presentations").getObjectAsComObject(unknown);
+		IJIDispatch presentations = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Presentations").getObjectAsComObject());
 		JIVariant[] result = presentations.callMethodA("Open",new Object[]{new JIString(fullEscapedPath),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
-		return (IJIDispatch)result[0].getObjectAsComObject(dispatch);
+		return (IJIDispatch)JIObjectFactory.narrowObject(result[0].getObjectAsComObject());
 	}
 
 	public IJIDispatch runPresentation(IJIDispatch activePresentation) throws JIException
 	{
-		IJIDispatch slideShowSettings = (IJIDispatch)activePresentation.get("SlideShowSettings").getObjectAsComObject(unknown);
+		IJIDispatch slideShowSettings = (IJIDispatch)JIObjectFactory.narrowObject(activePresentation.get("SlideShowSettings").getObjectAsComObject());
 		System.out.println("Running Slide show : " + activePresentation.get("Name").getObjectAsString().getString());
-		IJIDispatch slideShowWindow = (IJIDispatch)slideShowSettings.callMethodA("Run").getObjectAsComObject(unknown);
-		IJIDispatch slideShowView = (IJIDispatch)slideShowWindow.get("View").getObjectAsComObject(unknown);
+		IJIDispatch slideShowWindow = (IJIDispatch)JIObjectFactory.narrowObject(slideShowSettings.callMethodA("Run").getObjectAsComObject());
+		IJIDispatch slideShowView = (IJIDispatch)JIObjectFactory.narrowObject(slideShowWindow.get("View").getObjectAsComObject());
 		return slideShowView;
 	}
 

@@ -49,7 +49,7 @@ public class MetrikonOPC {
         callObject.addOutParamAsType ( Integer.class,JIFlags.FLAG_NULL );
         callObject.addOutParamAsType ( Integer.class,JIFlags.FLAG_NULL );
         callObject.addInParamAsUUID( "39C13A50-011E-11D0-9675-0020AFD8ADB3", JIFlags.FLAG_NULL );
-        callObject.addOutParamAsType ( JIInterfacePointer.class, JIFlags.FLAG_NULL );
+        callObject.addOutParamAsType ( IJIComObject.class, JIFlags.FLAG_NULL );
 
         Object[] result = opcServer.call ( callObject );
 

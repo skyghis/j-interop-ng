@@ -90,13 +90,13 @@ public class SampleTestServerCallback {
           JIInterfaceDefinition interfaceDefinition = registerInterface();
           if (StaticSinkJavaCoClass == null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
-          IJIComObject iStaticSink = JIObjectFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIObjectFactory.buildObject(session, StaticSinkJavaCoClass);
 
           Object[] results = new Object[1];
           // Create the session
           JICallObject javaCallback = new JICallObject(ITest.getIpid(), true);
           javaCallback.setOpnum(0);
-          javaCallback.addInParamAsInterfacePointer(iStaticSink.getInterfacePointer(), JIFlags.FLAG_NULL);
+          javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long
           System.out.println("ITest.DoSomethingAndGetSomethingBack about to call this...");
           results = ITest.call(javaCallback);//<== same exception is thrown here as well
@@ -155,13 +155,13 @@ public class SampleTestServerCallback {
           if (StaticSinkJavaCoClass != null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
 
-          IJIComObject iStaticSink = JIObjectFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIObjectFactory.buildObject(session, StaticSinkJavaCoClass);
 
           Object[] results = new Object[1];
           // Create the session
           JICallObject javaCallback = new JICallObject(ITest.getIpid(), true);
           javaCallback.setOpnum(8);
-          javaCallback.addInParamAsInterfacePointer(iStaticSink.getInterfacePointer(), JIFlags.FLAG_NULL);
+          javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long
           results = ITest.call(javaCallback);//<== same exception is thrown here as well
           System.out.println("ITest.DoSomethingAndGetSomethingBack succeeded, session out =" + results[0]);

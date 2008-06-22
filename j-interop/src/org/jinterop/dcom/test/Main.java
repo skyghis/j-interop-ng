@@ -51,12 +51,9 @@ public class Main {
             JISystem.setAutoRegisteration(true);
             JISession session3 = JISession.createSession(domain,username,password);
             session3.useSessionSecurity(true);
-            //JIComServer virtualServer = new JIComServer(JIProgId.valueOf(session3, "TestCOM123.TestServer2"),args[0],session3);
             JIComServer virtualServer = new JIComServer(JIProgId.valueOf(session3, "VirtualServer.Application"),args[0],session3);
-            IJIUnknown unkVirtualServer = virtualServer.createInstance();    
-            
-            // org.jinterop.dcom.common.JIException: Access is denied.  [0x80070005]
-            IJIDispatch dispatchVirtualServer = (IJIDispatch)JIObjectFactory.instantiateComObject(IJIDispatch.IID,(IJIComObject)unkVirtualServer);                        
+            IJIComObject unkVirtualServer = virtualServer.createInstance();    
+            IJIDispatch dispatchVirtualServer = (IJIDispatch)JIObjectFactory.narrowObject(unkVirtualServer.queryInterface(IJIDispatch.IID));                        
                         
  
             

@@ -92,7 +92,7 @@ public class FirstContact_Stub implements FirstContact {
 
 			ResourceBundle bundle = JISystem.getErrorMessages();
 			IJIComObject unknown = stub.createInstance();
-			IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
+			IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 			JIVariant variants = dispatch.callMethodA("GetDispatch");
 			
 //			dispatch.callMethodA("TestVariant1", new Object[]{variants[1]} );

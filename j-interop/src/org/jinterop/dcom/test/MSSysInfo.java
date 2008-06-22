@@ -29,7 +29,7 @@ public class MSSysInfo {
 		JIComServer comServer = new JIComServer(JIProgId.valueOf(session,"SYSINFO.SysInfo"),args[0],session);
 		sysInfoServer = comServer.createInstance();
 		sysInfoObject = (IJIComObject)sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
-		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(IJIDispatch.IID,sysInfoObject);
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(sysInfoObject.queryInterface(IJIDispatch.IID));
 
 	}
 	void displayValues() throws JIException
@@ -48,10 +48,10 @@ public class MSSysInfo {
 	{
 		//6FBA474D-43AC-11CE-9A0E-00AA0062BB4C
 
-		JIJavaCoClass javaComponent = new JIJavaCoClass(session,new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
+		JIJavaCoClass javaComponent = new JIJavaCoClass(new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("PowerStatusChanged",8,null));
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("TimeChanged",3,null));
-		identifier = JIObjectFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIInterfacePointer.getInterfacePointer(session,javaComponent));
+		identifier = JIObjectFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIObjectFactory.buildObject(session,javaComponent));
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {

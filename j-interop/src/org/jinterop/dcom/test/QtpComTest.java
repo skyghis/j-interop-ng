@@ -58,7 +58,7 @@ public class QtpComTest {
 
                     unknown = comServer.createInstance();
 
-                    dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
+                    dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 
                     //System.out.println(((JIVariant)dispatch.get("Version")).getObjectAsString().getString());
 
