@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIVariant;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 import rpc.core.UUID;
 /**@exclude
@@ -213,7 +214,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 		obj.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		//obj.setUpParams(new Object[]{new Integer(typeInfo),new Integer(0x400)},new Object[]{MInterfacePointer.class},JIFlags.FLAG_NULL,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(obj);
-		return (IJITypeInfo)JIComFactory.narrowObject((IJIComObject)result[0]);
+		return (IJITypeInfo)JIObjectFactory.narrowObject((IJIComObject)result[0]);
 	}
 	
 //	//First inparams[0] will always be variant and the inparams[1] is expected to be an JIArray

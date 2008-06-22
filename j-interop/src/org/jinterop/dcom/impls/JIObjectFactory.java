@@ -24,6 +24,8 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIJavaCoClass;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JISessionHelper;
+import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
+
 
 
 /**<p>Helper class for creating <code>COM</code> interfaces. <br>
@@ -35,7 +37,7 @@ import org.jinterop.dcom.core.JISessionHelper;
  *  //Assume comStub is the reference to JIComServer, obtained earlier... <br> 
  *	IJIUnknown unknown = comStub.createInstance(); <br>
  *  // This call will result into a <i>QueryInterface</i> for the IDispatch <br>
- *	IJIDispatch dispatch = (IJIDispatch)JIComFactory.<b>createCOMInstance</b>(JIComFactory.IID_IDispatch,unknown); <br>
+ *	IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.<b>createCOMInstance</b>(JIObjectFactory.IID_IDispatch,unknown); <br>
  * </code>
  * <br>
  * Another example:-
@@ -46,30 +48,14 @@ import org.jinterop.dcom.core.JISessionHelper;
  *	JIVariant outVal = dispatch.get(dispId); <br>
  *	JIInterfacePointer ptr = outVal.getObjectAsInterfacePointer(); <br>
  *  // This call wraps the JIInterfacePointer into it's actual type, based on it's IID (ptr.getIID()) <br>
- *	IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIComFactory.<b>createCOMInstance</b>(unknown,ptr); <br>
+ *	IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIObjectFactory.<b>createCOMInstance</b>(unknown,ptr); <br>
  * </code>
  * </p>
  * @since 1.0
  */
-public class JIComFactory {
+public class JIObjectFactory {
 
-	/**
-	 * IID of <code>IDispatch [IJIDispatch]</code>.  
-	 */
-	public static final String IID_IDispatch = IJIDispatch.IID;
-	/**
-	 * IID of <code>ITypeInfo [IJITypeInfo]</code>.
-	 */
-	public static final String IID_ITypeInfo = IJITypeInfo.IID;
-	/**
-	 * IID of <code>ITypeLib [IJITypeLib]</code>.
-	 */
-	public static final String IID_ITypeLib = IJITypeLib.IID;
 	
-	/**
-	 * IID of <code>IEnumVARIANT [IJIEnumVARIANT]</code>. 
-	 */
-	public static final String IID_IEnumVARIANT = IJIEnumVARIANT.IID;
 	
 	
 	
@@ -281,27 +267,8 @@ public class JIComFactory {
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMFACTORY_ILLEGAL_ARG));
 		}
 		
-		IJIComObject retval = comObject;
-		final String IID = comObject.getInterfaceIdentifier();
-		if (IID.equalsIgnoreCase(IID_IDispatch))// && iUnknown.isIDispatchSupported())
-		{
-			retval = new JIDispatchImpl((IJIComObject)retval);
-		}
-		else
-		if (IID.equalsIgnoreCase(IID_ITypeInfo))// && iUnknown.isIDispatchSupported())
-		{
-			retval = new JITypeInfoImpl((IJIComObject)retval);
-		}
-		else
-		if (IID.equalsIgnoreCase(IID_ITypeLib))// && iUnknown.isIDispatchSupported())
-		{
-			retval = new JITypeLibImpl((IJIComObject)retval);
-		}	
-		else
-		if (IID.equalsIgnoreCase(IID_IEnumVARIANT))// && iUnknown.isIDispatchSupported())
-		{
-			retval = new JIEnumVARIANTImpl((IJIComObject)retval);
-		}
+		//Will later on add another way to dynamically moving to factories.
+		IJIComObject retval = Internal_JIAutomationFactory.narrowObject(comObject);
 		
 		return retval;
 	}

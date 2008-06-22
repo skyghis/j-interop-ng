@@ -24,7 +24,7 @@ import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIUnsignedByte;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 public class SampleTestServerCallback {
 
@@ -90,7 +90,7 @@ public class SampleTestServerCallback {
           JIInterfaceDefinition interfaceDefinition = registerInterface();
           if (StaticSinkJavaCoClass == null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
-          IJIComObject iStaticSink = JIComFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIObjectFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
 
           Object[] results = new Object[1];
           // Create the session
@@ -155,7 +155,7 @@ public class SampleTestServerCallback {
           if (StaticSinkJavaCoClass != null)
             StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
 
-          IJIComObject iStaticSink = JIComFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
+          IJIComObject iStaticSink = JIObjectFactory.instantiateComObject( ITest, JIInterfacePointer.getInterfacePointer(session, StaticSinkJavaCoClass));
 
           Object[] results = new Object[1];
           // Create the session

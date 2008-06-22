@@ -11,8 +11,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSPowerPoint {
 
@@ -29,7 +29,7 @@ public class MSPowerPoint {
 	public void startPowerPoint() throws JIException
 	{
 		unknown = comStub.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
 	}
 
 	public void showPowerPoint() throws JIException
@@ -43,7 +43,7 @@ public class MSPowerPoint {
 	{
 		//JIVariant variant = dispatch.get("Presentations");
 		//JIInterfacePointer ptr = variant.getObjectAsInterfacePointer();
-		//IJIDispatch presentations = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
+		//IJIDispatch presentations = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
 		IJIDispatch presentations = (IJIDispatch)dispatch.get("Presentations").getObjectAsComObject(unknown);
 
 		for (int i = 0; i < 2; i++)
@@ -51,11 +51,11 @@ public class MSPowerPoint {
 			JIVariant results[] = presentations.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM()});
 			//variant = results[0];
 			//ptr = variant.getObjectAsInterfacePointer();
-			//IJIDispatch presentation = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
+			//IJIDispatch presentation = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
 			IJIDispatch presentation = (IJIDispatch)results[0].getObjectAsComObject(unknown);
 			//variant = presentation.get("Slides");
 			//ptr = variant.getObjectAsInterfacePointer();
-			//IJIDispatch slides = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
+			//IJIDispatch slides = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
 			IJIDispatch slides = (IJIDispatch)presentation.get("Slides").getObjectAsComObject(unknown);
 
 			results = slides.callMethodA("Add", new Object[]{new Integer(1),new Integer(1)});

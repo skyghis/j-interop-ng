@@ -11,8 +11,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSWord2 {
 
@@ -29,7 +29,7 @@ public class MSWord2 {
 	public void startWord() throws JIException
 	{
 		unknown = comStub.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
 	}
 
 	public void showWord() throws JIException
@@ -45,7 +45,7 @@ public class MSWord2 {
 		System.out.println(((JIVariant)dispatch.get("Path")).getObjectAsString().getString());
 		JIVariant variant = dispatch.get("Documents");
 		//JIInterfacePointer ptr = variant.getObjectAsInterfacePointer();
-		//IJIDispatch documents = (IJIDispatch)JIComFactory.createCOMInstance(unknown,ptr);
+		//IJIDispatch documents = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
 		IJIDispatch documents = (IJIDispatch)variant.getObjectAsComObject(unknown);
 		JIString filePath = new JIString("c:/temp/test.doc");
 		JIVariant variant2[] = documents.callMethodA("open",new Object[]{filePath.VariantByRef,JIVariant.OPTIONAL_PARAM()
@@ -54,10 +54,10 @@ public class MSWord2 {
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),
 				JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
-		//IJIDispatch document = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant2[0].getObjectAsInterfacePointer());
+		//IJIDispatch document = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,variant2[0].getObjectAsInterfacePointer());
 		IJIDispatch document = (IJIDispatch)variant2[0].getObjectAsComObject(unknown);
 		variant = document.get("Content");
-		//IJIDispatch range = (IJIDispatch)JIComFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
+		//IJIDispatch range = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,variant.getObjectAsInterfacePointer());
 		IJIDispatch range = (IJIDispatch)variant.getObjectAsComObject(unknown);
 
 		variant = range.get("Find");

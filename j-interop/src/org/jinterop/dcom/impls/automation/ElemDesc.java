@@ -16,7 +16,7 @@
  */
 
 
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 import java.io.Serializable;
 

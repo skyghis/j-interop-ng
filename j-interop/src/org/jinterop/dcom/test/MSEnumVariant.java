@@ -11,9 +11,9 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.IJIEnumVARIANT;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJIEnumVARIANT;
 
 //StdCollection.VBCollection
 public class MSEnumVariant {
@@ -27,7 +27,7 @@ public class MSEnumVariant {
 		session = JISession.createSession(args[1],args[2],args[3]);
 		comServer = new JIComServer(JIProgId.valueOf(session,"StdCollection.VBCollection"),address,session);
 		IJIComObject object = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,object);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(IJIDispatch.IID,object);
 
 	}
 
@@ -49,7 +49,7 @@ public class MSEnumVariant {
 		IJIComObject object2 = variant.getObjectAsComObject(dispatch);
 		//IJIComObject enumObject = (IJIComObject)object2.queryInterface(IJIEnumVARIANT.IID);
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
 
 		for (i = 0; i < 10; i++)
 		{

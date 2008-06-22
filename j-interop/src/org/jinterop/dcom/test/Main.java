@@ -20,8 +20,8 @@ import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class Main {
     
@@ -56,7 +56,7 @@ public class Main {
             IJIUnknown unkVirtualServer = virtualServer.createInstance();    
             
             // org.jinterop.dcom.common.JIException: Access is denied.  [0x80070005]
-            IJIDispatch dispatchVirtualServer = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,(IJIComObject)unkVirtualServer);                        
+            IJIDispatch dispatchVirtualServer = (IJIDispatch)JIObjectFactory.instantiateComObject(IJIDispatch.IID,(IJIComObject)unkVirtualServer);                        
                         
  
             

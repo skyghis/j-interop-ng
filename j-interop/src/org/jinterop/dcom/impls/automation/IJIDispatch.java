@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
@@ -30,7 +30,7 @@ import org.jinterop.dcom.core.JIVariant;
  *  //Assume comStub is the reference to JIComServer, obtained earlier... <br> 
  *	IJIUnknown unknown = comStub.createInstance(); <br>
  *  // This call will result into a <i>QueryInterface</i> for the IDispatch <br>
- *	IJIDispatch dispatch = (IJIDispatch)JIComFactory.<b>createCOMInstance</b>(JIComFactory.IID_IDispatch,unknown); <br>
+ *	IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.<b>createCOMInstance</b>(JIObjectFactory.IID_IDispatch,unknown); <br>
  * </code>
  * <br>
  * Another example:-
@@ -39,7 +39,7 @@ import org.jinterop.dcom.core.JIVariant;
  *  //From MSWord example <br>
  *	JIVariant variant = dispatch.get("Documents"); <br>
  * 	JIInterfacePointer ptr = variant.getObjectAsInterfacePointer(); <br>
- *	IJIDispatch documents = (IJIDispatch)JIComFactory.<b>createCOMInstance</b>(unknown,ptr); <br>
+ *	IJIDispatch documents = (IJIDispatch)JIObjectFactory.<b>createCOMInstance</b>(unknown,ptr); <br>
  *	JIString filePath = new JIString("c:/temp/test.doc"); <br>
  *	JIVariant variant2[] = documents.callMethodA("open",new Object[]{new JIVariant(filePath,true),JIVariant.OPTIONAL_PARAM 
  *			,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM, <br>
@@ -47,7 +47,7 @@ import org.jinterop.dcom.core.JIVariant;
  *			JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM, <br>
  *			JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM, <br>
  *			JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM}); <br>
- *	IJIDispatch document = (IJIDispatch)JIComFactory.<b>createCOMInstance</b>(unknown,variant2[0].getObjectAsInterfacePointer()); <br>
+ *	IJIDispatch document = (IJIDispatch)JIObjectFactory.<b>createCOMInstance</b>(unknown,variant2[0].getObjectAsInterfacePointer()); <br>
  * </code>
  * <br> 
  *  
@@ -57,7 +57,7 @@ import org.jinterop.dcom.core.JIVariant;
  *  for example:- <br>
  *  <code>
  *  //From MSADO example. <br> 	
- *  dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,unknown); <br>
+ *  dispatch = (IJIDispatch)JIObjectFactory.createCOMInstance(JIObjectFactory.IID_IDispatch,unknown); <br>
  *	dispatch.callMethod("Open",<b>new Object[]{new JIString("driver=Microsoft Access Driver (*.mdb);dbq=C:\\temp\\products.mdb"),JIVariant.OPTIONAL_PARAM,JIVariant.OPTIONAL_PARAM,new Integer(-1)} </b>); <br>
  *	JIVariant variant[] = dispatch.callMethodA("Execute",<b>new Object[]{new JIString("SELECT * FROM Products"),new Integer(-1)}</b>); <br>
  *	if (variant[0].isNull()) <br>

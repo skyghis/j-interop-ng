@@ -245,7 +245,7 @@ public interface IJIComObject extends Serializable {
 	 */
 	public void internal_setDeffered(boolean deffered);
 	
-	/** Returns true if this COM object represents a local Java reference obtained by JIComFactory.createLocalInstance(...)
+	/** Returns true if this COM object represents a local Java reference obtained by JIObjectFactory.createLocalInstance(...)
 	 * 
 	 * @return
 	 */

@@ -1,4 +1,4 @@
-/** j-Interop (Pure Java implementation of DCOM protocol) 
+/** j-Interop (Pure Java implementation of DCOM protocol)  
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -15,19 +15,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 /**
  * 
  * @since 1.0
  *
  */
-
-public interface IMPLETYPEFLAGS {
-	
-	public static final int IMPLTYPEFLAG_FDEFAULT = 0x1;
-	public static final int IMPLTYPEFLAG_FSOURCE =  0x2;
-	public static final int IMPLTYPEFLAG_FRESTRICTED = 0x4;
-	public static final int IMPLTYPEFLAG_FDEFAULTVTABLE = 0x800;
-
+public interface INVOKEKIND {
+	public static final Integer INVOKE_FUNC = new Integer(1);
+	public static final Integer INVOKE_PROPERTYGET = new Integer(2);
+	public static final Integer INVOKE_PROPERTYPUT = new Integer(4);
+	public static final Integer INVOKE_PROPERTYPUTREF = new Integer(8);
 }

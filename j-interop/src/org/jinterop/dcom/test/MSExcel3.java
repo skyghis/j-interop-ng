@@ -12,9 +12,9 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
-import org.jinterop.dcom.impls.JIExcepInfo;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.JIExcepInfo;
 
 
 public class MSExcel3 {
@@ -35,7 +35,7 @@ public class MSExcel3 {
 	public void startExcel() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.narrowObject((IJIComObject)unknown.queryInterface(JIComFactory.IID_IDispatch));
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)unknown.queryInterface(JIObjectFactory.IID_IDispatch));
 	}
 
 	public void showExcel() throws JIException
@@ -52,22 +52,22 @@ public class MSExcel3 {
 		int dispId = dispatch.getIDsOfNames("Workbooks");
 
 		JIVariant outVal = dispatch.get(dispId);
-		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 
 
 		JIVariant[] outVal2 = dispatchOfWorkBooks.callMethodA("Open",new Object[]{
 				new JIString("C:\\temp\\chart.xls"),Boolean.TRUE,Boolean.TRUE,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM()});
-		dispatchOfWorkBook =(IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		dispatchOfWorkBook =(IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
 		outVal = dispatchOfWorkBook.get("Worksheets");
-		dispatchOfWorkSheets =(IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		dispatchOfWorkSheets =(IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 
 		outVal2 = dispatchOfWorkSheets.get("Item", new Object[]{new JIVariant(1)});
-		IJIDispatch sheet =(IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		IJIDispatch sheet =(IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 		outVal2 = sheet.get("Range",new Object[]{new JIString("A1:B19"),JIVariant.OPTIONAL_PARAM()});
-		IJIDispatch range =(IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		IJIDispatch range =(IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
 		 Integer [][] newValue = {
 			        { new Integer(121), new Integer(117) },
@@ -121,12 +121,12 @@ public class MSExcel3 {
 	      }
 
 		outVal2 = sheet.get("ChartObjects",new Object[]{JIVariant.OPTIONAL_PARAM()});
-		IJIDispatch chartObjects = (IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		IJIDispatch chartObjects = (IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 		outVal2 = chartObjects.callMethodA("Add",new Object[]{new Double(100),new Double(30),new Double(400),new Double(250)});
 		//outVal2 = chartObjects.get("Item", new Object[]{new Integer(1)});
-		IJIDispatch chartObject = (IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		IJIDispatch chartObject = (IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 		outVal = chartObject.get("Chart");
-		IJIDispatch chart = (IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		IJIDispatch chart = (IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 		chart.callMethod("SetSourceData",new Object[]{range,JIVariant.OPTIONAL_PARAM()});
 		try {
 			Thread.sleep(5000);
@@ -135,7 +135,7 @@ public class MSExcel3 {
 		}
 
 		outVal = sheet.get("PageSetup");
-		IJIDispatch pageSetup = (IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		IJIDispatch pageSetup = (IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 		pageSetup.put("Orientation",new JIVariant(2));
 		pageSetup.put("Zoom",new JIVariant(100));
 		try{

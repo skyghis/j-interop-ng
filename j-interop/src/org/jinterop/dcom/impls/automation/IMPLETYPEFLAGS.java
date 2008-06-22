@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol) 
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -15,32 +15,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.impls;
-
-import java.io.Serializable;
-
-import org.jinterop.dcom.core.JIStruct;
+package org.jinterop.dcom.impls.automation;
 
 /**
  * 
  * @since 1.0
  *
  */
-public final class SafeArrayBounds implements Serializable{
 
-	private static final long serialVersionUID = -3110688445129575984L;
-	public final int cElements;
-	public final int lLbound;
+public interface IMPLETYPEFLAGS {
 	
-	SafeArrayBounds(JIStruct values)
-	{
-		if (values == null)
-		{
-			cElements = -1;
-			lLbound = -1;
-			return;
-		}
-		cElements = ((Integer)values.getMember(0)).intValue();
-		lLbound = ((Integer)values.getMember(0)).intValue();
-	}
+	public static final int IMPLTYPEFLAG_FDEFAULT = 0x1;
+	public static final int IMPLTYPEFLAG_FSOURCE =  0x2;
+	public static final int IMPLTYPEFLAG_FRESTRICTED = 0x4;
+	public static final int IMPLTYPEFLAG_FDEFAULTVTABLE = 0x800;
+
 }

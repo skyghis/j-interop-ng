@@ -1,4 +1,4 @@
-/** j-Interop (Pure Java implementation of DCOM protocol)  
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -15,16 +15,32 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
+
+import java.io.Serializable;
+
+import org.jinterop.dcom.core.JIStruct;
 
 /**
  * 
  * @since 1.0
  *
  */
-public interface INVOKEKIND {
-	public static final Integer INVOKE_FUNC = new Integer(1);
-	public static final Integer INVOKE_PROPERTYGET = new Integer(2);
-	public static final Integer INVOKE_PROPERTYPUT = new Integer(4);
-	public static final Integer INVOKE_PROPERTYPUTREF = new Integer(8);
+public final class SafeArrayBounds implements Serializable{
+
+	private static final long serialVersionUID = -3110688445129575984L;
+	public final int cElements;
+	public final int lLbound;
+	
+	SafeArrayBounds(JIStruct values)
+	{
+		if (values == null)
+		{
+			cElements = -1;
+			lLbound = -1;
+			return;
+		}
+		cElements = ((Integer)values.getMember(0)).intValue();
+		lLbound = ((Integer)values.getMember(0)).intValue();
+	}
 }

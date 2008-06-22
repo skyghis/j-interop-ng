@@ -24,11 +24,11 @@ import org.jinterop.dcom.core.JIUnsigned;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.FuncDesc;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.IJITypeInfo;
-import org.jinterop.dcom.impls.IJITypeLib;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.FuncDesc;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJITypeInfo;
+import org.jinterop.dcom.impls.automation.IJITypeLib;
 
 
 public class FirstContact_Stub implements FirstContact {
@@ -92,7 +92,7 @@ public class FirstContact_Stub implements FirstContact {
 
 			ResourceBundle bundle = JISystem.getErrorMessages();
 			IJIComObject unknown = stub.createInstance();
-			IJIDispatch dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
+			IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
 			JIVariant variants = dispatch.callMethodA("GetDispatch");
 			
 //			dispatch.callMethodA("TestVariant1", new Object[]{variants[1]} );
@@ -318,7 +318,7 @@ public class FirstContact_Stub implements FirstContact {
 			Object[] arry = typeInfo.getDocumentation(funcDesc.memberId);
 			JIString mops = typeInfo.getMops(funcDesc.memberId);
 			//int[] ids = typeInfo.getIdOfNames(new String[]{"QueryInterface"});
-			//IJIUnknown unknown2 = typeInfo.createInstance(JIComFactory.IID_IDispatch);
+			//IJIUnknown unknown2 = typeInfo.createInstance(JIObjectFactory.IID_IDispatch);
 			int hrefType = typeInfo.getRefTypeOfImplType(0);
 			IJITypeInfo info = typeInfo.getRefTypeInfo(hrefType);
 			//int implTypeFlags = typeInfo.getImplTypeFlags(1);
@@ -338,7 +338,7 @@ public class FirstContact_Stub implements FirstContact {
 			//if (handle.isIDispatchSupported())
 			{
 //				//System.out.println(handle.getDispatch().GetTypeInfoCount());
-//				dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,(IJIComObject)unknown.queryInterface(IJIDispatch.IID,false));
+//				dispatch = (IJIDispatch)JIObjectFactory.createCOMInstance(JIObjectFactory.IID_IDispatch,(IJIComObject)unknown.queryInterface(IJIDispatch.IID,false));
 //				int i = dispatch.GetIDsOfNames("testSA");
 //				//int i = dispatch.GetIDsOfNames("testAllVARIANTS");
 //				//IJITypeInfo type = dispatch.GetTypeInfo(0);
@@ -550,7 +550,7 @@ public class FirstContact_Stub implements FirstContact {
 			JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("test",1,runtimeObject);
 			interfaceDefinition.addMethodDescriptor(methodDescriptor);
 
-			IJIComObject objMyCOM = JIComFactory.buildObject(session,component);
+			IJIComObject objMyCOM = JIObjectFactory.buildObject(session,component);
 			obj.addInParamAsVariant(new JIVariant(objMyCOM),JIFlags.FLAG_NULL);
 			obj.addOutParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 			result = handle.call(obj);

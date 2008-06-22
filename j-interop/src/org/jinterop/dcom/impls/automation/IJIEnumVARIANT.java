@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 import org.jinterop.dcom.common.JIException;
 
@@ -24,8 +24,8 @@ import org.jinterop.dcom.common.JIException;
  *  <code>
  *  //From MSEnumVariant example <br>
  *  JIVariant variant = dispatch.get("_NewEnum"); <br>
- *	IJIComObject object2 = JIComFactory.createCOMInstance(dispatch,variant.getObjectAsInterfacePointer()); <br>
- *	IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.createCOMInstance(IJIEnumVARIANT.IID,object2); <br>
+ *	IJIComObject object2 = JIObjectFactory.createCOMInstance(dispatch,variant.getObjectAsInterfacePointer()); <br>
+ *	IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.createCOMInstance(IJIEnumVARIANT.IID,object2); <br>
  *	<br>
  *	for (i = 0; i < 10; i++) <br>
  *	{ <br>

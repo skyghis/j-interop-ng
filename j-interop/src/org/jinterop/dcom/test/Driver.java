@@ -7,7 +7,7 @@ import java.rmi.server.UID;
 import jcifs.util.Encdec;
 
 import org.jinterop.dcom.common.JISystem;
-import org.jinterop.dcom.impls.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 import rpc.core.UUID;
 

@@ -14,9 +14,9 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.IJIEnumVARIANT;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJIEnumVARIANT;
 
 /** WMI example showing how to use a new logger implementation.
  *
@@ -40,7 +40,7 @@ public class MSWMI2 {
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,comObject);
 	}
 
 
@@ -55,7 +55,7 @@ public class MSWMI2 {
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
 		IJIComObject object2 = variant.getObjectAsComObject(wbemObjectSet_dispatch);
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIComFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
+		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.instantiateComObject(IJIEnumVARIANT.IID,object2);
 
 		JIVariant Count = wbemObjectSet_dispatch.get("Count");
 		int count = Count.getObjectAsInt();

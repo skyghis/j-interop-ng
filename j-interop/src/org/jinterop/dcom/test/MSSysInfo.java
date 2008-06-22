@@ -12,8 +12,8 @@ import org.jinterop.dcom.core.JIJavaCoClass;
 import org.jinterop.dcom.core.JIMethodDescriptor;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSSysInfo {
 
@@ -29,7 +29,7 @@ public class MSSysInfo {
 		JIComServer comServer = new JIComServer(JIProgId.valueOf(session,"SYSINFO.SysInfo"),args[0],session);
 		sysInfoServer = comServer.createInstance();
 		sysInfoObject = (IJIComObject)sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(IJIDispatch.IID,sysInfoObject);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(IJIDispatch.IID,sysInfoObject);
 
 	}
 	void displayValues() throws JIException
@@ -51,7 +51,7 @@ public class MSSysInfo {
 		JIJavaCoClass javaComponent = new JIJavaCoClass(session,new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("PowerStatusChanged",8,null));
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("TimeChanged",3,null));
-		identifier = JIComFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIInterfacePointer.getInterfacePointer(session,javaComponent));
+		identifier = JIObjectFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIInterfacePointer.getInterfacePointer(session,javaComponent));
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -62,7 +62,7 @@ public class MSSysInfo {
 
 	void DetachEventListener() throws JIException
 	{
-		JIComFactory.detachEventHandler(sysInfoServer,identifier);
+		JIObjectFactory.detachEventHandler(sysInfoServer,identifier);
 		JISession.destroySession(dispatch.getAssociatedSession());
 	}
 

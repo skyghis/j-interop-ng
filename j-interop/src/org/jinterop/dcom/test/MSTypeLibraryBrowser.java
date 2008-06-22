@@ -8,13 +8,13 @@ import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
-import org.jinterop.dcom.impls.FuncDesc;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.IJITypeInfo;
-import org.jinterop.dcom.impls.IJITypeLib;
-import org.jinterop.dcom.impls.JIComFactory;
-import org.jinterop.dcom.impls.TypeAttr;
-import org.jinterop.dcom.impls.VarDesc;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.FuncDesc;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJITypeInfo;
+import org.jinterop.dcom.impls.automation.IJITypeLib;
+import org.jinterop.dcom.impls.automation.TypeAttr;
+import org.jinterop.dcom.impls.automation.VarDesc;
 
 public class MSTypeLibraryBrowser {
 
@@ -31,7 +31,7 @@ public class MSTypeLibraryBrowser {
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,unknown);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,unknown);
 		IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
 		IJITypeLib typeLib = (IJITypeLib)((Object[])typeInfo.getContainingTypeLib())[0];
 		Object[] result = typeLib.getDocumentation(-1);

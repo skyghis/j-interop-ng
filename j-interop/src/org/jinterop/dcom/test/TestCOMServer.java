@@ -13,8 +13,8 @@ import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class TestCOMServer {
 
@@ -38,7 +38,7 @@ public class TestCOMServer {
 		unknown = comStub.createInstance();
 		//CLSID of IITestCOMServer
 		IJIComObject comObject = (IJIComObject)unknown.queryInterface("4AE62432-FD04-4BF9-B8AC-56AA12A47FF9");
-		dispatch = (IJIDispatch)JIComFactory.instantiateComObject(JIComFactory.IID_IDispatch,comObject);
+		dispatch = (IJIDispatch)JIObjectFactory.instantiateComObject(JIObjectFactory.IID_IDispatch,comObject);
 
 		//Now call via automation
 		Object results[] = dispatch.callMethodA("Add",new Object[]{new Integer(1), new Integer(2), new JIVariant(0,true)});

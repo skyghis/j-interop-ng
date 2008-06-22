@@ -10,8 +10,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class TestJIThreading  {
 
@@ -130,7 +130,7 @@ public class TestJIThreading  {
 
 				IJIComObject baseComObject = (IJIComObject) unknown.queryInterface( comObjectId );
 
-				IJIDispatch baseDispatch = (IJIDispatch) JIComFactory.instantiateComObject( JIComFactory.IID_IDispatch, baseComObject );
+				IJIDispatch baseDispatch = (IJIDispatch) JIObjectFactory.instantiateComObject( JIObjectFactory.IID_IDispatch, baseComObject );
 
 				JIVariant connectServer = (JIVariant)
 				baseDispatch.callMethodA(

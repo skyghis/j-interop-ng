@@ -12,17 +12,17 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
-import org.jinterop.dcom.impls.ElemDesc;
-import org.jinterop.dcom.impls.FuncDesc;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.IJITypeInfo;
-import org.jinterop.dcom.impls.IJITypeLib;
-import org.jinterop.dcom.impls.IMPLETYPEFLAGS;
-import org.jinterop.dcom.impls.JIComFactory;
-import org.jinterop.dcom.impls.TYPEKIND;
-import org.jinterop.dcom.impls.TypeAttr;
-import org.jinterop.dcom.impls.TypeDesc;
-import org.jinterop.dcom.impls.VarDesc;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.ElemDesc;
+import org.jinterop.dcom.impls.automation.FuncDesc;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.automation.IJITypeInfo;
+import org.jinterop.dcom.impls.automation.IJITypeLib;
+import org.jinterop.dcom.impls.automation.IMPLETYPEFLAGS;
+import org.jinterop.dcom.impls.automation.TYPEKIND;
+import org.jinterop.dcom.impls.automation.TypeAttr;
+import org.jinterop.dcom.impls.automation.TypeDesc;
+import org.jinterop.dcom.impls.automation.VarDesc;
 
 public class MSTypeLibraryBrowser2 {
 
@@ -40,7 +40,7 @@ public class MSTypeLibraryBrowser2 {
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
 		IJITypeLib typeLib = (IJITypeLib)((Object[])dispatch.getTypeInfo(0).getContainingTypeLib())[0];
 		Object[] result = typeLib.getDocumentation(-1);
 		System.out.println("Name: " + ((JIString)result[0]).getString());

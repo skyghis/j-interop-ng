@@ -16,8 +16,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSExcel2 {
 
@@ -38,7 +38,7 @@ public class MSExcel2 {
 	public void startExcel() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
+		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
 	}
 
 	public void showExcel() throws JIException
@@ -54,18 +54,18 @@ public class MSExcel2 {
 
 		JIVariant outVal = dispatch.get(dispId);
 
-		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		IJIDispatch dispatchOfWorkBooks =(IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 
 
 		JIVariant[] outVal2 = dispatchOfWorkBooks.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM()});
-		dispatchOfWorkBook =(IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		dispatchOfWorkBook =(IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
 		outVal = dispatchOfWorkBook.get("Worksheets");
 
-		dispatchOfWorkSheets = (IJIDispatch)JIComFactory.narrowObject(outVal.getObjectAsComObject());
+		dispatchOfWorkSheets = (IJIDispatch)JIObjectFactory.narrowObject(outVal.getObjectAsComObject());
 
 		outVal2 = dispatchOfWorkSheets.callMethodA("Add",new Object[]{JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()});
-		dispatchOfWorkSheet =(IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		dispatchOfWorkSheet =(IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 	}
 
 	public void pasteArrayToWorkSheet() throws JIException
@@ -74,7 +74,7 @@ public class MSExcel2 {
 		JIVariant variant = new JIVariant(new JIString("A1:C3"));
 		Object[] out = new Object[]{JIVariant.class};
 		JIVariant[] outVal2 = dispatchOfWorkSheet.get(dispId, new Object[]{variant});
-		IJIDispatch dispRange = (IJIDispatch)JIComFactory.narrowObject(outVal2[0].getObjectAsComObject());
+		IJIDispatch dispRange = (IJIDispatch)JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
 
 	      JIVariant[][] newValue = {

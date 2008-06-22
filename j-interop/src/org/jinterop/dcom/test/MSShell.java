@@ -12,7 +12,7 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 public class MSShell {
 
@@ -49,7 +49,7 @@ public class MSShell {
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		Object[] result = shellDispatch.call(callObject);
 		JIInterfacePointer folderPtr = (JIInterfacePointer)result[0];
-		IJIComObject folder = JIComFactory.instantiateComObject(shellDispatch,folderPtr);
+		IJIComObject folder = JIObjectFactory.instantiateComObject(shellDispatch,folderPtr);
 
 		callObject = new JICallObject(folder.getIpid());
 		callObject.setOpnum(0);
@@ -61,26 +61,26 @@ public class MSShell {
 		callObject.setOpnum(1);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		result = folder.call(callObject);
-		IJIComObject test = JIComFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
+		IJIComObject test = JIObjectFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
 
 //		Not implemented by shell
 //		callObject.reInit();
 //		callObject.setOpnum(2);
 //		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 //		result = folder.call(callObject);
-//		test = JIComFactory.createCOMInstance(shellDispatch,(JIInterfacePointer)result[0]);
+//		test = JIObjectFactory.createCOMInstance(shellDispatch,(JIInterfacePointer)result[0]);
 
 		callObject.reInit();
 		callObject.setOpnum(3);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		result = folder.call(callObject);
-		test = JIComFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
+		test = JIObjectFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
 
 		callObject.reInit();
 		callObject.setOpnum(4);
 		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 		result = folder.call(callObject);
-		IJIComObject folderItems = JIComFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
+		IJIComObject folderItems = JIObjectFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
 
 		callObject = new JICallObject(folderItems.getIpid());
 		callObject.setOpnum(0);
@@ -96,7 +96,7 @@ public class MSShell {
 			callObject.addInParamAsVariant(new JIVariant(i),JIFlags.FLAG_NULL);
 			callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
 			result = folderItems.call(callObject);
-			IJIComObject folderItem = JIComFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
+			IJIComObject folderItem = JIObjectFactory.instantiateComObject(shellDispatch,(JIInterfacePointer)result[0]);
 
 
 			JICallObject callObject2 = new JICallObject(folderItem.getIpid());

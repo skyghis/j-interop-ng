@@ -18,8 +18,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSInternetExplorer {
 
@@ -35,7 +35,7 @@ public class MSInternetExplorer {
 		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
 		IJIComObject ieObjectWebBrowser2 = (IJIComObject)ieObject.queryInterface("D30C1661-CDAF-11D0-8A3E-00C04FC9E26E");
-		ieObjectDispatch = (IJIDispatch)JIComFactory.narrowObject((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));
+		ieObjectDispatch = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));
 
 	}
 
@@ -97,7 +97,7 @@ public class MSInternetExplorer {
 	 *
 	 * The next call attaches the event handler (our JIJavaCoClass) to the actual COM server for recieving events for the interface identified by the IID.
 	 * There can be many such calls on the same COM server for different IIDs.
-	 * identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIInterfacePointer.getInterfacePointer(session,javaComponent));
+	 * identifier = JIObjectFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIInterfacePointer.getInterfacePointer(session,javaComponent));
 	 *
 	 * Now whether you use IJIDispatch or not, events will work regardless of that. The COM object you have to use in the attachEventHandler is the COM Object on
 	 * which you did the queryinterface for the IJIDispatch.
@@ -311,7 +311,7 @@ public class MSInternetExplorer {
 
 
 
-		identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIComFactory.buildObject(session,javaComponent));
+		identifier = JIObjectFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIObjectFactory.buildObject(session,javaComponent));
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -322,7 +322,7 @@ public class MSInternetExplorer {
 
 	private void detachCallBack() throws JIException
 	{
-		JIComFactory.detachEventHandler(ieObject,identifier);
+		JIObjectFactory.detachEventHandler(ieObject,identifier);
 		JISession.destroySession(ieObjectDispatch.getAssociatedSession());
 	}
 

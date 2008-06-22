@@ -39,7 +39,7 @@ import org.jinterop.dcom.common.JISystem;
  * object.addOutParamAsObject(JIInterfacePointer.class,JIFlags.FLAG_NULL); <br>
  * Object[] objects = (Object[])connectionPointContainer.call(object); //find connection point <br>
  * JIInterfacePointer connectionPtr = (JIInterfacePointer)objects[0]; <br>
- * IJIComObject connectionPointer = JIComFactory.createCOMInstance(connectionPointContainer,connectionPtr); <br>
+ * IJIComObject connectionPointer = JIObjectFactory.createCOMInstance(connectionPointContainer,connectionPtr); <br>
  * </code>
  * </p>
  * @since 1.0

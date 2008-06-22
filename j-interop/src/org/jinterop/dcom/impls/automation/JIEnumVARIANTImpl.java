@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
  
-package org.jinterop.dcom.impls;
+package org.jinterop.dcom.impls.automation;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
@@ -24,6 +24,7 @@ import org.jinterop.dcom.core.JICallObject;
 import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIVariant;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 /**
  * @exclude
@@ -76,7 +77,7 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
 		callObject.setOpnum(3);
 		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJIEnumVARIANT)JIComFactory.narrowObject((IJIComObject)result[0]);
+		return (IJIEnumVARIANT)JIObjectFactory.narrowObject((IJIComObject)result[0]);
     }
 
 	

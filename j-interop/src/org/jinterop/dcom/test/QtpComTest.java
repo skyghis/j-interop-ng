@@ -11,8 +11,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.IJIDispatch;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class QtpComTest {
 
@@ -58,7 +58,7 @@ public class QtpComTest {
 
                     unknown = comServer.createInstance();
 
-                    dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
+                    dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(JIObjectFactory.IID_IDispatch));
 
                     //System.out.println(((JIVariant)dispatch.get("Version")).getObjectAsString().getString());
 
@@ -84,7 +84,7 @@ public class QtpComTest {
 
                     JIVariant variant = dispatch.get("Test");
 
-                    IJIDispatch test = (IJIDispatch)JIComFactory.narrowObject(variant.getObjectAsComObject());
+                    IJIDispatch test = (IJIDispatch)JIObjectFactory.narrowObject(variant.getObjectAsComObject());
                     System.out.println(test.get("Author"));
                     
                     //and this is the original session associated with dispatch.

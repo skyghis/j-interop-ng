@@ -4,7 +4,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 public class DWebBrowserEvents2 {
 
@@ -34,7 +34,7 @@ public class DWebBrowserEvents2 {
 	public JIVariant BeforeNavigate2(IJIComObject dispatch,JIVariant URL,JIVariant Flags,JIVariant TargetFrameName,
 										JIVariant PostData, JIVariant Headers, JIVariant Cancel) throws JIException 
 	{
-		dispatch = JIComFactory.narrowObject(dispatch);
+		dispatch = JIObjectFactory.narrowObject(dispatch);
 		JIVariant realURL = URL;
 		while (realURL.isByRefFlagSet())
 		{
@@ -102,7 +102,7 @@ public class DWebBrowserEvents2 {
                          IJIComObject pDisp, 
                         JIVariant URL) throws JIException
     {
-    	pDisp = JIComFactory.narrowObject(pDisp);
+    	pDisp = JIObjectFactory.narrowObject(pDisp);
 		JIVariant realURL = URL;
 		while (realURL.isByRefFlagSet())
 		{

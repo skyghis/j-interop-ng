@@ -14,23 +14,20 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.jinterop.dcom.impls;
 
-/**
+package org.jinterop.dcom.impls.automation;
+
+/**Function specifier.
  * 
  * @since 1.0
  *
  */
-public interface TYPEKIND {
+public interface FUNCKIND {
 
-	public static final Integer TKIND_ENUM = new Integer(0);
-	public static final Integer TKIND_RECORD = new Integer(1);
-	public static final Integer TKIND_MODULE = new Integer(2);
-	public static final Integer TKIND_INTERFACE = new Integer(3);
-	public static final Integer TKIND_DISPATCH = new Integer(4);
-	public static final Integer TKIND_COCLASS = new Integer(5);
-	public static final Integer TKIND_ALIAS = new Integer(6);
-	public static final Integer TKIND_UNION = new Integer(7);
-	public static final Integer TKIND_MAX = new Integer(8);
-
+	public static final Integer FUNC_VIRTUAL = new Integer(0);
+	public static final Integer FUNC_PUREVIRTUAL = new Integer(1);
+	public static final Integer FUNC_NONVIRTUAL = new Integer(2);
+	public static final Integer FUNC_STATIC = new Integer(3);
+	public static final Integer FUNC_DISPATCH = new Integer(4);
+	
 }

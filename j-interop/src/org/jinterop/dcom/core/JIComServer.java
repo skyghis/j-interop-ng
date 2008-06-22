@@ -51,7 +51,7 @@ import rpc.Stub;
  *  IJIComObject excelServerObject = excelServer.createInstance(); <br>
  *  
  *  //Obtaining the IJIDispatch (if supported) <br>
- *  IJIDispatch dispatch = (IJIDispatch)JIComFactory.createCOMInstance(JIComFactory.IID_IDispatch,excelServerObject); <br>
+ *  IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.createCOMInstance(JIObjectFactory.IID_IDispatch,excelServerObject); <br>
  *  
  *  </code>
  *  
@@ -98,9 +98,9 @@ public class JIComServer extends Stub {
 	/**<p> Instantiates a JIComServer represented by the interfacePointer param. There are cases where a COM server may hand down a 
 	 * reference to a different COM server(which may or may not be on the same machine) and we would like to hook in between. 
 	 * The <code>IJIComObject</code> interface is usable only in the context of the current JIComServer, but when the interfacePointer 
-	 * is of a completely different COM server, the JIComFactory APIs will not work. The reason is the interface pointer passed to those 
+	 * is of a completely different COM server, the JIObjectFactory APIs will not work. The reason is the interface pointer passed to those 
 	 * APIs expects to belong only to a single and same COM server (say 'A'). If by any chance, that COM server passes a reference to you 
-	 * of another COM server (say 'B') on a different machine, the <code>IJIComObject</code> so returned from <code>JIComFactory</code> APIs 
+	 * of another COM server (say 'B') on a different machine, the <code>IJIComObject</code> so returned from <code>JIObjectFactory</code> APIs 
 	 * will result in "Method not found" Exceptions (or others) since the pointer returned via that will always place calls to  'A' instead of 'B'. 
 	 * Under such scenarios you must use this API. This is not a usual case and for reasons related to nature of DCOM, will be very well documented 
 	 * in the Developers guide of your COM server.  

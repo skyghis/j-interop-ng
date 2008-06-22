@@ -440,7 +440,7 @@ public final class JISession {
 	/**<p>Used to destroy the session, this release all references of the <code>COM</code> server and it's interfaces. 
 	 * It should be called once the developer is done with the usage of a <code>COM</code> object, it is required so as to close all open sockets
 	 * with the COM server. The references to COM interfaces are discarded from time to time when a random GC is done or when the system shuts down.<br>
-	 * Please note that all interface pointers belonging to sessions linked to this session (refer the JIComFactory.createCOMInstance API) will also be 
+	 * Please note that all interface pointers belonging to sessions linked to this session (refer the JIObjectFactory.createCOMInstance API) will also be 
 	 * destroyed.
 	 * </p>
 	 * @param session
@@ -830,7 +830,7 @@ public final class JISession {
 	
 	
 	/** Based on the oxid returns the JISession (and thus the COM Server) associated with it. This is required, since there are
-	 * cases where a different JISession may be passed in JIComFactory for an JIInterfacePointer which does not belong to this JISession.
+	 * cases where a different JISession may be passed in JIObjectFactory for an JIInterfacePointer which does not belong to this JISession.
 	 * Under those scenarios, the COM factory will create a new instance of a JISession and associate that Interface pointer with the session.
 	 * But that is not the right approach as a COM Server for that interface and thus a session might already exist and these have to be tied together.
 	 * 
