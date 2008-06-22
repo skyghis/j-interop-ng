@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -274,7 +274,7 @@ public class JIComFactory {
 	 * @return
 	 * @throws JIException
 	 */
-	public static IJIComObject narrowInstance(final IJIComObject comObject) throws JIException
+	public static IJIComObject narrowObject(final IJIComObject comObject) throws JIException
 	{
 		if (comObject == null || comObject.isLocalReference())
 		{
@@ -315,7 +315,7 @@ public class JIComFactory {
 	 * @return
 	 * @throws JIException
 	 */
-	public static IJIComObject buildInstance(JISession session,JIJavaCoClass javaComponent) throws JIException
+	public static IJIComObject buildObject(JISession session,JIJavaCoClass javaComponent) throws JIException
 	{
 		return JISessionHelper.instantiateLocalComObject(session, javaComponent);
 	}
@@ -327,9 +327,9 @@ public class JIComFactory {
 	 * @return
 	 * @throws JIException
 	 */
-	public static IJIComObject narrowInstance(JISession session, byte[] rawBytes) throws JIException
+	public static IJIComObject buildObject(JISession session, byte[] rawBytes) throws JIException
 	{
-		return narrowInstance(JISessionHelper.instantiateComObject(session, rawBytes));
+		return narrowObject(JISessionHelper.instantiateComObject(session, rawBytes));
 	}
 	
 	 /** Typically used in the Man-In-The-Middle scenario, where one j-Interop system interacts with another over the wire. 
@@ -340,8 +340,8 @@ public class JIComFactory {
      * @return
      * @throws JIException
      */
-	public static IJIComObject narrowInstance(JISession session, IJIComObject comObject) throws JIException
+	public static IJIComObject narrowObject(JISession session, IJIComObject comObject) throws JIException
 	{
-		return narrowInstance(JISessionHelper.instantiateComObject(session, comObject));
+		return narrowObject(JISessionHelper.instantiateComObject(session, comObject));
 	}
 }

@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
@@ -68,7 +68,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJITypeInfo) JIComFactory.narrowInstance((IJIComObject)result[0]);
+		return (IJITypeInfo) JIComFactory.narrowObject((IJIComObject)result[0]);
 	}
 
 	public int getTypeInfoType(int index) throws JIException
@@ -88,7 +88,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 		callObject.addInParamAsUUID(uuid,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJITypeInfo) JIComFactory.narrowInstance((IJIComObject)result[0]);
+		return (IJITypeInfo) JIComFactory.narrowObject((IJIComObject)result[0]);
 	}
 	
 	public void getLibAttr() throws JIException

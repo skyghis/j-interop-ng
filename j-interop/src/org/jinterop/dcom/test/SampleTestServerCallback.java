@@ -24,7 +24,7 @@ import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIUnsignedByte;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
-import org.jinterop.dcom.win32.JIComFactory;
+import org.jinterop.dcom.impls.JIComFactory;
 
 public class SampleTestServerCallback {
 

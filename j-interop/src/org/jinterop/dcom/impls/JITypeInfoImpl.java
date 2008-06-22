@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -245,7 +245,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 		callObject.setOpnum(15);
 		Object[] result = comObject.call(callObject);
 		Object[] retVal = new Object[2];
-		retVal[0] = (IJITypeLib) JIComFactory.narrowInstance((IJIComObject)result[0]);
+		retVal[0] = (IJITypeLib) JIComFactory.narrowObject((IJIComObject)result[0]);
 		retVal[1] = result[1];
 		return retVal;
 	}
@@ -422,7 +422,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 		callObject.addInParamAsInt(hrefType,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJITypeInfo) JIComFactory.narrowInstance((IJIComObject)result[0]);
+		return (IJITypeInfo) JIComFactory.narrowObject((IJIComObject)result[0]);
 	}
 	
 //	public int[] getIdOfNames(String[] names) throws JIException
@@ -472,7 +472,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 		callObject.addInParamAsUUID(riid,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return JIComFactory.narrowInstance((IJIComObject)result[0]);
+		return JIComFactory.narrowObject((IJIComObject)result[0]);
 	}
 	
 	public JIString getMops(int memberId) throws JIException

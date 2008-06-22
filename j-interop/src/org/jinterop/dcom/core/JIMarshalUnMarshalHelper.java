@@ -36,7 +36,7 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
-import org.jinterop.dcom.win32.IJIDispatch;
+import org.jinterop.dcom.impls.IJIDispatch;
 
 import rpc.core.UUID;
 

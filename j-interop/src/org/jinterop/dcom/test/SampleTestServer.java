@@ -17,7 +17,7 @@ import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIUnsigned;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
-import org.jinterop.dcom.win32.IJIDispatch;
+import org.jinterop.dcom.impls.IJIDispatch;
 
 /** Contributed Code sample. Works in conjunction with SampleTestServers.zip
  *

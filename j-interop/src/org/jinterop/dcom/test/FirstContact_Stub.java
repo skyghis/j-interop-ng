@@ -24,11 +24,11 @@ import org.jinterop.dcom.core.JIUnsigned;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.win32.FuncDesc;
-import org.jinterop.dcom.win32.IJIDispatch;
-import org.jinterop.dcom.win32.IJITypeInfo;
-import org.jinterop.dcom.win32.IJITypeLib;
-import org.jinterop.dcom.win32.JIComFactory;
+import org.jinterop.dcom.impls.FuncDesc;
+import org.jinterop.dcom.impls.IJIDispatch;
+import org.jinterop.dcom.impls.IJITypeInfo;
+import org.jinterop.dcom.impls.IJITypeLib;
+import org.jinterop.dcom.impls.JIComFactory;
 
 
 public class FirstContact_Stub implements FirstContact {
@@ -92,7 +92,7 @@ public class FirstContact_Stub implements FirstContact {
 
 			ResourceBundle bundle = JISystem.getErrorMessages();
 			IJIComObject unknown = stub.createInstance();
-			IJIDispatch dispatch = (IJIDispatch)JIComFactory.narrowInstance(unknown.queryInterface(JIComFactory.IID_IDispatch));
+			IJIDispatch dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
 			JIVariant variants = dispatch.callMethodA("GetDispatch");
 			
 //			dispatch.callMethodA("TestVariant1", new Object[]{variants[1]} );
@@ -550,7 +550,7 @@ public class FirstContact_Stub implements FirstContact {
 			JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("test",1,runtimeObject);
 			interfaceDefinition.addMethodDescriptor(methodDescriptor);
 
-			IJIComObject objMyCOM = JIComFactory.instantiateComObject(handle,JIInterfacePointer.getInterfacePointer(session,component));
+			IJIComObject objMyCOM = JIComFactory.buildObject(session,component);
 			obj.addInParamAsVariant(new JIVariant(objMyCOM),JIFlags.FLAG_NULL);
 			obj.addOutParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 			result = handle.call(obj);

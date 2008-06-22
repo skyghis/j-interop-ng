@@ -33,7 +33,7 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
-import org.jinterop.dcom.win32.IJIDispatch;
+import org.jinterop.dcom.impls.IJIDispatch;
 
 /**<p>Class representing the <code>VARIANT</code> datatype. Please use the <code>byRef</code> flag based CTORs for constructing "by reference"
  * parameters in COM calls. Also note that the library is unaware of <code>[OPTIONAL]</code> parameters , hence they have to be sent as 

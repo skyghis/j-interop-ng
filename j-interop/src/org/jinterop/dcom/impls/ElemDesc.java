@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/**j-Interop (Pure Java implementation of DCOM protocol)  
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -15,41 +15,42 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+
+package org.jinterop.dcom.impls;
 
 import java.io.Serializable;
 
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**
- * @exclude
+/**From MSDN:- <br>
+ * <i>Includes the type description and process-transfer information for a variable <br>
+ * , a function, or a function parameter. <br> <br>
+ * </i>
  * @since 1.0
  *
  */
-public final class IdlDesc implements Serializable{
-
-	private static final long serialVersionUID = 7130410752801712935L;
-	public static final short IDLFLAG_NONE    = ParamDesc.PARAMFLAG_NONE;
-	public static final short IDLFLAG_FIN     = ParamDesc.PARAMFLAG_FIN;
-	public static final short IDLFLAG_FOUT    = ParamDesc.PARAMFLAG_FOUT;
-	public static final short IDLFLAG_FLCID   = ParamDesc.PARAMFLAG_FLCID;
-	public static final short IDLFLAG_FRETVAL = ParamDesc.PARAMFLAG_FRETVAL;
-
+public final class ElemDesc implements Serializable{
 	
-	public final JIPointer dwReserved;
-	public final short wIDLFlags;
+	private static final long serialVersionUID = 3022259075461969376L;
+	public final TypeDesc typeDesc;
+	public final ParamDesc paramDesc; 
 	
-	IdlDesc(JIStruct values)
+	public ElemDesc(JIStruct values)
 	{
 		if (values == null)
 		{
-			dwReserved = null;
-			wIDLFlags = -1;
+			typeDesc = null;
+			paramDesc = null;
 			return;
 		}
-		dwReserved = (JIPointer)values.getMember(0);
-		wIDLFlags = ((Short)values.getMember(1)).shortValue();
+		typeDesc = new TypeDesc((JIStruct)values.getMember(0));
+		paramDesc = new ParamDesc((JIStruct)values.getMember(1));	
+	}
+	
+	ElemDesc(JIPointer ptrValues)
+	{
+		this(ptrValues.isNull() ? null : (JIStruct)ptrValues.getReferent());
 	}
 
 }

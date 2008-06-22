@@ -18,8 +18,8 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.win32.IJIDispatch;
-import org.jinterop.dcom.win32.JIComFactory;
+import org.jinterop.dcom.impls.IJIDispatch;
+import org.jinterop.dcom.impls.JIComFactory;
 
 public class MSInternetExplorer {
 
@@ -35,7 +35,7 @@ public class MSInternetExplorer {
 		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
 		IJIComObject ieObjectWebBrowser2 = (IJIComObject)ieObject.queryInterface("D30C1661-CDAF-11D0-8A3E-00C04FC9E26E");
-		ieObjectDispatch = (IJIDispatch)JIComFactory.narrowInstance((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));
+		ieObjectDispatch = (IJIDispatch)JIComFactory.narrowObject((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));
 
 	}
 
@@ -311,7 +311,7 @@ public class MSInternetExplorer {
 
 
 
-		identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIComFactory.buildInstance(session,javaComponent));
+		identifier = JIComFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIComFactory.buildObject(session,javaComponent));
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {

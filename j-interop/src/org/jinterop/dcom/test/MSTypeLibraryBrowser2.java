@@ -12,17 +12,17 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
-import org.jinterop.dcom.win32.ElemDesc;
-import org.jinterop.dcom.win32.FuncDesc;
-import org.jinterop.dcom.win32.IJIDispatch;
-import org.jinterop.dcom.win32.IJITypeInfo;
-import org.jinterop.dcom.win32.IJITypeLib;
-import org.jinterop.dcom.win32.IMPLETYPEFLAGS;
-import org.jinterop.dcom.win32.JIComFactory;
-import org.jinterop.dcom.win32.TYPEKIND;
-import org.jinterop.dcom.win32.TypeAttr;
-import org.jinterop.dcom.win32.TypeDesc;
-import org.jinterop.dcom.win32.VarDesc;
+import org.jinterop.dcom.impls.ElemDesc;
+import org.jinterop.dcom.impls.FuncDesc;
+import org.jinterop.dcom.impls.IJIDispatch;
+import org.jinterop.dcom.impls.IJITypeInfo;
+import org.jinterop.dcom.impls.IJITypeLib;
+import org.jinterop.dcom.impls.IMPLETYPEFLAGS;
+import org.jinterop.dcom.impls.JIComFactory;
+import org.jinterop.dcom.impls.TYPEKIND;
+import org.jinterop.dcom.impls.TypeAttr;
+import org.jinterop.dcom.impls.TypeDesc;
+import org.jinterop.dcom.impls.VarDesc;
 
 public class MSTypeLibraryBrowser2 {
 
@@ -40,7 +40,7 @@ public class MSTypeLibraryBrowser2 {
 	public void start() throws JIException
 	{
 		unknown = comServer.createInstance();
-		dispatch = (IJIDispatch)JIComFactory.narrowInstance(unknown.queryInterface(JIComFactory.IID_IDispatch));
+		dispatch = (IJIDispatch)JIComFactory.narrowObject(unknown.queryInterface(JIComFactory.IID_IDispatch));
 		IJITypeLib typeLib = (IJITypeLib)((Object[])dispatch.getTypeInfo(0).getContainingTypeLib())[0];
 		Object[] result = typeLib.getDocumentation(-1);
 		System.out.println("Name: " + ((JIString)result[0]).getString());

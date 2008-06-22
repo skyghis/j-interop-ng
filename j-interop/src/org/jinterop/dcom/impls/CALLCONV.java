@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
 /**From MSDN <br>
  * <i> Identifies the calling convention used by a member function. </i>

@@ -15,32 +15,41 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
 import java.io.Serializable;
 
+import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
 /**
- * 
+ * @exclude
  * @since 1.0
  *
  */
-public final class SafeArrayBounds implements Serializable{
+public final class IdlDesc implements Serializable{
 
-	private static final long serialVersionUID = -3110688445129575984L;
-	public final int cElements;
-	public final int lLbound;
+	private static final long serialVersionUID = 7130410752801712935L;
+	public static final short IDLFLAG_NONE    = ParamDesc.PARAMFLAG_NONE;
+	public static final short IDLFLAG_FIN     = ParamDesc.PARAMFLAG_FIN;
+	public static final short IDLFLAG_FOUT    = ParamDesc.PARAMFLAG_FOUT;
+	public static final short IDLFLAG_FLCID   = ParamDesc.PARAMFLAG_FLCID;
+	public static final short IDLFLAG_FRETVAL = ParamDesc.PARAMFLAG_FRETVAL;
+
 	
-	SafeArrayBounds(JIStruct values)
+	public final JIPointer dwReserved;
+	public final short wIDLFlags;
+	
+	IdlDesc(JIStruct values)
 	{
 		if (values == null)
 		{
-			cElements = -1;
-			lLbound = -1;
+			dwReserved = null;
+			wIDLFlags = -1;
 			return;
 		}
-		cElements = ((Integer)values.getMember(0)).intValue();
-		lLbound = ((Integer)values.getMember(0)).intValue();
+		dwReserved = (JIPointer)values.getMember(0);
+		wIDLFlags = ((Short)values.getMember(1)).shortValue();
 	}
+
 }

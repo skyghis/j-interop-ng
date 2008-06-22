@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)  
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -15,17 +15,19 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package org.jinterop.dcom.win32;
+package org.jinterop.dcom.impls;
 
-/**
- * Rectangle boundaries in pix.
+/**Function specifier.
+ * 
  * @since 1.0
- *@exclude
+ *
  */
-public final class JIRect
-{
-  public int bottom;
-  public int left;
-  public int right;
-  public int top;
+public interface FUNCKIND {
+
+	public static final Integer FUNC_VIRTUAL = new Integer(0);
+	public static final Integer FUNC_PUREVIRTUAL = new Integer(1);
+	public static final Integer FUNC_NONVIRTUAL = new Integer(2);
+	public static final Integer FUNC_STATIC = new Integer(3);
+	public static final Integer FUNC_DISPATCH = new Integer(4);
+	
 }

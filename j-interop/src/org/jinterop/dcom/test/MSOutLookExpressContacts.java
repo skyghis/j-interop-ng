@@ -11,8 +11,8 @@ import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIVariant;
-import org.jinterop.dcom.win32.IJIDispatch;
-import org.jinterop.dcom.win32.JIComFactory;
+import org.jinterop.dcom.impls.IJIDispatch;
+import org.jinterop.dcom.impls.JIComFactory;
 
 public class MSOutLookExpressContacts {
 
