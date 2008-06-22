@@ -124,7 +124,7 @@ public class Ntlm1 implements NtlmFlags, Security {
             //this should result in an access denied fault
             if (!keyFactory.compareSignature(verifier, signing))
             {
-            	throw new IntegrityException("Message out of sequence.");
+            	throw new IntegrityException("Message out of sequence. Perhaps the user being used to run this application is different from the one under which the COM server is running !.");
             }
       
             //only clients increment, servers just respond to the clients seq id.
