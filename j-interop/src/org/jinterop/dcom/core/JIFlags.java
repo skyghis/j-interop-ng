@@ -116,4 +116,17 @@ public final class JIFlags {
 	 * Used from within JIInterfacePointer to use decode2 API.
 	 */
 	static final int FLAG_REPRESENTATION_INTERFACEPTR_DECODE2 = 32768;
+	
+	/**
+	 * Used in JIVariant when sending a IUnknown Pointer. This is also how COM runtime does it.
+	 * A little strange to expect this behaviour since essentially all objects derieve from IUnknown so why replace the
+	 * IID ?
+	 */
+	static final int FLAG_REPRESENTATION_USE_IUNKNOWN_IID = 65536;
+	
+	/**
+	 * Used in JIVariant when sending a IDispatch Pointer. This is also how COM runtime does it.
+	 */
+	static final int FLAG_REPRESENTATION_USE_IDISPATCH_IID = 131072;
+	
 }

@@ -185,6 +185,15 @@ public final class JIVariant implements Serializable {
 	{
 		Integer retVal = (Integer)supportedTypes.get(c);
 		
+		if (retVal == null && IJIComObject.class.equals(c))
+		{
+			retVal = new Integer(VT_UNKNOWN);
+		}
+		
+		if (retVal == null && IJIDispatch.class.equals(c))
+		{
+			retVal = new Integer(VT_DISPATCH);
+		}
 		//means that if retval came back as VT_I4, we should make that VT_INT
 		if (retVal.intValue() == VT_I4 && 
 		   (FLAG & JIFlags.FLAG_REPRESENTATION_VT_INT) == JIFlags.FLAG_REPRESENTATION_VT_INT)
@@ -204,26 +213,20 @@ public final class JIVariant implements Serializable {
 	static Integer getSupportedType(Object o, int defaultType)
 	{
 		Class c = o.getClass();
-		if(o instanceof IJIComObject)
+		Integer retval = (Integer)supportedTypes.get(c);
+		
+		// Order is important since IJIDispatch derieves from IJIComObject
+		if(retval == null && o instanceof IJIDispatch)
 		{
-			String IID = "";
-			try{
-				IID = ((IJIComObject)o).getInterfaceIdentifier();
-			}catch(NullPointerException npe) //this will come if the MIP is not fully done yet i.e deffered.
-			{
-				return new Integer(defaultType); //this will only be sent properly incase of JIInterfacePointer
-			}
-			
-			if (IID.equals(IJIComObject.IID))
-			{
-				return new Integer(VT_UNKNOWN);
-			}
-			else
-			{
-				return new Integer(VT_DISPATCH);
-			}
+			retval = new Integer(VT_DISPATCH);
 		}
-		return (Integer)supportedTypes.get(c);
+		
+		if(retval == null && o instanceof IJIComObject)
+		{
+			retval = new Integer(VT_UNKNOWN);
+		}
+				
+		return retval;
 	}
 	
 	/**
@@ -378,7 +381,7 @@ public final class JIVariant implements Serializable {
 	public void setFlag(int FLAG)
 	{
 		VariantBody variantBody = ((VariantBody)member.getReferent());
-		variantBody.FLAG = FLAG;
+		variantBody.FLAG |= FLAG;
 	}
 	
 	/**Returns the flag value for this variant.
@@ -542,6 +545,14 @@ public final class JIVariant implements Serializable {
 	public JIVariant(IJIComObject value, boolean isByRef)
 	{
 		this((Object)value,isByRef);
+		if (value instanceof IJIDispatch)
+		{
+			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID);
+		}
+		else
+		{
+			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID);
+		}
 	}
 	
 	
@@ -640,6 +651,14 @@ public final class JIVariant implements Serializable {
 	public JIVariant(IJIComObject value)
 	{
 		this((Object)value);
+		if (value instanceof IJIDispatch)
+		{
+			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID);
+		}
+		else
+		{
+			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID);
+		}
 	}
 	
 	/**Setting up a <code>VARIANT</code> with an java.util.Date. Used via serializing the <code>VARIANT</code>.
@@ -829,10 +848,12 @@ public final class JIVariant implements Serializable {
 				if (c.equals(IJIComObject.class))
 				{
 					flags = (short)(flags | JIVariant.FADF_UNKNOWN);
+					FLAG |= JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID;
 				}else
 				if (c.equals(IJIDispatch.class))
 				{
 					flags = (short)(flags | JIVariant.FADF_DISPATCH);
+					FLAG |= JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID;
 				}
 				elementSize = 4; //Since all these are pointers inherently 
 			}
@@ -1114,7 +1135,8 @@ public final class JIVariant implements Serializable {
 	}
 
 	/**Retrieves the contained object as JIArray. Only 1 and 2 dim arrays are supported currently.
-	 * Please note that this array is not backed by the Variant and is a new Copy.
+	 * Please note that this array is not backed by the Variant and is a new Copy. If the Array is IJIComObjects, please make sure 
+	 * to use JIObjectFactory.narrowObject() to get the right instance.
 	 * 
 	 * @return
 	 * @throws JIException
@@ -2168,17 +2190,14 @@ class VariantBody implements Serializable
 	{
 		int type = 0; //EMPTY
 		
+		if (obj instanceof IJIDispatch)
+		{
+			return JIVariant.VT_DISPATCH;
+		}
+		
 		if (obj instanceof IJIComObject)
 		{
-			if (((IJIComObject)obj).getInterfaceIdentifier().equalsIgnoreCase(JIRemUnknown.IID_IUnknown))
-			{
-				type = JIVariant.VT_UNKNOWN;
-			}
-			else
-			{
-				type = JIVariant.VT_DISPATCH;
-			}
-			return type;
+			return JIVariant.VT_UNKNOWN;
 		}
 		
 		if (c != null)

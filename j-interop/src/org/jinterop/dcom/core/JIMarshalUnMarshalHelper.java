@@ -1251,7 +1251,7 @@ final class JIMarshalUnMarshalHelper {
 	private static class MInterfacePointerImpl2 implements SerializerDeserializer {
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			((JIInterfacePointerBody)value).encode(ndr);
+			((JIInterfacePointerBody)value).encode(ndr,FLAG);
 		}
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{

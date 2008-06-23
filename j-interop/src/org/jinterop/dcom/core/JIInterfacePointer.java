@@ -26,6 +26,7 @@ import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
 
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 /**<p> Class representing a Marshalled Interface Pointer. You will never use the members of this 
  * class directly, but always as an implementation of <code>IJIComObject</code> interface.
@@ -459,7 +460,7 @@ class JIInterfacePointerBody implements Serializable
 	    }
 	    
 	    
-	    void encode(NetworkDataRepresentation ndr)
+	    void encode(NetworkDataRepresentation ndr, int FLAGS)
 	    {
 	    	
 	    	//now for length  
@@ -477,6 +478,16 @@ class JIInterfacePointerBody implements Serializable
 	    	
 	    	try {
 				rpc.core.UUID ipid2 = new rpc.core.UUID(iid);
+				
+				if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID) == JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID )
+				{
+					ipid2 = new rpc.core.UUID(IJIComObject.IID);
+				}
+				else if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) == JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID)
+				{
+					ipid2 = new rpc.core.UUID(IJIDispatch.IID);
+				}
+				
 				ipid2.encode(ndr,ndr.getBuffer());
 			} catch (NdrException e) {
 				// TODO Auto-generated catch block

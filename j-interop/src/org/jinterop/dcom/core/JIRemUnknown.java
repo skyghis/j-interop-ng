@@ -33,7 +33,7 @@ import rpc.core.UUID;
 final class JIRemUnknown extends NdrObject {
 
 	public static final String IID_IUnknown = "00000143-0000-0000-c000-000000000046"; 
-	public static final String IID_IDispatch = "00020400-0000-0000-c000-000000000046"; 
+//	public static final String IID_IDispatch = "00020400-0000-0000-c000-000000000046"; 
 	private String ipidOfIUnknown = null;
 	private String requestedIID = null;
 	private JIInterfacePointer iidPtr = null;
