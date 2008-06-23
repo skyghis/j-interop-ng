@@ -296,6 +296,25 @@ public final class JIVariant implements Serializable {
 	 */
 	public static final SCODE SCODE = new SCODE();
 	
+	/** Helper method for creating an Array of BSTRs , IDL signature [in, out] SAFEARRAY(BSTR) *p. The return value can directly be used in an IJIDispatch call.
+	 * 
+	 * @return
+	 */
+	public static JIVariant BSTRARRAY()
+	{
+		return new JIVariant(new JIArray(new JIString[]{new JIString("")}, true),true);
+	}
+	
+	/** Helper method for creating an Array of VARIANTs , IDL signature [in, out] SAFEARRAY(VARIANT) *p OR [in,out] VARIANT *pArray. The return value can directly be used in an IJIDispatch call.
+	 * 
+	 * @return
+	 */
+	public static JIVariant VARIANTARRAY()
+	{
+		return new JIVariant(new JIArray(new JIVariant[]{JIVariant.EMPTY()}, true),true);
+	}
+	
+	
 	JIPointer member = null;
 	
 	private JIVariant(){}
