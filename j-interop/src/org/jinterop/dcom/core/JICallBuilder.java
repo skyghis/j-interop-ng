@@ -40,7 +40,7 @@ import rpc.core.UUID;
  * <br> Sample Usage:-
  * <code>
  *  <br>
- *  JICallObject obj = new JICallObject(handle.getIpid()); <br>
+ *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
  *  obj.reInit(); <br>
  *	obj.setOpnum(94); //This needs to be obtained via IDL, Other wise use IJIDispatch if COM <i>IDispatch</i> <br> 
  *					  //interface is supported by the underlying COM Object.
@@ -65,7 +65,7 @@ import rpc.core.UUID;
  * </p>
  * @since 1.0
  */
-public class JICallObject extends NdrObject implements Serializable {
+public class JICallBuilder extends NdrObject implements Serializable {
 
 	static final String CURRENTSESSION = "CURRENTSESSION";
 	static final String COMOBJECTS = "COMOBJECTS";
@@ -84,31 +84,31 @@ public class JICallObject extends NdrObject implements Serializable {
 	private Object[] resultsOfException = null;
 	private JISession session = null;
 	
-	/** Creates a JICallObject associated with an Interface Identifier.
+	/** Creates a JICallBuilder associated with an Interface Identifier.
 	 * 
 	 * @param IPIDofParent Please use <code>IJIComObject.getIpid()</code> for this.
 	 * @param dispatchNotSupported true if dispatch is not supported by the Interface, please use <code>IJIComObject.isDispatchSupported()</code> <br>
 	 * to find out whether dispatch is supported on the parent or not.
 	 */
-	public JICallObject(String IPIDofParent,boolean dispatchNotSupported)
+	public JICallBuilder(String IPIDofParent,boolean dispatchNotSupported)
 	{
 		this(IPIDofParent);
 		this.dispatchNotSupported = dispatchNotSupported;
 	}
 	
-	/**<p> Creates a JICallObject associated with an Interface Identifier. This ctor assumes that Dispatch is 
+	/**<p> Creates a JICallBuilder associated with an Interface Identifier. This ctor assumes that Dispatch is 
 	 * supported by the Interface.
 	 * 
 	 * <br> Sample Usage:-
 	 * <code>
 	 *  <br>
 	 *  //handle is an IJIComObject obtained before <br> 
-	 *  JICallObject obj = new JICallObject(handle.getIpid()); <br>
+	 *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
 	 *  </code>
 	 *  </p>
 	 * @param IPIDofParent Please use <code>IJIComObject.getIpid()</code> for this.
 	 */
-	public JICallObject(String IPIDofParent)
+	public JICallBuilder(String IPIDofParent)
 	{
 		enclosingParentsIPID = IPIDofParent;
 	}
@@ -1038,10 +1038,10 @@ public class JICallObject extends NdrObject implements Serializable {
 			{
 				JIComObjectImpl comObjectImpl = (JIComObjectImpl)comObjects.get(i);
 				try {
-					comObjectImpl.replaceMembers(JISessionHelper.instantiateComObject2(session, comObjectImpl.getInterfacePointer()));
+					comObjectImpl.replaceMembers(JISessionHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer()));
 					JISessionHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
 				} catch (JIException e) {
-					JISystem.getLogger().throwing("JICallObject", "readPacket", e);
+					JISystem.getLogger().throwing("JICallBuilder", "readPacket", e);
 					throw new JIRuntimeException(e.getErrorCode());
 				}
 				//replace the members of the original com objects by the completed ones.

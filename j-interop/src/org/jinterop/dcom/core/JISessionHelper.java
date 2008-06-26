@@ -85,7 +85,7 @@ public final class JISessionHelper {
 		return session.getStub().getServerInterfacePointer();
 	}
 	
-	 /** Must be called once and only once from JICallObject "read" to create the right pointer in case of man in the middle scenario and 
+	 /** Must be called once and only once from JICallBuilder "read" to create the right pointer in case of man in the middle scenario and 
 	  * add it to the session.
 	  * 
 	  * @param session
@@ -142,7 +142,7 @@ public final class JISessionHelper {
 	
 	static void addComObjectToSession(JISession session,IJIComObject comObject)
 	{
-		session.addToSession(comObject,comObject.getInterfacePointer().getOID());
+		session.addToSession(comObject,comObject.internal_getInterfacePointer().getOID());
 	}
 	
  
@@ -203,7 +203,7 @@ public final class JISessionHelper {
     		throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMOBJ_LOCAL_REF));
     	}
     	
-    	return instantiateComObject(session, comObject.getInterfacePointer());
+    	return instantiateComObject(session, comObject.internal_getInterfacePointer());
     }
     
     /**
@@ -228,7 +228,7 @@ public final class JISessionHelper {
 		IJIComObject connectionPointer = (IJIComObject)connectionInfo[0];
 		
 		//first use the cookie to detach.
-		JICallObject object = new JICallObject(connectionPointer.getIpid(),true);
+		JICallBuilder object = new JICallBuilder(connectionPointer.getIpid(),true);
 		object.setOpnum(3);
 		object.addInParamAsInt(((Integer)connectionInfo[1]).intValue(),JIFlags.FLAG_NULL);
 		connectionPointer.call(object);
@@ -257,7 +257,7 @@ public final class JISessionHelper {
 		}
 		//IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
 		IJIComObject connectionPointContainer = (IJIComObject)comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
-		JICallObject object = new JICallObject(connectionPointContainer.getIpid(),true);
+		JICallBuilder object = new JICallBuilder(connectionPointContainer.getIpid(),true);
 		object.setOpnum(1);
 		object.addInParamAsUUID(sourceUUID,JIFlags.FLAG_NULL);
 		object.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);

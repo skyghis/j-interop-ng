@@ -21,7 +21,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIPointer;
@@ -60,7 +60,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 		
 		//prepare the GO here
 		
-		JICallObject obj = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
 		obj.setOpnum(2);
 		obj.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		
@@ -167,7 +167,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public TypeAttr getTypeAttr() throws JIException
 	{
-		JICallObject obj = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
 		obj.setOpnum(0);
 		
 		
@@ -240,7 +240,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public Object[] getContainingTypeLib() throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
 		callObject.setOpnum(15);
@@ -266,7 +266,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.E_INVALIDARG));
 		}
 		
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.addInParamAsInt(memberId,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(invKind,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(1,JIFlags.FLAG_NULL);//refPtrFlags , as per the oaidl.idl...
@@ -286,7 +286,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 //			);
 	public Object[] getDocumentation(int memberId) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.addInParamAsInt(memberId,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(0xb,JIFlags.FLAG_NULL);//refPtrFlags , as per the oaidl.idl...
 		callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
@@ -299,7 +299,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public VarDesc getVarDesc(int index) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(3);
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		
@@ -378,7 +378,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public Object[] getNames(int memberId, int maxNames) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(4);
 		
 		//for experiment only
@@ -400,7 +400,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public int getRefTypeOfImplType(int index) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(5);
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -409,7 +409,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public int getImplTypeFlags(int index) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(6);
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -418,7 +418,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public IJITypeInfo getRefTypeInfo(int hrefType) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(11);
 		callObject.addInParamAsInt(hrefType,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
@@ -428,7 +428,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 //	public int[] getIdOfNames(String[] names) throws JIException
 //	{
-//		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+//		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 //		callObject.setOpnum(7);
 //
 //		JIPointer[] pointers = new JIPointer[names.length];
@@ -467,7 +467,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public IJIComObject createInstance(String riid) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(13);
 		
 		callObject.addInParamAsUUID(riid,JIFlags.FLAG_NULL);
@@ -478,7 +478,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 	public JIString getMops(int memberId) throws JIException
 	{
-		JICallObject callObject = new JICallObject(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
 		callObject.setOpnum(14);
 		callObject.addInParamAsInt(memberId,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);

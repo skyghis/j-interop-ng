@@ -61,7 +61,7 @@ public final class JIArray implements Serializable{
 	
 	/** <P>Creates an array Object of the type specified by <code>clazz</code>. This is used 
 	 * to prepare a template for decoding an array of that type. Used only for setting as an 
-	 * OutParam in a JICallObject. <br>
+	 * OutParam in a JICallBuilder. <br>
 	 *
 	 * For example:- <br>
 	 * This call creates a template for a single dimension Integer array of size 10. 
@@ -86,7 +86,7 @@ public final class JIArray implements Serializable{
 
 	/**<P> Creates an array Object of the type specified by <code>clazz</code>. This is used 
 	 * to prepare a template for decoding an array of that type. Used only for setting as an 
-	 * OutParam in a JICallObject. <br>
+	 * OutParam in a JICallBuilder. <br>
      *
 	 * For example:- <br>
 	 * This call creates a template for a single dimension Integer array of size 10. 

@@ -344,7 +344,7 @@ public final class JIErrorCodes {
  public static final int JI_UTIL_FLAG_ERROR = 0x00001008;
  
  /**
-  * Internal Library Error. This method should not have been called. Please check the parameters which you have passed to JICallObject. 
+  * Internal Library Error. This method should not have been called. Please check the parameters which you have passed to JICallBuilder. 
   * They have been sent incorrectly.
   */
  public static final int JI_UTIL_INCORRECT_CALL = 0x00001009;
@@ -375,7 +375,7 @@ public final class JIErrorCodes {
  public static final int JI_COMSTUB_RR_ERROR = 0x0000100E;
  
  /**
-  *	Internal Library Error, the serializer\deserializer was not found for {0}. Please check the parameters passed to JICallObject.
+  *	Internal Library Error, the serializer\deserializer was not found for {0}. Please check the parameters passed to JICallBuilder.
   */
  public static final int JI_UTIL_SERDESER_NOT_FOUND = 0x0000100F;
  

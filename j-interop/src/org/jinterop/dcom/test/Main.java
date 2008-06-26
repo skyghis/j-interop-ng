@@ -51,7 +51,7 @@ public class Main {
             JISystem.setAutoRegisteration(true);
             JISession session3 = JISession.createSession(domain,username,password);
             session3.useSessionSecurity(true);
-            JIComServer virtualServer = new JIComServer(JIProgId.valueOf(session3, "VirtualServer.Application"),args[0],session3);
+            JIComServer virtualServer = new JIComServer(JIProgId.valueOf("VirtualServer.Application"),args[0],session3);
             IJIComObject unkVirtualServer = virtualServer.createInstance();    
             IJIDispatch dispatchVirtualServer = (IJIDispatch)JIObjectFactory.narrowObject(unkVirtualServer.queryInterface(IJIDispatch.IID));                        
                         

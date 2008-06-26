@@ -72,7 +72,7 @@ final class JIComRuntimeTransport implements Transport {
        
         Endpoint endPoint = null;
         try {
-            socket = (Socket)JISystem.getSocket();
+            socket = (Socket)JISystem.internal_getSocket();
             output = null;
             input = null;
             attached = true;

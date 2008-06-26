@@ -25,7 +25,7 @@ public class MSADO {
 	public MSADO(String address, String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"ADODB.Connection"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("ADODB.Connection"),address,session);
 	}
 
 

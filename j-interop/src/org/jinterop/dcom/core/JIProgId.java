@@ -66,11 +66,10 @@ public class JIProgId  {
 		return autoRegister;
 	}
 	
-	private JIProgId(JISession session,String progId)
+	private JIProgId(String progId)
 	{
 		this.progId = progId;
 		clsid = JIClsid.valueOf(JISystem.getClsidFromProgId(progId));
-		this.session = session;
 	}
 	
 	void setServer(String server)
@@ -120,19 +119,18 @@ public class JIProgId  {
 		//seperate the {}
 		clsid = JIClsid.valueOf(key.substring(key.indexOf("{") + 1,key.indexOf("}")));
 		clsid.setAutoRegistration(autoRegister);
-		JISystem.setClsidtoProgId(progId,clsid.getCLSID());
+		JISystem.internal_setClsidtoProgId(progId,clsid.getCLSID());
 		
 	}
 	
 	/** Creates a JIProgId.
-	 * 
-	 * @param session
 	 * @param progId
+	 * 
 	 * @return
 	 */
-	public static JIProgId valueOf(JISession session,String progId)
+	public static JIProgId valueOf(String progId)
 	{
-		return new JIProgId(session,progId);
+		return new JIProgId(progId);
 	}
 	
 	/** Gets the clsid for this ProgId. 
@@ -149,4 +147,8 @@ public class JIProgId  {
 		return clsid;
 	}
 	
+	void setSession(JISession session)
+	{
+		this.session = session;
+	}
 }

@@ -43,7 +43,8 @@ final class JIComObjectImpl implements IJIComObject {
 	 * 
 	 */
 	private static final long serialVersionUID = -1661750453596032089L;
-	boolean isDual = false;
+	private boolean isDual = false;
+	private boolean dualInfo = false;
 	private transient JISession session = null;
 	private JIInterfacePointer ptr = null;
 	private Map connectionPointInfo = null;
@@ -65,8 +66,7 @@ final class JIComObjectImpl implements IJIComObject {
 	void replaceMembers(IJIComObject comObject)
 	{
 		this.session = comObject.getAssociatedSession();
-		this.ptr = comObject.getInterfacePointer();
-		this.isDual = comObject.isDispatchSupported();
+		this.ptr = comObject.internal_getInterfacePointer();
 	}
 	
 	private void checkLocal()
@@ -86,7 +86,7 @@ final class JIComObjectImpl implements IJIComObject {
 	public void addRef() throws JIException
 	{
 		checkLocal();
-		JICallObject obj = new JICallObject(ptr.getIPID(),true);
+		JICallBuilder obj = new JICallBuilder(ptr.getIPID(),true);
 		obj.setOpnum(1);//addRef
 		
 		//length
@@ -112,7 +112,7 @@ final class JIComObjectImpl implements IJIComObject {
 	public void release() throws JIException
 	{
 		checkLocal();
-		JICallObject obj = new JICallObject(ptr.getIPID(),true);
+		JICallBuilder obj = new JICallBuilder(ptr.getIPID(),true);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)1,JIFlags.FLAG_NULL);
@@ -127,7 +127,7 @@ final class JIComObjectImpl implements IJIComObject {
 	}
 
 
-	public Object[] call(JICallObject obj) throws JIException 
+	public Object[] call(JICallBuilder obj) throws JIException 
 	{
 		checkLocal();
 		return call(obj,timeout);	
@@ -136,7 +136,7 @@ final class JIComObjectImpl implements IJIComObject {
 	
 	
 	
-	public JIInterfacePointer getInterfacePointer()
+	public JIInterfacePointer internal_getInterfacePointer()
 	{
 		return ptr == null ? session.getStub().getServerInterfacePointer() : ptr;
 	}
@@ -177,8 +177,19 @@ final class JIComObjectImpl implements IJIComObject {
 //		return session.getStub();
 //	}
 	
-	public boolean isDispatchSupported()
+	public synchronized boolean isDispatchSupported()
 	{
+		if (!dualInfo)
+		{
+			//query interface for it and then release it.
+			try {
+				IJIComObject comObject = queryInterface("00020400-0000-0000-c000-000000000046");
+				comObject.release();
+				setIsDual(true);
+			} catch (JIException e) {
+				setIsDual(false);
+			}
+		}
 		return isDual;
 	}
 
@@ -218,7 +229,7 @@ final class JIComObjectImpl implements IJIComObject {
 		session.unregisterUnreferencedHandler(getIpid());
 	}
 
-	public Object[] call(JICallObject obj, int socketTimeout) throws JIException
+	public Object[] call(JICallBuilder obj, int socketTimeout) throws JIException
 	{
 		checkLocal();
 		obj.attachSession(session);
@@ -253,5 +264,11 @@ final class JIComObjectImpl implements IJIComObject {
 
 	public boolean isLocalReference() {
 		return isLocal;
+	}
+	
+	void setIsDual(boolean isDual)
+	{
+		this.dualInfo = true;
+		this.isDual = isDual;
 	}
 }

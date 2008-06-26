@@ -605,7 +605,7 @@ public final class JISession {
 		{
 			JISystem.getLogger().info("releaseRef:Reclaiming from Session: " + getSessionIdentifier() + " , the IPID: " + IPID);
 		}
-		JICallObject obj = new JICallObject(IPID,true);
+		JICallBuilder obj = new JICallBuilder(IPID,true);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)1,JIFlags.FLAG_NULL);
@@ -639,7 +639,7 @@ public final class JISession {
 		{
 			JISystem.getLogger().info("In releaseRefs for session : " + getSessionIdentifier() + " , array length is: " + (short)(((Object[])arrayOfStructs.getArrayInstance()).length));
 		}
-		JICallObject obj = new JICallObject(null,true);
+		JICallBuilder obj = new JICallBuilder(null,true);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)(((Object[])arrayOfStructs.getArrayInstance()).length),JIFlags.FLAG_NULL);

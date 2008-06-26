@@ -32,7 +32,7 @@ public class Test10KServer {
 				{
 
 					JISession session = JISession.createSession(args[1],args[2],args[3]);
-					JIComServer comServer = new JIComServer(JIProgId.valueOf(session,"MSMQ.MSMQQueueInfo"),args[0],session);
+					JIComServer comServer = new JIComServer(JIProgId.valueOf("MSMQ.MSMQQueueInfo"),args[0],session);
 					IJIComObject unknown = comServer.createInstance();
 					IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 					//JISession.destroySession(session);

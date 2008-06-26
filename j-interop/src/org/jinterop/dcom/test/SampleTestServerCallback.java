@@ -10,7 +10,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIInterfaceDefinition;
@@ -81,7 +81,7 @@ public class SampleTestServerCallback {
         public static void testStaticUpdateMeSink(String[] args) throws JIException, InterruptedException, UnknownHostException {
 
           JISession session = JISession.createSession(args[1], args[2], args[3]);
-          JIComServer comStub = new JIComServer(JIProgId.valueOf(session, "TstMarsh.Test"), args[0], session);
+          JIComServer comStub = new JIComServer(JIProgId.valueOf("TstMarsh.Test"), args[0], session);
           IJIComObject unknown = comStub.createInstance();
           IJIComObject ITest = (IJIComObject) unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
 
@@ -94,7 +94,7 @@ public class SampleTestServerCallback {
 
           Object[] results = new Object[1];
           // Create the session
-          JICallObject javaCallback = new JICallObject(ITest.getIpid(), true);
+          JICallBuilder javaCallback = new JICallBuilder(ITest.getIpid(), true);
           javaCallback.setOpnum(0);
           javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long
@@ -145,7 +145,7 @@ public class SampleTestServerCallback {
         public static void testSinkDebug(String[] args) throws JIException, InterruptedException, UnknownHostException {
 
           JISession session = JISession.createSession(args[1], args[2], args[3]);
-          JIComServer comStub = new JIComServer(JIProgId.valueOf(session, "TstMarsh.Test"), args[0], session);
+          JIComServer comStub = new JIComServer(JIProgId.valueOf("TstMarsh.Test"), args[0], session);
           IJIComObject unknown = comStub.createInstance();
           IJIComObject ITest = (IJIComObject) unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
 
@@ -159,7 +159,7 @@ public class SampleTestServerCallback {
 
           Object[] results = new Object[1];
           // Create the session
-          JICallObject javaCallback = new JICallObject(ITest.getIpid(), true);
+          JICallBuilder javaCallback = new JICallBuilder(ITest.getIpid(), true);
           javaCallback.setOpnum(8);
           javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long

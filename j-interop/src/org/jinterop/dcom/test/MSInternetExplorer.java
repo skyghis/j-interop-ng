@@ -32,7 +32,7 @@ public class MSInternetExplorer {
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
 //		session.useSessionSecurity(true);
-		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
 		IJIComObject ieObjectWebBrowser2 = (IJIComObject)ieObject.queryInterface("D30C1661-CDAF-11D0-8A3E-00C04FC9E26E");
 		ieObjectDispatch = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)ieObject.queryInterface(IJIDispatch.IID));

@@ -38,7 +38,7 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
 /**<p>Class representing the <code>VARIANT</code> datatype. Please use the <code>byRef</code> flag based CTORs for constructing "by reference"
  * parameters in COM calls. Also note that the library is unaware of <code>[OPTIONAL]</code> parameters , hence they have to be sent as 
  * <code>JIVariant.OPTIONAL_PARAM</code>.<p> Please note that if the <code>byRef</code> flag is set then  
- * that Variant should also be added as the outparam to the JICallObject. For developers using the <code>IJIDispatch </code>
+ * that Variant should also be added as the outparam to the JICallBuilder. For developers using the <code>IJIDispatch </code>
  * variant would be returned back to them via the return type JIVariant[] associated with <code>IJIDispatch</code> Apis. <br> <br>
  * 
  * An <b>important</b> note for Boolean Arrays (JIArray of Boolean), please set the JIFlag.FLAG_REPRESENTATION_VARIANT_BOOL using the <i>setFlag</i>
@@ -1891,7 +1891,7 @@ class VariantBody implements Serializable
 		}else // for Interface pointers without  
 		if((obj instanceof IJIComObject))
 		{
-			double value = ((IJIComObject)obj).getInterfacePointer().getLength();
+			double value = ((IJIComObject)obj).internal_getInterfacePointer().getLength();
 			if (isByRef)
 			{
 				value = value + 4;
@@ -1939,7 +1939,7 @@ class VariantBody implements Serializable
 		}else // for Interface pointers without  
 		if(obj instanceof IJIComObject)
 		{
-			double value = ((IJIComObject)obj).getInterfacePointer().getLength();
+			double value = ((IJIComObject)obj).internal_getInterfacePointer().getLength();
 			value = value + 4 + 4 + 4; //20 of variant , 4 of the ptr, 4 of max count, 4 of actual count
 		}
 		

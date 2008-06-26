@@ -115,7 +115,7 @@ public class TestJIThreading  {
 				//this.session.setGlobalSocketTimeout( 60000 );
 
 				// by name, requires local access (for registry search), or a populated progIdVsClsidDB.properties
-				JIProgId progId = JIProgId.valueOf( session, comServerName );
+				JIProgId progId = JIProgId.valueOf( comServerName );
 
 				JIComServer baseComServer = new JIComServer( progId, host, session );
 

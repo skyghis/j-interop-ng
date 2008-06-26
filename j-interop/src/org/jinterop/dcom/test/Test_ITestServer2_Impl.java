@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIInterfaceDefinition;
@@ -44,22 +44,22 @@ public class Test_ITestServer2_Impl {
 			JISystem.getLogger().setLevel(Level.ALL);
 			JISession session1 = JISession.createSession(args[1],args[2],args[3]);
 			JISession session2 = JISession.createSession(args[1],args[2],args[3]);
-			JIComServer testServer1 = new JIComServer(JIProgId.valueOf(session1,"TestJavaServer.TestServer1"),args[0],session1);
+			JIComServer testServer1 = new JIComServer(JIProgId.valueOf("TestJavaServer.TestServer1"),args[0],session1);
 			IJIComObject unkTestServer1 = testServer1.createInstance();
 			IJIComObject testServer1Intf = JIObjectFactory.narrowObject(unkTestServer1.queryInterface("2A93A24D-59FE-4DE0-B67E-B8D41C9F57F8"));
 			IJIDispatch dispatch1 = (IJIDispatch)JIObjectFactory.narrowObject(unkTestServer1.queryInterface(IJIDispatch.IID));;
 			
 			//First lets call the ITestServer1.Call_TestServer2_Java using the Dispatch interface
 			//Acquire a reference to ITestServer2
-			JIComServer testServer2 = new JIComServer(JIProgId.valueOf(session2,"TestJavaServer.TestServer2"),args[0],session2);
+			JIComServer testServer2 = new JIComServer(JIProgId.valueOf("TestJavaServer.TestServer2"),args[0],session2);
 			IJIComObject unkTestServer2 = testServer2.createInstance();
 			//Get the interface pointer to ITestServer2
 			IJIComObject iTestServer2 = (IJIComObject)JIObjectFactory.narrowObject(unkTestServer2.queryInterface("9CCC5120-457D-49F3-8113-90F7E97B54A7"));
 		
 			IJIDispatch dispatch2 = (IJIDispatch)JIObjectFactory.narrowObject(unkTestServer2.queryInterface(IJIDispatch.IID));;
 			
-			//send it directly without IDispatch interface, please note that the "dispatchNotSupported" flag of JICallObject is "false".
-			JICallObject callObject = new JICallObject(testServer1Intf.getIpid(),false);
+			//send it directly without IDispatch interface, please note that the "dispatchNotSupported" flag of JICallBuilder is "false".
+			JICallBuilder callObject = new JICallBuilder(testServer1Intf.getIpid(),false);
 			callObject.addInParamAsComObject(iTestServer2, JIFlags.FLAG_NULL);
 			callObject.setOpnum(0);
 			testServer1Intf.call(callObject);

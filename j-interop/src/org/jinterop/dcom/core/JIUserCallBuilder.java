@@ -24,12 +24,12 @@ import ndr.NetworkDataRepresentation;
  * Users can implement this class to provide for custom handling of there objects
  * @since 1.0
  */
-public abstract class JIUserCallObject extends JICallObject {
+public abstract class JIUserCallBuilder extends JICallBuilder {
 
 	public abstract void writeObject(NetworkDataRepresentation ndr);
 	public abstract void readObject(NetworkDataRepresentation ndr);
 	
-	public JIUserCallObject(String parentIpid)
+	public JIUserCallBuilder(String parentIpid)
 	{
 		super(parentIpid);
 	}

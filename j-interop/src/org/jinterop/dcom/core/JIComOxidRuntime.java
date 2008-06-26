@@ -462,7 +462,7 @@ final class JIComOxidRuntime {
 				    	//System.err.println("VIKRAM: Accepting new Call from " + socket.getPort());
 				    	//in a multithreaded scenario this will be serialized.
 				    	synchronized (mutex) {
-				    		JISystem.setSocket(socket);
+				    		JISystem.internal_setSocket(socket);
 					    	//now create the JIComOxidRuntimeHelper Object and start it.
 				    		Properties properties = new Properties(defaults);
 				    		properties.put("IID","99fcfec4-5260-101b-bbcb-00aa0021347a:0.0".toUpperCase()); //IOxidResolver

@@ -59,14 +59,14 @@ public class JIComObjectImplWrapper implements IJIComObject {
 		return comObject.getIpid();
 	}
 	
-	public Object[] call(JICallObject obj) throws JIException
+	public Object[] call(JICallBuilder obj) throws JIException
 	{
 		return comObject.call(obj);
 	}
 	
-	public JIInterfacePointer getInterfacePointer()
+	public JIInterfacePointer internal_getInterfacePointer()
 	{
-		return comObject.getInterfacePointer();
+		return comObject.internal_getInterfacePointer();
 	}
 	
 	public JISession getAssociatedSession()
@@ -127,7 +127,7 @@ public class JIComObjectImplWrapper implements IJIComObject {
 	}
 
 
-	public Object[] call(JICallObject obj, int timeout) throws JIException
+	public Object[] call(JICallBuilder obj, int timeout) throws JIException
 	{
 		return comObject.call(obj, timeout);
 	}

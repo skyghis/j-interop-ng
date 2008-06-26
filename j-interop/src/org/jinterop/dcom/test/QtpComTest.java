@@ -44,7 +44,7 @@ public class QtpComTest {
 
                     session = JISession.createSession(domain,username,password);
 
-                    comServer = new JIComServer(JIProgId.valueOf(session, "QuickTest.Application"), address, session);
+                    comServer = new JIComServer(JIProgId.valueOf("QuickTest.Application"), address, session);
 
 //                    session.setGlobalSocketTimeout(30000);
 

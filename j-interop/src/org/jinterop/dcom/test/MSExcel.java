@@ -28,7 +28,7 @@ public class MSExcel {
 	public MSExcel(String address,String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"Excel.Application"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("Excel.Application"),address,session);
 	}
 
 	public void startExcel() throws JIException

@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIPointer;
@@ -22,7 +22,7 @@ public class MetrikonOPC {
 	public MetrikonOPC(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
-		comStub = new JIComServer(JIProgId.valueOf(session,"Matrikon.OPC.Simulation"),address,session);
+		comStub = new JIComServer(JIProgId.valueOf("Matrikon.OPC.Simulation"),address,session);
 	}
 
 	public void getOPC() throws JIException
@@ -36,7 +36,7 @@ public class MetrikonOPC {
 	public void performOp() throws JIException, InterruptedException
 	{
 
-		JICallObject callObject = new JICallObject ( opcServer.getIpid (), true );
+		JICallBuilder callObject = new JICallBuilder ( opcServer.getIpid (), true );
         callObject.setOpnum ( 0 );
 
         callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR);

@@ -34,7 +34,7 @@ public class MSTypeLibraryBrowser2 {
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
 		session.useSessionSecurity(true);
-		comServer = new JIComServer(JIProgId.valueOf(session,args[4]),address,session);
+		comServer = new JIComServer(JIProgId.valueOf(args[4]),address,session);
 	}
 
 	public void start() throws JIException

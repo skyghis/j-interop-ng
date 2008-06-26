@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
@@ -45,7 +45,7 @@ public class TestCOMServer {
 		System.out.println(results[1]);
 
 		//now without automation
-		JICallObject callObject = new JICallObject(comObject.getIpid());
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid());
 		callObject.setOpnum(1);//obtained from the IDL or TypeLib.
 		callObject.addInParamAsInt(1,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(2,JIFlags.FLAG_NULL);

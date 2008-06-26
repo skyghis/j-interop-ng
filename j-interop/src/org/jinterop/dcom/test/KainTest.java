@@ -23,7 +23,7 @@ public class KainTest {
 	public KainTest(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"Word.Application"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("Word.Application"),address,session);
 	}
 
 	public void startWord() throws JIException

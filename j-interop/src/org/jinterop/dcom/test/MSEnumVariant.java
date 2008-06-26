@@ -25,7 +25,7 @@ public class MSEnumVariant {
 	public MSEnumVariant(String address,String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"StdCollection.VBCollection"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("StdCollection.VBCollection"),address,session);
 		IJIComObject object = comServer.createInstance();
 		dispatch = (IJIDispatch)JIObjectFactory.narrowObject(object.queryInterface(IJIDispatch.IID));
 

@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIProgId;
@@ -22,7 +22,7 @@ public class MSShell {
 	MSShell(String args[]) throws UnknownHostException, JIException
 	{
 		session  = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"Shell.Application"),args[0],session);
+		comServer = new JIComServer(JIProgId.valueOf("Shell.Application"),args[0],session);
 	}
 
 
@@ -34,7 +34,7 @@ public class MSShell {
 		//now we query for the IShellDispatch interface
 		IJIComObject shellDispatch = (IJIComObject)comUnknown.queryInterface("D8F015C0-C278-11CE-A49E-444553540000");
 
-		JICallObject callObject = new JICallObject(shellDispatch.getIpid());
+		JICallBuilder callObject = new JICallBuilder(shellDispatch.getIpid());
 //		callObject.setOpnum(5);
 //		callObject.addInParamAsVariant(new JIVariant(new JIString("c:")),JIFlags.FLAG_NULL);
 //		Object result[] = shellDispatch.call(callObject);
@@ -50,7 +50,7 @@ public class MSShell {
 		Object[] result = shellDispatch.call(callObject);
 		IJIComObject folder = JIObjectFactory.narrowObject((IJIComObject)result[0]);
 
-		callObject = new JICallObject(folder.getIpid());
+		callObject = new JICallBuilder(folder.getIpid());
 		callObject.setOpnum(0);
 		callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
 		result = folder.call(callObject);
@@ -81,7 +81,7 @@ public class MSShell {
 		result = folder.call(callObject);
 		IJIComObject folderItems = JIObjectFactory.narrowObject((IJIComObject)result[0]);
 
-		callObject = new JICallObject(folderItems.getIpid());
+		callObject = new JICallBuilder(folderItems.getIpid());
 		callObject.setOpnum(0);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		result = folderItems.call(callObject);
@@ -98,7 +98,7 @@ public class MSShell {
 			IJIComObject folderItem = JIObjectFactory.narrowObject((IJIComObject)result[0]);
 
 
-			JICallObject callObject2 = new JICallObject(folderItem.getIpid());
+			JICallBuilder callObject2 = new JICallBuilder(folderItem.getIpid());
 			callObject2.setOpnum(2);
 			callObject2.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
 			result = folderItem.call(callObject2);
@@ -112,7 +112,7 @@ public class MSShell {
 
 
 			callObject2.reInit();
-			callObject2 = new JICallObject(folderItem.getIpid());
+			callObject2 = new JICallBuilder(folderItem.getIpid());
 			callObject2.setOpnum(9);
 			//VARIANT_BOOL is Boolean
 			callObject2.addOutParamAsType(Boolean.class,JIFlags.FLAG_NULL);
@@ -130,7 +130,7 @@ public class MSShell {
 			}
 
 			callObject2.reInit();
-			callObject2 = new JICallObject(folderItem.getIpid());
+			callObject2 = new JICallBuilder(folderItem.getIpid());
 			callObject2.setOpnum(13);
 			callObject2.addOutParamAsObject((Integer.class),JIFlags.FLAG_NULL);
 			result = folderItem.call(callObject2);

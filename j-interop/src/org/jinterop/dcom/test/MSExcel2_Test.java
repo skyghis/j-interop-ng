@@ -28,7 +28,7 @@ public class MSExcel2_Test {
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
 		session.useSessionSecurity(true);
-		comServer = new JIComServer(JIProgId.valueOf(session,"Excel.Application"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("Excel.Application"),address,session);
 	}
 
 	public void startExcel() throws JIException

@@ -25,7 +25,7 @@ public class MSTypeLibraryBrowser {
 	public MSTypeLibraryBrowser(String address, String args[]) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"InternetExplorer.Application"),address,session);
+		comServer = new JIComServer(JIProgId.valueOf("InternetExplorer.Application"),address,session);
 	}
 
 	public void start() throws JIException

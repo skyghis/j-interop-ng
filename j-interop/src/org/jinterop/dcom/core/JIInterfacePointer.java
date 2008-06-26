@@ -34,7 +34,7 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
  * Sample Usage:-
  * <br><code>
  * IJIComObject connectionPointContainer = (IJIComObject)ieObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07"); <br>
- * JICallObject object = new JICallObject(connectionPointContainer.getIpid(),true); <br>
+ * JICallBuilder object = new JICallBuilder(connectionPointContainer.getIpid(),true); <br>
  * object.setOpnum(1); <br>
  * object.addInParamAsUUID("34A715A0-6587-11D0-924A-0020AFC7AC4D",JIFlags.FLAG_NULL); <br>
  * object.addOutParamAsObject(JIInterfacePointer.class,JIFlags.FLAG_NULL); <br>

@@ -10,7 +10,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIProgId;
@@ -35,7 +35,7 @@ public class MSWMI {
 		session = JISession.createSession(args[1],args[2],args[3]);
 		session.useSessionSecurity(true);
 		session.setGlobalSocketTimeout(5000);
-		comStub = new JIComServer(JIProgId.valueOf(session,"WbemScripting.SWbemLocator"),address,session);
+		comStub = new JIComServer(JIProgId.valueOf("WbemScripting.SWbemLocator"),address,session);
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
@@ -54,7 +54,7 @@ public class MSWMI {
 
 		//OR
 		//Make a direct call like below , in this case you would get back an interface pointer to ISWbemServices , NOT to it's IDispatch
-		JICallObject callObject = new JICallObject(comObject.getIpid());
+		JICallBuilder callObject = new JICallBuilder(comObject.getIpid());
 		callObject.addInParamAsString(address,JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
@@ -81,6 +81,9 @@ public class MSWMI {
 		JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
 		IJIComObject object2 = variant.getObjectAsComObject();
 
+		System.out.println(object2.isDispatchSupported());
+		System.out.println(object2.isDispatchSupported());
+		
 		object2.registerUnreferencedHandler(session, new IJIUnreferenced(){
 			public void unReferenced()
 			{
@@ -94,7 +97,7 @@ public class MSWMI {
 
 		//OR
 		//It returns back the pointer to ISWbemObjectSet
-		callObject = new JICallObject(wbemServices.getIpid());
+		callObject = new JICallBuilder(wbemServices.getIpid());
 		callObject.addInParamAsString("Win32_Process",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsInt(0,JIFlags.FLAG_NULL);
 		callObject.addInParamAsPointer(null,JIFlags.FLAG_NULL);

@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JICallObject;
+import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
 import org.jinterop.dcom.core.JIProgId;
@@ -22,7 +22,7 @@ public class MSOutLookExpressContacts {
 	MSOutLookExpressContacts(String args[]) throws UnknownHostException, JIException
 	{
 		session  = JISession.createSession(args[1],args[2],args[3]);
-		comServer = new JIComServer(JIProgId.valueOf(session,"Outlook.Application"),args[0],session);
+		comServer = new JIComServer(JIProgId.valueOf("Outlook.Application"),args[0],session);
 	}
 
 	void doStuff() throws JIException
@@ -30,14 +30,14 @@ public class MSOutLookExpressContacts {
 		IJIComObject unknown = (IJIComObject)comServer.createInstance();
 		IJIComObject application = (IJIComObject)unknown.queryInterface("00063001-0000-0000-C000-000000000046");
 
-		JICallObject callObject = new JICallObject(application.getIpid(),!application.isDispatchSupported());
+		JICallBuilder callObject = new JICallBuilder(application.getIpid(),!application.isDispatchSupported());
 		callObject.setOpnum(12);
 		callObject.addInParamAsString("MAPI", JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] res = application.call(callObject);
 
 		IJIComObject namespace = JIObjectFactory.narrowObject((IJIComObject)res[0]);
-		callObject = new JICallObject(namespace.getIpid());
+		callObject = new JICallBuilder(namespace.getIpid());
 		callObject.setOpnum(16);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		res = namespace.call(callObject);
@@ -49,7 +49,7 @@ public class MSOutLookExpressContacts {
 		}
 
 		IJIComObject folder = JIObjectFactory.narrowObject((IJIComObject)res[0]);
-		callObject = new JICallObject(folder.getIpid());
+		callObject = new JICallBuilder(folder.getIpid());
 		callObject.setOpnum(4);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		res = folder.call(callObject);
@@ -71,7 +71,7 @@ public class MSOutLookExpressContacts {
 		}
 
 		IJIComObject items = JIObjectFactory.narrowObject((IJIComObject)res[0]);
-		callObject = new JICallObject(items.getIpid());
+		callObject = new JICallBuilder(items.getIpid());
 		callObject.setOpnum(12);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		res = items.call(callObject);
@@ -86,7 +86,7 @@ public class MSOutLookExpressContacts {
 			String details = null;
 			IJIDispatch contactItem = (IJIDispatch)JIObjectFactory.narrowObject((IJIComObject)res[0]);
 			JIVariant res2 = contactItem.get("FullName");
-//			callObject = new JICallObject(contactItem.getIpid());
+//			callObject = new JICallBuilder(contactItem.getIpid());
 //			callObject.setOpnum(124);
 //			callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
 //			res = contactItem.call(callObject);
@@ -101,7 +101,7 @@ public class MSOutLookExpressContacts {
 
 			System.out.println(details);
 
-			callObject = new JICallObject(items.getIpid());
+			callObject = new JICallBuilder(items.getIpid());
 			callObject.setOpnum(14);
 			callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 			res = items.call(callObject);

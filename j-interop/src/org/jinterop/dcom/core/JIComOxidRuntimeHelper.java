@@ -130,7 +130,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 						JISystem.getLogger().info("RemUnknown Thread: Got Connection from " + socket.getPort());
 					}
 					synchronized (JIComOxidRuntime.mutex) {
-			    		JISystem.setSocket(socket);
+			    		JISystem.internal_setSocket(socket);
 				    	//now create the JIComOxidRuntimeHelper Object and start it.
 			    		attach();
 			    		//getEndpoint().getSyntax().getUuid().toString();
@@ -767,7 +767,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			
 			//JIOrpcThat.encode(ndr2);
 			//have to create a call Object, since these return types could be structs , unions etc. having deffered pointers 
-			JICallObject callObject = new JICallObject(null);
+			JICallBuilder callObject = new JICallBuilder(null);
 			callObject.attachSession(component.getSession());
 			if (result != null)
 			{

@@ -401,6 +401,7 @@ public class JIComServer extends Stub {
 		address = address.trim();
 		address = InetAddress.getByName(address).getHostAddress();
 		
+		progId.setSession(session);
 		progId.setServer(address);
 		address = "ncacn_ip_tcp:"+address+"[135]";
 		JIClsid clsid = progId.getCorrespondingCLSID();
@@ -664,7 +665,7 @@ public class JIComServer extends Stub {
 			if (!iid.equalsIgnoreCase("00020400-0000-0000-c000-000000000046"))
 			{
 				boolean success = true;
-				((JIComObjectImpl)retval).isDual = true;
+				((JIComObjectImpl)retval).setIsDual(true);
 				//now to check whether it supports IDispatch
 				//IDispatch 00020400-0000-0000-c000-000000000046
 				JIRemUnknown dispatch = new JIRemUnknown(retval.getIpid(),"00020400-0000-0000-c000-000000000046");
@@ -678,7 +679,7 @@ public class JIComServer extends Stub {
 				}catch (JIRuntimeException e1)
 				{
 					//will eat this exception here. 
-					((JIComObjectImpl)retval).isDual = false;
+					((JIComObjectImpl)retval).setIsDual(false);
 					success = false;
 				}
 				
@@ -729,7 +730,11 @@ public class JIComServer extends Stub {
 				//session.addToSession(comObject2,remoteActivation.dispOid);
 				session.releaseRef(remoteActivation.dispIpid);
 				remoteActivation.dispIpid = null;
-				((JIComObjectImpl)comObject).isDual = true;
+				((JIComObjectImpl)comObject).setIsDual(true);
+			}
+			else
+			{
+				((JIComObjectImpl)comObject).setIsDual(false);
 			}
 			serverInstantiated = true;
 		}
@@ -796,7 +801,7 @@ public class JIComServer extends Stub {
 	 * @return
 	 * @throws JIException
 	 */ 
-	Object[] call(JICallObject obj,String targetIID) throws JIException
+	Object[] call(JICallBuilder obj,String targetIID) throws JIException
 	{
 		return call(obj, targetIID, session.getGlobalSocketTimeout());
 	}
@@ -810,7 +815,7 @@ public class JIComServer extends Stub {
 	 * @return
 	 * @throws JIException
 	 */ 
-	Object[] call(JICallObject obj,String targetIID, int socketTimeout) throws JIException
+	Object[] call(JICallBuilder obj,String targetIID, int socketTimeout) throws JIException
 	{
 		synchronized (mutex) {
 			
@@ -865,7 +870,7 @@ public class JIComServer extends Stub {
 		return remoteActivation == null ? interfacePtrCtor : remoteActivation.getMInterfacePointer();
 	}
 
-	void addRef_ReleaseRef(JICallObject obj) throws JIException
+	void addRef_ReleaseRef(JICallBuilder obj) throws JIException
 	{
 		synchronized (mutex) {
 		

@@ -54,7 +54,7 @@ public class WshShell {
 
             session = JISession.createSession(domain,username,password);
 
-            comServer = new JIComServer(JIProgId.valueOf(session, "WScript.Shell"), address, session);
+            comServer = new JIComServer(JIProgId.valueOf("WScript.Shell"), address, session);
 
       }
 

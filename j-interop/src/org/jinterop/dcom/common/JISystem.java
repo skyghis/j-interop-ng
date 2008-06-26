@@ -282,7 +282,7 @@ public final class JISystem {
 	/**Stores it in a temporary hash map here, and this is later persisted when the library is shutdown
 	 * @exclude
 	 */
-	public static void setClsidtoProgId(String progId, String clsid)
+	public static void internal_setClsidtoProgId(String progId, String clsid)
 	{
 		mapOfProgIdsVsClsids.put(progId,clsid);
 	}
@@ -291,7 +291,7 @@ public final class JISystem {
 	 * @exclude
 	 * @return
 	 */
-	public static Object getSocket()
+	public static Object internal_getSocket()
 	{
 		//synchronized (socketQueue) 
 		{
@@ -302,7 +302,7 @@ public final class JISystem {
 	/**synchronisation will be performed by the oxid master
 	 * @exclude
 	 */
-	public static void setSocket(Object socket)
+	public static void internal_setSocket(Object socket)
 	{
 		//synchronized (socketQueue) 
 		{

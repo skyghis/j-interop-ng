@@ -86,11 +86,11 @@ public interface IJIComObject extends Serializable {
 	public String getIpid();
 	
 	/** <P>Executes a <i>method call</i> on the actual <code>COM</code> object represented by this interface. All the data like parameter information, operation number etc. are 
-	 *  prepared and sent via the JICallObject.
+	 *  prepared and sent via the JICallBuilder.
 	 * <br>
 	 * <code>
 	 * <br>
-	 *  JICallObject obj = new JICallObject(handle.getIpid()); <br>
+	 *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
 	 *  obj.reInit(); <br>
 	 *	obj.setOpnum(94); //This needs to be obtained via IDL, Other wise use IJIDispatch if COM <i>IDispatch</i> 
 	 *					  //interface is supported by the underlying COM Object.
@@ -103,7 +103,7 @@ public interface IJIComObject extends Serializable {
 	 * </code>
 	 * <br>
 	 * The above example demonstrates a call where no results are expected. When you expect something to be returned back
-	 * , set up the Out Params also in the JICallObject (see corresponding JICallObject javadoc for more details). 
+	 * , set up the Out Params also in the JICallBuilder (see corresponding JICallBuilder javadoc for more details). 
 	 * <br>
 	 * 
 	 * The timeout used here , by default is the instance level timeout. If not instance level timeout has been specified(or is 0) then the global timeout in JISession
@@ -111,18 +111,18 @@ public interface IJIComObject extends Serializable {
 	 * 
 	 * </P>
 	 * @param obj Data Object carrying all information neccessary to make the call.
-	 * @return Object[] representing the results in the order set in JICallObject.
+	 * @return Object[] representing the results in the order set in JICallBuilder.
 	 * 
 	 * @throws JIException
 	 */
-	public Object[] call(JICallObject obj) throws JIException;
+	public Object[] call(JICallBuilder obj) throws JIException;
 	
 	/** <P>Executes a <i>method call</i> on the actual <code>COM</code> object represented by this interface. All the data like parameter information, operation number etc. are 
-	 *  prepared and sent via the JICallObject.
+	 *  prepared and sent via the JICallBuilder.
 	 * <br>
 	 * <code>
 	 * <br>
-	 *  JICallObject obj = new JICallObject(handle.getIpid()); <br>
+	 *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
 	 *  obj.reInit(); <br>
 	 *	obj.setOpnum(94); //This needs to be obtained via IDL, Other wise use IJIDispatch if COM <i>IDispatch</i> 
 	 *					  //interface is supported by the underlying COM Object.
@@ -135,16 +135,16 @@ public interface IJIComObject extends Serializable {
 	 * </code>
 	 * <br>
 	 * The above example demonstrates a call where no results are expected. When you expect something to be returned back
-	 * , set up the Out Params also in the JICallObject (see corresponding JICallObject javadoc for more details). 
+	 * , set up the Out Params also in the JICallBuilder (see corresponding JICallBuilder javadoc for more details). 
 	 * <br>
 	 * </P>
 	 * @param obj Data Object carrying all information necessary to make the call.
 	 * @param timeout timeout for this call in millisecs, overrides the instance level timeout. Passing 0 here will use the global socket timeout (not the class level timeout) .
-	 * @return Object[] representing the results in the order set in JICallObject.
+	 * @return Object[] representing the results in the order set in JICallBuilder.
 	 *
 	 * @throws JIException
 	 */
-	public Object[] call(JICallObject obj, int timeout) throws JIException;
+	public Object[] call(JICallBuilder obj, int timeout) throws JIException;
 	
 	/** Sets a timeout for all socket level operations , overrides the global socket timeout at the JISession level.
 	 * To unset a previous timeout, pass 0 as a parameter.
@@ -162,7 +162,7 @@ public interface IJIComObject extends Serializable {
 	/**
 	 * Returns self Interface pointer
 	 */
-	public JIInterfacePointer getInterfacePointer();
+	public JIInterfacePointer internal_getInterfacePointer();
 	
 	/** Session associated with this object.   
 	 * 

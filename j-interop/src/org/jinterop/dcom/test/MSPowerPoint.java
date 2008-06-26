@@ -23,7 +23,7 @@ public class MSPowerPoint {
 	public MSPowerPoint(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
-		comStub = new JIComServer(JIProgId.valueOf(session,"PowerPoint.Application"),address,session);
+		comStub = new JIComServer(JIProgId.valueOf("PowerPoint.Application"),address,session);
 	}
 
 	public void startPowerPoint() throws JIException

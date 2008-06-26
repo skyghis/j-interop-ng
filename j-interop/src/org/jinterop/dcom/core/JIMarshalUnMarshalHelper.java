@@ -484,21 +484,21 @@ final class JIMarshalUnMarshalHelper {
 				
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			serialize(ndr, JIInterfacePointer.class, ((IJIComObject)value).getInterfacePointer(), defferedPointers, FLAG);
+			serialize(ndr, JIInterfacePointer.class, ((IJIComObject)value).internal_getInterfacePointer(), defferedPointers, FLAG);
 		}
 		
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{
-			JISession session = (JISession)additionalData.get(JICallObject.CURRENTSESSION);
+			JISession session = (JISession)additionalData.get(JICallBuilder.CURRENTSESSION);
 			IJIComObject comObject = new JIComObjectImpl(session,(JIInterfacePointer)deSerialize(ndr, JIInterfacePointer.class, defferedPointers, FLAG, additionalData));
-			((ArrayList)additionalData.get(JICallObject.COMOBJECTS)).add(comObject);
+			((ArrayList)additionalData.get(JICallBuilder.COMOBJECTS)).add(comObject);
 			return comObject;
 		}
 		
 		
 		public int getLengthInBytes(Object value,int FLAG)
 		{
-			JIInterfacePointer interfacePointer = ((IJIComObject)value).getInterfacePointer();
+			JIInterfacePointer interfacePointer = ((IJIComObject)value).internal_getInterfacePointer();
 			return ((JIInterfacePointer)interfacePointer).getLength();
 		}
 		

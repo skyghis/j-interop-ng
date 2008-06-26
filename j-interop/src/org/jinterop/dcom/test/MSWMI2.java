@@ -9,6 +9,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
+import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
@@ -34,9 +35,9 @@ public class MSWMI2 {
 	{
 		this.address = address;
 		session = JISession.createSession(args[1],args[2],args[3]);
-		session.useSessionSecurity(true);
-		session.setGlobalSocketTimeout(5000);
-		comStub = new JIComServer(JIProgId.valueOf(session,"WbemScripting.SWbemLocator"),address,session);
+//		session.useSessionSecurity(true);
+//		session.setGlobalSocketTimeout(5000);
+		comStub = new JIComServer(JIClsid.valueOf("76a64158-cb41-11d1-8b02-00600806d9b6"),address,session);
 		IJIComObject unknown = comStub.createInstance();
 		comObject = (IJIComObject)unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
 		//This will obtain the dispatch interface
@@ -46,7 +47,9 @@ public class MSWMI2 {
 
 	public void performOp() throws JIException, InterruptedException
 	{
-		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString(address),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
+//		IJIDispatch securityDisp = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Security_").getObjectAsComObject());
+//		securityDisp.put("ImpersonationLevel", new JIVariant(3));
+		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString("locutus"),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(0),JIVariant.OPTIONAL_PARAM()});
 
 		IJIDispatch wbemServices_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
@@ -90,8 +93,8 @@ public class MSWMI2 {
 			    	return;
 			    }
 
-//				JISystem.setInBuiltLogHandler(false);
-				JISystem.getLogger().setLevel(Level.OFF);
+				JISystem.setInBuiltLogHandler(false);
+				JISystem.getLogger().setLevel(Level.FINEST);
 				JISystem.setAutoRegisteration(true);
 				MSWMI2 test = new MSWMI2(args[0],args);
 				for (int i = 0 ; i < 2; i++)
