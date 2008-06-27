@@ -33,7 +33,7 @@ import org.jinterop.dcom.common.JISystem;
  * @since 1.0
  *
  */
-public final class JIInterfaceDefinition implements Serializable
+public final class JILocalInterfaceDefinition implements Serializable
 {
 	private static final long serialVersionUID = 7683984211902254797L;
 	private String interfaceIdentifier = null;
@@ -49,7 +49,7 @@ public final class JIInterfaceDefinition implements Serializable
      * 
      * @param interfaceIdentifier
      */
-	public JIInterfaceDefinition(String interfaceIdentifier)
+	public JILocalInterfaceDefinition(String interfaceIdentifier)
 	{
 		this.interfaceIdentifier = interfaceIdentifier;
 	}
@@ -60,7 +60,7 @@ public final class JIInterfaceDefinition implements Serializable
      * @param interfaceIdentifier
      * @param isDispInterface true if IDispatch is supported ("dispinterface"), false otherwise
      */
-	public JIInterfaceDefinition(String interfaceIdentifier, boolean isDispInterface)
+	public JILocalInterfaceDefinition(String interfaceIdentifier, boolean isDispInterface)
 	{
 		this.interfaceIdentifier = interfaceIdentifier;
 		this.dispInterface = isDispInterface;
@@ -72,7 +72,7 @@ public final class JIInterfaceDefinition implements Serializable
 	 * 
 	 * @param methodDescriptor
 	 */
-	public void addMethodDescriptor(JIMethodDescriptor methodDescriptor)
+	public void addMethodDescriptor(JILocalMethodDescriptor methodDescriptor)
 	{
 		if (nameVsMethodInfo.containsKey(methodDescriptor.getMethodName()))
 		{
@@ -102,9 +102,9 @@ public final class JIInterfaceDefinition implements Serializable
 	 * @param opnum
 	 * @return
 	 */
-	public JIMethodDescriptor getMethodDescriptor(int opnum)
+	public JILocalMethodDescriptor getMethodDescriptor(int opnum)
 	{
-		return (JIMethodDescriptor)opnumVsMethodInfo.get(new Integer(opnum));
+		return (JILocalMethodDescriptor)opnumVsMethodInfo.get(new Integer(opnum));
 	}
 
 	/**Returns the descriptor identified by it's dispId. <br>
@@ -112,9 +112,9 @@ public final class JIInterfaceDefinition implements Serializable
 	 * @param dispId
 	 * @return
 	 */
-	public JIMethodDescriptor getMethodDescriptorForDispId(int dispId)
+	public JILocalMethodDescriptor getMethodDescriptorForDispId(int dispId)
 	{
-		return (JIMethodDescriptor)dispIdVsMethodInfo.get(new Integer(dispId));
+		return (JILocalMethodDescriptor)dispIdVsMethodInfo.get(new Integer(dispId));
 	}
 
 	
@@ -123,18 +123,18 @@ public final class JIInterfaceDefinition implements Serializable
 	 * @param name
 	 * @return
 	 */
-	public JIMethodDescriptor getMethodDescriptor(String name)
+	public JILocalMethodDescriptor getMethodDescriptor(String name)
 	{
-		return (JIMethodDescriptor)nameVsMethodInfo.get(name);
+		return (JILocalMethodDescriptor)nameVsMethodInfo.get(name);
 	}
 	
 	/**Returns all descriptors. <br>
 	 * 
 	 * @return
 	 */
-	public JIMethodDescriptor[] getMethodDescriptors()
+	public JILocalMethodDescriptor[] getMethodDescriptors()
 	{
-		return (JIMethodDescriptor[])opnumVsMethodInfo.values().toArray(new JIMethodDescriptor[opnumVsMethodInfo.values().size()]);
+		return (JILocalMethodDescriptor[])opnumVsMethodInfo.values().toArray(new JILocalMethodDescriptor[opnumVsMethodInfo.values().size()]);
 	}
 	
 	/**Returns the interface identifier of this definition. <br>
@@ -153,7 +153,7 @@ public final class JIInterfaceDefinition implements Serializable
 	 */
 	public void removeMethodDescriptor(int opnum)
 	{
-		JIMethodDescriptor methodDescriptor = (JIMethodDescriptor)opnumVsMethodInfo.remove(new Integer(opnum));
+		JILocalMethodDescriptor methodDescriptor = (JILocalMethodDescriptor)opnumVsMethodInfo.remove(new Integer(opnum));
 		if (methodDescriptor != null)
 		{
 			nameVsMethodInfo.remove(methodDescriptor.getMethodName());
@@ -167,7 +167,7 @@ public final class JIInterfaceDefinition implements Serializable
 	 */
 	public void removeMethodDescriptor(String methodName)
 	{
-		JIMethodDescriptor methodDescriptor = (JIMethodDescriptor)nameVsMethodInfo.remove(methodName);
+		JILocalMethodDescriptor methodDescriptor = (JILocalMethodDescriptor)nameVsMethodInfo.remove(methodName);
 		if (methodDescriptor != null)
 		{
 			nameVsMethodInfo.remove(new Integer(methodDescriptor.getMethodNum()));

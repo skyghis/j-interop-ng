@@ -13,10 +13,10 @@ import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
-import org.jinterop.dcom.core.JIParameterObject;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
+import org.jinterop.dcom.core.JILocalParamsDescriptor;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
@@ -49,9 +49,9 @@ public class SampleTestServerCallback {
           }
         }
 
-        private static JIInterfaceDefinition registerInterface() throws JIException {
+        private static JILocalInterfaceDefinition registerInterface() throws JIException {
           //Now for the Java Implementation of SampleTestServer2 interface (from the type library or IDL)
-           JIInterfaceDefinition interfaceDefinition = new JIInterfaceDefinition("D3F9CE10-686C-11d2-97BF-006008BD50B1", false);//IStatisUpdateMeSink
+           JILocalInterfaceDefinition interfaceDefinition = new JILocalInterfaceDefinition("D3F9CE10-686C-11d2-97BF-006008BD50B1", false);//IStatisUpdateMeSink
 
           JIStruct VarData = new JIStruct();// Will add in the struct later on
           VarData.addMember(JIUnsignedInteger.class);
@@ -69,10 +69,10 @@ public class SampleTestServerCallback {
           NonVariableData.addMember(new JIPointer(new JIArray(VarData, null, 1, true),true)); //since this is an embedded pointer
           JIArray NonVariableDataArray = new JIArray(NonVariableData, null, 1, true);
 
-          JIParameterObject updateParamObj = new JIParameterObject();
+          JILocalParamsDescriptor updateParamObj = new JILocalParamsDescriptor();
           updateParamObj.addInParamAsType(JIUnsignedShort.class, JIFlags.FLAG_NULL);
           updateParamObj.addInParamAsObject(NonVariableDataArray, JIFlags.FLAG_NULL);
-          JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("UpdateMe", updateParamObj);
+          JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("UpdateMe", updateParamObj);
           interfaceDefinition.addMethodDescriptor(methodDescriptor);
 
           return interfaceDefinition;
@@ -87,9 +87,9 @@ public class SampleTestServerCallback {
 
           //Create the Java Server class. This contains the instance to be called by the COM Server
           //
-          JIInterfaceDefinition interfaceDefinition = registerInterface();
+          JILocalInterfaceDefinition interfaceDefinition = registerInterface();
           if (StaticSinkJavaCoClass == null)
-            StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
+            StaticSinkJavaCoClass = new JILocalCoClass(interfaceDefinition, new SampleTestServerCallback());
           IJIComObject iStaticSink = JIObjectFactory.buildObject(session, StaticSinkJavaCoClass);
 
           Object[] results = new Object[1];
@@ -151,9 +151,9 @@ public class SampleTestServerCallback {
 
           //Create the Java Server class. This contains the instance to be called by the COM Server
           //
-          JIInterfaceDefinition interfaceDefinition = registerInterface();
+          JILocalInterfaceDefinition interfaceDefinition = registerInterface();
           if (StaticSinkJavaCoClass != null)
-            StaticSinkJavaCoClass = new JIJavaCoClass(interfaceDefinition, new SampleTestServerCallback());
+            StaticSinkJavaCoClass = new JILocalCoClass(interfaceDefinition, new SampleTestServerCallback());
 
           IJIComObject iStaticSink = JIObjectFactory.buildObject(session, StaticSinkJavaCoClass);
 
@@ -199,6 +199,6 @@ public class SampleTestServerCallback {
           }
         }
 
-        static JIJavaCoClass StaticSinkJavaCoClass;
+        static JILocalCoClass StaticSinkJavaCoClass;
 
       }

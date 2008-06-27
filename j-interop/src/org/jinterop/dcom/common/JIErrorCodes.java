@@ -545,7 +545,7 @@ public final class JIErrorCodes {
  public static final int JI_WINREG_EXCEPTION5 = 0x00001036;
  
  /**
-  * JIMethodDescriptor is being added to a JIInterfaceDefinition supporting dispInterface, but it itself does not have a 
+  * JILocalMethodDescriptor is being added to a JILocalInterfaceDefinition supporting dispInterface, but it itself does not have a 
   * dispId.
   */
  public static final int JI_METHODDESC_DISPID_MISSING = 0x00001037;
@@ -577,7 +577,7 @@ public final class JIErrorCodes {
  
  
  /**
-  * This JIJavaCoClass has already been exported with one interface pointer, please use a new instance of this class with JIInterfacePointer.getInterfacePointer(...) api.
+  * This JILocalCoClass has already been exported with one interface pointer, please use a new instance of this class with JIInterfacePointer.getInterfacePointer(...) api.
   */
  public static final int JI_JAVACOCLASS_ALREADY_EXPORTED = 0x00001043;
  

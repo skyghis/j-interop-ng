@@ -34,10 +34,10 @@ import ndr.NetworkDataRepresentation;
  *    void NewWindow2(   [in, out] IDispatch** ppDisp, 
  *                       [in, out] VARIANT_BOOL* Cancel); <br>
  *
- * <br> Corresponding <code>JIParameterObject</code> would be :- <br>
+ * <br> Corresponding <code>JILocalParamsDescriptor</code> would be :- <br>
  * 
  * <code>
- * 		JIParameterObject paramObject = new JIParameterObject(); <br>
+ * 		JILocalParamsDescriptor paramObject = new JILocalParamsDescriptor(); <br>
  * 		paramObject.addInParamAsObject(new JIPointer(JIInterfacePointer.class,false), JIFlags.FLAG_NULL); <br>
  * 		paramObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);<br>
  * </code>
@@ -49,7 +49,7 @@ import ndr.NetworkDataRepresentation;
  * @since 1.0
  *
  */
-public final class JIParameterObject implements Serializable
+public final class JILocalParamsDescriptor implements Serializable
 {
 
 	private JICallBuilder callObject = new JICallBuilder(); 

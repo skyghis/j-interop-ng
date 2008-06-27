@@ -7,10 +7,10 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
-import org.jinterop.dcom.core.JIParameterObject;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
+import org.jinterop.dcom.core.JILocalParamsDescriptor;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
@@ -73,15 +73,15 @@ public class Test_ITestServer2_Impl {
 			
 			//Now for the Java Implementation of ITestServer2 interface (from the type library or IDL)  
 			//IID of ITestServer2 interface
-			JIInterfaceDefinition interfaceDefinition = new JIInterfaceDefinition("9CCC5120-457D-49F3-8113-90F7E97B54A7");
+			JILocalInterfaceDefinition interfaceDefinition = new JILocalInterfaceDefinition("9CCC5120-457D-49F3-8113-90F7E97B54A7");
 			//lets define the method "Execute" now. Please note that either this should be in the same order as defined in IDL
 			//or use the addInParamAsObject with opnum parameter function.
-			JIParameterObject parameterObject = new JIParameterObject();
+			JILocalParamsDescriptor parameterObject = new JILocalParamsDescriptor();
 			parameterObject.addInParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
-			JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("Execute",1,parameterObject);
+			JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("Execute",1,parameterObject);
 			interfaceDefinition.addMethodDescriptor(methodDescriptor);
 			//Create the Java Server class. This contains the instance to be called by the COM Server ITestServer1.
-			JIJavaCoClass _testServer2 = new JIJavaCoClass(interfaceDefinition,new Test_ITestServer2_Impl());
+			JILocalCoClass _testServer2 = new JILocalCoClass(interfaceDefinition,new Test_ITestServer2_Impl());
 			//Get a interface pointer to the Java CO Class. The template could be any IJIComObject since only the session is reused.
 			IJIComObject __testServer2 = JIObjectFactory.buildObject(session1,_testServer2); 
 			//Call our Java server. The same message should be printed on the Java console.

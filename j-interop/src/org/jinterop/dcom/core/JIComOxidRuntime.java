@@ -133,7 +133,7 @@ final class JIComOxidRuntime {
 					if (oid.hasExpired())
 					{
 						//remove all
-						JIJavaCoClass component = (JIJavaCoClass)mapOfOIDVsComponents.get(oid);
+						JILocalCoClass component = (JILocalCoClass)mapOfOIDVsComponents.get(oid);
 						JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
 						mapOfOxidVsOxidDetails.remove(details.getOxid());
 						mapOfIPIDVsComponent.remove(details.getIpid());
@@ -173,7 +173,7 @@ final class JIComOxidRuntime {
             {
                 JIObjectId oid = (JIObjectId)oids.get(i);
                 //remove all
-                JIJavaCoClass component = (JIJavaCoClass)mapOfOIDVsComponents.remove(oid);
+                JILocalCoClass component = (JILocalCoClass)mapOfOIDVsComponents.remove(oid);
                 JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
                 mapOfOxidVsOxidDetails.remove(details.getOxid());
                 mapOfIPIDVsComponent.remove(details.getIpid());
@@ -523,7 +523,7 @@ final class JIComOxidRuntime {
 	 * @param javaInstance
 	 * @return
 	 */
-	static JIInterfacePointer getInterfacePointer(JISession session,JIJavaCoClass component) throws JIException
+	static JIInterfacePointer getInterfacePointer(JISession session,JILocalCoClass component) throws JIException
 	{
 		JIInterfacePointer ptr = null;
 		
@@ -672,13 +672,13 @@ final class JIComOxidRuntime {
 	}
 	
 	//since the IID is unique and we have to consider nested IIDs, this API will not work for component's IID
-//	static JIJavaCoClass getJavaComponentForIID(String uniqueIID) 
+//	static JILocalCoClass getJavaComponentForIID(String uniqueIID) 
 //	{
-//		JIJavaCoClass component = null;
+//		JILocalCoClass component = null;
 //		synchronized (mutex2) {
 //			for (int i = 0; i < listOfExportedJavaComponents.size(); i++ )
 //			{
-//				component = (JIJavaCoClass)listOfExportedJavaComponents.get(i);
+//				component = (JILocalCoClass)listOfExportedJavaComponents.get(i);
 //				if (component.isPresent(uniqueIID))
 //				{
 //					break;
@@ -690,13 +690,13 @@ final class JIComOxidRuntime {
 //		return component;
 //	}
 	
-	static JIJavaCoClass getJavaComponentFromIPID(String ipid) 
+	static JILocalCoClass getJavaComponentFromIPID(String ipid) 
 	{
-		JIJavaCoClass component = null;
+		JILocalCoClass component = null;
 		synchronized (mutex2) {
 			for (int i = 0; i < listOfExportedJavaComponents.size(); i++ )
 			{
-				component = (JIJavaCoClass)listOfExportedJavaComponents.get(i);
+				component = (JILocalCoClass)listOfExportedJavaComponents.get(i);
 				//this will be unique, no two components will ever have same IPID for an IID.They will have different IPIDs for same IIDs.
 				if (component.getIIDFromIpid(ipid) != null)
 				{

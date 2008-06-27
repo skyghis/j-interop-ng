@@ -7,9 +7,9 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.impls.JIObjectFactory;
@@ -48,9 +48,9 @@ public class MSSysInfo {
 	{
 		//6FBA474D-43AC-11CE-9A0E-00AA0062BB4C
 
-		JIJavaCoClass javaComponent = new JIJavaCoClass(new JIInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
-		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("PowerStatusChanged",8,null));
-		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JIMethodDescriptor("TimeChanged",3,null));
+		JILocalCoClass javaComponent = new JILocalCoClass(new JILocalInterfaceDefinition("6FBA474D-43AC-11CE-9A0E-00AA0062BB4C"),SysInfoEvents.class);
+		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JILocalMethodDescriptor("PowerStatusChanged",8,null));
+		javaComponent.getInterfaceDefinition().addMethodDescriptor(new JILocalMethodDescriptor("TimeChanged",3,null));
 		identifier = JIObjectFactory.attachEventHandler(sysInfoServer,"6FBA474D-43AC-11CE-9A0E-00AA0062BB4C",JIObjectFactory.buildObject(session,javaComponent));
 		try {
 			Thread.sleep(3000);

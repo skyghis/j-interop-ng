@@ -21,7 +21,7 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
-import org.jinterop.dcom.core.JIJavaCoClass;
+import org.jinterop.dcom.core.JILocalCoClass;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JISessionHelper;
 import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
@@ -228,7 +228,7 @@ public class JIObjectFactory {
 	
 	/**<p> Attaches an Event Handler to this <code>comObject</code> for the source event interface of COM , identified by the 
 	 * <code>sourceUUID</code>. The event listener is itself identified by <code>eventListener</code>. It is obtained 
-	 * by <code>JIInterfacePointer.getInterfacePointer(JISession,JIJavaCoClass)</code> api. A JIException will get thrown if 
+	 * by <code>JIInterfacePointer.getInterfacePointer(JISession,JILocalCoClass)</code> api. A JIException will get thrown if 
 	 * <code>sourceUUID</code> is not supported by the COM Server.
 	 *  </p>
 	 * @param comObject
@@ -282,7 +282,7 @@ public class JIObjectFactory {
 	 * @return
 	 * @throws JIException
 	 */
-	public static IJIComObject buildObject(JISession session,JIJavaCoClass javaComponent) throws JIException
+	public static IJIComObject buildObject(JISession session,JILocalCoClass javaComponent) throws JIException
 	{
 		return JISessionHelper.instantiateLocalComObject(session, javaComponent);
 	}

@@ -152,7 +152,7 @@ public final class JISessionHelper {
      * @param javaComponent
      * @return
      */
-    public static IJIComObject instantiateLocalComObject(JISession session,JIJavaCoClass javaComponent) throws JIException
+    public static IJIComObject instantiateLocalComObject(JISession session,JILocalCoClass javaComponent) throws JIException
     {
     	return new JIComObjectImpl(session,JIComOxidRuntime.getInterfacePointer(session,javaComponent),true);
     }

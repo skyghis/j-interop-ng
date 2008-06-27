@@ -11,10 +11,10 @@ import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
-import org.jinterop.dcom.core.JIParameterObject;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
+import org.jinterop.dcom.core.JILocalParamsDescriptor;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
@@ -544,10 +544,10 @@ public class FirstContact_Stub implements FirstContact {
 			obj.reInit();
 			obj.setOpnum(4);
 
-			JIInterfaceDefinition interfaceDefinition = new JIInterfaceDefinition("620012E2-69E3-4DC0-B553-AE252524D2F6");
-			JIJavaCoClass component = new JIJavaCoClass(interfaceDefinition,Test.class);
-			JIParameterObject runtimeObject = new JIParameterObject();
-			JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("test",1,runtimeObject);
+			JILocalInterfaceDefinition interfaceDefinition = new JILocalInterfaceDefinition("620012E2-69E3-4DC0-B553-AE252524D2F6");
+			JILocalCoClass component = new JILocalCoClass(interfaceDefinition,Test.class);
+			JILocalParamsDescriptor runtimeObject = new JILocalParamsDescriptor();
+			JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("test",1,runtimeObject);
 			interfaceDefinition.addMethodDescriptor(methodDescriptor);
 
 			IJIComObject objMyCOM = JIObjectFactory.buildObject(session,component);

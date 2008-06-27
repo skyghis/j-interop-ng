@@ -26,22 +26,22 @@ package org.jinterop.dcom.core;
  * 
  * @since 1.0
  */
-public final class JIMethodDescriptor 
+public final class JILocalMethodDescriptor 
 {
 	private String methodName = null;
 	private int methodNum = -1;
 	private int dispId = -1;
 	private Class[] inparametersAsClass = new Class[0];
-	private JIParameterObject parameters = null;
+	private JILocalParamsDescriptor parameters = null;
 
 	/**Creates the Method Descriptor. The Method Number is set by the order in which this instance is 
-	 * added to the <code>JIInterfaceDefinition</code>. This number is incremented by 1 for each subsequent 
+	 * added to the <code>JILocalInterfaceDefinition</code>. This number is incremented by 1 for each subsequent 
 	 * and new addition into Interface definition.
 	 * 
 	 * @param methodName
 	 * @param parameters
 	 */
-	public JIMethodDescriptor(String methodName,JIParameterObject parameters)
+	public JILocalMethodDescriptor(String methodName,JILocalParamsDescriptor parameters)
 	{
 		this.methodName = methodName;
 		setParameterObject(parameters);
@@ -53,7 +53,7 @@ public final class JIMethodDescriptor
 	 * @param dispId DispID of this method as in the IDL or the TypeLibrary.
 	 * @param parameters Please pass <code>null</code> if the method has no parameters. 
 	 */
-	public JIMethodDescriptor(String methodName,int dispId, JIParameterObject parameters)
+	public JILocalMethodDescriptor(String methodName,int dispId, JILocalParamsDescriptor parameters)
 	{
 		this.methodName = methodName;
 		this.dispId = dispId;
@@ -65,7 +65,7 @@ public final class JIMethodDescriptor
 		this.methodNum = methodNum;	
 	}
 	
-	private void setParameterObject(JIParameterObject parameters) {
+	private void setParameterObject(JILocalParamsDescriptor parameters) {
 		
 		if (parameters == null)
 		{
@@ -152,7 +152,7 @@ public final class JIMethodDescriptor
 	 * 
 	 * @return
 	 */
-	public JIParameterObject getParameterObject() {
+	public JILocalParamsDescriptor getParameterObject() {
 		return parameters;
 	}
 

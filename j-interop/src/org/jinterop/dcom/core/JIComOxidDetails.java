@@ -25,7 +25,7 @@ package org.jinterop.dcom.core;
  */
 final class JIComOxidDetails {
 
-	private JIJavaCoClass referent = null;
+	private JILocalCoClass referent = null;
 	private String ipid = null;
 	private JIOxid oxid = null;
 	private JIObjectId oid = null;
@@ -36,7 +36,7 @@ final class JIComOxidDetails {
 	private int protectionLevel = 2;
 	private Thread remUnknownThread = null;
 	
-	JIComOxidDetails(JIJavaCoClass javaInstance, JIOxid oxid, JIObjectId oid
+	JIComOxidDetails(JILocalCoClass javaInstance, JIOxid oxid, JIObjectId oid
 					,String iid,String ipid,JIInterfacePointer ptr, JIComOxidRuntimeHelper helper,int protectionLevel)
 	{
 		referent = javaInstance;
@@ -79,7 +79,7 @@ final class JIComOxidDetails {
 		return oxid;
 	}
 
-	JIJavaCoClass getReferent()
+	JILocalCoClass getReferent()
 	{
 		return referent;
 	}

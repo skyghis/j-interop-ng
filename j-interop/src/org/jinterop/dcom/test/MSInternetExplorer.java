@@ -10,10 +10,10 @@ import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
-import org.jinterop.dcom.core.JIParameterObject;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
+import org.jinterop.dcom.core.JILocalParamsDescriptor;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
@@ -64,7 +64,7 @@ public class MSInternetExplorer {
 	 * The JIJavaCOClass is a representation for a Java server class. It's there so that when we get to the next version of the library, I am able to support full bi-directional access. Currently, you can implement any IDL of an existing COM server using the JIJavaCOClass and
 	 * pass it's interface pointer instead of the original COM server and it will work fine. Similar mechanism is exploited for call backs.In our case I had to implement DWebBrowserEvents interface.
 	 *
-	 * IJavaCoClass javaComponent = new JIJavaCoClass(new JIInterfaceDefinition("45B5FC0C-FAC2-42bd-923E-2B221A89E092"),DWebBrowserEvents2.class);
+	 * IJavaCoClass javaComponent = new JILocalCoClass(new JILocalInterfaceDefinition("45B5FC0C-FAC2-42bd-923E-2B221A89E092"),DWebBrowserEvents2.class);
 	 *
 	 * This definition create a Java component with an IID of 45B5FC0C-FAC2-42bd-923E-2B221A89E092...I just made this one up for uniquely classifying this class...you can equate this to a lib identifier of COM IDL. This is required if there are multilple interfaces being implemented in the same Java Class.
 	 * If you have only one...you can put it's IID here. I just did not do it for showing the user a possiblity.
@@ -74,14 +74,14 @@ public class MSInternetExplorer {
 	 *
 	 * This is done using the Method descriptors which are themselves described using the Parameter Objects.
 	 *
-	 * JIParameterObject propertyChangeObject = new JIParameterObject();
+	 * JILocalParamsDescriptor propertyChangeObject = new JILocalParamsDescriptor();
 	 *
 	 * This creates a Parameter Object, capable of defining a IN or OUT type for a Method.
 	 *
 	 * like:-
 	 * propertyChangeObject.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
 	 *
-	 * JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("PropertyChange",0x70,propertyChangeObject);
+	 * JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("PropertyChange",0x70,propertyChangeObject);
 	 * javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 	 *
 	 * This declares a method descriptor. The first parameter in the ctor is the API name of the api to implement, the second one is it's OP number.
@@ -95,7 +95,7 @@ public class MSInternetExplorer {
 	 *
 	 * This will be the list of all COM interfaces which this Java class supports or implements.
 	 *
-	 * The next call attaches the event handler (our JIJavaCoClass) to the actual COM server for recieving events for the interface identified by the IID.
+	 * The next call attaches the event handler (our JILocalCoClass) to the actual COM server for recieving events for the interface identified by the IID.
 	 * There can be many such calls on the same COM server for different IIDs.
 	 * identifier = JIObjectFactory.attachEventHandler(ieObject,"34A715A0-6587-11D0-924A-0020AFC7AC4D",JIInterfacePointer.getInterfacePointer(session,javaComponent));
 	 *
@@ -103,15 +103,15 @@ public class MSInternetExplorer {
 	 * which you did the queryinterface for the IJIDispatch.
 	 *
 	 **/
-		JIJavaCoClass javaComponent = new JIJavaCoClass(new JIInterfaceDefinition("34A715A0-6587-11D0-924A-0020AFC7AC4D"),DWebBrowserEvents2.class);
+		JILocalCoClass javaComponent = new JILocalCoClass(new JILocalInterfaceDefinition("34A715A0-6587-11D0-924A-0020AFC7AC4D"),DWebBrowserEvents2.class);
 
-		JIParameterObject propertyChangeObject = new JIParameterObject();
+		JILocalParamsDescriptor propertyChangeObject = new JILocalParamsDescriptor();
 		propertyChangeObject.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
-		JIMethodDescriptor methodDescriptor = new JIMethodDescriptor("PropertyChange",0x70,propertyChangeObject);
+		JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("PropertyChange",0x70,propertyChangeObject);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 
-		JIParameterObject navigateObject = new JIParameterObject();
+		JILocalParamsDescriptor navigateObject = new JILocalParamsDescriptor();
 		navigateObject.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
@@ -119,189 +119,189 @@ public class MSInternetExplorer {
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		navigateObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("BeforeNavigate2",0xFA,navigateObject);
+		methodDescriptor = new JILocalMethodDescriptor("BeforeNavigate2",0xFA,navigateObject);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject StatusTextChange = new JIParameterObject();
+		JILocalParamsDescriptor StatusTextChange = new JILocalParamsDescriptor();
 		StatusTextChange.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("StatusTextChange",0x66,StatusTextChange);
+		methodDescriptor = new JILocalMethodDescriptor("StatusTextChange",0x66,StatusTextChange);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject ProgressChange = new JIParameterObject();
+		JILocalParamsDescriptor ProgressChange = new JILocalParamsDescriptor();
 		ProgressChange.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		ProgressChange.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("ProgressChange",0x6c,ProgressChange);
+		methodDescriptor = new JILocalMethodDescriptor("ProgressChange",0x6c,ProgressChange);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject CommandStateChange = new JIParameterObject();
+		JILocalParamsDescriptor CommandStateChange = new JILocalParamsDescriptor();
 		CommandStateChange.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		CommandStateChange.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("CommandStateChange",0x69,CommandStateChange);
+		methodDescriptor = new JILocalMethodDescriptor("CommandStateChange",0x69,CommandStateChange);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject DownloadBegin = new JIParameterObject();
-		methodDescriptor = new JIMethodDescriptor("DownloadBegin",0x6a,DownloadBegin);
+		JILocalParamsDescriptor DownloadBegin = new JILocalParamsDescriptor();
+		methodDescriptor = new JILocalMethodDescriptor("DownloadBegin",0x6a,DownloadBegin);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject DownloadComplete = new JIParameterObject();
-		methodDescriptor = new JIMethodDescriptor("DownloadComplete",0x68,DownloadComplete);
+		JILocalParamsDescriptor DownloadComplete = new JILocalParamsDescriptor();
+		methodDescriptor = new JILocalMethodDescriptor("DownloadComplete",0x68,DownloadComplete);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject TitleChange = new JIParameterObject();
+		JILocalParamsDescriptor TitleChange = new JILocalParamsDescriptor();
 		TitleChange.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("TitleChange",0x71,TitleChange);
+		methodDescriptor = new JILocalMethodDescriptor("TitleChange",0x71,TitleChange);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject NewWindow2 = new JIParameterObject();
+		JILocalParamsDescriptor NewWindow2 = new JILocalParamsDescriptor();
 		NewWindow2.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NewWindow2.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("NewWindow2",0xfb,NewWindow2);
+		methodDescriptor = new JILocalMethodDescriptor("NewWindow2",0xfb,NewWindow2);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject NavigateComplete2 = new JIParameterObject();
+		JILocalParamsDescriptor NavigateComplete2 = new JILocalParamsDescriptor();
 		NavigateComplete2.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		NavigateComplete2.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("NavigateComplete2",0xfc,NavigateComplete2);
+		methodDescriptor = new JILocalMethodDescriptor("NavigateComplete2",0xfc,NavigateComplete2);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject DocumentComplete = new JIParameterObject();
+		JILocalParamsDescriptor DocumentComplete = new JILocalParamsDescriptor();
 		DocumentComplete.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		DocumentComplete.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("DocumentComplete",0x103,DocumentComplete);
+		methodDescriptor = new JILocalMethodDescriptor("DocumentComplete",0x103,DocumentComplete);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnQuit = new JIParameterObject();
-		methodDescriptor = new JIMethodDescriptor("OnQuit",0xfd,OnQuit);
+		JILocalParamsDescriptor OnQuit = new JILocalParamsDescriptor();
+		methodDescriptor = new JILocalMethodDescriptor("OnQuit",0xfd,OnQuit);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnVisible = new JIParameterObject();
+		JILocalParamsDescriptor OnVisible = new JILocalParamsDescriptor();
 		OnVisible.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnVisible",0xfe,OnVisible);
+		methodDescriptor = new JILocalMethodDescriptor("OnVisible",0xfe,OnVisible);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnToolBar = new JIParameterObject();
+		JILocalParamsDescriptor OnToolBar = new JILocalParamsDescriptor();
 		OnToolBar.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnToolBar",0xff,OnToolBar);
+		methodDescriptor = new JILocalMethodDescriptor("OnToolBar",0xff,OnToolBar);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnMenuBar = new JIParameterObject();
+		JILocalParamsDescriptor OnMenuBar = new JILocalParamsDescriptor();
 		OnMenuBar.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnMenuBar",0x100,OnMenuBar);
+		methodDescriptor = new JILocalMethodDescriptor("OnMenuBar",0x100,OnMenuBar);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnStatusBar = new JIParameterObject();
+		JILocalParamsDescriptor OnStatusBar = new JILocalParamsDescriptor();
 		OnStatusBar.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnStatusBar",0x101,OnStatusBar);
+		methodDescriptor = new JILocalMethodDescriptor("OnStatusBar",0x101,OnStatusBar);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnFullScreen = new JIParameterObject();
+		JILocalParamsDescriptor OnFullScreen = new JILocalParamsDescriptor();
 		OnFullScreen.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnFullScreen",0x102,OnFullScreen);
+		methodDescriptor = new JILocalMethodDescriptor("OnFullScreen",0x102,OnFullScreen);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject OnTheaterMode = new JIParameterObject();
+		JILocalParamsDescriptor OnTheaterMode = new JILocalParamsDescriptor();
 		OnTheaterMode.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("OnTheaterMode",0x104,OnTheaterMode);
+		methodDescriptor = new JILocalMethodDescriptor("OnTheaterMode",0x104,OnTheaterMode);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowSetResizable = new JIParameterObject();
+		JILocalParamsDescriptor WindowSetResizable = new JILocalParamsDescriptor();
 		WindowSetResizable.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowSetResizable",0x106,WindowSetResizable);
+		methodDescriptor = new JILocalMethodDescriptor("WindowSetResizable",0x106,WindowSetResizable);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowSetLeft = new JIParameterObject();
+		JILocalParamsDescriptor WindowSetLeft = new JILocalParamsDescriptor();
 		WindowSetLeft.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowSetLeft",0x108,WindowSetLeft);
+		methodDescriptor = new JILocalMethodDescriptor("WindowSetLeft",0x108,WindowSetLeft);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowSetTop = new JIParameterObject();
+		JILocalParamsDescriptor WindowSetTop = new JILocalParamsDescriptor();
 		WindowSetTop.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowSetTop",0x109,WindowSetTop);
+		methodDescriptor = new JILocalMethodDescriptor("WindowSetTop",0x109,WindowSetTop);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowSetWidth = new JIParameterObject();
+		JILocalParamsDescriptor WindowSetWidth = new JILocalParamsDescriptor();
 		WindowSetWidth.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowSetWidth",0x10a,WindowSetWidth);
+		methodDescriptor = new JILocalMethodDescriptor("WindowSetWidth",0x10a,WindowSetWidth);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowSetHeight = new JIParameterObject();
+		JILocalParamsDescriptor WindowSetHeight = new JILocalParamsDescriptor();
 		WindowSetHeight.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowSetHeight",0x10b,WindowSetHeight);
+		methodDescriptor = new JILocalMethodDescriptor("WindowSetHeight",0x10b,WindowSetHeight);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowClosing = new JIParameterObject();
+		JILocalParamsDescriptor WindowClosing = new JILocalParamsDescriptor();
 		WindowClosing.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
 		WindowClosing.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowClosing",0x107,WindowClosing);
+		methodDescriptor = new JILocalMethodDescriptor("WindowClosing",0x107,WindowClosing);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject ClientToHostWindow = new JIParameterObject();
+		JILocalParamsDescriptor ClientToHostWindow = new JILocalParamsDescriptor();
 		ClientToHostWindow.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		ClientToHostWindow.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("ClientToHostWindow",0x10c,ClientToHostWindow);
+		methodDescriptor = new JILocalMethodDescriptor("ClientToHostWindow",0x10c,ClientToHostWindow);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject SetSecureLockIcon = new JIParameterObject();
+		JILocalParamsDescriptor SetSecureLockIcon = new JILocalParamsDescriptor();
 		SetSecureLockIcon.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("SetSecureLockIcon",0x10d,SetSecureLockIcon);
+		methodDescriptor = new JILocalMethodDescriptor("SetSecureLockIcon",0x10d,SetSecureLockIcon);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject FileDownload = new JIParameterObject();
+		JILocalParamsDescriptor FileDownload = new JILocalParamsDescriptor();
 		FileDownload.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
 		FileDownload.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("FileDownload",0x10e,FileDownload);
+		methodDescriptor = new JILocalMethodDescriptor("FileDownload",0x10e,FileDownload);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject NavigateError = new JIParameterObject();
+		JILocalParamsDescriptor NavigateError = new JILocalParamsDescriptor();
 		NavigateError.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NavigateError.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("NavigateError",0x10f,NavigateError);
+		methodDescriptor = new JILocalMethodDescriptor("NavigateError",0x10f,NavigateError);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject NewWindow3 = new JIParameterObject();
+		JILocalParamsDescriptor NewWindow3 = new JILocalParamsDescriptor();
 		NewWindow3.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NewWindow3.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		NewWindow3.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		NewWindow3.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
 		NewWindow3.addInParamAsType(JIString.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("NewWindow3",0x111,NewWindow3);
+		methodDescriptor = new JILocalMethodDescriptor("NewWindow3",0x111,NewWindow3);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject PrintTemplateInstantiation = new JIParameterObject();
+		JILocalParamsDescriptor PrintTemplateInstantiation = new JILocalParamsDescriptor();
 		PrintTemplateInstantiation.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("PrintTemplateInstantiation",0xe1,PrintTemplateInstantiation);
+		methodDescriptor = new JILocalMethodDescriptor("PrintTemplateInstantiation",0xe1,PrintTemplateInstantiation);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject PrintTemplateTeardown = new JIParameterObject();
+		JILocalParamsDescriptor PrintTemplateTeardown = new JILocalParamsDescriptor();
 		PrintTemplateTeardown.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("PrintTemplateTeardown",0xe2,PrintTemplateTeardown);
+		methodDescriptor = new JILocalMethodDescriptor("PrintTemplateTeardown",0xe2,PrintTemplateTeardown);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject SetPhishingFilterStatus = new JIParameterObject();
+		JILocalParamsDescriptor SetPhishingFilterStatus = new JILocalParamsDescriptor();
 		SetPhishingFilterStatus.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("SetPhishingFilterStatus",0x11A,SetPhishingFilterStatus );
+		methodDescriptor = new JILocalMethodDescriptor("SetPhishingFilterStatus",0x11A,SetPhishingFilterStatus );
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject WindowStateChanged = new JIParameterObject();
+		JILocalParamsDescriptor WindowStateChanged = new JILocalParamsDescriptor();
 		WindowStateChanged.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		WindowStateChanged.addInParamAsType(Integer.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("WindowStateChanged",0x11B,WindowStateChanged);
+		methodDescriptor = new JILocalMethodDescriptor("WindowStateChanged",0x11B,WindowStateChanged);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 
-		JIParameterObject UpdatePageStatus = new JIParameterObject();
+		JILocalParamsDescriptor UpdatePageStatus = new JILocalParamsDescriptor();
 		UpdatePageStatus.addInParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		UpdatePageStatus.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
 		UpdatePageStatus.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("UpdatePageStatus",0xe3,UpdatePageStatus);
+		methodDescriptor = new JILocalMethodDescriptor("UpdatePageStatus",0xe3,UpdatePageStatus);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
-		JIParameterObject PrivacyImpactedStateChange = new JIParameterObject();
+		JILocalParamsDescriptor PrivacyImpactedStateChange = new JILocalParamsDescriptor();
 		PrivacyImpactedStateChange.addInParamAsType(Boolean.class,JIFlags.FLAG_NULL);
-		methodDescriptor = new JIMethodDescriptor("PrivacyImpactedStateChange",0x110,PrivacyImpactedStateChange);
+		methodDescriptor = new JILocalMethodDescriptor("PrivacyImpactedStateChange",0x110,PrivacyImpactedStateChange);
 		javaComponent.getInterfaceDefinition().addMethodDescriptor(methodDescriptor);
 
 

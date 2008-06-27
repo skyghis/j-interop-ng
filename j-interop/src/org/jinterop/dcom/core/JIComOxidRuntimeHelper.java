@@ -498,9 +498,9 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 	private int opnum = -1;
 	private NdrBuffer buffer = null;
 	
-	//component tells you the JIJavaCoClass to act on , sent via the AlterContext calls
+	//component tells you the JILocalCoClass to act on , sent via the AlterContext calls
 	//for all Altercontexts with IRemUnknown , this will be null.
-	private JIJavaCoClass component = null; //will hold the current instance to act on.
+	private JILocalCoClass component = null; //will hold the current instance to act on.
 	/* the component and object id duo work together. 1 component could export many ipids.
 	 * 
 	 */
@@ -829,7 +829,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
         {
 			JISystem.getLogger().finest("RemUnknownObject: [QI] IPID is " + ipid);
         }
-		//set the JIJavaCoClass., the ipid should not be null in this call.
+		//set the JILocalCoClass., the ipid should not be null in this call.
 		JIComOxidDetails details = JIComOxidRuntime.getComponentFromIPID(ipid.toString());
 		
 		if (details == null)
@@ -838,7 +838,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			throw new JIRuntimeException(JIErrorCodes.RPC_E_INVALID_OXID);
 		}
 		
-		JIJavaCoClass component = details.getReferent();
+		JILocalCoClass component = details.getReferent();
 		
 		if (JISystem.getLogger().isLoggable(Level.FINEST))
         {

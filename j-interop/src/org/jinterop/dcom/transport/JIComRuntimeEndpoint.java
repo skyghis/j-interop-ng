@@ -112,7 +112,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 				  }
 				  ndr.setFormat(((RequestCoPdu) request).getFormat());
 				  workerObject.setOpnum(((RequestCoPdu) request).getOpnum());
-				  //sets the current object, this is used to identify the JIJavaCoClass to work on.
+				  //sets the current object, this is used to identify the JILocalCoClass to work on.
 				  //for most cases this will be null , till there is an actual COM interface request.
 				  workerObject.setCurrentObjectID(((RequestCoPdu) request).getObject());
 				  

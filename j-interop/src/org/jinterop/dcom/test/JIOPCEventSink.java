@@ -7,10 +7,10 @@ import java.util.Set;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIFlags;
-import org.jinterop.dcom.core.JIInterfaceDefinition;
-import org.jinterop.dcom.core.JIJavaCoClass;
-import org.jinterop.dcom.core.JIMethodDescriptor;
-import org.jinterop.dcom.core.JIParameterObject;
+import org.jinterop.dcom.core.JILocalInterfaceDefinition;
+import org.jinterop.dcom.core.JILocalCoClass;
+import org.jinterop.dcom.core.JILocalMethodDescriptor;
+import org.jinterop.dcom.core.JILocalParamsDescriptor;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
@@ -124,19 +124,19 @@ public class JIOPCEventSink {
 		}
 	}
 
-	public static final JIJavaCoClass getCoClass(JIOPCEventSink instance){
+	public static final JILocalCoClass getCoClass(JIOPCEventSink instance){
 		//Define the onEvent method for this interface
-		JIParameterObject oeParams=new JIParameterObject();
+		JILocalParamsDescriptor oeParams=new JILocalParamsDescriptor();
 		oeParams.addInParamAsType(Integer.class, JIFlags.FLAG_NULL);
 		oeParams.addInParamAsType(Integer.class, JIFlags.FLAG_NULL);
 		oeParams.addInParamAsType(Integer.class, JIFlags.FLAG_NULL);
 		oeParams.addInParamAsType(Integer.class, JIFlags.FLAG_NULL);
 		oeParams.addInParamAsObject(new JIArray(outStruct(),null,1,true), JIFlags.FLAG_NULL);
-		JIMethodDescriptor oeMethod=new JIMethodDescriptor("onEvent",0,oeParams);
+		JILocalMethodDescriptor oeMethod=new JILocalMethodDescriptor("onEvent",0,oeParams);
 		//This identify the JIOPCEventSink and not the interface
-		JIInterfaceDefinition def=new JIInterfaceDefinition(LOCAL_CLASS_IID,false);
+		JILocalInterfaceDefinition def=new JILocalInterfaceDefinition(LOCAL_CLASS_IID,false);
 		def.addMethodDescriptor(oeMethod);
-		JIJavaCoClass coClass=(instance==null) ? new JIJavaCoClass(def,JIOPCEventSink.class) : new JIJavaCoClass(def,instance);
+		JILocalCoClass coClass=(instance==null) ? new JILocalCoClass(def,JIOPCEventSink.class) : new JILocalCoClass(def,instance);
 		ArrayList list = new ArrayList();
 		//Supported interface
 		list.add(OPC_IID);
