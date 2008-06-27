@@ -11,7 +11,6 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
-import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
