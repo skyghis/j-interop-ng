@@ -47,7 +47,7 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
 	
 	public Object[] next(int celt) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(0);
 		callObject.addInParamAsInt(celt,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsObject(new JIArray(JIVariant.class,null,1,true,true),JIFlags.FLAG_NULL);
@@ -58,7 +58,7 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
 	
     public void skip(int celt) throws JIException
     {
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(1);
 		callObject.addInParamAsInt(celt,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
@@ -66,14 +66,14 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
 
     public void reset() throws JIException
     {
-    	JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+    	JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(2);
 		Object[] result = comObject.call(callObject);
     }
 
     public IJIEnumVARIANT Clone() throws JIException
     {
-    	JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+    	JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(3);
 		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);

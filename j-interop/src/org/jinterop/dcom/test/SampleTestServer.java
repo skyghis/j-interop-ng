@@ -42,7 +42,7 @@ public class SampleTestServer {
 
   public void performSquare(String[] args) throws JIException, InterruptedException, UnknownHostException {
 
-    JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+    JICallBuilder callObject = new JICallBuilder( true);
     callObject.setOpnum(1); //obtained from the IDL or TypeLib. //    AskTestServerToSquare
     Object results[];
     short i = 3;
@@ -60,7 +60,7 @@ public class SampleTestServer {
   public void getTCharArray()
       throws JIException, InterruptedException, UnknownHostException {
       System.gc();
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(6);
       Object results[];
 
@@ -79,7 +79,7 @@ public class SampleTestServer {
   public void setTCharArray()
       throws JIException, InterruptedException, UnknownHostException {
       System.gc();
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(7);
       Object results[];
       callObject.addInParamAsString("AHHHHHHH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR);
@@ -90,7 +90,7 @@ public class SampleTestServer {
   public void setConformantIntArray()
       throws JIException, InterruptedException, UnknownHostException {
       System.gc();
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(9);
       Object results[];
       int i = 4;
@@ -107,7 +107,7 @@ public class SampleTestServer {
   public void getConformantIntArray()
       throws JIException, InterruptedException, UnknownHostException {
 
-	  JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+	  JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(8);
       Object results[];
 
@@ -126,7 +126,7 @@ public class SampleTestServer {
     public void GetStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(10); //obtained from the IDL or TypeLib. //
         Object results[];
 
@@ -145,7 +145,7 @@ public class SampleTestServer {
     public void getSimpleStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(12); //obtained from the IDL or TypeLib. //
         Object results[];
 
@@ -175,7 +175,7 @@ public class SampleTestServer {
     public void getSimpleStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(13); //obtained from the IDL or TypeLib. //
         Object results[];
 
@@ -194,7 +194,7 @@ public class SampleTestServer {
     public void getConformantStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(14); //obtained from the IDL or TypeLib. //
         Object results[];
 
@@ -214,7 +214,7 @@ public class SampleTestServer {
     public void GetStructStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(17); //obtained from the IDL or TypeLib. //
       Object results[];
 
@@ -241,7 +241,7 @@ public class SampleTestServer {
     public void GetStructStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(18); //obtained from the IDL or TypeLib. //
       Object results[];
 
@@ -269,7 +269,7 @@ public class SampleTestServer {
     public void GetSimpleArrayStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(19); //obtained from the IDL or TypeLib. //
       Object results[];
 
@@ -297,7 +297,7 @@ public class SampleTestServer {
     public void GetSimpleArrayStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-      JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+      JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(20); //obtained from the IDL or TypeLib. //
       Object results[];
 
@@ -326,7 +326,7 @@ public class SampleTestServer {
     public void SetSimpleArrayStructArray(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(21); //obtained from the IDL or TypeLib. ModifyStaticData
         Object results[];
 
@@ -359,7 +359,7 @@ public class SampleTestServer {
   public void GetStaticStruct(String[] args)
       throws JIException, InterruptedException, UnknownHostException {
 
-       JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+       JICallBuilder callObject = new JICallBuilder( true);
       callObject.setOpnum(15); //obtained from the IDL or TypeLib. //
       Object results[];
 
@@ -393,7 +393,7 @@ public class SampleTestServer {
     public void SetStaticStruct(String[] args)
         throws JIException, InterruptedException, UnknownHostException {
 
-        JICallBuilder callObject = new JICallBuilder(comObject.getIpid(), true);
+        JICallBuilder callObject = new JICallBuilder( true);
         callObject.setOpnum(16); //obtained from the IDL or TypeLib.
         Object results[];
 

@@ -36,7 +36,7 @@ public class MetrikonOPC {
 	public void performOp() throws JIException, InterruptedException
 	{
 
-		JICallBuilder callObject = new JICallBuilder ( opcServer.getIpid (), true );
+		JICallBuilder callObject = new JICallBuilder (true);
         callObject.setOpnum ( 0 );
 
         callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR);

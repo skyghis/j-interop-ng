@@ -69,7 +69,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 
 	public int getTypeInfoCount() throws JIException
 	{
-		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(0);
 		obj.addInParamAsInt(0, JIFlags.FLAG_NULL);
 		obj.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -93,7 +93,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 		
 		
 		
-		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(2);									//size of the array																	//1st is the num elements and second is the actual values
 		
 		JIString name = new JIString(apiName.trim(),JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR);
@@ -155,7 +155,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 		}
 
 		
-		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(2);									//size of the array																	//1st is the num elements and second is the actual values
 		
 		JIPointer[] pointers = new JIPointer[apiName.length];
@@ -207,7 +207,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 	
 	public IJITypeInfo getTypeInfo(int typeInfo) throws JIException
 	{
-		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(1);	
 		obj.addInParamAsInt(typeInfo,JIFlags.FLAG_NULL);
 		obj.addInParamAsInt(0x400,JIFlags.FLAG_NULL);
@@ -226,7 +226,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 	public JIVariant[] invoke(int dispId,int dispatchFlags,JIArray arrayOfVariantsInParams,JIArray arrayOfNamedDispIds,JIVariant outParamType) throws JIException
 	{
 	    lastExcepInfo.clearAll();
-		JICallBuilder obj = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(3);				
 		
 		

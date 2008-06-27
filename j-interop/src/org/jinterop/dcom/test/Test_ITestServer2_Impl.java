@@ -59,7 +59,7 @@ public class Test_ITestServer2_Impl {
 			IJIDispatch dispatch2 = (IJIDispatch)JIObjectFactory.narrowObject(unkTestServer2.queryInterface(IJIDispatch.IID));;
 			
 			//send it directly without IDispatch interface, please note that the "dispatchNotSupported" flag of JICallBuilder is "false".
-			JICallBuilder callObject = new JICallBuilder(testServer1Intf.getIpid(),false);
+			JICallBuilder callObject = new JICallBuilder(false);
 			callObject.addInParamAsComObject(iTestServer2, JIFlags.FLAG_NULL);
 			callObject.setOpnum(0);
 			testServer1Intf.call(callObject);

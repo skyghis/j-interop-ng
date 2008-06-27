@@ -45,7 +45,7 @@ public class TestCOMServer {
 		System.out.println(results[1]);
 
 		//now without automation
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid());
+		JICallBuilder callObject = new JICallBuilder();
 		callObject.setOpnum(1);//obtained from the IDL or TypeLib.
 		callObject.addInParamAsInt(1,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(2,JIFlags.FLAG_NULL);

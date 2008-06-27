@@ -94,7 +94,7 @@ public class SampleTestServerCallback {
 
           Object[] results = new Object[1];
           // Create the session
-          JICallBuilder javaCallback = new JICallBuilder(ITest.getIpid(), true);
+          JICallBuilder javaCallback = new JICallBuilder(true);
           javaCallback.setOpnum(0);
           javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long
@@ -159,7 +159,7 @@ public class SampleTestServerCallback {
 
           Object[] results = new Object[1];
           // Create the session
-          JICallBuilder javaCallback = new JICallBuilder(ITest.getIpid(), true);
+          JICallBuilder javaCallback = new JICallBuilder(true);
           javaCallback.setOpnum(8);
           javaCallback.addInParamAsComObject(iStaticSink, JIFlags.FLAG_NULL);
           javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long

@@ -767,7 +767,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			
 			//JIOrpcThat.encode(ndr2);
 			//have to create a call Object, since these return types could be structs , unions etc. having deffered pointers 
-			JICallBuilder callObject = new JICallBuilder(null);
+			JICallBuilder callObject = new JICallBuilder();
 			callObject.attachSession(component.getSession());
 			if (result != null)
 			{

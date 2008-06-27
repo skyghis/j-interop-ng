@@ -55,7 +55,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 
 	public int getTypeInfoCount() throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(0);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
@@ -64,7 +64,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 	
 	public IJITypeInfo getTypeInfo(int index) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(1);
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
@@ -74,7 +74,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 
 	public int getTypeInfoType(int index) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(2);
 		callObject.addInParamAsInt(index,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
@@ -84,7 +84,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 	
 	public IJITypeInfo getTypeInfoOfGuid(String uuid) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(3);
 		callObject.addInParamAsUUID(uuid,JIFlags.FLAG_NULL);
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
@@ -94,7 +94,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 	
 	public void getLibAttr() throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(4);
 		
 		JIStruct tlibattr = new JIStruct();
@@ -114,7 +114,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 	
 	public Object[] getDocumentation(int memberId) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.addInParamAsInt(memberId,JIFlags.FLAG_NULL);
 		callObject.addInParamAsInt(0xb,JIFlags.FLAG_NULL);//refPtrFlags , as per the oaidl.idl...
 		callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
@@ -127,7 +127,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
 
 	public Object[] findName(JIString nameBuf,int hashValue,short found) throws JIException
 	{
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid(),true);
+		JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(8);
 		callObject.addInParamAsString((nameBuf).getString(),nameBuf.getType());
 		callObject.addInParamAsInt(hashValue,JIFlags.FLAG_NULL);

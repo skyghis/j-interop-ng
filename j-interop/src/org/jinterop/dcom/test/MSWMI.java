@@ -54,7 +54,7 @@ public class MSWMI {
 
 		//OR
 		//Make a direct call like below , in this case you would get back an interface pointer to ISWbemServices , NOT to it's IDispatch
-		JICallBuilder callObject = new JICallBuilder(comObject.getIpid());
+		JICallBuilder callObject = new JICallBuilder();
 		callObject.addInParamAsString(address,JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsString("",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
@@ -97,7 +97,7 @@ public class MSWMI {
 
 		//OR
 		//It returns back the pointer to ISWbemObjectSet
-		callObject = new JICallBuilder(wbemServices.getIpid());
+		callObject = new JICallBuilder();
 		callObject.addInParamAsString("Win32_Process",JIFlags.FLAG_REPRESENTATION_STRING_BSTR);
 		callObject.addInParamAsInt(0,JIFlags.FLAG_NULL);
 		callObject.addInParamAsPointer(null,JIFlags.FLAG_NULL);

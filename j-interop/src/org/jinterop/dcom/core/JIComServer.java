@@ -668,7 +668,7 @@ public class JIComServer extends Stub {
 				((JIComObjectImpl)retval).setIsDual(true);
 				//now to check whether it supports IDispatch
 				//IDispatch 00020400-0000-0000-c000-000000000046
-				JIRemUnknown dispatch = new JIRemUnknown(retval.getIpid(),"00020400-0000-0000-c000-000000000046");
+				JIRemUnknown dispatch = new JIRemUnknown(retval.internal_getIpid(),"00020400-0000-0000-c000-000000000046");
 				try {
 					call(Endpoint.IDEMPOTENT,dispatch);
 				}catch(FaultException e)

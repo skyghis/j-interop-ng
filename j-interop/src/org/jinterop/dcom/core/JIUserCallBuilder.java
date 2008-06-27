@@ -29,9 +29,14 @@ public abstract class JIUserCallBuilder extends JICallBuilder {
 	public abstract void writeObject(NetworkDataRepresentation ndr);
 	public abstract void readObject(NetworkDataRepresentation ndr);
 	
-	public JIUserCallBuilder(String parentIpid)
+	public JIUserCallBuilder(boolean dispatchNotSupported)
 	{
-		super(parentIpid);
+		super(dispatchNotSupported);
+	}
+	
+	public JIUserCallBuilder()
+	{
+		super();
 	}
 	
 	public void write(NetworkDataRepresentation ndr) 

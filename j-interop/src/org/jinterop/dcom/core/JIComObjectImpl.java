@@ -86,7 +86,8 @@ final class JIComObjectImpl implements IJIComObject {
 	public void addRef() throws JIException
 	{
 		checkLocal();
-		JICallBuilder obj = new JICallBuilder(ptr.getIPID(),true);
+		JICallBuilder obj = new JICallBuilder(true);
+		obj.setParentIpid(ptr.getIPID());
 		obj.setOpnum(1);//addRef
 		
 		//length
@@ -112,7 +113,8 @@ final class JIComObjectImpl implements IJIComObject {
 	public void release() throws JIException
 	{
 		checkLocal();
-		JICallBuilder obj = new JICallBuilder(ptr.getIPID(),true);
+		JICallBuilder obj = new JICallBuilder(true);
+		obj.setParentIpid(ptr.getIPID());
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)1,JIFlags.FLAG_NULL);
@@ -141,7 +143,7 @@ final class JIComObjectImpl implements IJIComObject {
 		return ptr == null ? session.getStub().getServerInterfacePointer() : ptr;
 	}
 	
-	public String getIpid()
+	public String internal_getIpid()
 	{
 		return ptr.getIPID();
 	}
@@ -153,7 +155,7 @@ final class JIComObjectImpl implements IJIComObject {
 			return false;
 		}
 		
-		return (this.ptr.getIPID().equalsIgnoreCase(((IJIComObject)obj).getIpid()));
+		return (this.ptr.getIPID().equalsIgnoreCase(((IJIComObject)obj).internal_getIpid()));
 	}
 	
 	public int hashCode()
@@ -216,17 +218,17 @@ final class JIComObjectImpl implements IJIComObject {
 
 	public IJIUnreferenced getUnreferencedHandler(JISession session) {
 		checkLocal();
-		return session.getUnreferencedHandler(getIpid());
+		return session.getUnreferencedHandler(internal_getIpid());
 	}
 
 	public void registerUnreferencedHandler(JISession session, IJIUnreferenced unreferenced) {
 		checkLocal();
-		session.registerUnreferencedHandler(getIpid(), unreferenced);
+		session.registerUnreferencedHandler(internal_getIpid(), unreferenced);
 	}
 
 	public void unregisterUnreferencedHandler(JISession session) {
 		checkLocal();
-		session.unregisterUnreferencedHandler(getIpid());
+		session.unregisterUnreferencedHandler(internal_getIpid());
 	}
 
 	public Object[] call(JICallBuilder obj, int socketTimeout) throws JIException

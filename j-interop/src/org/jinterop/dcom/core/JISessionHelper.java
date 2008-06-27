@@ -228,7 +228,7 @@ public final class JISessionHelper {
 		IJIComObject connectionPointer = (IJIComObject)connectionInfo[0];
 		
 		//first use the cookie to detach.
-		JICallBuilder object = new JICallBuilder(connectionPointer.getIpid(),true);
+		JICallBuilder object = new JICallBuilder(true);
 		object.setOpnum(3);
 		object.addInParamAsInt(((Integer)connectionInfo[1]).intValue(),JIFlags.FLAG_NULL);
 		connectionPointer.call(object);
@@ -253,11 +253,11 @@ public final class JISessionHelper {
 		
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
-			JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.getIpid());
+			JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.internal_getIpid());
 		}
 		//IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
 		IJIComObject connectionPointContainer = (IJIComObject)comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
-		JICallBuilder object = new JICallBuilder(connectionPointContainer.getIpid(),true);
+		JICallBuilder object = new JICallBuilder(true);
 		object.setOpnum(1);
 		object.addInParamAsUUID(sourceUUID,JIFlags.FLAG_NULL);
 		object.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);

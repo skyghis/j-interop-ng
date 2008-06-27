@@ -560,13 +560,13 @@ public final class JISession {
 	 */
 	void addToSession(IJIComObject comObject, byte[] oid)
 	{
-		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(),getSessionIdentifier(),false,oid);
+		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.internal_getIpid(),getSessionIdentifier(),false,oid);
 		//mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		synchronized (mutex) 
 		{
 			mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		}
-		addToSession(comObject.getIpid(),oid);
+		addToSession(comObject.internal_getIpid(),oid);
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier());
@@ -605,7 +605,8 @@ public final class JISession {
 		{
 			JISystem.getLogger().info("releaseRef:Reclaiming from Session: " + getSessionIdentifier() + " , the IPID: " + IPID);
 		}
-		JICallBuilder obj = new JICallBuilder(IPID,true);
+		JICallBuilder obj = new JICallBuilder(true);
+		obj.setParentIpid(IPID);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)1,JIFlags.FLAG_NULL);
@@ -639,7 +640,7 @@ public final class JISession {
 		{
 			JISystem.getLogger().info("In releaseRefs for session : " + getSessionIdentifier() + " , array length is: " + (short)(((Object[])arrayOfStructs.getArrayInstance()).length));
 		}
-		JICallBuilder obj = new JICallBuilder(null,true);
+		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)(((Object[])arrayOfStructs.getArrayInstance()).length),JIFlags.FLAG_NULL);

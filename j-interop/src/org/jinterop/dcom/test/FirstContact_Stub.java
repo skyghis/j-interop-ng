@@ -129,7 +129,7 @@ public class FirstContact_Stub implements FirstContact {
 			//JIVariant[] c2 = dispatch.callMethodA("Request", new Object[]{new JIString("rtrtr"),new JIVariant(new JIVariant(arry34)),JIVariant.EMPTY()_BYREF,JIVariant.EMPTY()_BYREF} );
 			//Object[] t1 = dispatch.callMethodA("GetFlavorsWithPrices", new Object[]{JIVariant.EMPTY()_BYREF} );
 
-			JICallBuilder callObject = new JICallBuilder(handle2.getIpid());
+			JICallBuilder callObject = new JICallBuilder();
 			callObject.setOpnum(156);
 			callObject.addInParamAsPointer(new JIPointer(new JIArray(new JIVariant[]{}, true)), JIFlags.FLAG_NULL);
 			//callObject.addInParamAsArray(new JIArray(new JIVariant[]{new JIVariant(new JIArray(new JIString[]{new JIString("ab"),new JIString("cd")}))},true), JIFlags.FLAG_NULL);
@@ -193,7 +193,7 @@ public class FirstContact_Stub implements FirstContact {
 			ONEVENTSTRUCT.addMember(new JIPointer(JIVariant.class));
 			ONEVENTSTRUCT.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
 
-			callObject = new JICallBuilder(handle2.getIpid());
+			callObject = new JICallBuilder();
 //			callObject.setOpnum(3);
 //			callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
 //			callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
@@ -291,7 +291,7 @@ public class FirstContact_Stub implements FirstContact {
 			//System.out.println(arrtt);
 
 			IJIComObject handle = (IJIComObject)unknown.queryInterface("620012E2-69E3-4DC0-B553-AE252524D2F6");
-			JICallBuilder callObject2 = new JICallBuilder(handle.getIpid());
+			JICallBuilder callObject2 = new JICallBuilder();
 
 
 
@@ -349,7 +349,7 @@ public class FirstContact_Stub implements FirstContact {
 //				//dispatch.invoke(i,1,new Object[]{params,null,new Integer(2),new Integer(0)},new Object[]{JIVariant.class});
 			}
 
-			JICallBuilder obj = new JICallBuilder(handle.getIpid());
+			JICallBuilder obj = new JICallBuilder();
 			Object[] in = null;
 			Object[] out = null;
 //			obj.setOpnum(13);//31);//30);//29);//32);

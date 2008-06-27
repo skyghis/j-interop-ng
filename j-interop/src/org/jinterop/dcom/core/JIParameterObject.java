@@ -52,7 +52,7 @@ import ndr.NetworkDataRepresentation;
 public final class JIParameterObject implements Serializable
 {
 
-	private JICallBuilder callObject = new JICallBuilder(null); 
+	private JICallBuilder callObject = new JICallBuilder(); 
 	private static final long serialVersionUID = -4274963180104543505L;
 
 	/**

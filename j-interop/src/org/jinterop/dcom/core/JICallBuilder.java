@@ -90,9 +90,9 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	 * @param dispatchNotSupported true if dispatch is not supported by the Interface, please use <code>IJIComObject.isDispatchSupported()</code> <br>
 	 * to find out whether dispatch is supported on the parent or not.
 	 */
-	public JICallBuilder(String IPIDofParent,boolean dispatchNotSupported)
+	public JICallBuilder(boolean dispatchNotSupported)
 	{
-		this(IPIDofParent);
+		this();
 		this.dispatchNotSupported = dispatchNotSupported;
 	}
 	
@@ -108,9 +108,9 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	 *  </p>
 	 * @param IPIDofParent Please use <code>IJIComObject.getIpid()</code> for this.
 	 */
-	public JICallBuilder(String IPIDofParent)
+	public JICallBuilder()
 	{
-		enclosingParentsIPID = IPIDofParent;
+//		enclosingParentsIPID = IPIDofParent;
 	}
 	
 	/**

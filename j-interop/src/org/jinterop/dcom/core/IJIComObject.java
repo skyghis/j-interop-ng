@@ -25,8 +25,7 @@ import org.jinterop.dcom.common.JIException;
 
 
 
-/** <p>Represents a <code>COM</code> Object. All interfaces (representing <code>COM</code> objects) 
- * for e.g. IJIDispatch, IJITypeInfo must extend from this interface.</p>
+/** <p>Represents a <i>Windows COM</i> Object. 
  * <p>
  * Sample usage:- 
  * <code><br>
@@ -80,10 +79,10 @@ public interface IJIComObject extends Serializable {
 	public void release() throws JIException;
 	
 	/**Unique 128 bit uuid representing the interface on the <code>COM</code> server. <br>
-	 * 
+	 * @exclude
 	 * @return
 	 */
-	public String getIpid();
+	public String internal_getIpid();
 	
 	/** <P>Executes a <i>method call</i> on the actual <code>COM</code> object represented by this interface. All the data like parameter information, operation number etc. are 
 	 *  prepared and sent via the JICallBuilder.
