@@ -79,7 +79,7 @@ final class JIMarshalUnMarshalHelper {
 		mapOfSerializers.put(JIUnsignedByte.class,new JIMarshalUnMarshalHelper.JIUnsignedByteImpl());
 		mapOfSerializers.put(JIUnsignedShort.class,new JIMarshalUnMarshalHelper.JIUnsignedShortImpl());
 		mapOfSerializers.put(JIUnsignedInteger.class,new JIMarshalUnMarshalHelper.JIUnsignedIntImpl());
-		
+//		mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
 		
 	}
 	
@@ -385,13 +385,13 @@ final class JIMarshalUnMarshalHelper {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(((JIUnsignedInteger)value).getEncapsulatedUnsigned().intValue()),null,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(((JIUnsignedInteger)value).getValue().intValue()),null,FLAG);
 		}
 		
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{
 			Integer b = (Integer)JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,FLAG,additionalData);
-			return JIUnsigned.getUnsigned(new Long((long)(b.intValue() & 0xFFFFFFFFL)),JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
+			return JIUnsignedFactory.getUnsigned(new Long((long)(b.intValue() & 0xFFFFFFFFL)),JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
 		}
 		
 		public int getLengthInBytes(Object value,int FLAG)
@@ -405,13 +405,13 @@ final class JIMarshalUnMarshalHelper {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			JIMarshalUnMarshalHelper.serialize(ndr,Byte.class,new Byte(((JIUnsignedByte)value).getEncapsulatedUnsigned().byteValue()),null,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Byte.class,new Byte(((JIUnsignedByte)value).getValue().byteValue()),null,FLAG);
 		}
 		
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{
 			Byte b = (Byte)JIMarshalUnMarshalHelper.deSerialize(ndr,Byte.class,null,FLAG,additionalData);
-			return JIUnsigned.getUnsigned(new Short((short)(b.byteValue() & 0xFF)),JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE);
+			return JIUnsignedFactory.getUnsigned(new Short((short)(b.byteValue() & 0xFF)),JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE);
 		}
 		
 		public int getLengthInBytes(Object value,int FLAG)
@@ -425,13 +425,13 @@ final class JIMarshalUnMarshalHelper {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			JIMarshalUnMarshalHelper.serialize(ndr,Short.class,new Short(((JIUnsignedShort)value).getEncapsulatedUnsigned().shortValue()),null,FLAG);
+			JIMarshalUnMarshalHelper.serialize(ndr,Short.class,new Short(((JIUnsignedShort)value).getValue().shortValue()),null,FLAG);
 		}
 		
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{
 			Short b = (Short)JIMarshalUnMarshalHelper.deSerialize(ndr,Short.class,null,FLAG,additionalData);
-			return JIUnsigned.getUnsigned(new Integer((int)(b.shortValue() & 0xFFFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);	
+			return JIUnsignedFactory.getUnsigned(new Integer((int)(b.shortValue() & 0xFFFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);	
 		}
 		
 		public int getLengthInBytes(Object value,int FLAG)
@@ -440,6 +440,121 @@ final class JIMarshalUnMarshalHelper {
 		}
 	}
 
+//	private static class JIUnsignedImpl implements SerializerDeserializer {
+//
+//		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
+//		{
+//			IJIUnsigned unsigned = (IJIUnsigned)value;
+//			switch(unsigned.getType())
+//			{
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE: 
+//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedByte.class,value,defferedPointers,FLAG);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT: 
+//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedShort.class,value,defferedPointers,FLAG);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT: 
+//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedInteger.class,value,defferedPointers,FLAG);
+//					break;
+//				
+//				default: 
+//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
+//			}
+//			
+//		}
+//		
+//		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
+//		{
+//			IJIUnsigned unsigned = null;
+//			int type = JIFlags.FLAG_NULL;
+//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)
+//			{
+//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
+//			}
+//			else
+//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)
+//			{
+//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
+//			}
+//			else
+//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)
+//			{
+//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
+//			}
+//
+//			switch(type)
+//			{
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE: 
+//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedByte.class, defferedPointers, FLAG, additionalData);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT: 
+//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedShort.class, defferedPointers, FLAG, additionalData);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT: 
+//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedInteger.class, defferedPointers, FLAG, additionalData);
+//					break;
+//				
+//				default: 
+//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
+//			}
+//			
+//			return unsigned;
+//		}
+//		
+//		public int getLengthInBytes(Object value,int FLAG)
+//		{
+//			IJIUnsigned unsigned = (IJIUnsigned)value;
+//			int length = 0;
+//			int type = JIFlags.FLAG_NULL;
+//			if (unsigned != null)
+//			{
+//				type = unsigned.getType();
+//			}
+//			else
+//			{
+//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)
+//				{
+//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
+//				}
+//				else
+//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)
+//				{
+//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
+//				}
+//				else
+//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)
+//				{
+//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
+//				}
+//			}
+//			
+//			switch(type)
+//			{
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE: 
+//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedByte.class,value,FLAG);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT: 
+//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedShort.class,value,FLAG);
+//					break;
+//				
+//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT: 
+//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedInteger.class,value,FLAG);
+//					break;
+//				
+//				default: 
+//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
+//			}
+//			
+//			return length;
+//		}
+//
+//	}
+	
 	private static class StructImpl implements SerializerDeserializer {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)

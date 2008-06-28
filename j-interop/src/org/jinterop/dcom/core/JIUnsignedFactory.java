@@ -25,7 +25,7 @@ import org.jinterop.dcom.common.JISystem;
  * 
  * @since 1.15
  */
-public final class JIUnsigned {
+public final class JIUnsignedFactory {
 
 	/**<p>Returns an implementation for each of the unsigned type. Only 3 types are supported at present Byte, Short, Integer and 
 	 * since Java has no support for unsigned types, please send a Short for a Byte, Integer for a Short and Long for an Integer. This is to 
@@ -65,6 +65,34 @@ public final class JIUnsigned {
 	}
 	
 
+//	/** Returns template to be used during [out] params.
+//	 * 
+//	 * @param flag
+//	 * @return
+//	 */
+//	public static IJIUnsigned getUnsigned(int flag)
+//	{
+//		IJIUnsigned retVal = null;
+//		switch(flag)
+//		{
+//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
+//				retVal = new JIUnsignedByte();
+//				break;
+//			
+//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
+//				retVal = new JIUnsignedShort();
+//				break;
+//				
+//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
+//				retVal = new JIUnsignedInteger();
+//				break;
+//			default:
+//				throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_INCORRECT_TYPE));
+//		}
+//		
+//		return retVal;
+//		
+//	}
 	
 	
 }

@@ -34,5 +34,5 @@ public interface IJIUnsigned {
 	 * 
 	 * @return
 	 */
-	public Number getEncapsulatedUnsigned();
+	public Number getValue();
 }

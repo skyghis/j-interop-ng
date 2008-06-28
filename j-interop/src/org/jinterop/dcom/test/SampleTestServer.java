@@ -14,7 +14,7 @@ import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIStruct;
-import org.jinterop.dcom.core.JIUnsigned;
+import org.jinterop.dcom.core.JIUnsignedFactory;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
@@ -188,7 +188,7 @@ public class SampleTestServer {
         JIArray DataArray = new JIArray(struct, null, 1, true);
         callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
         results = comObject.call(callObject);
-        System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
+        System.out.println(((JIUnsignedShort)results[0]).getValue());
     }
 
     public void getConformantStruct(String[] args)
@@ -262,7 +262,7 @@ public class SampleTestServer {
       callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
       results = comObject.call(callObject);
-      System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
+      System.out.println(((JIUnsignedShort)results[0]).getValue());
 
     }
 
@@ -318,7 +318,7 @@ public class SampleTestServer {
       callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
       results = comObject.call(callObject);
-      System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
+      System.out.println(((JIUnsignedShort)results[0]).getValue());
 
     }
 
@@ -339,7 +339,7 @@ public class SampleTestServer {
         JIStruct simpleArrayStruct = new JIStruct();
         simpleArrayStruct.addMember(new Integer(54));
         simpleArrayStruct.addMember(new Double(5));
-        simpleArrayStruct.addMember(JIUnsigned.getUnsigned(shortValue, JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
+        simpleArrayStruct.addMember(JIUnsignedFactory.getUnsigned(shortValue, JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
         JIStruct[] structArray = new JIStruct[1];
         structArray[0] = simpleStruct;
         simpleArrayStruct.addMember(new JIPointer(new JIArray(structArray, true)));
@@ -386,7 +386,7 @@ public class SampleTestServer {
 
 
       results = comObject.call(callObject);
-      System.out.println(((JIUnsignedShort)results[0]).getEncapsulatedUnsigned());
+      System.out.println(((JIUnsignedShort)results[0]).getValue());
 
     }
 
@@ -401,17 +401,17 @@ public class SampleTestServer {
         Long value = new Long(10);
         Integer shortValue = new Integer(5);
         JIStruct varStruct = new JIStruct();
-        varStruct.addMember(JIUnsigned.getUnsigned(value, JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
+        varStruct.addMember(JIUnsignedFactory.getUnsigned(value, JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
         varStruct.addMember(new Float(1.1));
         varStruct.addMember(new Float(1.2));
-        varStruct.addMember(JIUnsigned.getUnsigned(shortValue, JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
+        varStruct.addMember(JIUnsignedFactory.getUnsigned(shortValue, JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
         varStruct.addMember(new Float(1.0));
         varStruct.addMember(new Date());
-        varStruct.addMember(JIUnsigned.getUnsigned(value, JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
+        varStruct.addMember(JIUnsignedFactory.getUnsigned(value, JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
 
         JIStruct pointStruct = new JIStruct();
-        pointStruct.addMember(JIUnsigned.getUnsigned(new Long(15), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
-        pointStruct.addMember(JIUnsigned.getUnsigned(new Long(10), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
+        pointStruct.addMember(JIUnsignedFactory.getUnsigned(new Long(15), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
+        pointStruct.addMember(JIUnsignedFactory.getUnsigned(new Long(10), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
         pointStruct.addMember(new Byte((byte)1));
         JIStruct[] varStructArray = new JIStruct[1];
         varStructArray[0] = varStruct;

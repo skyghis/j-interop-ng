@@ -43,7 +43,7 @@ public final class JIUnsignedInteger implements IJIUnsigned {
 		return JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
 	}
 
-	public Number getEncapsulatedUnsigned() {
+	public Number getValue() {
 		return intValue;
 	}
 

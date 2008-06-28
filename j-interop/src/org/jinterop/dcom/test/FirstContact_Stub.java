@@ -20,7 +20,7 @@ import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
-import org.jinterop.dcom.core.JIUnsigned;
+import org.jinterop.dcom.core.JIUnsignedFactory;
 import org.jinterop.dcom.core.JIUnsignedInteger;
 import org.jinterop.dcom.core.JIUnsignedShort;
 import org.jinterop.dcom.core.JIVariant;
@@ -144,8 +144,8 @@ public class FirstContact_Stub implements FirstContact {
 			Object[] ret0 = dispatch.callMethodA("LongArray", new Object[]{new JIVariant(new JIArray(new Integer[]{new Integer(1),new Integer(2),new Integer(4)},true), true)});
 			JIArray ret01 = ((JIVariant)ret0[1]).getObjectAsArray();
 			ret0 = dispatch.callMethodA("ReadAsicRegisterBlock", new Object[]{new JIString("Chonap"),new JIString("Cho"),new JIVariant(new JIArray(new JIUnsignedShort[]{
-					(JIUnsignedShort)JIUnsigned.getUnsigned(new Integer(4000), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT),(JIUnsignedShort)JIUnsigned.getUnsigned(new Integer(4001), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)},true),true),new JIVariant(new JIArray(new JIUnsignedInteger[]{
-							(JIUnsignedInteger)JIUnsigned.getUnsigned(new Long(9999), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT),(JIUnsignedInteger)JIUnsigned.getUnsigned(new Long(9999), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)},true),true), Boolean.FALSE,Boolean.TRUE});
+					(JIUnsignedShort)JIUnsignedFactory.getUnsigned(new Integer(4000), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT),(JIUnsignedShort)JIUnsignedFactory.getUnsigned(new Integer(4001), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)},true),true),new JIVariant(new JIArray(new JIUnsignedInteger[]{
+							(JIUnsignedInteger)JIUnsignedFactory.getUnsigned(new Long(9999), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT),(JIUnsignedInteger)JIUnsignedFactory.getUnsigned(new Long(9999), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)},true),true), Boolean.FALSE,Boolean.TRUE});
 			ret01 = ((JIVariant)ret0[1]).getObjectAsArray();
 
 			ret0 = dispatch.callMethodA("testSA1", new Object[]{new JIVariant(new JIArray(new Boolean[]{Boolean.FALSE,Boolean.TRUE},true),true),new JIVariant(new JIArray(new Float[]{new Float(123.4),new Float(123.4)},true),true),new JIVariant(new JIArray(new Double[]{new Double(123.4),new Double(123.4)},true),true)});
@@ -167,7 +167,7 @@ public class FirstContact_Stub implements FirstContact {
 
 			//IJIComObject handle2 = (IJIComObject)unknown.queryInterface("A12E7F85-B011-4AB3-A924-215F67A725D5");
 
-			dispatch.callMethod("testUnsignedInt", new Object[]{JIUnsigned.getUnsigned(new Short((short)-200), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)});
+			dispatch.callMethod("testUnsignedInt", new Object[]{JIUnsignedFactory.getUnsigned(new Short((short)-200), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)});
 
 			JIStruct filetime = new JIStruct();
 			filetime.addMember(Integer.class);
@@ -209,7 +209,7 @@ public class FirstContact_Stub implements FirstContact {
 		//Integer
 			callObject.reInit();
 			callObject.setOpnum(147);
-			callObject.addInParamAsUnsigned(JIUnsigned.getUnsigned(new Short((short)200), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE),JIFlags.FLAG_NULL);
+			callObject.addInParamAsUnsigned(JIUnsignedFactory.getUnsigned(new Short((short)200), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE),JIFlags.FLAG_NULL);
 			handle2.call(callObject);
 
 			JIArray	 aIn	= new JIArray(new JIVariant[] {new JIVariant(new JIString("40807810804000300798")),new JIVariant(new JIString("1"))},true);

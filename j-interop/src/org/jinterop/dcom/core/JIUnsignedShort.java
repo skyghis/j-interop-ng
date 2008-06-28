@@ -43,7 +43,7 @@ public final class JIUnsignedShort implements IJIUnsigned {
 		return JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
 	}
 
-	public Number getEncapsulatedUnsigned() {
+	public Number getValue() {
 		return shortValue;
 	}
 

@@ -43,7 +43,7 @@ public class SampleTestServerCallback {
           append("C:\\Test\\callback_j.log", "SampleTestServerCallback::UpdateMe entered with array size=" + size + "\n");
           System.out.println("SampleTestServerCallback::UpdateMe entered with array size=" + size + "\n");
           JIStruct[] structArray = (JIStruct[]) array.getArrayInstance();
-          for (int i = 0; i < size.getEncapsulatedUnsigned().intValue(); i++) {
+          for (int i = 0; i < size.getValue().intValue(); i++) {
             append("C:\\Test\\callback_j.log", "Member 0= " + structArray[i].getMember(0).toString() +"\n");
             System.out.println("Array elt=" + i+ ",Member 0= " + structArray[i].getMember(0).toString() + "\n");
           }

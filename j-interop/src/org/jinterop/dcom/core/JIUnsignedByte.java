@@ -43,7 +43,7 @@ public final class JIUnsignedByte implements IJIUnsigned {
 		return JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
 	}
 
-	public Number getEncapsulatedUnsigned() {
+	public Number getValue() {
 		return byteValue;
 	}
 
