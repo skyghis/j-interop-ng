@@ -611,5 +611,10 @@ public final class JIErrorCodes {
   */
  public static final int JI_COMOBJ_LOCAL_REF = 0x00001049;
  
+ /**
+  * A session is not attached with this object , use JIObjectFactory.buildObject(JISession, IJIComObject) to attach a session with this object.
+  */
+ public static final int JI_SESSION_NOT_ATTACHED = 0x00001050;
+ 
  
 }

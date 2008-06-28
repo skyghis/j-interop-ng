@@ -28,12 +28,11 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 
-/** Internal Helper class. Do not use outside of framework.
+/** Internal Framework Helper class. Do not use outside of framework.
  * 
  * @exclude
- *
  */
-public final class JISessionHelper {
+public final class JIFrameworkHelper {
 
 	/** 
 	 * @exclude
@@ -108,11 +107,11 @@ public final class JISessionHelper {
 		}
 		
 		IJIComObject retval = null;
-		JIInterfacePointer stubPtr = JISessionHelper.getInterfacePointerOfStub(session);
+		JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
 		if (!JIInterfacePointer.isOxidEqual(stubPtr, ptr))
 		{
 		    //first check if a session for this OXID does not already exist and thus its stub
-			JISession newsession = JISessionHelper.resolveSessionForOXID(ptr.getOXID());
+			JISession newsession = JIFrameworkHelper.resolveSessionForOXID(ptr.getOXID());
 			if (newsession == null)
 			{
 				//new COM server pointer
@@ -121,7 +120,7 @@ public final class JISessionHelper {
 			    newsession.useSessionSecurity(session.isSessionSecurityEnabled());
 			    JIComServer comServer = new JIComServer(newsession,ptr,null);
 			    retval = comServer.getInstance();
-			    JISessionHelper.link2Sessions(session, newsession);
+			    JIFrameworkHelper.link2Sessions(session, newsession);
 			}
 //			else
 //			{
@@ -282,4 +281,9 @@ public final class JISessionHelper {
 		return comObject.internal_setConnectionInfo(connectionPointer,dwcookie);
 		
 	}
+    
+    public static int reverseArrayForDispatch(JIArray arrayToReverse)
+    {
+    	return arrayToReverse.reverseArrayForDispatch();
+    }
 }

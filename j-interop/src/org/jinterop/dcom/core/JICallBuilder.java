@@ -1038,8 +1038,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
 			{
 				JIComObjectImpl comObjectImpl = (JIComObjectImpl)comObjects.get(i);
 				try {
-					comObjectImpl.replaceMembers(JISessionHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer()));
-					JISessionHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
+					comObjectImpl.replaceMembers(JIFrameworkHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer()));
+					JIFrameworkHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
 				} catch (JIException e) {
 					JISystem.getLogger().throwing("JICallBuilder", "readPacket", e);
 					throw new JIRuntimeException(e.getErrorCode());

@@ -112,18 +112,18 @@ public class JIComObjectImplWrapper implements IJIComObject {
 	}
 
 
-	public IJIUnreferenced getUnreferencedHandler(JISession session) {
-		return comObject.getUnreferencedHandler(session);
+	public IJIUnreferenced getUnreferencedHandler() {
+		return comObject.getUnreferencedHandler();
 	}
 
 
-	public void registerUnreferencedHandler(JISession session, IJIUnreferenced unreferenced) {
-		comObject.registerUnreferencedHandler(session, unreferenced);
+	public void registerUnreferencedHandler(IJIUnreferenced unreferenced) {
+		comObject.registerUnreferencedHandler(unreferenced);
 	}
 
 
-	public void unregisterUnreferencedHandler(JISession session) {
-		comObject.unregisterUnreferencedHandler(session);
+	public void unregisterUnreferencedHandler() {
+		comObject.unregisterUnreferencedHandler();
 	}
 
 

@@ -45,7 +45,7 @@ public final class Internal_JIAutomationFactory {
 	/**
 	 * IID of <code>IEnumVARIANT [IJIEnumVARIANT]</code>. 
 	 */
-	public static final String IID_IEnumVARIANT = IJIEnumVARIANT.IID;
+	public static final String IID_IEnumVariant = IJIEnumVariant.IID;
 	
 	public static IJIComObject narrowObject(final IJIComObject comObject) throws JIException
 	{
@@ -66,7 +66,7 @@ public final class Internal_JIAutomationFactory {
 			retval = new JITypeLibImpl((IJIComObject)retval);
 		}	
 		else
-		if (IID.equalsIgnoreCase(IID_IEnumVARIANT))// && iUnknown.isIDispatchSupported())
+		if (IID.equalsIgnoreCase(IID_IEnumVariant))// && iUnknown.isIDispatchSupported())
 		{
 			retval = new JIEnumVARIANTImpl((IJIComObject)retval);
 		}

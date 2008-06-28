@@ -659,7 +659,7 @@ public class JIComServer extends Stub {
 				throw new JIException(e1);
 			}
 			
-			retval = JISessionHelper.instantiateComObject(session, reqUnknown.getInterfacePointer());
+			retval = JIFrameworkHelper.instantiateComObject(session, reqUnknown.getInterfacePointer());
 			
 			//for querying dispatch we can't send another call
 			if (!iid.equalsIgnoreCase("00020400-0000-0000-c000-000000000046"))
@@ -722,7 +722,7 @@ public class JIComServer extends Stub {
 			}
 //			JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
 //			comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
-			comObject = JISessionHelper.instantiateComObject(session, remoteActivation.getMInterfacePointer());
+			comObject = JIFrameworkHelper.instantiateComObject(session, remoteActivation.getMInterfacePointer());
 			if (remoteActivation.isDual)
 			{
 				//IJIComObject comObject2 = getObject(remoteActivation.dispIpid,"00020400-0000-0000-c000-000000000046");
@@ -766,7 +766,7 @@ public class JIComServer extends Stub {
 			
 //			JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
 //			comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
-			comObject = JISessionHelper.instantiateComObject(session,interfacePtrCtor);
+			comObject = JIFrameworkHelper.instantiateComObject(session,interfacePtrCtor);
 			serverInstantiated = true;
 		}
 		

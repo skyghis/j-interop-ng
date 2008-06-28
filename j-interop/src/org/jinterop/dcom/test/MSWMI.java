@@ -19,7 +19,7 @@ import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
-import org.jinterop.dcom.impls.automation.IJIEnumVARIANT;
+import org.jinterop.dcom.impls.automation.IJIEnumVariant;
 
 
 public class MSWMI {
@@ -67,7 +67,7 @@ public class MSWMI {
 		callObject.addOutParamAsType(IJIComObject.class,JIFlags.FLAG_NULL);
 		IJIComObject wbemServices = JIObjectFactory.narrowObject((IJIComObject)((Object[])comObject.call(callObject))[0]);
 		wbemServices.setInstanceLevelSocketTimeout(1000);
-		wbemServices.registerUnreferencedHandler(session, new IJIUnreferenced(){
+		wbemServices.registerUnreferencedHandler(new IJIUnreferenced(){
 			public void unReferenced()
 			{
 				System.out.println("wbemServices unreferenced... ");
@@ -84,14 +84,14 @@ public class MSWMI {
 		System.out.println(object2.isDispatchSupported());
 		System.out.println(object2.isDispatchSupported());
 		
-		object2.registerUnreferencedHandler(session, new IJIUnreferenced(){
+		object2.registerUnreferencedHandler(new IJIUnreferenced(){
 			public void unReferenced()
 			{
 				System.out.println("object2 unreferenced...");
 			}
 		});
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVARIANT.IID));
+		IJIEnumVariant enumVARIANT = (IJIEnumVariant)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVariant.IID));
 
 		//This will return back a dispatch of ISWbemObjectSet
 

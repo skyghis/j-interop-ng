@@ -17,22 +17,24 @@
 
 package org.jinterop.dcom.core;
 
-/**Representation of an unsigned number. 
+/** Java representation of a C++ <i>unsigned</i> number. An unsigned number can
+ * be obtained by using {@link JIUnsignedFactory#getUnsigned(Number, int)}.
  * 
  * @since 1.15(b)
- *
  */
 public interface IJIUnsigned {
 
-	/** Returns the unsigned type as per the JIFlags.
+	/** Returns the unsigned type (<code>byte</code>,<code>short</code>,<code>int</code>).
 	 * 
-	 * @return
+	 * @return {@link JIFlags#FLAG_REPRESENTATION_UNSIGNED_BYTE} or 
+	 * {@link JIFlags#FLAG_REPRESENTATION_UNSIGNED_SHORT} or 
+	 * {@link JIFlags#FLAG_REPRESENTATION_UNSIGNED_INT}
 	 */
 	public int getType();
 	
-	/**Returns the encapsulated number.
+	/** Returns the number represented by this object.
 	 * 
-	 * @return
+	 * @return value 
 	 */
 	public Number getValue();
 }

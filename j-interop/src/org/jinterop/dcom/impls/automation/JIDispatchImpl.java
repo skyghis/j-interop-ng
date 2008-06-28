@@ -30,6 +30,7 @@ import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComObjectImplWrapper;
 import org.jinterop.dcom.core.JIFlags;
+import org.jinterop.dcom.core.JIFrameworkHelper;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIStruct;
@@ -241,7 +242,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 		//boolean isLastAptr = false;
 		if (arrayOfVariantsInParams != null)
 		{
-			lengthVar = arrayOfVariantsInParams.reverseArrayForDispatch();
+			lengthVar = JIFrameworkHelper.reverseArrayForDispatch(arrayOfVariantsInParams);
 			variants = (JIVariant[])arrayOfVariantsInParams.getArrayInstance();
 			for (int i = 0;i < variants.length;i++)
 			{
@@ -261,7 +262,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 		int lengthPtr = 0;
 		if (arrayOfNamedDispIds != null)
 		{
-			lengthPtr = arrayOfNamedDispIds.reverseArrayForDispatch(); 
+			lengthPtr = JIFrameworkHelper.reverseArrayForDispatch(arrayOfNamedDispIds); 
 		}
 		
 		dispParams.addMember(new JIPointer(arrayOfVariantsInParams)); //should be an array of variants 

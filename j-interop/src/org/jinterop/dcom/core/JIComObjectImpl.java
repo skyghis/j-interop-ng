@@ -71,6 +71,11 @@ final class JIComObjectImpl implements IJIComObject {
 	
 	private void checkLocal()
 	{
+		if (session == null)
+		{
+			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_SESSION_NOT_ATTACHED));
+		}
+		
 		if (isLocalReference())
 		{
 			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.E_NOTIMPL));
@@ -181,6 +186,7 @@ final class JIComObjectImpl implements IJIComObject {
 	
 	public synchronized boolean isDispatchSupported()
 	{
+		checkLocal();
 		if (!dualInfo)
 		{
 			//query interface for it and then release it.
@@ -216,17 +222,17 @@ final class JIComObjectImpl implements IJIComObject {
 		return (Object[])connectionPointInfo.remove(identifier);
 	}
 
-	public IJIUnreferenced getUnreferencedHandler(JISession session) {
+	public IJIUnreferenced getUnreferencedHandler() {
 		checkLocal();
 		return session.getUnreferencedHandler(internal_getIpid());
 	}
 
-	public void registerUnreferencedHandler(JISession session, IJIUnreferenced unreferenced) {
+	public void registerUnreferencedHandler(IJIUnreferenced unreferenced) {
 		checkLocal();
 		session.registerUnreferencedHandler(internal_getIpid(), unreferenced);
 	}
 
-	public void unregisterUnreferencedHandler(JISession session) {
+	public void unregisterUnreferencedHandler() {
 		checkLocal();
 		session.unregisterUnreferencedHandler(internal_getIpid());
 	}

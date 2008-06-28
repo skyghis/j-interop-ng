@@ -31,7 +31,7 @@ import org.jinterop.dcom.impls.JIObjectFactory;
  * @since 1.0
  *
  */
-final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumVARIANT {
+final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumVariant {
 
 	//IJIComObject comObject = null;
 
@@ -71,13 +71,13 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
 		Object[] result = comObject.call(callObject);
     }
 
-    public IJIEnumVARIANT Clone() throws JIException
+    public IJIEnumVariant Clone() throws JIException
     {
     	JICallBuilder callObject = new JICallBuilder(true);
 		callObject.setOpnum(3);
 		callObject.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] result = comObject.call(callObject);
-		return (IJIEnumVARIANT)JIObjectFactory.narrowObject((IJIComObject)result[0]);
+		return (IJIEnumVariant)JIObjectFactory.narrowObject((IJIComObject)result[0]);
     }
 
 	

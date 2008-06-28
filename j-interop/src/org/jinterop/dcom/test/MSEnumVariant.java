@@ -13,7 +13,7 @@ import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
-import org.jinterop.dcom.impls.automation.IJIEnumVARIANT;
+import org.jinterop.dcom.impls.automation.IJIEnumVariant;
 
 //StdCollection.VBCollection
 public class MSEnumVariant {
@@ -49,7 +49,7 @@ public class MSEnumVariant {
 		IJIComObject object2 = variant.getObjectAsComObject();
 		//IJIComObject enumObject = (IJIComObject)object2.queryInterface(IJIEnumVARIANT.IID);
 
-		IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVARIANT.IID));
+		IJIEnumVariant enumVARIANT = (IJIEnumVariant)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVariant.IID));
 
 		for (i = 0; i < 10; i++)
 		{
@@ -69,7 +69,7 @@ public class MSEnumVariant {
 		enumVARIANT.next(1);
 		enumVARIANT.skip(2);
 		values = enumVARIANT.next(1);
-		IJIEnumVARIANT newenum = enumVARIANT.Clone();
+		IJIEnumVariant newenum = enumVARIANT.Clone();
 		newenum.reset();
 		values = newenum.next(10);
 		i = 0;

@@ -21,9 +21,9 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
+import org.jinterop.dcom.core.JIFrameworkHelper;
 import org.jinterop.dcom.core.JILocalCoClass;
 import org.jinterop.dcom.core.JISession;
-import org.jinterop.dcom.core.JISessionHelper;
 import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
 
 
@@ -166,7 +166,7 @@ public class JIObjectFactory {
 //		}
 //		
 //		IJIUnknown retval = null;
-//		JIInterfacePointer stubPtr = JISessionHelper.getInterfacePointerOfStub(session);
+//		JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
 //		if (JIInterfacePointer.isOxidEqual(stubPtr, ptr))
 //		{
 //		    retval = new JIComObjectImpl(session,ptr);
@@ -175,7 +175,7 @@ public class JIObjectFactory {
 //		{
 //		    //first check if a session for this OXID does not already exist and thus its stub
 //			JISession newsession = null;
-//			newsession = JISessionHelper.resolveSessionForOXID(ptr);
+//			newsession = JIFrameworkHelper.resolveSessionForOXID(ptr);
 //			if (newsession == null)
 //			{
 //				//new COM server pointer
@@ -184,7 +184,7 @@ public class JIObjectFactory {
 //			    newsession.useSessionSecurity(session.isSessionSecurityEnabled());
 //			    JIComServer comServer = new JIComServer(newsession,ptr,null);
 //			    retval = comServer.getInstance();
-//			    JISessionHelper.link2Sessions(session, newsession);
+//			    JIFrameworkHelper.link2Sessions(session, newsession);
 //			}
 //			else
 //			{
@@ -239,7 +239,7 @@ public class JIObjectFactory {
 	 */
 	public static String attachEventHandler(IJIComObject comObject,String sourceUUID,IJIComObject eventListener) throws JIException
 	{
-		return JISessionHelper.attachEventHandler(comObject, sourceUUID, eventListener);
+		return JIFrameworkHelper.attachEventHandler(comObject, sourceUUID, eventListener);
 		
 	}
 	/**Detaches the event handler identified by <code>identifier</code> and associated with this <code>comObject</code>. 
@@ -250,7 +250,7 @@ public class JIObjectFactory {
 	 */
 	public static void detachEventHandler(IJIComObject comObject, String identifier) throws JIException
 	{
-		JISessionHelper.detachEventHandler(comObject, identifier);
+		JIFrameworkHelper.detachEventHandler(comObject, identifier);
 	}
 
 	/** <p>Narrows the source object into its right type based on the IID of the source COM Object. For e.g passing a comObject which is a COM IDispatch reference
@@ -284,7 +284,7 @@ public class JIObjectFactory {
 	 */
 	public static IJIComObject buildObject(JISession session,JILocalCoClass javaComponent) throws JIException
 	{
-		return JISessionHelper.instantiateLocalComObject(session, javaComponent);
+		return JIFrameworkHelper.instantiateLocalComObject(session, javaComponent);
 	}
 	
 	/** Returns a COM Object from raw bytes. These bytes must conform to the Marshalled Interface Pointer template as per DCOM specifications.
@@ -296,7 +296,7 @@ public class JIObjectFactory {
 	 */
 	public static IJIComObject buildObject(JISession session, byte[] rawBytes) throws JIException
 	{
-		return narrowObject(JISessionHelper.instantiateComObject(session, rawBytes));
+		return narrowObject(JIFrameworkHelper.instantiateComObject(session, rawBytes));
 	}
 	
 	 /** Typically used in the Man-In-The-Middle scenario, where one j-Interop system interacts with another over the wire. 
@@ -309,6 +309,6 @@ public class JIObjectFactory {
      */
 	public static IJIComObject narrowObject(JISession session, IJIComObject comObject) throws JIException
 	{
-		return narrowObject(JISessionHelper.instantiateComObject(session, comObject));
+		return narrowObject(JIFrameworkHelper.instantiateComObject(session, comObject));
 	}
 }

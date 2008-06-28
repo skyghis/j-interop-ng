@@ -29,11 +29,17 @@ import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
-/** <p>Represents an Array which can display Conformant\Standard behaviours. <br> Please make sure you supply completed and final Arrays (of Objects) to this class. Modifying the Array 
- *     after it has been passed to a JIArray (to subsequently be used in a DCOM call) will have unexpected results.
- *  
- *  <br><i>Please refer to <b>MSExcel</b> examples for more details on how to use this class.</i><br>
- *  </p>
+/**<p>Represents a C++ array which can display both <i>conformant and standard</i> 
+ * behaviors. Since this class forms a wrapper on the actual array, the developer 
+ * is expected to provide complete and final arrays (of Objects) to this class. 
+ * Modifying the wrapped array afterwards <b>will</b> have unexpected results.
+ *  </p> 
+ * <p>
+ * <i>Please refer to <b>MSExcel</b> examples for more details on how to use this 
+ * class.</i>
+ *  <p>
+ * <b>Note</b>: Wrapped Arrays can be at most two dimensional in nature. Above
+ * that is not supported by the library.
  *  
  * @since 1.0
  */
@@ -59,24 +65,25 @@ public final class JIArray implements Serializable{
 		
 	}
 	
-	/** <P>Creates an array Object of the type specified by <code>clazz</code>. This is used 
+	/**<p>Creates an array object of the type specified by <code>clazz</code>. This is used 
 	 * to prepare a template for decoding an array of that type. Used only for setting as an 
-	 * OutParam in a JICallBuilder. <br>
-	 *
+	 * <code>[out]</code> parameter in a JICallBuilder. 
+	 * </p><p>
 	 * For example:- <br>
 	 * This call creates a template for a single dimension Integer array of size 10. 
-	 * <code> <br>
-	 * 
+	 * <code> 
+	 * <br>
 	 * JIArray array = new JIArray(Integer.class,new int[]{10},1,false);
+	 * </code>
+	 *<br>
 	 * 
-	 * </code> <br>
-	 * 
-	 * This ctor is invoked when the developer wants to deserialize an array. <br>
 	 * </P>
-	 * @param clazz Template for the Array.
-	 * @param upperBounds Highest index for each dimension.
-	 * @param dimension Number of dimensions
-	 * @param isConformant declares whether the array is conformant or not. 
+	 * @param clazz class whose instances will be members of the deserialized array.
+	 * @param upperBounds highest index for each dimension.
+	 * @param dimension number of dimensions
+	 * @param isConformant declares whether the array is <i>conformant</i> or not.  
+	 * @throws IllegalArgumentException if <code>upperBounds</code> is supplied and its length
+	 * is not equal to the <code>dimension</code> parameter.
 	 */
 	public JIArray(Class clazz, int[] upperBounds,int dimension, boolean isConformant)
 	{
@@ -84,26 +91,16 @@ public final class JIArray implements Serializable{
 		init2(upperBounds,dimension,isConformant,false);
 	}
 
-	/**<P> Creates an array Object of the type specified by <code>clazz</code>. This is used 
-	 * to prepare a template for decoding an array of that type. Used only for setting as an 
-	 * OutParam in a JICallBuilder. <br>
-     *
-	 * For example:- <br>
-	 * This call creates a template for a single dimension Integer array of size 10. 
-	 * <code> <br>
+	/**<P> Refer to {@link #JIArray(Class, int[], int, boolean)}
 	 * 
-	 * JIArray array = new JIArray(Integer.class,new int[]{10},1,false,false);
+	 * @param clazz class whose instances will be members of the deserialized array.
+	 * @param upperBounds highest index for each dimension.
+	 * @param dimension number of dimensions
+	 * @param isConformant declares whether the array is <i>conformant</i> or not.  
+	 * @param isVarying declares whether the array is <i>varying</i> or not.
+	 * @throws IllegalArgumentException if <code>upperBounds</code> is supplied and its length
+	 * is not equal to the <code>dimension</code> parameter.
 	 * 
-	 * </code> <br>
-	 * 
-	 * This ctor is invoked when the developer wants to deserialize an array. <br>
-	 * </p>
-	 * 
-	 * @param clazz Template for the Array.
-	 * @param upperBounds Highest index for each dimension.
-	 * @param dimension Number of dimensions
-	 * @param isConformant declares whether the array is conformant or not.
-	 * @param isVarying   declares whether the array is varying or not.
 	 */
 	public JIArray(Class clazz, int[] upperBounds,int dimension, boolean isConformant,boolean isVarying)
 	{
@@ -112,33 +109,40 @@ public final class JIArray implements Serializable{
 	}
 
 	
-	/**<p> Creates an array Object with members of the type template. This API is exclusively for 
-	 * composite types like <code>JIStruct, JIPointer, JIUnion, JIString </code> data types.
+	/**<p> Creates an array object with members of the type <code>template</code>. 
+	 * This constructor is used to prepare a template for decoding an array and is
+	 * exclusively for composites like <code>JIStruct</code>, <code>JIPointer</code>, 
+	 * <code>JIUnion</code>, <code>JIString</code> where more information on the 
+	 * structure of the composite is required before trying to deserialize it.
 	 * 
-	 *  <br>
+	 *<p>
 	 *  
 	 *  Sample Usage:-
 	 *  <br>
 	 *  <code>
 	 *  JIStruct safeArrayBounds = new JIStruct(); <br>
 	 *	safeArrayBounds.addMember(Integer.class); <br>
-	 *	safeArrayBounds.addMember(Integer.class); <br>
+	 *	safeArrayBounds.addMember(Integer.class); <br><br>
 	 *	
 	 *	//arraydesc <br>
 	 *	JIStruct arrayDesc = new JIStruct(); <br>
 	 *	//typedesc <br>
-	 *	JIStruct typeDesc = new JIStruct(); <br>
+	 *	JIStruct typeDesc = new JIStruct(); <br><br>
 	 *	
 	 *	arrayDesc.addMember(typeDesc);<br>
 	 *	arrayDesc.addMember(Short.class);<br>
 	 *	arrayDesc.addMember(<b>new JIArray(safeArrayBounds,new int[]{1},1,true)</b>);<br>
 	 *  </code>
-	 *  <br>This ctor is invoked when the developer wants to deserialize an array. <br>
 	 *  </p>
-	 * @param template Can be only of the type JIStruct, JIPointer, JIUnion and JIString
-	 * @param upperBounds Highest index for each dimension.
-	 * @param dimension Number of dimensions
-	 * @param isConformant declares whether the array is conformant or not. 
+	 * @param template can be only of the type <code>JIStruct</code>, <code>JIPointer</code>, 
+	 * <code>JIUnion</code>, <code>JIString</code>
+	 * @param upperBounds highest index for each dimension.
+	 * @param dimension number of dimensions
+	 * @param isConformant declares whether the array is <i>conformant</i> or not.  
+	 * @throws IllegalArgumentException if <code>upperBounds</code> is supplied and its length
+	 * is not equal to the <code>dimension</code> parameter.
+	 * @throws IllegalArgumentException if <code>template</code> is null or is not of the 
+	 * specified types.
 	 */
 	//for structs, pointers , unions.
 	public JIArray(Object template, int[] upperBounds,int dimension, boolean isConformant)
@@ -161,34 +165,19 @@ public final class JIArray implements Serializable{
 	}
 
 
-	/**<p> Creates an array Object with members of the type template. This API is exclusively for 
-	 * composite types like <code>JIStruct, JIPointer, JIUnion, JIString </code> data types.
+	/**<p> Refer to {@link #JIArray(Object, int[], int, boolean)} for details.
 	 * 
-	 *  <br>
-	 *  
-	 *  Sample Usage:-
-	 *  <br>
-	 *  <code>
-	 *  JIStruct safeArrayBounds = new JIStruct(); <br>
-	 *	safeArrayBounds.addMember(Integer.class); <br>
-	 *	safeArrayBounds.addMember(Integer.class); <br>
-	 *	
-	 *	//arraydesc <br>
-	 *	JIStruct arrayDesc = new JIStruct(); <br>
-	 *	//typedesc <br>
-	 *	JIStruct typeDesc = new JIStruct(); <br>
-	 *	
-	 *	arrayDesc.addMember(typeDesc);<br>
-	 *	arrayDesc.addMember(Short.class);<br>
-	 *	arrayDesc.addMember(<b>new JIArray(safeArrayBounds,new int[]{1},1,true)</b>);<br>
-	 *  </code>
-	 *  <br>This ctor is invoked when the developer wants to deserialize an array. <br>
-	 *  </p>
-	 * @param template Can be only of the type JIStruct, JIPointer, JIUnion and JIString
-	 * @param upperBounds Highest index for each dimension.
-	 * @param dimension Number of dimensions
-	 * @param isConformant declares whether the array is conformant or not.
-	 * @param isVarying   declares whether the array is varying or not.
+	 * 
+	 * @param template can be only of the type <code>JIStruct</code>, <code>JIPointer</code>, 
+	 * <code>JIUnion</code>, <code>JIString</code>
+	 * @param upperBounds highest index for each dimension.
+	 * @param dimension number of dimensions
+	 * @param isConformant declares whether the array is <i>conformant</i> or not.  
+	 * @param isVarying declares whether the array is <i>varying</i> or not. 
+	 * @throws IllegalArgumentException if <code>upperBounds</code> is supplied and its length
+	 * is not equal to the <code>dimension</code> parameter.
+	 * @throws IllegalArgumentException if <code>template</code> is null or is not of the 
+	 * specified types.
 	 */
 	//for structs, pointers , unions.
 	public JIArray(Object template, int[] upperBounds,int dimension, boolean isConformant,boolean isVarying)
@@ -240,21 +229,20 @@ public final class JIArray implements Serializable{
 		//numElementsInAllDimensions = numElementsInAllDimensions * dimension;
 	}
 	
-	/** Creates an array object with <i>array</i> parameter as the nested Array. 
-	 * This ctor is invoked when the developer wants to serialize an array. <br>
-	 * 
-	 * Sample Usage:- 
-	 * 
+	/**<p>Creates an object with <i>array</i> parameter as the nested Array. 
+	 * This constructor is used when the developer wants to send an array to
+	 * COM server.
+	 * <p>
+	 * Sample Usage :- 
+	 * <br>
 	 * <code>
-	 * 
-	 * JIArray array = new JIArray(new JIPointer[]{new JIPointer(name)},true); <br>
-	 * 
+	 * JIArray array = new JIArray(new JIString[]{new JIString(name)},true); <br>
 	 * </code>
 	 * 
-	 * 
-	 * 
-	 * @param array Array of any type.
-	 * @param isConformant declares whether the array is conformant or not.
+	 * @param array Array of any type. Primitive arrays are not allowed.
+	 * @param isConformant declares whether the array is <code>conformant</code> or not.
+	 * @throws IllegalArgumentException if the <code>array</code> is not an array or 
+	 * is of primitive type or is an array of <code>java.lang.Object</code>.
 	 */
 	public JIArray(Object array, boolean isConformant)
 	{
@@ -263,22 +251,13 @@ public final class JIArray implements Serializable{
 		init(array);
 	}
 	
-	/**Creates an array object with <i>array</i> parameter as the nested Array. 
-	 * This ctor is invoked when the developer wants to serialize an array. <br>
+	/** Refer {@link #JIArray(Object, boolean)} 
 	 * 
-	 * Sample Usage:- 
-	 * 
-	 * <code>
-	 * 
-	 * JIArray array = new JIArray(new JIPointer[]{new JIPointer(name)},true,true); <br>
-	 * 
-	 * </code>
-	 * 
-	 * 
-	 * 
-	 * @param array Array of any type.
-	 * @param isConformant declares whether the array is conformant or not.
-	 * @param isVarying declares whether the array is varying or not.
+	 * @param array Array of any type. Primitive arrays are not allowed.
+	 * @param isConformant declares whether the array is <code>conformant</code> or not.
+	 * @param isVarying declares whether the array is <code>varying</code> or not. 
+	 * @throws IllegalArgumentException if the <code>array</code> is not an array or 
+	 * is of primitive type or is an array of <code>java.lang.Object</code>.
 	 */
 	public JIArray(Object array, boolean isConformant,boolean isVarying)
 	{
@@ -289,20 +268,19 @@ public final class JIArray implements Serializable{
 		init(array);
 	}
 	
-	/** Creates a non conformant array object with <i>array</i> parameter as the nested Array. 
-	 * This ctor is invoked when the developer wants to serialize an array. <br>
-	 * 
-	 * Sample Usage:- 
-	 * 
+	/***<p>Creates an object with <i>array</i> parameter as the nested Array. 
+	 * This constructor forms a <code>non-conformant</code> array and is used 
+	 * when the developer wants to send an array to COM server.
+	 * <p>
+	 * Sample Usage :- 
+	 * <br>
 	 * <code>
-	 * 
-	 * JIArray array = new JIArray(new Integer[]{new Integer(1)}); <br>
-	 * 
+	 * JIArray array = new JIArray(new JIString[]{new JIString(name)},true); <br>
 	 * </code>
 	 * 
-	 * 
-	 * 
-	 * @param array Array of any type.
+	 * @param array Array of any type. Primitive arrays are not allowed.
+	 * @throws IllegalArgumentException if the <code>array</code> is not an array or 
+	 * is of primitive type or is an array of <code>java.lang.Object</code>.
 	 */
 	public JIArray(Object array)
 	{
@@ -391,7 +369,7 @@ public final class JIArray implements Serializable{
 	
 	/** Returns the nested Array.
 	 * 
-	 * @return array Object (type cast based on class).
+	 * @return array Object which can be type casted based on value returned by {@link #getArrayClass()}.
 	 */
 	public Object getArrayInstance()
 	{
@@ -400,16 +378,16 @@ public final class JIArray implements Serializable{
 	
 	/** Class of the nested Array.
 	 * 
-	 * @return
+	 * @return <code>class</code> 
 	 */
 	public Class getArrayClass()
 	{
 		return clazz;
 	}
 	
-	/** Array of integers depicting Highest index for each dimension.
+	/** Array of integers depicting highest index for each dimension.
 	 * 
-	 * @return 
+	 * @return <code>int[]</code>
 	 */
 	public int[] getUpperBounds()
 	{
@@ -418,7 +396,7 @@ public final class JIArray implements Serializable{
 	
 	/** Returns the dimensions of the Array.
 	 * 
-	 * @return
+	 * @return <code>int</code>
 	 */
 	public int getDimensions()
 	{
@@ -489,18 +467,18 @@ public final class JIArray implements Serializable{
 		
 	}
 	
-	/** Status whether the array is Conformant or not.
+	/** Status whether the array is <code>conformant</code> or not.
 	 * 
-	 * @return <code>true</code> is array is conformant.
+	 * @return <code>true</code> is array is <code>conformant</code>.
 	 */
 	public boolean isConformant()
 	{
 		return isConformant;
 	}
 
-	/** Status whether the array is Varying or not.
+	/** Status whether the array is <code>varying</code> or not.
 	 * 
-	 * @return <code>true</code> is array is Varying.
+	 * @return <code>true</code> is array is <code>varying</code>.
 	 */
 	public boolean isVarying()
 	{
@@ -636,10 +614,9 @@ public final class JIArray implements Serializable{
 	
 	/**	Reverses Array elements for IJIDispatch.
 	 * 
-	 * @exclude
 	 * @return
 	 */
-	public int reverseArrayForDispatch()
+	int reverseArrayForDispatch()
 	{
 		if (memberArray == null)
 			return 0;
