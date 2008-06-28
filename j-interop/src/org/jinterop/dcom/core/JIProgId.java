@@ -28,15 +28,21 @@ import org.jinterop.winreg.IJIWinReg;
 import org.jinterop.winreg.JIPolicyHandle;
 import org.jinterop.winreg.JIWinRegFactory;
 
-//this class will contain all logic of looking up the 
-//JISystem for progId to clsid mapping and 
-//if not found query the windows registry service.
-// this will be called from JIComServer, incase it's progid ctor has been called.
 
-/**<p>Wrapper class used to define user friendly <code>ProgId</code>. This class uses the WINREG service to get the
- * mapping between the ProgId and the Clsid. The Winreg package of j-Interop is capable of querying the Windows
- * registry in a platform independent way using SMB. The internal database is looked up first before making calls
- * to WINREG service.
+/**<p>Wrapper class used to define user friendly <code>ProgID</code>. 
+ * <p> Definition from MSDN: <i>
+ *  A ProgID, or programmatic identifier, is a registry entry that can be associated 
+ *  with a CLSID. The format of a ProgID is <Vendor>.<Component>.<Version>, separated 
+ *  by periods and with no spaces, as in Word.Document.6. Like the CLSID, the ProgID 
+ *  identifies a class, but with less precision. 
+ *  </i>
+ * <p>
+ * This class uses the <code>WINREG</code> service to get the mapping between the <code>ProgId</code>
+ * and the <code>CLSID</code>. 
+ * <p>
+ * The <code>WINREG</code> package of j-Interop is capable of querying the Windows registry in a 
+ * platform independent way using SMB. The internal database is looked up first before 
+ * making calls to <code>WINREG</code> service.
  * </p>
  * @since 1.0
  */
@@ -48,18 +54,21 @@ public class JIProgId  {
 	private String server = null; 
 	private boolean autoRegister = false;
 	
-	/** Pass true if, this is an OCX\DLL component and you want the library to do auto registration.
+	/** Indicates to the framework, if Windows Registry settings for DLL\OCX
+	 * component identified by this object should be modified to add a <code>Surrogate</code> 
+	 * automatically. A <code>Surrogate</code> is a process which provides resources
+	 * such as memory and cpu for a DLL\OCX to execute.
 	 * 
-	 * @param autoRegister
+	 * @param autoRegister <code>true</code> if auto registration should be done by the framework.
 	 */
 	public void setAutoRegistration(boolean autoRegister)
 	{
 		this.autoRegister = autoRegister; 
 	}
 
-	/**Returns true is auto registration is enabled.
+	/**Returns the status of the auto registration flag for the component identified by this object.
 	 * 
-	 * @return
+	 * @return <code>true</code> if the auto registration flag is set.
 	 */
 	public boolean isAutoRegistrationSet()
 	{
@@ -123,9 +132,9 @@ public class JIProgId  {
 		
 	}
 	
-	/** Creates a JIProgId.
-	 * @param progId
+	/** Factory method returning an instance of this class.
 	 * 
+	 * @param progId user-friendly string representation such as "Excel.Application"
 	 * @return
 	 */
 	public static JIProgId valueOf(String progId)
@@ -133,7 +142,7 @@ public class JIProgId  {
 		return new JIProgId(progId);
 	}
 	
-	/** Gets the clsid for this ProgId. 
+	/** Returns the <code>CLSID</code> for this <code>ProgId</code>. 
 	 * 
 	 * @return
 	 * @throws JIException

@@ -34,36 +34,30 @@ import org.jinterop.dcom.common.JISystem;
 
 import rpc.core.UUID;
 
-/** <p>This class is used to setup all the parameters (in and out) for the call to the 
- * COM server to be successfully executed. 
- * 
- * <br> Sample Usage:-
+/**<p>Class used for setting up information such as <code>[in]</code>
+ * ,<code>[out]</code> parameters and the method number for executing a call to the 
+ * COM server. 
+ * <p> Sample Usage :-
  * <code>
  *  <br>
- *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
+ *  JICallBuilder obj = new JICallBuilder(); <br>
  *  obj.reInit(); <br>
- *	obj.setOpnum(94); //This needs to be obtained via IDL, Other wise use IJIDispatch if COM <i>IDispatch</i> <br> 
- *					  //interface is supported by the underlying COM Object.
+ *	obj.setOpnum(0); //0 based index, can be obtained from the IDL or the Type Library of COM server.
  *	<br>
- *	obj.addInParamAsPointer(new JIPointer(new JIString("j-Interop Rocks",JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR)), JIFlags.FLAG_NULL); <br>
- *	obj.addInParamAsPointer(new JIPointer(new JIString("Pretty simple ;)",JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR)), JIFlags.FLAG_NULL); <br>
- *	<br>
- *	//handle is previously obtained IJIComObject <br>
- *	Object[] result = handle.call(obj); 
+ *	obj.addInParamAsString(new JIString("j-Interop Rocks !"), JIFlags.FLAG_NULL); <br>
+ *	obj.addInParamAsInt(100, JIFlags.FLAG_NULL); <br>
+ *	//handle is previously obtained {@link IJIComObject} <br>
+ *	Object[] result = comObject.call(obj); 
  * <br>
  * </code>
- * 
- * <br>Please note that if values are expected back from the call, they should be added as <code>outParams</code> before 
- * the <code>call(...)</code> api is used.
- * <br>
+ * <br><code>[out]</code> parameters can be added in a similar way.<br>
  * <code>
  *  obj.addOutParamAsType(JIVariant.class,JIFlags.FLAG_NULL); <br>
  *  obj.addOutParamAsObject(new JIPointer(Short.class,true),JIFlags.FLAG_NULL); <br>
  * </code>
  * <br>
- * <b>Note: </b> Something odd that I have noticed, BSTR* and any second level Interface Pointer like IDispatch** , are always returned back to the callee. So when they are being used in inParams, please use them in outParams as well.
  * </p>
- * @since 1.0
+ * @since 2.0 (formerly <code>JICallObject</code>)
  */
 public class JICallBuilder extends NdrObject implements Serializable {
 
@@ -84,11 +78,12 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	private Object[] resultsOfException = null;
 	private JISession session = null;
 	
-	/** Creates a JICallBuilder associated with an Interface Identifier.
+	/** Constructs a builder object.
 	 * 
-	 * @param IPIDofParent Please use <code>IJIComObject.getIpid()</code> for this.
-	 * @param dispatchNotSupported true if dispatch is not supported by the Interface, please use <code>IJIComObject.isDispatchSupported()</code> <br>
-	 * to find out whether dispatch is supported on the parent or not.
+	 * @param dispatchNotSupported <code>true</code> if <code>IDispatch</code> is 
+	 * not supported by the <code>IJIComObject</code> on which this builder would
+	 * act. Use {@link IJIComObject#isDispatchSupported()} to find out if 
+	 * dispatch is supported on the COM Object.
 	 */
 	public JICallBuilder(boolean dispatchNotSupported)
 	{
@@ -96,17 +91,10 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		this.dispatchNotSupported = dispatchNotSupported;
 	}
 	
-	/**<p> Creates a JICallBuilder associated with an Interface Identifier. This ctor assumes that Dispatch is 
-	 * supported by the Interface.
+	/**<p> Constructs a builder object. It is assumed that <code>IDispatch</code>
+	 * interface is supported by the <code>IJIComObject</code> on which this builder
+	 * would act.
 	 * 
-	 * <br> Sample Usage:-
-	 * <code>
-	 *  <br>
-	 *  //handle is an IJIComObject obtained before <br> 
-	 *  JICallBuilder obj = new JICallBuilder(handle.getIpid()); <br>
-	 *  </code>
-	 *  </p>
-	 * @param IPIDofParent Please use <code>IJIComObject.getIpid()</code> for this.
 	 */
 	public JICallBuilder()
 	{
@@ -114,8 +102,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	}
 	
 	/**
-	 * Reinitialises all members of this object except the parent's IPID. The Object is ready to be used again on a 
-	 * fresh <code>IJIComObject.call(...)</code> after this step. 
+	 * Reinitializes all members of this object. It is ready to be used again on a 
+	 * fresh <code>{@link IJIComObject#call}</code> after this step. 
 	 *
 	 */
 	//after reinit, except parent, nothing is available.
@@ -151,9 +139,9 @@ public class JICallBuilder extends NdrObject implements Serializable {
 //		insertInParamAsInterfacePointerAt(inParams.size(),interfacePointer,FLAGS);
 //	}
 
-	/**Add IN parameter as <code>IJIComObject</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>IJIComObject</code> at the end of the Parameter list.
 	 * 
-	 * @param value
+	 * @param comObject
 	 * @param FLAGS from JIFlags (if need be)
 	 */
 	public void addInParamAsComObject(IJIComObject comObject, int FLAGS)
@@ -162,7 +150,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	}
 	
 	
-	/**Add IN parameter as <code>int</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>int</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -172,7 +160,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsIntAt(inParams.size(),value,FLAGS);
 	}
 
-	/**Add IN parameter as <code>IJIUnsigned</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>IJIUnsigned</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -182,7 +170,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsUnsignedAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>float</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>float</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -192,7 +180,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsFloatAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>boolean</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>boolean</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -202,7 +190,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsBooleanAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>short</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>short</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -212,7 +200,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsShortAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>double</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>double</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -222,7 +210,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsDoubleAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>char</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>char</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be)
@@ -232,7 +220,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsCharacterAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>String</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>String</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (These <i>HAVE</i> to be the <b>String</b> Flags).
@@ -243,7 +231,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsStringAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>JIVariant</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIVariant</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -253,7 +241,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsVariantAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>Object</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>Object</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -263,7 +251,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsObjectAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>String representation of UUID</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>String representation of UUID</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -273,7 +261,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsUUIDAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>JIPointer</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIPointer</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -283,7 +271,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsPointerAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>JIStruct</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIStruct</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -293,7 +281,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsStructAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>JIArray</code> at the end of the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIArray</code> at the end of the Parameter list.
 	 * 
 	 * @param value
 	 * @param FLAGS from JIFlags (if need be).
@@ -303,7 +291,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertInParamAsArrayAt(inParams.size(),value,FLAGS);
 	}
 	
-	/**Add IN parameter as <code>Object[]</code> at the end of the Parameter list.The array is iterated and
+	/**Add <code>[in]</code> parameter as <code>Object[]</code> at the end of the Parameter list.The array is iterated and
 	 * all members appended to the list.
 	 * 
 	 * @param values
@@ -319,7 +307,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		
 	}
 	
-	/**Add IN parameter as <code>IJIComObject</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>IJIComObject</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -331,7 +319,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>int</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>int</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -343,7 +331,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 
-	/**Add IN parameter as <code>IJIUnsigned</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>IJIUnsigned</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -356,7 +344,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	}
 
 	
-	/**Add IN parameter as <code>float</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>float</code> at the specified index in the Parameter list.
 	 *
 	 * @param index 0 based index
 	 * @param value
@@ -368,7 +356,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>boolean</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>boolean</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -380,7 +368,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>short</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>short</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -392,7 +380,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>double</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>double</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -404,7 +392,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>char</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>char</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -416,7 +404,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>String</code>  at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>String</code>  at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -429,7 +417,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(JIFlags.FLAG_NULL));
 	}
 	
-	/**Add IN parameter as <code>JIVariant</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIVariant</code> at the specified index in the Parameter list.
 	 *
 	 * @param index 0 based index
 	 * @param value
@@ -441,7 +429,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(JIFlags.FLAG_NULL));
 	}
 	
-	/**Add IN parameter as <code>Object</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>Object</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -454,7 +442,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>String representation of UUID</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>String representation of UUID</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -466,7 +454,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>JIPointer</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIPointer</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -478,7 +466,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>JIStruct</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIStruct</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -490,7 +478,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Add IN parameter as <code>JIArray</code> at the specified index in the Parameter list.
+	/**Add <code>[in]</code> parameter as <code>JIArray</code> at the specified index in the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param value
@@ -502,7 +490,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/**Removes IN parameter at the specified index from the Parameter list.
+	/**Removes <code>[in]</code> parameter at the specified index from the Parameter list.
 	 * 
 	 * @param index 0 based index
 	 * @param FLAGS from JIFlags (if need be). 
@@ -513,7 +501,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		inparamFlags.remove(index);
 	}
 
-	/**Returns IN parameter at the specified index from the Parameter list.
+	/**Returns <code>[in]</code> parameter at the specified index from the Parameter list.
 	 * 
 	 * @param index 0 based index 
 	 * @return Primitives are returned as there Derieved types. 
@@ -524,7 +512,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		return inParams.get(index);
 	}
 	
-	/** Add OUT parameter of the type <code>clazz</code> at the end of the out parameter list.
+	/** Add <code>[out]</code> parameter of the type <code>clazz</code> at the end of the out parameter list.
 	 * 
 	 * @param clazz
 	 * @param FLAGS
@@ -534,7 +522,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertOutParamAt(outParams.size(),clazz,FLAGS);
 	}
 	
-	/** Add OUT parameter at the end of the out parameter list. Typically callers are <br> 
+	/** Add <code>[out]</code> parameter at the end of the out parameter list. Typically callers are <br> 
 	 * composite in nature JIStruct, JIUnions, JIPointer and JIString . 
 	 * 
 	 * @param outparam
@@ -545,7 +533,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		insertOutParamAt(outParams.size(),outparam,FLAGS);
 	}
 	
-	/** insert an OUT parameter at the specified index in the out parameter list. 
+	/** insert an <code>[out]</code> parameter at the specified index in the out parameter list. 
 	 * 
 	 * @param index 0 based index
 	 * @param classOrInstance can be either a Class or an Object
@@ -557,7 +545,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		outparamFlags.add(index,new Integer(FLAGS));
 	}
 	
-	/** Retrieves the OUT param at the index in the out parameters list.
+	/** Retrieves the <code>[out]</code> param at the index in the out parameters list.
 	 * 
 	 * @param index 0 based index
 	 * @return 
@@ -567,7 +555,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		return outParams.get(index);
 	}
 	
-	/**Removes OUT parameter at the specified index from the out parameters list.
+	/**Removes <code>[out]</code> parameter at the specified index from the out parameters list.
 	 * 
 	 * @param index 0 based index
 	 * @param FLAGS from JIFlags (if need be). 
@@ -578,7 +566,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		outparamFlags.remove(index);
 	}
 	
-	/**Add OUT parameter as <code>Object[]</code> at the end of the Parameter list. The array is iterated and
+	/**Add <code>[out]</code> parameter as <code>Object[]</code> at the end of the Parameter list. The array is iterated and
 	 * all members appended to the list. 
 	 * 
 	 * @param values
@@ -766,7 +754,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		}
 	}
 	
-	/** Returns the entire IN parameters list. 
+	/** Returns the entire <code>[in]</code> parameters list. 
 	 * 
 	 * @return
 	 */
@@ -775,7 +763,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		return inParams.toArray();
 	}
 	
-	/** Returns the entire OUT parameters list. 
+	/** Returns the entire <code>[out]</code> parameters list. 
 	 * 
 	 * @return
 	 */

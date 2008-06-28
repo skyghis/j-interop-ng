@@ -51,7 +51,7 @@ import org.jinterop.dcom.common.JIException;
  *<code>
  *JISession session = JISession.createSession("DOMAIN","USERNAME","PASSWORD");
  *<br>
- *JIComServer comserver = new JIComServer(JIProgId.valueOf(session,"Word.Application"),address,session);
+ *JIComServer comserver = new JIComServer(JIProgId.valueOf("Word.Application"),address,session);
  *<br>
  *IJIComObject comObject = comserver.createInstance();
  *<br>

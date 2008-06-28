@@ -28,6 +28,8 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.impls.JIObjectFactory;
+import org.jinterop.dcom.impls.automation.IJIDispatch;
 import org.jinterop.dcom.transport.JIComEndpoint;
 import org.jinterop.dcom.transport.JIComTransportFactory;
 import org.jinterop.winreg.IJIWinReg;
@@ -39,29 +41,23 @@ import rpc.FaultException;
 import rpc.Stub;
 
 
-/** <p>Represents a <code>COM</code> Server. This is the startup class for using j-Interop to interoperate 
- *  with a <code> COM </code> component.<br>
- *	
- *	Sample Usage:-
+/** Startup class representing a COM Server. 	
+ *  <p> 
+ *	Sample Usage :-
  *  <br>
  *  <code>
  *  
- *  JISession session = JISession.createSession("DOMAIN","USERNAME","PASSWORD"); <br>
- *	JIComServer excelServer = new JIComServer(JIProgId.valueOf(session,"Excel.Application"),address,session); <br>
- *  IJIComObject excelServerObject = excelServer.createInstance(); <br>
- *  
+ *  {@link JISession} session = JISession.createSession("DOMAIN","USERNAME","PASSWORD"); <br>
+ *	JIComServer excelServer = new JIComServer(JIProgId.valueOf("Excel.Application"),address,session); <br>
+ *  IJIComObject comObject = excelServer.createInstance(); <br>
  *  //Obtaining the IJIDispatch (if supported) <br>
- *  IJIDispatch dispatch = (IJIDispatch)JIObjectFactory.createCOMInstance(JIObjectFactory.IID_IDispatch,excelServerObject); <br>
- *  
+ *  {@link IJIDispatch} dispatch = (IJIDispatch){@link JIObjectFactory}.narrowObject(comObject.queryInterface(IJIDispatch.IID)); <br>
  *  </code>
  *  
- *  <br> Each instance of <code>JIComServer </code> belongs to 1 session only. The session is responsible for all the reference counting and subsequent garbage collection of this instance. 
- *  
+ *  <p>Each instance of this class is associated with a single session only. 
  *   
- *  </p>
- *
- * 
  * @since 1.0
+ * 
  */
 public class JIComServer extends Stub {
 	
@@ -313,26 +309,12 @@ public class JIComServer extends Stub {
 	}
 	
 	
-	/**<p>Instantiates this object with JIProgId which is, according to MSDN:- <br> 
+	/**<p><code>JIProgId</code> based constructor with the host machine for COM server being <i>LOCALHOST</i>.
 	 *  
-	 *  <i>
-	 *  A ProgID, or programmatic identifier, is a registry entry that can be associated with a JIClsid. 
-	 *  The format of a ProgID is <Vendor>.<Component>.<Version>, separated by periods and with no spaces,
-	 *  as in Word.Document.6. Like the JIClsid, the ProgID identifies a class, but with less precision. 
-	 *  </i>
-	 *  
-	 *  <br> ProgId is searched for it's JIClsid in the target servers registry. For the very first run, calling
-	 *  with ProgId will result in 3 extra calls to the server (for JIClsid resolution). Subsequently the 
-	 *  j-Interop Library caches the JIClsid for this progId and uses that. It is also stored in a properties file (progIdVsClsidDB.properties) 
-	 *  and reffered from there. We can save on the 3 calls in the subsequent runs also. <br>
-	 *  
-	 *  This call works on the LOCALHOST.
-	 *  </p>
-	 *  
-	 * @param progId Id like "Excel.Application" , "TestCOMServer.Test123" e.t.c
-	 * @param session User's session.
-	 * @throws IllegalArgumentException raised when either progId or session is null.
-	 * @throws JIException
+	 * @param progId user-friendly string such as "Excel.Application" , "TestCOMServer.Test123" etc.
+	 * @param session session to be associated with. 
+	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
+	 * @throws IllegalArgumentException raised when either <code>progId</code> or <code>session</code> is <code>null</code>.
 	 * @throws UnknownHostException 
 	 */
 	public JIComServer(JIProgId progId,JISession session) throws JIException, UnknownHostException
@@ -340,22 +322,12 @@ public class JIComServer extends Stub {
 		this(progId,InetAddress.getLocalHost().getHostAddress(),session);
 	}
 	
-	/** <p>Instantiates this object with JIClsid which is, according to MSDN:- <br> 
+	/** <p><code>{@link JIClsid}</code> based constructor with the host machine for COM server being <i>LOCALHOST</i>.
 	 *  
-	 *  <i>
-	 *  A universally unique identifier (UUID) that identifies a type of Component Object Model (COM) object.  
-	 *  Each type of COM object item has its JIClsid in the registry so that it can be loaded and used by other
-	 *  applications. For example, a spreadsheet may create worksheet items, chart items, and macrosheet items.
-	 *  Each of these item types has its own JIClsid that uniquely identifies it to the system. 
-	 *  </i><br>
-	 *  
-	 *  This call works on the LOCALHOST.
-	 *  </p>
-	 *  
-	 * @param clsid 128 bit uuid like "00024500-0000-0000-C000-000000000046".
-	 * @param session User's session.
-	 * @throws IllegalArgumentException raised when either clsid or session is null.
-	 * @throws JIException
+	 * @param clsid 128 bit string such as "00024500-0000-0000-C000-000000000046".
+	 * @param session session to be associated with. 
+	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
+	 * @throws IllegalArgumentException raised when either <code>clsid</code> or <code>session</code> is <code>null</code>.
 	 * @throws UnknownHostException 
 	 */
 	public JIComServer(JIClsid clsid,JISession session) throws IllegalArgumentException,JIException, UnknownHostException
@@ -363,25 +335,13 @@ public class JIComServer extends Stub {
 		this(clsid,InetAddress.getLocalHost().getHostAddress(),session);
 	}
 	
-	/**<p> Instantiates this object with JIProgId which is, according to MSDN:- <p> 
+	/**<p>Refer {@link #JIComServer(JIProgId, JISession)} for details. 
 	 *  
-	 *  <i>
-	 *  A ProgID, or programmatic identifier, is a registry entry that can be associated with a JIClsid. 
-	 *  The format of a ProgID is <Vendor>.<Component>.<Version>, separated by periods and with no spaces,
-	 *  as in Word.Document.6. Like the JIClsid, the ProgID identifies a class, but with less precision. 
-	 *  </i>
-	 *  
-	 *  <br> ProgId is searched for it's JIClsid in the target servers registry. For the very first run, calling
-	 *  with ProgId will result in 3 extra calls to the server (for JIClsid resolution). Subsequently the 
-	 *  j-Interop Library caches the JIClsid for this progId and uses that. It is also stored in a properties file (progIdVsClsidDB.properties) 
-	 *  and reffered from there. We can save on the 3 calls in the subsequent runs also. <br>
-	 *  </p>
-	 *  
-	 * @param progId Id like "Excel.Application" , "TestCOMServer.Test123" e.t.c
-	 * @param address address of the server where the <code>COM<code> object resides . This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
-	 * @param session User's session.
-	 * @throws IllegalArgumentException raised when either progId or address or session is null.
-	 * @throws JIException
+	 * @param progId user-friendly string such as "Excel.Application" , "TestCOMServer.Test123" etc.
+	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
+	 * @param session session to be associated with. 
+	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
+	 * @throws IllegalArgumentException raised when any of the parameters is <code>null</code>.
 	 * @throws UnknownHostException 
 	 */
 	public JIComServer(JIProgId progId,String address, JISession session) throws JIException, UnknownHostException
@@ -408,21 +368,14 @@ public class JIComServer extends Stub {
 		initialise(clsid,address,session);
 	}
 	
-	/** <p>Instantiates this object with JIClsid which is, according to MSDN:- <br> 
+	/** <p>Refer {@link #JIComServer(JIClsid, JISession)} for details. 
 	 *  
-	 *  <i>
-	 *  A universally unique identifier (UUID) that identifies a type of Component Object Model (COM) object.  
-	 *  Each type of COM object item has its JIClsid in the registry so that it can be loaded and used by other
-	 *  applications. For example, a spreadsheet may create worksheet items, chart items, and macrosheet items.
-	 *  Each of these item types has its own JIClsid that uniquely identifies it to the system. An IllegalArgumentException raised when either clsid or address or session is null. 
-	 *  </i>
 	 *  
-	 *  </p>
-	 *  
-	 * @param clsid 128 bit uuid like "00024500-0000-0000-C000-000000000046".
-	 * @param address address of the server where the <code>COM<code> object resides . This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
-	 * @param session User's session.
-	 * @throws JIException
+	 * @param clsid 128 bit string such as "00024500-0000-0000-C000-000000000046".
+	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
+	 * @param session session to be associated with. 
+	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
+	 * @throws IllegalArgumentException raised when any of the parameters is <code>null</code>.
 	 * @throws UnknownHostException 
 	 */
 	public JIComServer(JIClsid clsid,String address, JISession session) throws JIException, UnknownHostException
@@ -699,8 +652,7 @@ public class JIComServer extends Stub {
 	
 	
 	
-	/** Returns a <code>IJIComObject</code> representing the <code>COM</code> Server. Not to be used with <code>JIComServer(JISession,JIInterfacePointer,String)</code> ctor,
-	 * Use getInstance() instead.
+	/**Returns an <code>IJIComObject</code> representing the COM Server. 
 	 * 
 	 * @return
 	 * @throws JIException
