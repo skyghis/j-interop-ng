@@ -40,6 +40,7 @@ import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 /**<p>Representation of an active session with a COM server. All interface references being given out by 
  * the framework for a particular COM server are maintained by the session and an <code>IJIComObject</code> 
