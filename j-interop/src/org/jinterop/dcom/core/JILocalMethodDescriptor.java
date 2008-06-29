@@ -26,7 +26,7 @@ package org.jinterop.dcom.core;
  * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl, SampleTestServer 
  * and MSShell examples for more details on how to use this class.</i><br>
  * 
- * @since 1.0
+ * @since 2.0 (formerly JIMethodDescriptor)
  */
 public final class JILocalMethodDescriptor 
 {
