@@ -545,7 +545,7 @@ final class JIComOxidRuntime {
 			
 			//as the ID could be repeated, this is the ipid of the interface being requested.
 			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
-			String iid = component.isCoClassUnderRealIID() ? component.getComponentID() : IJIComObject.IID;//has to be IUnknown's IID.
+			String iid = component.isCoClassUnderRealIID() ? component.getCoClassIID() : IJIComObject.IID;//has to be IUnknown's IID.
 			byte[] bytes = new byte[8];
 			randomGen.nextBytes(bytes);
 			JIOxid oxid = new JIOxid(bytes);

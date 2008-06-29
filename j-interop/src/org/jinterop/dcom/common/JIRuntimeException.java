@@ -16,9 +16,10 @@
  */
 package org.jinterop.dcom.common;
 
-/**
+/** Framework Internal class.
+ * 
  * @exclude
- * <p>Internally used class from GenericObject, since the read(), write() do not throw
+ * <p>Internally used class from JICallBuilder, since the read(), write() do not throw
  * exceptions. The IJIComObject call or QI or any other APIs will always throw checked JIException
  *</p>
  */

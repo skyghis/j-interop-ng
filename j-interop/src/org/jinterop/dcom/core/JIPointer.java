@@ -27,7 +27,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 
 
-/** Representation of a Pointer. 
+/** Representation of a COM pointer. 
  * 
  * @since 1.0
  */
@@ -43,11 +43,11 @@ public final class JIPointer implements Serializable {
 	private int flags = JIFlags.FLAG_NULL;
 	private JIPointer() {}
 	
-	/** Creates an instance of this Object where the referent is of the type <code>value</code>. 
+	/** Creates an instance of this class where the referent is of the type <code>value</code>. 
 	 * Used when deserializing this pointer. 
 	 * 
-	 * @param value null is acceptable
-	 * @param isReferenceTypePtr true if a referent Identifier will not precede this ptr.
+	 * @param value <code>null</code> is acceptable
+	 * @param isReferenceTypePtr <code>true</code> if a referent identifier will not precede this ptr.
 	 */
 	public JIPointer(Class value, boolean isReferenceTypePtr)
 	{
@@ -67,11 +67,11 @@ public final class JIPointer implements Serializable {
 		this.isReferenceTypePtr = isReferenceTypePtr;
 	}
 	
-	/** Creates an instance of this Object where the referent is <code>value</code>. 
+	/** Creates an instance of this class where the referent is <code>value</code>. 
 	 *  Used when serializing this pointer.
 	 * 
-	 * @param value null is acceptable
-	 * @param isReferenceTypePtr true if a referent Identifier will not precede this ptr.
+	 * @param value <code>null</code> is acceptable
+	 * @param isReferenceTypePtr <code>true</code> if a referent Identifier will not precede this ptr.
 	 */
 	public JIPointer(Object value, boolean isReferenceTypePtr)
 	{
@@ -109,7 +109,7 @@ public final class JIPointer implements Serializable {
 		this.flags = flags; 
 	}
 	
-	/**Creates an instance of this Object where the referent is <code>value</code>. 
+	/**Creates an instance of this class where the referent is <code>value</code>. 
 	 * Used when serializing this pointer. This pointer is <b>not</b> of reference type.
 	 * 
 	 * @param value
@@ -246,7 +246,7 @@ public final class JIPointer implements Serializable {
 	
 	/** Returns status whether this is a reference type pointer or not.
 	 * 
-	 * @return
+	 * @return <code>true</code> if this is a reference type pointer.
 	 */
 	public boolean isReference()
 	{
@@ -266,7 +266,7 @@ public final class JIPointer implements Serializable {
 	 * @exclude
 	 * @return
 	 */
-	public int getLength()
+	int getLength()
 	{
 		if (isNull)
 		{
@@ -290,6 +290,10 @@ public final class JIPointer implements Serializable {
 		this.referent = replacement.referent;
 	}
 
+	/** Returns status if this pointer is <code>null</code>.
+	 * 
+	 * @return <code>true</code> if the pointer is <code>null</code>.
+	 */
 	public boolean isNull() {
 		return isNull;
 	}

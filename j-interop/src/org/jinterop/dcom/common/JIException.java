@@ -17,12 +17,14 @@
 package org.jinterop.dcom.common;
 
 
-/** Exception class for j-Interop lib. User should only catch or rethrow these exceptions. <br>
+/** Exception class for the framework. Developers are expected to catch or re-throw these exceptions. 
+ * and not create one themselves.
  *  
  * @since 1.0
  */
 
-public final class JIException extends Exception{
+public final class JIException extends Exception
+{
 
 	
 	private static final long serialVersionUID = 8648697261032503931L;
@@ -74,6 +76,7 @@ public final class JIException extends Exception{
 
 	/**
 	 * Returns the localized error messages.
+	 * 
 	 * @return
 	 */
 	public String getMessage() {
@@ -85,10 +88,10 @@ public final class JIException extends Exception{
 		return (message = JISystem.getLocalizedMessage(errorCode));
 	}
 
-	/** Returns the error code associated with this exception. Please refer <br> 
-	 * <code> JIErrorCodes </code> for a complete list of errors.
+	/** Returns the error code associated with this exception. Please refer 
+	 * <code>JIErrorCodes</code> for a complete list of errors.
 	 * 
-	 * @return
+	 * @return int representing the error code.
 	 */
 	public int getErrorCode()
 	{

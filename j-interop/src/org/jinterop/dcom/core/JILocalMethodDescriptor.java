@@ -18,11 +18,13 @@
 package org.jinterop.dcom.core;
 
 
-/**<p> This class describes an IDL Method. Please remember to keep the Java implementation class(s) Method(s) 
- * conforming to exactly as they are described by this object. j-Interop Library uses Java reflection to 
- * invoke Java Servers. </p>
- *  
- * <br><i>Please refer to <b>MSInternetExplorer</b> example for more details on how to use this class.</i><br>
+/** Describe a method of the COM <code>IDL</code> to be used in Callback implementations.
+ * Framework uses java reflection to invoke methods requested by COM clients so it is 
+ * absolutely essential that java methods in the implementation class conform exactly to 
+ * what is described in this object. 
+ * <p>
+ * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl, SampleTestServer 
+ * and MSShell examples for more details on how to use this class.</i><br>
  * 
  * @since 1.0
  */
@@ -34,12 +36,12 @@ public final class JILocalMethodDescriptor
 	private Class[] inparametersAsClass = new Class[0];
 	private JILocalParamsDescriptor parameters = null;
 
-	/**Creates the Method Descriptor. The Method Number is set by the order in which this instance is 
+	/**Creates the method descriptor. The method number is set by the order in which this instance is 
 	 * added to the <code>JILocalInterfaceDefinition</code>. This number is incremented by 1 for each subsequent 
-	 * and new addition into Interface definition.
+	 * and new addition into interface definition.
 	 * 
-	 * @param methodName
-	 * @param parameters
+	 * @param methodName name of the method.
+	 * @param parameters pass <code>null</code> if the method has no parameters. 
 	 */
 	public JILocalMethodDescriptor(String methodName,JILocalParamsDescriptor parameters)
 	{
@@ -47,11 +49,11 @@ public final class JILocalMethodDescriptor
 		setParameterObject(parameters);
 	}
 
-	/** Creates a Method Descriptor.
+	/** Creates the method descriptor.
 	 * 
-	 * @param methodName
-	 * @param dispId DispID of this method as in the IDL or the TypeLibrary.
-	 * @param parameters Please pass <code>null</code> if the method has no parameters. 
+	 * @param methodName name of the method.
+	 * @param dispId <code>DISPID</code> of this method as in the <code>IDL</code> or the TypeLibrary.
+	 * @param parameters pass <code>null</code> if the method has no parameters. 
 	 */
 	public JILocalMethodDescriptor(String methodName,int dispId, JILocalParamsDescriptor parameters)
 	{
@@ -132,7 +134,7 @@ public final class JILocalMethodDescriptor
 		return methodName;
 	}
 
-	/**Gets the Opnum of this method in the order as defined in the IDL.
+	/**Gets the opnum of this method in the order as defined in the IDL.
 	 * 
 	 * @return
 	 */
@@ -140,7 +142,7 @@ public final class JILocalMethodDescriptor
 		return methodNum;
 	}
 	
-	/**Gets the DispID of this method. Incase this Method descriptor is for a COM event IDL, then the dispIDs should come from there.
+	/**Gets the <code>DISPID</code> of this method.
 	 * 
 	 * @return
 	 */
@@ -148,9 +150,9 @@ public final class JILocalMethodDescriptor
 		return dispId;
 	}
 	
-	/**Returns the Parameter Object.
+	/**Returns the parameter object.
 	 * 
-	 * @return
+	 * @return <code>null</code> if the method has no parameters. 
 	 */
 	public JILocalParamsDescriptor getParameterObject() {
 		return parameters;

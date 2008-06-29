@@ -842,7 +842,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 		
 		if (JISystem.getLogger().isLoggable(Level.FINEST))
         {
-			JISystem.getLogger().finest("RemUnknownObject: [QI] JIJavcCoClass is " + component.getComponentID());
+			JISystem.getLogger().finest("RemUnknownObject: [QI] JIJavcCoClass is " + component.getCoClassIID());
         }
 		
 		((Integer)(JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null, JIFlags.FLAG_NULL,null))).intValue();//refs , don't really care about this.

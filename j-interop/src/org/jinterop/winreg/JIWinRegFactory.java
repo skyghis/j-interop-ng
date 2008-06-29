@@ -24,8 +24,9 @@ import org.jinterop.winreg.smb.JIWinRegStub;
 
 
 
-/** Factory to get an implementation of <code>IJIWinReg</code>. <br>
- * 
+/** Factory to get an implementation of <code>IJIWinReg</code>. 
+ * <p>This interface uses "Windows Remote Registry" and "Server" services and these must be running on target workstation. 
+ *
  * @since 1.0
  *
  */
@@ -56,7 +57,7 @@ public class JIWinRegFactory {
 		return factory;
 	}
 	
-	/** gets an Implementation of WinReg interface, currently only SMB transport supported.
+	/** Gets an Implementation of WinReg interface, currently only SMB transport is supported.
 	 * 
 	 * @param authInfo credentials for access to Windows Remote Registry service
 	 * @param serverName target server

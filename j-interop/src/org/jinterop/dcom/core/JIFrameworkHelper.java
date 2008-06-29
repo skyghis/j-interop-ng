@@ -247,12 +247,12 @@ public final class JIFrameworkHelper {
 	{
 		if (eventListener == null || comObject == null || sourceUUID == null || sourceUUID.equalsIgnoreCase(""))
 		{
-			throw new JIException(JIErrorCodes.JI_CALLBACK_INVALID_PARAMS);
+			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_CALLBACK_INVALID_PARAMS));
 		}
 		
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
-			JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.internal_getIpid());
+			JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.getIpid());
 		}
 		//IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
 		IJIComObject connectionPointContainer = (IJIComObject)comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");

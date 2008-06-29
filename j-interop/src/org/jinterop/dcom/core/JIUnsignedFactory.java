@@ -27,13 +27,21 @@ import org.jinterop.dcom.common.JISystem;
  */
 public final class JIUnsignedFactory {
 
-	/**<p>Returns an implementation for each of the unsigned type. Only 3 types are supported at present Byte, Short, Integer and 
-	 * since Java has no support for unsigned types, please send a Short for a Byte, Integer for a Short and Long for an Integer. This is to 
-	 * accomodate the entire spectrum for the unsigned type and prevent the rollover problem. 
-	 * </p>
-	 * @param value Short, Integer, Long only
-	 * @param flag refer JIFlags documentation
+	/**<p>Returns an implementation for each of the <code>unsigned</code> type. Only 3 types are supported at present 
+	 * <code>Byte</code>, <code>Short</code>, <code>Integer</code>.
+	 * 
+	 * <p>Since Java has no support for unsigned types, use a <code>Short</code> for a <code>Byte</code>, <code>Integer</code> 
+	 * for a <code>Short</code> and <code>Long</code> for an <code>Integer</code>. This is to accomodate the entire 
+	 * spectrum for the <code>unsigned</code> type and prevent the rollover problem. 
+	 * 
+	 * @param value <code>Short</code>, <code>Integer</code>, <code>Long</code> only
+	 * @param flag  JIFlags unsigned flags
 	 * @return
+	 * @throws IllegalArgumentException if the <code>value</code> is not an instance of the supported types or an incorrect 
+	 * <code>flag</code> has been provided.
+	 * @see JIFlags#FLAG_REPRESENTATION_UNSIGNED_BYTE
+	 * @see JIFlags#FLAG_REPRESENTATION_UNSIGNED_SHORT
+	 * @see JIFlags#FLAG_REPRESENTATION_UNSIGNED_INT
 	 */
 	public static IJIUnsigned getUnsigned(Number value, int flag)
 	{

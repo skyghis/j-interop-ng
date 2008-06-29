@@ -26,19 +26,22 @@ import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
-/**<p> Class representing a String. The Wide Char (LPWSTR) and the BSTRs are both encoded by the server in "UTF-16LE".
- * This encoding will be preserved by the library for all to and fro operations.
+/**<p>Class representing a COM string. The Wide Char (<code>LPWSTR</code>) and the <code>BSTR</code> are 
+ * both encoded by the server in "UTF-16LE". This encoding will be preserved by the library for all to 
+ * and fro operations.
  * </p>
  * @since 1.0
  */
 public final class JIString implements Serializable {
 
 	/**
-	 * Represents JIVariant for this JIString, it is valid only if the JIString is a BSTR(JIFlags.FLAG_REPRESENTATION_STRING_BSTR) type.
+	 * Represents <code>JIVariant</code> for this object, it is valid only if this object is a <code>BSTR</code>
+	 * (<code>JIFlags.FLAG_REPRESENTATION_STRING_BSTR</code>) type.
 	 */
 	public final JIVariant Variant;
 	/**
-	 * Represents JIVariant(byRef = true) for this JIString, it is valid only if the JIString is a BSTR(JIFlags.FLAG_REPRESENTATION_STRING_BSTR) type.
+	 * Represents <code>JIVariant(byRef = true)</code> for this object, it is valid only if this object is a <code>BSTR</code>
+	 * (<code>JIFlags.FLAG_REPRESENTATION_STRING_BSTR</code>) type.
 	 */
 	public final JIVariant VariantByRef;
 	private static final long serialVersionUID = -1656299949818101872L;
@@ -46,9 +49,14 @@ public final class JIString implements Serializable {
 	private int type = JIFlags.FLAG_NULL;
 	
 
-	/**Creates a JIString Object of the specified type. To be used while deserialiazing this Object.
+	/**Creates an object of the specified type. Used while deserialiazing this object.
 	 * 
-	 * @param type JIFlags , String flags only.
+	 * @param type JIFlags string flags
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_BSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPCTSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPWSTR
+	 * @throws IllegalArgumentException if <code>type</code> is not a string flag.
+	 * 
 	 */
 	public JIString(int type)
 	{
@@ -71,10 +79,14 @@ public final class JIString implements Serializable {
 	}
 
 	
-	/** Creates a JIString Object. To be used while serialiazing this Object.
+	/** Creates a string object of a given <code>type</code>.
 	 * 
-	 * @param str
-	 * @param type JIFlags , String flags only.
+	 * @param str value encapsulated by this object.
+	 * @param type JIFlags string flags
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_BSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPCTSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPWSTR
+	 * @throws IllegalArgumentException if <code>type</code> is not a string flag.
 	 */
 	public JIString(String str, int type)
 	{
@@ -104,9 +116,9 @@ public final class JIString implements Serializable {
 
 	
 	
-	/** Creates a JIString Object of the BSTR type. To be used while serialiazing this Object.
+	/** Creates a object of the <code>BSTR</code> type. 
 	 * 
-	 * @param str
+	 * @param str value encapsulated by this object.
 	 */
 	public JIString(String str)
 	{
@@ -114,7 +126,7 @@ public final class JIString implements Serializable {
 	}
 	
 	
-	/** String encapsulated by this Object. The encoding scheme for LPWSTR and BSTR strings is "UTF-16LE".
+	/** String encapsulated by this object. The encoding scheme for <code>LPWSTR</code> and <code>BSTR</code> strings is "UTF-16LE".
 	 * 
 	 * 
 	 * @return
@@ -124,9 +136,12 @@ public final class JIString implements Serializable {
 		return (String)member.getReferent();
 	}
 	
-	/** Type representing the String  
+	/** Type representing this object.
 	 * 
-	 * @return JIFlag's String types.
+	 * @return JIFlags string flags
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_BSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPCTSTR
+	 * @see JIFlags#FLAG_REPRESENTATION_STRING_LPWSTR
 	 */
 	public int getType()
 	{

@@ -36,10 +36,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-/**<p>General purpose utility class. Fields set here are applied system wide.  The j-Interop library exposes JRE based logger "org.jinterop". Applications need to 
- * attach their own handler to this logger. If you would like to set the in-built handler, which writes to a file <i>j-Interop.log</i> in the <code>java.io.tmpdir</code>
- * directory, please use the <code>JISystem.setInBuiltLogHandler(boolean)</code>. Please note that the <code>level</code> for the logger and all other
- * configuration parameters should be set directly on the logger instance, using LogManager.getLogger("org.jinterop")</p>
+/**<p>Class implemented for defining system wide changes. 
+ * 
+ * <p>A note on logging: The framework exposes JRE based logger "org.jinterop". Applications need to 
+ * attach their own handler to this logger. If you would like to set the in-built handler, which 
+ * writes to a file <code>j-Interop.log</code> in the <code>java.io.tmpdir</code> directory, please use 
+ * the {@link #setInBuiltLogHandler(boolean)}. Please note that the <code>level</code> for the logger 
+ * and all other configuration parameters should be set directly on the logger instance, 
+ * using <code>LogManager.getLogger("org.jinterop")</code></p>
+ * 
+ * <p><b>Note</b>: Methods starting with <i>internal_</i> keyword are internal to the framework 
+ * and must not be called by the developer.
  * 
  * @since 1.0
  *
@@ -59,7 +66,7 @@ public final class JISystem {
 	private static boolean autoCollection = true;
 	private static final Logger logger = Logger.getLogger("org.jinterop");
 
-	/** Returns the j-Interop logger identified by the name "org.jinterop".
+	/** Returns the framework logger identified by the name "org.jinterop".
 	 * 
 	 * @return
 	 */
@@ -68,10 +75,10 @@ public final class JISystem {
 		return logger;
 	}
 	
-	/** Sets the COM version which the library would use for communicating with COM servers.
-	 * <br> Default is 5.2. 
+	/** Sets the COM version which the library would use for communicating with COM servers. 
+	 * Default is 5.2. 
 	 * 
-	 * @param comVersion
+	 * @param comVersion new COM version
 	 */
 	public static void setCOMVersion(JIComVersion comVersion)
 	{
@@ -90,7 +97,7 @@ public final class JISystem {
 	
 	/** Sets the locale, this locale will be used to retrieve the resource bundle for Error Messages. 
 	 * 
-	 * @param locale default is Locale.getDefault().
+	 * @param locale default is <code>Locale.getDefault()</code>.
 	 */
 	public static void setLocale(Locale locale)
 	{
@@ -158,9 +165,10 @@ public final class JISystem {
 		return message;
 	}
 	
-	/** Queries the property file maintaining the progId Vs Clsid DB and returns the JIClsid or null
+	/** Queries the property file maintaining the <code>PROGID</code> Vs <code>CLSID</code> mappings 
+	 * and returns the <code>CLSID</code> if found or null otherwise.
 	 * 
-	 * @param progId
+	 * @param progId user friendly string such as "Excel.Application".
 	 * @return
 	 */
 	public static String getClsidFromProgId(String progId)
@@ -258,7 +266,7 @@ public final class JISystem {
 	 * 
 	 * @exclude
 	 */
-	public static void writeProgIdsToFile()
+	public static void internal_writeProgIdsToFile()
 	{
 		if (pathToDB != null)
 		{
@@ -338,11 +346,13 @@ public final class JISystem {
 		}
 	}
 	
-	/** Pass true if, this is an OCX\DLL component and you want the library to do auto registration. This API supercedes the instance specific
-	 * flags set on JIClsid or JIProgID. 
-	 * 
-	 * 
-	 * @param autoRegisteration
+	/**Indicates to the framework, if Windows Registry settings for DLL\OCX
+	 * component identified by this object should be modified to add a <code>Surrogate</code> 
+	 * automatically. A <code>Surrogate</code> is a process which provides resources
+	 * such as memory and cpu for a DLL\OCX to execute.
+	 * <p> This API overrides the instance specific flags set on JIClsid or JIProgID. 
+	 *  
+	 * @param autoRegisteration <code>true</code> if auto registration should be done by the framework.
 	 */
 	public static void setAutoRegisteration(boolean autoRegisteration)
 	{
@@ -358,21 +368,24 @@ public final class JISystem {
 		return autoRegister;
 	}
 	
-	/**<p>Sometimes the DCOM runtime of Windows will not send a ping on time to the j-Interop runtime. It is not very abnormal, since Windows can
-	 * sometimes resort to mechanisms other than DCOM to keep a reference count for the instances they imported. In case of j-Interop, if a ping is not 
-	 * recieved in 8 minutes , the Java CoClass is collected for GC. And when the COM server asks for it, it is sent back an Exception. Please use this
-	 * flag to set the Auto Collection status to ON or OFF. By Default, it is ON. </p>  
+	/**<p>Sometimes the DCOM runtime of Windows will not send a ping on time to the Framework. 
+	 * It is not very abnormal, since Windows can sometimes resort to mechanisms other than
+	 * DCOM to keep a reference count for the instances they imported. In case of j-Interop
+	 * framework, if a ping is not received in 8 minutes , the Java Local Class is collected for 
+	 * GC. And if the COM server requires a reference to it or acts on a previously obtained reference
+	 * , it is sent back an <i>Exception</i>. Please use this flag to set the Auto Collection status 
+	 * to ON or OFF. By Default, it is ON. </p>  
 	 * 
-	 * @param autoCollection
+	 * @param autoCollection <code>true</code> if auto collection should be turned off.
 	 */
 	public static void setJavaCoClassAutoCollection(boolean autoCollection)
 	{
 		JISystem.autoCollection = autoCollection;
 	}
 	
-	/** Status of autoCollection flag. True if autoCollection is enabled, false otherwise.  
+	/** Status of autoCollection flag.   
 	 * 
-	 * @return
+	 * @return <code>true</code> if autoCollection is enabled, <code>false</code> otherwise.
 	 */
 	public static boolean isJavaCoClassAutoCollectionSet()
 	{

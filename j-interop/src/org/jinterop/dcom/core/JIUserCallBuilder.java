@@ -22,7 +22,8 @@ import ndr.NetworkDataRepresentation;
 //Users can implement this object to provide for custom handling of there objects
 /**
  * Users can implement this class to provide for custom handling of there objects
- * @since 1.0
+ * 
+ * @since 2.0 (formerly JIUserCallObject)
  */
 public abstract class JIUserCallBuilder extends JICallBuilder {
 

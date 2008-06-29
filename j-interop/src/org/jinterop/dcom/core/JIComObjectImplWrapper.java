@@ -54,9 +54,9 @@ public class JIComObjectImplWrapper implements IJIComObject {
 		comObject.release();
 	}
 	
-	public String internal_getIpid()
+	public String getIpid()
 	{
-		return comObject.internal_getIpid();
+		return comObject.getIpid();
 	}
 	
 	public Object[] call(JICallBuilder obj) throws JIException

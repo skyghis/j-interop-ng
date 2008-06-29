@@ -41,14 +41,13 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 
-/**<p>Class representing the user's session. Each <code>IJIComObject</code> is associated with 1 session only.
- * All Interface references being given out by the library for a particular COM server are maintained
- * by the session. It is also responsible for the clean up once the system shuts down or objects loose there 
- * references.<br>
+/**<p>Representation of an active session with a COM server. All interface references being given out by 
+ * the framework for a particular COM server are maintained by the session and an <code>IJIComObject</code> 
+ * is associated with a single session only. Sessions are also responsible for the clean up once the system 
+ * shuts down or <code>IJIComObject</code> go out of reference scope.<p>
  * 
- * Please make sure that you call JISession.destroySession after you are done using the session. This will ensure that any
- * open sockets to COM server are closed.
- * </p>
+ * Please make sure that you call {@link #destroySession(JISession)} after you are done using the session. 
+ * This will ensure that any open sockets to COM server are closed.
  * 
  * @since 1.0
  */
@@ -236,7 +235,7 @@ public final class JISession {
 							JISystem.getLogger().throwing("JISession","addShutDownHook Thread:run()",e);  
 						}
 					}
-					JISystem.writeProgIdsToFile();
+					JISystem.internal_writeProgIdsToFile();
 					JIComOxidRuntime.stopResolver();
 					releaseRefsTimer.cancel();
 					mapOfSessionIdsVsSessions.clear();
@@ -348,7 +347,7 @@ public final class JISession {
 		return oxidResolverPort;
 	}
 	
-	/**Returns the authInfo (if any) associated with this session.
+	/**Returns the <code>IJIAuthInfo</code> (if any) associated with this session.
 	 * 
 	 * @return
 	 */
@@ -357,10 +356,14 @@ public final class JISession {
 		return authInfo;
 	}
 	
-	/** Creates a session with the authInfo of the user. authInfo cannot be null.
+	/** Creates a session with the <code>authInfo</code> of the user. This session is not yet attached to a
+	 * COM server.
 	 * 
 	 * @param authInfo
 	 * @return
+	 * @throws IllegalArgumentException if <code>authInfo</code> is <code>null</code>.
+	 * @see JIComServer#JIComServer(JIClsid, JISession)
+	 * @see JIComServer#JIComServer(JIProgId, JISession)
 	 */
 	public static JISession createSession(IJIAuthInfo authInfo)
 	{
@@ -390,12 +393,16 @@ public final class JISession {
 	
 	
 	
-	/** Creates a session.
+	/** Creates a session. This session is not yet attached to a
+	 * COM server.
 	 * 
-	 * @param domain Domain of the user.
-	 * @param username Username
+	 * @param domain domain of the user.
+	 * @param username name of the user
 	 * @param password password of the user.
 	 * @return
+	 * @throws IllegalArgumentException if any parameter is <code>null</code>.
+	 * @see JIComServer#JIComServer(JIClsid, JISession)
+	 * @see JIComServer#JIComServer(JIProgId, JISession)
 	 */
 	public static JISession createSession(String domain,String username, String password)
 	{
@@ -424,10 +431,13 @@ public final class JISession {
 	}
 
 
-	/** Creates a new Session , using credentials of the session sent as parameter.
+	/** Creates a new session using credentials of the <code>session</code>parameter. The new session is not yet attached to a
+	 * COM server.
 	 * 
 	 * @param session
 	 * @return
+	 * @see JIComServer#JIComServer(JIClsid, JISession)
+	 * @see JIComServer#JIComServer(JIProgId, JISession)
 	 */
 	public static JISession createSession(JISession session)
 	{
@@ -437,14 +447,14 @@ public final class JISession {
 
 	}
 	
-	/**<p>Used to destroy the session, this release all references of the <code>COM</code> server and it's interfaces. 
-	 * It should be called once the developer is done with the usage of a <code>COM</code> object, it is required so as to close all open sockets
-	 * with the COM server. The references to COM interfaces are discarded from time to time when a random GC is done or when the system shuts down.<br>
-	 * Please note that all interface pointers belonging to sessions linked to this session (refer the JIObjectFactory.createCOMInstance API) will also be 
-	 * destroyed.
-	 * </p>
+	/**<p>Used to destroy the <code>session</code>, this release all references of the COM server and it's interfaces. 
+	 * It should be called in the end after the developer is done with the COM server. 
+	 * <p>
+	 * Note that all interface references belonging to sessions linked to this session will also be destroyed.
+	 * 
 	 * @param session
 	 * @throws JIException
+	 * @see JIObjectFactory#narrowObject
 	 */
 	public static void destroySession(JISession session) throws JIException
 	{
@@ -560,13 +570,13 @@ public final class JISession {
 	 */
 	void addToSession(IJIComObject comObject, byte[] oid)
 	{
-		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.internal_getIpid(),getSessionIdentifier(),false,oid);
+		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(),getSessionIdentifier(),false,oid);
 		//mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		synchronized (mutex) 
 		{
 			mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		}
-		addToSession(comObject.internal_getIpid(),oid);
+		addToSession(comObject.getIpid(),oid);
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier());
@@ -659,7 +669,7 @@ public final class JISession {
 		return remInterface;
 	}
 
-	/**Gets the username associated with this session.
+	/** Gets the user name associated with this session.
 	 * 
 	 * @return
 	 */
@@ -746,9 +756,11 @@ public final class JISession {
 	}
 	
 	/**<p> Sets the timeout for all sockets opened to (not fro) the COM server for this session. Default value is 0 (no timeout).
-	 * The class level and the API level settings in case of IJIComObject override this timeout. </p>  
+	 * The class level and the method level settings in case of <code>IJIComObject</code> override this timeout. </p>  
 	 * 
 	 * @param timeout in millisecs
+	 * @see IJIComObject#setInstanceLevelSocketTimeout(int)
+	 * @see IJIComObject#call(JICallBuilder, int)
 	 */
 	public void setGlobalSocketTimeout(int timeout)
 	{
@@ -764,19 +776,22 @@ public final class JISession {
 		return this.timeout;
 	}
 	
-	/**<p> Sets the use of NTLM2 Session Security. j-Interop will use NTLM Packet Level Privacy and Sign\Seal all packets. Once the JIComServer is
-	 * bound to this session (using any of the {@link JIComServer#JIComServer(...)} ctors) the use of session security cannot be enabled or disabled.
-	 * 
-	 * Please note that session security can come at any available level of authentication (LM\NTLM\LMv2\NTLMv2). The library currently
-	 * only supports sign and seal at NTLMv1 level. Whether to use NTLM1 or not is dictated by this field in the registry. 
-	 * 
+	/**<p> Sets the use of NTLM2 Session Security. Framework will use NTLM Packet Level Privacy and Sign\Seal all packets. 
+	 * Once the <code>JIComServer</code> is bound to this session (using any of the <code>JIComServer</code> constructors) 
+	 * the use of session security <b>cannot</b> be enabled or disabled.
+	 * <p>
+	 * Please note that session security can come at any available level of authentication (LM\NTLM\LMv2\NTLMv2). The framework
+	 * currently only supports sign and seal at NTLMv1 level. 
+	 * <p>
+	 * Whether to use NTLM1 or not is dictated by this field in the Windows Registry. 
+	 * <p>
 	 * <code>
-	 * HKLM\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel 
+	 * HKLM\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel <p>
 	 * </code>
 	 * 
 	 * This article on MSDN talks more about it http://support.microsoft.com/default.aspx?scid=KB;en-us;239869 
-	 * </p>
-	 * @param enable true to enable, false to disable. 
+	 * 
+	 * @param enable <code>true</code> to enable, <code>false</code> to disable. 
 	 */
 	public void useSessionSecurity(boolean enable)
 	{
@@ -789,7 +804,7 @@ public final class JISession {
 	
 	/**<p> Flag indicating whether session security is enabled. </p>
 	 * 
-	 * @return true for enabled.
+	 * @return <code>true</code> for enabled.
 	 */
 	public boolean isSessionSecurityEnabled()
 	{

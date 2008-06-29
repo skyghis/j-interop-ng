@@ -36,15 +36,11 @@ import org.jinterop.dcom.common.JISystem;
 import rpc.core.UUID;
 
 
-/**<p>Each instance of this class represents a JAVA COCLASS. It may contain many interfaces, each represented 
- * at instance level by their uniqueIID and an instance. This instance is assigned an IPID when a Q.I call 
- * comes for them. This is provided incase the developer wants to maintain some
- * sort of state in the Java Instance. if <code>clazz</code> constructor has been used, then the library will try
- * to create a instance of the Java class using Class.newInstance. Please make sure that at least in all your classes 
- * visible nullary ctor is present.</p>
- * <p>Stores all IIDs, IPIDs internally in upper case. </p><br>
- *
- * <i>Please refer to <b>MSInternetExplorer</b> example for more details on how to use this class.</i><br>
+/**<p>Represents a Java <code>COCLASS</code>. 
+ * <p>
+ * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl, SampleTestServer 
+ * and MSShell examples for more details on how to use this class.</i><br>
+ * 
  * @since 1.0
  *
  */
@@ -92,10 +88,34 @@ public final class JILocalCoClass implements Serializable
 		this.realIID = realIID;
 	}
 	
-	/**
+	
+	
+	/** Creates a local class instance. The framework will try to create a instance of the <code>clazz</code>
+	 *  using <code>Class.newInstance</code>. Make sure that <code>clazz</code> has a visible <code>null</code> 
+	 *  constructor.
 	 * 
-	 * @param interfaceDefinition
-	 * @param clazz
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param clazz <code>class</code> to instantiate for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>clazz</code> are <code>null</code>. 
+     */
+	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Class clazz)
+	{
+		if (interfaceDefinition == null || clazz == null)
+		{
+			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
+		}
+		this.identifier = clazz.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
+		init(interfaceDefinition,clazz,null,false);
+	}
+	
+	/** Refer {@link #JILocalCoClass(JILocalInterfaceDefinition, Class)}.
+	 * 
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param clazz <code>class</code> to instantiate for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @param realIID <code>true</code> if the <code>interfaceDefinition</code> implements a real COM <code>IID</code>.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>clazz</code> are <code>null</code>. 
 	 */
 	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Class clazz, boolean realIID)
 	{
@@ -107,40 +127,12 @@ public final class JILocalCoClass implements Serializable
 		init(interfaceDefinition,clazz,null,realIID);
 	}
 	
-	/**
+	/**Creates a local class instance. 
 	 * 
-	 * @param interfaceDefinition
-	 * @param clazz
-	 */
-	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Class clazz)
-	{
-		if (interfaceDefinition == null || clazz == null)
-		{
-			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
-		}
-		this.identifier = clazz.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
-		init(interfaceDefinition,clazz,null,false);
-	}
-	
-	/**
-	 * 
-	 * @param interfaceDefinition
-	 * @param instance
-	 */
-	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Object instance,boolean realIID)
-	{
-		if (interfaceDefinition == null || instance == null)
-		{
-			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
-		}
-		this.identifier = instance.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
-		init(interfaceDefinition,null,instance,realIID);	
-	}
-	
-	/**
-	 * 
-	 * @param interfaceDefinition
-	 * @param instance
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param instance instance for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>instance</code> are <code>null</code>.
 	 */
 	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Object instance)
 	{
@@ -152,9 +144,32 @@ public final class JILocalCoClass implements Serializable
 		init(interfaceDefinition,null,instance,false);	
 	}
 	
-	/**Sets the interface identifiers (IIDs) of the event interfaces this class would support.
+	/**Creates a local class instance. 
+	 * 
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param instance instance for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @param realIID <code>true</code> if the <code>interfaceDefinition</code> implements a real COM <code>IID</code>.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>instance</code> are <code>null</code>.
+	 */
+	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Object instance,boolean realIID)
+	{
+		if (interfaceDefinition == null || instance == null)
+		{
+			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
+		}
+		this.identifier = instance.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
+		init(interfaceDefinition,null,instance,realIID);	
+	}
+	
+	
+	
+	/**Sets the interface identifiers (<code>IID</code>s) of the event interfaces this class would support. This in case the same 
+	 * <code>clazz</code> or <code>instance</code> is implementing more than one <code>IID</code>. 
 	 * 
 	 * @param listOfIIDs
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Class) 
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Object)
 	 */
 	public void setSupportedEventInterfaces(List listOfIIDs)
 	{
@@ -173,8 +188,10 @@ public final class JILocalCoClass implements Serializable
 	
 	/**Add another interface definition and it's supporting object instance.
 	 * 
-	 * @param interfaceDefinition
-	 * @param instance
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param instance instance for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>instance</code> are <code>null</code>.
 	 */
 	public void addInterfaceDefinition(JILocalInterfaceDefinition interfaceDefinition, Object instance )
 	{
@@ -189,11 +206,13 @@ public final class JILocalCoClass implements Serializable
 		mapOfIIDsToInterfaceDefinitions.put(s,interfaceDefinition);
 	}
 
-	/**Add another interface definition and it's class. Please make sure that this class has a default constructor, so that instantiation using reflection 
-	 * can take place.
+	/** Add another interface definition and it's class. Make sure that this class has a default constructor, 
+	 * so that instantiation using <i>reflection</i> can take place.
 	 * 
-	 * @param interfaceDefinition
-	 * @param clazz
+	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
+	 * @param clazz instance for serving requests from COM client. Must implement 
+	 * the <code>interfaceDefinition</code> fully.
+	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>clazz</code> are <code>null</code>.
 	 */
 	public void addInterfaceDefinition(JILocalInterfaceDefinition interfaceDefinition, Class clazz )
 	{
@@ -211,6 +230,7 @@ public final class JILocalCoClass implements Serializable
 	/**
 	 * Returns the instance representing the interface definition. <br>
 	 * @return
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Object)
 	 */
 	public Object getServerInstance()
 	{
@@ -220,6 +240,7 @@ public final class JILocalCoClass implements Serializable
 	/**
 	 * Returns the actual class representing the interface definition. <br> 
 	 * @return
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Class)
 	 */
 	public Class getServerClass()
 	{
@@ -306,8 +327,11 @@ public final class JILocalCoClass implements Serializable
 	/**
 	 * Returns the interface identifier of this COCLASS. <br>
 	 * @return
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Class) 
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Object)
+	 * @see JILocalInterfaceDefinition#getInterfaceIdentifier() 
 	 */
-	public String getComponentID()
+	public String getCoClassIID()
 	{
 		return interfaceDefinition.getInterfaceIdentifier();
 	}
@@ -563,9 +587,11 @@ public final class JILocalCoClass implements Serializable
 	}
 
 	
-	/**Returns the primary(i.e the one added first time during construction of this instance) interfaceDefinition. <br>
+	/**Returns the primary interfaceDefinition. <br>
 	 * 
 	 * @return
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Class) 
+	 * @see #JILocalCoClass(JILocalInterfaceDefinition, Object)
 	 */
 	public JILocalInterfaceDefinition getInterfaceDefinition()
 	{
@@ -592,9 +618,9 @@ public final class JILocalCoClass implements Serializable
 		return identifier;
 	}
 	
-	/**Returns the interfaceDefinition based on the IID of the interface.
+	/**Returns the interface definition based on the IID of the interface.
 	 * 
-	 * @return
+	 * @return <code>null</code> if no interface definition matching the <code>IID</code> has been found.
 	 */
 	public JILocalInterfaceDefinition getInterfaceDefinition(String IID)
 	{
@@ -628,11 +654,11 @@ public final class JILocalCoClass implements Serializable
 		return (String)ipidVsIID.get(ipid.toUpperCase());
 	}
 	
-	/** <p> Returns true if the primary interface definition represents a real IID. The bind-auth3 and all are then all done as per this IID and
-	 * not IUnknown. </p>
-	 * 
+	/** <p> Returns <code>true</code> if the primary interface definition represents a real <code>IID</code> .
+	 *  
 	 * @return
 	 */
+//	 The bind-auth3 and all are then all done as per this <code>IID</code> and not IUnknown. 
 	public boolean isCoClassUnderRealIID()
 	{
 		return realIID;

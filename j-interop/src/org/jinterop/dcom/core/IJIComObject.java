@@ -126,13 +126,15 @@ public interface IJIComObject extends Serializable {
 	 */	
 	public void release() throws JIException;
 	
-	/** <i><u>Framework Internal</u></i>
-	 * Unique 128 bit uuid representing the interface on the COM server. <br>
+	/**Unique 128 bit uuid representing the interface on the COM server. This value can
+	 * and should be used to map an <code>IJIUnreferenced</code> handler implementation to this COM Object.
+	 * <p>Under <b>NO</b> circumstances should a reference to this COM object be stored any where
+	 * for only purposes of "unreferenced" handling. This would hinder the way in which objects
+	 * are garbage collected by the framework and this object would be forever "live".
 	 * 
-	 * @exclude
 	 * @return string representation of ipid.
 	 */
-	public String internal_getIpid();
+	public String getIpid();
 	
 	/** <P>Executes a method call on the actual COM object represented by this interface. 
 	 * All the data like parameter information, operation number etc. are prepared and 

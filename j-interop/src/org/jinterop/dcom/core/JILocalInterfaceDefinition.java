@@ -25,10 +25,10 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
 
-/**<p>Forms the definition of a Java Interface. Please note that Overloads not allowed.  
- * Primarily used to form a definition for callback. </p>
+/**<p>Forms the definition of a COM interface to be used in callbacks. Method overloads are <b>not</b> allowed.
  * 
- * <br><i>Please refer to <b>MSInternetExplorer</b> example for more details on how to use this class.</i><br>
+ * <p><i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl, SampleTestServer 
+ * and MSShell examples for more details on how to use this class.</i><br>
  * 
  * @since 1.0
  *
@@ -45,20 +45,21 @@ public final class JILocalInterfaceDefinition implements Serializable
     Class clazz = null;
     private boolean dispInterface = true; 
     
-    /**Creates an Interface definition. By default, the "dispinterface" property is true.
+    /**Creates an Interface definition. By default, the <code>dispinterface</code> property is <code>true</code>.
      * 
-     * @param interfaceIdentifier
+     * @param interfaceIdentifier <code>IID</code> of the COM interface being implemented.
      */
 	public JILocalInterfaceDefinition(String interfaceIdentifier)
 	{
 		this.interfaceIdentifier = interfaceIdentifier;
 	}
 	
-	 /**Creates an Interface definition. Set <code>isDispInterface</code> interface to false if this interface does not
-	 * support IDispatch based calls.
+	 /**Creates an Interface definition. Set <code>isDispInterface</code> interface to <code>false</code> 
+	  * if this interface does not support <code>IDispatch</code> based calls.
      * 
-     * @param interfaceIdentifier
-     * @param isDispInterface true if IDispatch is supported ("dispinterface"), false otherwise
+     * @param interfaceIdentifier  <code>IID</code> of the COM interface being implemented.
+     * @param isDispInterface <code>true</code> if <code>IDispatch</code> ("<code>dispinterface</code>") 
+     * is supported , <code>false</code> otherwise.
      */
 	public JILocalInterfaceDefinition(String interfaceIdentifier, boolean isDispInterface)
 	{
@@ -66,11 +67,11 @@ public final class JILocalInterfaceDefinition implements Serializable
 		this.dispInterface = isDispInterface;
 	}
 	
-	/**Adds a Method Descriptor. <b>Methods should be added in the same order as they appear in the IDL</b>.
+	/**Adds a Method Descriptor. Methods <b>must</b> be added in the same order as they appear in the IDL.
 	 * 
-	 * <p> Please note that overloaded Methods are not allowed.
-	 * 
-	 * @param methodDescriptor
+	 * <p> Please note that overloaded methods are not allowed.
+	 * @param methodDescriptor 
+	 * @throws IllegalArgumentException if a method by the same name already exists.
 	 */
 	public void addMethodDescriptor(JILocalMethodDescriptor methodDescriptor)
 	{
@@ -97,20 +98,20 @@ public final class JILocalInterfaceDefinition implements Serializable
 		
 	}
 	
-	/**Returns the descriptor identified by it's Method number. <br>
+	/** Returns the method descriptor identified by it's number. <br>
 	 * 
 	 * @param opnum
-	 * @return
+	 * @return <code>null</code> if no method by this <code>opnum</code> was found.
 	 */
 	public JILocalMethodDescriptor getMethodDescriptor(int opnum)
 	{
 		return (JILocalMethodDescriptor)opnumVsMethodInfo.get(new Integer(opnum));
 	}
 
-	/**Returns the descriptor identified by it's dispId. <br>
+	/**Returns the method descriptor identified by it's dispId. <br>
 	 * 
 	 * @param dispId
-	 * @return
+	 * @return <code>null</code> if no method by this <code>dispId</code> was found.
 	 */
 	public JILocalMethodDescriptor getMethodDescriptorForDispId(int dispId)
 	{
@@ -118,17 +119,17 @@ public final class JILocalInterfaceDefinition implements Serializable
 	}
 
 	
-	/**Returns the descriptor identified by it's Method Name. <br>
+	/**Returns the method descriptor identified by it's name. <br>
 	 * 
 	 * @param name
-	 * @return
+	 * @return <code>null</code> if no method by this <code>name</code> was found.
 	 */
 	public JILocalMethodDescriptor getMethodDescriptor(String name)
 	{
 		return (JILocalMethodDescriptor)nameVsMethodInfo.get(name);
 	}
 	
-	/**Returns all descriptors. <br>
+	/**Returns all method descriptors. <br>
 	 * 
 	 * @return
 	 */
@@ -137,7 +138,7 @@ public final class JILocalInterfaceDefinition implements Serializable
 		return (JILocalMethodDescriptor[])opnumVsMethodInfo.values().toArray(new JILocalMethodDescriptor[opnumVsMethodInfo.values().size()]);
 	}
 	
-	/**Returns the interface identifier of this definition. <br>
+	/**Returns the interface identifier (<code>IID</code>) of this definition. <br>
 	 * 
 	 * @return
 	 */
@@ -146,10 +147,11 @@ public final class JILocalInterfaceDefinition implements Serializable
 		return interfaceIdentifier;
 	}
 	
-	/**Removes the descriptor identified by it's Method Num. <p>  
-	 * Please note that removal of a sequential Method Num can have unpredictable results during a call. <br>  
-	 * 
+	/**Removes the method descriptor identified by it's number. 
+	 * <p>  
+	 * Please note that removal of a sequential method can have unpredictable results during a call. <br>  
 	 * @param opnum
+	 * @see #addMethodDescriptor(JILocalMethodDescriptor)
 	 */
 	public void removeMethodDescriptor(int opnum)
 	{
@@ -160,10 +162,11 @@ public final class JILocalInterfaceDefinition implements Serializable
 		}
 	}
 	
-	/**Removes the descriptor identified by it's Method Name. <p>  
-	 * Please note that removal of a sequential Method Num can have unpredictable results during a call.  <br>
-	 * 
+	/**Removes the method descriptor identified by it's name. <p>  
+	 * <p>  
+	 * Please note that removal of a sequential method can have unpredictable results during a call. <br>  
 	 * @param methodName
+	 * @see #addMethodDescriptor(JILocalMethodDescriptor)
 	 */
 	public void removeMethodDescriptor(String methodName)
 	{
@@ -174,9 +177,9 @@ public final class JILocalInterfaceDefinition implements Serializable
 		}
 	}
 	
-	/**Returns whether this interface supports IDispatch or not.
+	/**Returns status whether this interface supports <code>IDispatch</code> or not.
 	 * 
-	 * @return true if IDispatch is supported.
+	 * @return <code>true</code> if <code>IDispatch</code> is supported.
 	 */
 	public boolean isDispInterface()
 	{

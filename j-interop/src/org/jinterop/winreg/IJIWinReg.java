@@ -26,9 +26,9 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 
-/** Interface for performing C-R-U-D on the Windows registry in a platform independent way without using JNI. 
- * This interface used Windows Remote Registry service and should be running on target workstation. The SERVER service 
- * should also be running. <br>
+/** Perform C-R-U-D on the Windows Registry.
+ * 
+ * <p>This interface uses "Windows Remote Registry" and "Server" services and these must be running on target workstation. 
  * 
  * @since 1.0
  *

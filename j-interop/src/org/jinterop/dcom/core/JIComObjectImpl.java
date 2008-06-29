@@ -148,7 +148,7 @@ final class JIComObjectImpl implements IJIComObject {
 		return ptr == null ? session.getStub().getServerInterfacePointer() : ptr;
 	}
 	
-	public String internal_getIpid()
+	public String getIpid()
 	{
 		return ptr.getIPID();
 	}
@@ -160,7 +160,7 @@ final class JIComObjectImpl implements IJIComObject {
 			return false;
 		}
 		
-		return (this.ptr.getIPID().equalsIgnoreCase(((IJIComObject)obj).internal_getIpid()));
+		return (this.ptr.getIPID().equalsIgnoreCase(((IJIComObject)obj).getIpid()));
 	}
 	
 	public int hashCode()
@@ -224,17 +224,17 @@ final class JIComObjectImpl implements IJIComObject {
 
 	public IJIUnreferenced getUnreferencedHandler() {
 		checkLocal();
-		return session.getUnreferencedHandler(internal_getIpid());
+		return session.getUnreferencedHandler(getIpid());
 	}
 
 	public void registerUnreferencedHandler(IJIUnreferenced unreferenced) {
 		checkLocal();
-		session.registerUnreferencedHandler(internal_getIpid(), unreferenced);
+		session.registerUnreferencedHandler(getIpid(), unreferenced);
 	}
 
 	public void unregisterUnreferencedHandler() {
 		checkLocal();
-		session.unregisterUnreferencedHandler(internal_getIpid());
+		session.unregisterUnreferencedHandler(getIpid());
 	}
 
 	public Object[] call(JICallBuilder obj, int socketTimeout) throws JIException

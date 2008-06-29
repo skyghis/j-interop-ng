@@ -32,7 +32,7 @@ import org.jinterop.dcom.common.JISystem;
 
 
 /**<p> This class represents the <code>Union</code> data type. Its usage is dictated by the discriminant
- * which acts as a "switch" to select the correct member to be serialized\deserialzed. <br>
+ * which acts as a "switch" to select the correct member to be serialized\deserialzed. <p>
  * 
  * Sample Usage :-
  * 
@@ -44,12 +44,12 @@ import org.jinterop.dcom.common.JISystem;
  *	forTypeDesc.addMember(TypeDesc.VT_PTR,ptrToTypeDesc); <br>
  *	forTypeDesc.addMember(TypeDesc.VT_SAFEARRAY,ptrToTypeDesc); <br>
  *	forTypeDesc.addMember(TypeDesc.VT_CARRAY,ptrToArrayDesc); <br>
- *	forTypeDesc.addMember(TypeDesc.VT_USERDEFINED,Integer.class); <br>
+ *	forTypeDesc.addMember(TypeDesc.VT_USERDEFINED,Integer.class); <p>
  * </code>
  *
- *	The TypeDesc.VT_PTR is an Integer and is used as a Discriminant to select ptrTypeDesc, TypeDesc.VT_CARRAY 
+ *	The TypeDesc.VT_PTR is an <code>Integer</code> and is used as a discriminant to select ptrTypeDesc, TypeDesc.VT_CARRAY 
  *  chooses ptrArrayDesc. <br>
- *  </p>
+ *  
  *  	
  * 
  * @since 1.0
@@ -65,10 +65,13 @@ public final class JIUnion implements Serializable {
 	//private Union clone = null;
 	private JIUnion() {}
 	
-	/** Creates the JIUnion object with discriminant type specified. Used only during deserializing 
-	 *  the union. Can only be of the type Integer,Short,Boolean or Character. <br>
+	/** Creates an object with discriminant type specified. Used only during deserializing 
+	 *  the union. Can only be of the type <code>Integer</code>,<code>Short</code>,<code>Boolean</code>
+	 *  or <code>Character</code>. <br>
 	 * 
 	 * @param discriminantClass
+	 * @throws IllegalArgumentException if the <code>discriminantClass</code> is not of the type as specified
+	 * above.
 	 */
 	public JIUnion(Class discriminantClass)
 	{
@@ -85,11 +88,12 @@ public final class JIUnion implements Serializable {
 		
 	}
 	
-	/** Adds a member to this Union. The member is distinguished using the discriminant. <br>
+	/** Adds a member to this Union. The <code>member</code> is distinguished using the <code>discriminant</code>. <br>
 	 * 
 	 * @param discriminant
 	 * @param member
 	 * @throws JIException
+	 * @throws IllegalArgumentException if any parameter is <code>null</code>
 	 */
 	public void addMember(Object discriminant, Object member) throws JIException
 	{
@@ -116,11 +120,12 @@ public final class JIUnion implements Serializable {
 		dsVsMember.put(discriminant,member);
 	}
 	
-	/** Adds a member to this Union. The member is distinguished using the discriminant. <br>
+	/** Adds a member to this Union. The <code>member</code> is distinguished using the <code>discriminant</code>. <br>
 	 * 
 	 * @param discriminant
 	 * @param member
 	 * @throws JIException
+	 * @throws IllegalArgumentException if <code>discriminant</code> is <code>null</code>
 	 */
 	//used both for reading and writing
 	public void addMember(Object discriminant, JIStruct member) throws JIException
@@ -145,7 +150,7 @@ public final class JIUnion implements Serializable {
 		//(if present) can be deserialized\serialized.
  	}
 
-	/**Removes the entry , identified by it's discriminant from the Parameter list of the union. <br>
+	/**Removes the entry , identified by it's <code>discriminant</code> from the parameter list of the union. <br>
 	 * 
 	 * @param discriminant
 	 */

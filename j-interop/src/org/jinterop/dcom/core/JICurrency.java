@@ -18,18 +18,18 @@
 package org.jinterop.dcom.core;
 
 
-/**<p> From MSDN:  <i> encapsulates the CURRENCY data type used in Automation. CURRENCY is implemented 
+/**Definition from MSDN: <i> encapsulates the CURRENCY data type used in Automation. CURRENCY is implemented 
  * as an 8-byte, two's-complement integer value scaled by 10,000. This gives a fixed-point number 
  * with 15 digits to the left of the decimal point and 4 digits to the right. The CURRENCY data type
  * is extremely useful for calculations involving money, or for any fixed-point calculation where accuracy 
- * is important. It is one of the possible types for the VARIANT data type of Automation. </i> <br>
+ * is important. It is one of the possible types for the VARIANT data type of Automation.<p>
  *
- * for e.g. <br>
+ * for example :- <br>
  * If the absolute value of the fractional part is greater than 10,000, the appropriate adjustment 
- * is made to the units, as shown in the third of the following examples. <br>
+ * is made to the units, as shown in the third of the following examples. <p>
  *
  * Note that the units and fractional part are specified by signed long values. The fourth of the following  
- * examples shows what happens when the parameters have different signs. <br>
+ * examples shows what happens when the parameters have different signs. <p>
  * 
  * COleCurrency curA;           // value: 0.0000 <br>
  * curA.SetCurrency(4, 500);    // value: 4.0500 <br>
@@ -37,7 +37,6 @@ package org.jinterop.dcom.core;
  * curA.SetCurrency(2, -50);    // value: 1.9950 <br>
  *	  
  * </i>
- * </p>
  * @since 1.0
  */
 public final class JICurrency {
@@ -57,7 +56,7 @@ public final class JICurrency {
 		this.fractionalUnits = fractionalUnits;
 	}
 	
-	/**Returns the encapsulated units value. <br>
+	/**Returns the units value. <br>
 	 * 
 	 * @return
 	 */
@@ -66,7 +65,7 @@ public final class JICurrency {
 		return units;
 	}
 	
-	/**Returns the encapsulated fractionalUnits value. <br>
+	/**Returns the fractionalUnits value. <br>
 	 * 
 	 * @return
 	 */
