@@ -19,13 +19,14 @@ package org.jinterop.dcom.impls.automation;
 
 import org.jinterop.dcom.common.JIException;
 
-/**<p> j-Interop class corresponding to COM <code>IEnumVARIANT</code> Interface. <br>
+
+/**<p> Represents the Windows COM <code>IEnumVARIANT</code> Interface. <p>
  *  Sample Usage:- <br>
  *  <code>
  *  //From MSEnumVariant example <br>
  *  JIVariant variant = dispatch.get("_NewEnum"); <br>
- *	IJIComObject object2 = JIObjectFactory.createCOMInstance(dispatch,variant.getObjectAsInterfacePointer()); <br>
- *	IJIEnumVARIANT enumVARIANT = (IJIEnumVARIANT)JIObjectFactory.createCOMInstance(IJIEnumVARIANT.IID,object2); <br>
+ *	IJIComObject object2 = variant.getObjectAsComObject();<br>
+ *	IJIEnumVariant enumVARIANT = (IJIEnumVariant)JIObjectFactory.narrowObject(object2.queryInterface(IJIEnumVariant.IID));
  *	<br>
  *	for (i = 0; i < 10; i++) <br>
  *	{ <br>
@@ -51,48 +52,43 @@ public interface IJIEnumVariant {
 	 */
 	public static final String IID = "00020404-0000-0000-C000-000000000046";
 
-	/** From MSDN:-
-	 * <i>
+	/** Definition from MSDN: <i> 
 	 * Attempts to get the next celt items in the enumeration sequence. If fewer than the requested number 
-	 * of elements remain in the sequence, Next returns only the remaining elements. <br>
+	 * of elements remain in the sequence, Next returns only the remaining elements.
 	 * </i>
 	 * 
-	 * @param celt The number of elements to be returned. 
+	 * @param celt number of elements to be returned. 
 	 * @return results
 	 * @throws JIException
 	 */
 	public Object[] next(int celt) throws JIException;
 	
-	/** From MSDN:-
-	 * <i>
-	 * Attempts to skip over the next celt elements in the enumeration sequence.
+	/** Definition from MSDN: <i> Attempts to skip over the next celt elements in the enumeration sequence.
 	 * </i>
 	 * 
-	 * @param celt The number of elements to skip. 
+	 * @param celt number of elements to skip. 
 	 * @throws JIException
 	 */
     public void skip(int celt) throws JIException;
 
-    /**From MSDN:- 
+    /**Definition from MSDN:
      * <i>Resets the enumeration sequence to the beginning. There is no guarantee that exactly the same set of 
      * variants will be enumerated the second time as was enumerated the first time. Although an exact duplicate 
      * is desirable, the outcome depends on the collection being enumerated. You may find that it is impractical 
-     * for some collections to maintain this condition (for example, an enumeration of the files in a directory). <br>
+     * for some collections to maintain this condition (for example, an enumeration of the files in a directory). 
      * </i>
      * @throws JIException
      */
     public void reset() throws JIException;
 
-    /** From MSDN:-
-     * <i>
+    /** Definition from MSDN: <i> 
      * Creates a copy of the current state of enumeration. Using this function, a particular point in the enumeration 
      * sequence can be recorded, and then returned to at a later time. The returned enumerator is of the same actual 
      * interface as the one that is being cloned. <p>
      * There is no guarantee that exactly the same set of variants will be enumerated the second time as was 
      * enumerated the first. Although an exact duplicate is desirable, the outcome depends on the collection 
      * being enumerated. You may find that it is impractical for some collections to maintain this condition 
-     * (for example, an enumeration of the files in a directory). <br>
-     *
+     * (for example, an enumeration of the files in a directory). 
      * </i>
      * @return reference to the clone.
      * @throws JIException

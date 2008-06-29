@@ -23,7 +23,9 @@ import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIUnion;
 
-/**Describes the type of a variable, the return type of a function, or the type of a function parameter.
+/**Implements the <i>TYPEDESC</i> structure of COM Automation and 
+ * describes the type of a variable, the return type of a function, 
+ * or the type of a function parameter.
  * 
  *@since 1.0
  */

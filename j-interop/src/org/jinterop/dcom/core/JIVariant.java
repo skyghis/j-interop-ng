@@ -1132,7 +1132,6 @@ public final class JIVariant implements Serializable {
 	/**Retrieves the contained object as IJIComObject. Return value must be "narrowed" to get the expected type. for e.g. :- If expected type is an IJIDispatch , 
 	 * then the return value must pass through JIObjectFactory.narrowInstance(IJIComObject) to get to the right type.
 	 * 
-	 * @param session session to which this object will belong.
 	 * @return
 	 * @throws JIException
 	 */

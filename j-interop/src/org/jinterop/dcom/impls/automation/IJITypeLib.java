@@ -21,8 +21,8 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 
-/**From MSDN:-
- * <i>
+/** Represents the Windows COM <code>ITypeLib</code> Interface. <p>
+ * Definition from MSDN: <i> 
  * The ITypeLib interface provides methods for accessing a library of type descriptions. This interface supports the following:  
  * Generalized containment for type information. ITypeLib allows iteration over the type descriptions contained 
  * in the library. <p>
@@ -51,7 +51,7 @@ public interface IJITypeLib extends IJIComObject {
 
 	/**Retrieves the specified type description in the library.
 	 * 
-	 * @param index Index of the ITypeInfo interface to be returned. 
+	 * @param index index of the ITypeInfo interface to be returned. 
 	 * @return
 	 * @throws JIException
 	 */
@@ -59,7 +59,7 @@ public interface IJITypeLib extends IJIComObject {
 	
 	/**Retrieves the type of a type description.
 	 * 
-	 * @param index The index of the type description within the type library. 
+	 * @param index ihe index of the type description within the type library. 
 	 * @return
 	 * @throws JIException
 	 */
@@ -72,6 +72,7 @@ public interface IJITypeLib extends IJIComObject {
 	 * @throws JIException
 	 */
 	public IJITypeInfo getTypeInfoOfGuid(String uuid) throws JIException;
+	
 	/** Retrieves the structure that contains the library's attributes.
 	 * 
 	 * @throws JIException

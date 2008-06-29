@@ -23,7 +23,7 @@ import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 import org.jinterop.dcom.core.JIUnion;
 
-/**
+/** Implements the <i>VARDESC</i> structure of COM Automation
  * 
  * @since 1.0
  *
@@ -39,7 +39,13 @@ public final class VarDesc implements Serializable{
 	public final int memberId;
 	public final JIPointer lpstrSchema;
 	public final JIUnion u;
+	/**
+	 *  Contains the variable type.
+	 */
 	public final ElemDesc elemdescVar;
+	/**
+	 * Definition of flags follows
+	 */
 	public final short wVarFlags;
 	public final int varkind; 
 	

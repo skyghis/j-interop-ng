@@ -23,20 +23,28 @@ import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**
- * From MSDN: <br>
- * <i> Contained within the TYPEDESC, which describes the type of the array's <br>
- * elements, and information about the array's dimensions.
+/** Implements the <i>ARRAYDESC</i> structure of COM Automation.
+ * <p> 
+ * Definition from MSDN: <i> Contained within the TYPEDESC, which describes the
+ * type of the array's elements, and information about the array's dimensions.
  * </i>
  * 
  * @since 1.0
- *
  */
 public final class ArrayDesc implements Serializable{
 
 	private static final long serialVersionUID = 8801586899375554929L;
+	/**
+	 * Element Type.
+	 */
 	public final TypeDesc typeDesc;
+	/**
+	 * Dimension Count.
+	 */
 	public final short cDims;
+	/**
+	 * Variable length array containing one element for each dimension.
+	 */
 	public final SafeArrayBounds safeArrayBounds[];
 	
 	ArrayDesc(JIStruct values)

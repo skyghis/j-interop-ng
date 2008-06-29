@@ -17,17 +17,28 @@
 
 package org.jinterop.dcom.impls.automation;
 
-/**
+/** Implements the <i>IMPLTYPEFLAGS</i> structure of COM Automation.
  * 
- * @since 1.0
- *
+ * @since 2.0 (formerly IMPLTYPEFLAGS)
  */
 
-public interface IMPLETYPEFLAGS {
+public interface ImplTypeFlags {
 	
+	/**
+	 * The interface or dispinterface represents the default for the source or sink.
+	 */
 	public static final int IMPLTYPEFLAG_FDEFAULT = 0x1;
+	/**
+	 * This member of a coclass is called rather than implemented.
+	 */
 	public static final int IMPLTYPEFLAG_FSOURCE =  0x2;
+	/**
+	 * The member should not be displayed or programmable by users. 
+	 */
 	public static final int IMPLTYPEFLAG_FRESTRICTED = 0x4;
+	/**
+	 * Sinks receive events through the VTBL.
+	 */
 	public static final int IMPLTYPEFLAG_FDEFAULTVTABLE = 0x800;
 
 }

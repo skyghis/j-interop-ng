@@ -18,8 +18,8 @@
 package org.jinterop.dcom.impls.automation;
 
 /**
- * Exposes errorCode , exception Source, exception description and help file path
- * for an unsuccessful IJIDispatch operation.
+ * Exposes error code , exception source, exception description and help file path
+ * for an unsuccessful {@link IJIDispatch} operation.
  */
 public final class JIExcepInfo
 {
@@ -40,21 +40,44 @@ public final class JIExcepInfo
         excepHelpfile = null;
     }
     
+    /**
+     * An error code identifying the error.
+     * 
+     * @return
+     */
     public int getErrorCode()
     {
         return errorCode;
     }
     
+    /**
+     * A textual, human-readable name of the source of the exception. Typically, this is an 
+     * application name. 
+     * 
+     * @return
+     */
     public String getExcepSource()
     {
         return excepSource;
     }
     
+    /**
+     * A textual, human-readable description of the error intended for the customer. If no 
+     * description is available it returns <code>null</code>.
+     * 
+     * @return
+     */
     public String getExcepDesc()
     {
         return excepDesc;
     }
     
+    /**
+     * The fully qualified drive, path, and file name of a Help file that has more information 
+     * about the error. If no Help is available it returns <code>null</code>.
+     * 
+     * @return
+     */
     public String getHelpFilePath()
     {
         return excepHelpfile;

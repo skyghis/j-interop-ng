@@ -18,10 +18,10 @@ import org.jinterop.dcom.impls.automation.FuncDesc;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 import org.jinterop.dcom.impls.automation.IJITypeInfo;
 import org.jinterop.dcom.impls.automation.IJITypeLib;
-import org.jinterop.dcom.impls.automation.IMPLETYPEFLAGS;
-import org.jinterop.dcom.impls.automation.TYPEKIND;
+import org.jinterop.dcom.impls.automation.ImplTypeFlags;
 import org.jinterop.dcom.impls.automation.TypeAttr;
 import org.jinterop.dcom.impls.automation.TypeDesc;
+import org.jinterop.dcom.impls.automation.TypeKind;
 import org.jinterop.dcom.impls.automation.VarDesc;
 
 public class MSTypeLibraryBrowser2 {
@@ -65,13 +65,13 @@ public class MSTypeLibraryBrowser2 {
 			TypeAttr typeAttr = typeInfo.getTypeAttr();
 			IJITypeInfo ptempInfo = null;
 			TypeAttr pTempAttr = null;
-			if(typeAttr.typekind != TYPEKIND.TKIND_DISPATCH.intValue() && typeAttr.typekind != TYPEKIND.TKIND_COCLASS.intValue())
+			if(typeAttr.typekind != TypeKind.TKIND_DISPATCH.intValue() && typeAttr.typekind != TypeKind.TKIND_COCLASS.intValue())
 			{
 				int p = 0;
 				p++;
 			}
 
-			if(typeAttr.typekind == TYPEKIND.TKIND_COCLASS.intValue())
+			if(typeAttr.typekind == TypeKind.TKIND_COCLASS.intValue())
 			{
 
 				for (int i = 0;i<typeAttr.cImplTypes;i++)
@@ -83,7 +83,7 @@ public class MSTypeLibraryBrowser2 {
 						continue;
 					}
 
-					if((nFlags & IMPLETYPEFLAGS.IMPLTYPEFLAG_FDEFAULT) == IMPLETYPEFLAGS.IMPLTYPEFLAG_FDEFAULT)
+					if((nFlags & ImplTypeFlags.IMPLTYPEFLAG_FDEFAULT) == ImplTypeFlags.IMPLTYPEFLAG_FDEFAULT)
 					{
 						int hRefType = -1;
 						try{
@@ -154,16 +154,16 @@ public class MSTypeLibraryBrowser2 {
 				switch(pFuncDesc.invokeKind)
 				{
 
-				case 2://INVOKEKIND.INVOKE_PROPERTYGET.intValue():
+				case 2://InvokeKind.INVOKE_PROPERTYGET.intValue():
 					System.out.println("PropertyGet");
 					break;
-				case 4://INVOKEKIND.INVOKE_PROPERTYPUT.intValue():
+				case 4://InvokeKind.INVOKE_PROPERTYPUT.intValue():
 					System.out.println("PropertyPut");
 					break;
-				case 8://INVOKEKIND.INVOKE_PROPERTYPUTREF.intValue():
+				case 8://InvokeKind.INVOKE_PROPERTYPUTREF.intValue():
 					System.out.println("PropertyPutRef");
 					break;
-				case 1://INVOKEKIND.INVOKE_FUNC.intValue():
+				case 1://InvokeKind.INVOKE_FUNC.intValue():
 					System.out.println("DispatchMethod");
 					break;
 				default:

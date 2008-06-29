@@ -24,7 +24,8 @@ import java.io.Serializable;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**Contains attributes of an IJITypeInfo.
+/**Implements the <i>TYPEATTR</i> structure of COM Automation and 
+ * contains attributes of an IJITypeInfo.
  * 
  * @since 1.0
  *
@@ -44,7 +45,7 @@ public final class TypeAttr implements Serializable {
     OLECHAR FAR* lpstrSchema;    // Reserved for future use.
     unsigned long cbSizeInstance;// The size of an instance of 
                                 // this type.
-    TYPEKIND typekind;            // The kind of type this information
+    TypeKind typekind;            // The kind of type this information
                                 // describes.
     unsigned short cFuncs;        // Number of functions.
     unsigned short cVars;        // Number of variables/data members.
@@ -62,31 +63,76 @@ public final class TypeAttr implements Serializable {
                                 // described type.
 	 */
 
+	/**
+	 *  The GUID of the type information.
+	 */
 	public final String guid;                    // The GUID of the type information. 
+	/**
+	 * Locale of member names and doc strings.
+	 */
     public final int lcid;                    // Locale of member names and doc 
                                 // strings.
     public final int dwReserved;
+    /**
+     * ID of constructor, or MEMBERID_NIL if none.
+     */
     public final int memidConstructor;    // ID of constructor, or MEMBERID_NIL if 
                                 // none.
+    /**
+     * ID of destructor, or MEMBERID_NIL if none.
+     */
     public final int memidDestructor;    // ID of destructor, or MEMBERID_NIL if 
                                 // none. 
     public final JIPointer lpstrSchema;    // Reserved for future use.
+    /**
+     * The size of an instance of this type.
+     */
     public final int cbSizeInstance;// The size of an instance of 
                                 // this type.
+    /**
+     * The kind of type this information describes.
+     */
     public final int typekind;            // The kind of type this information
                                 // describes.
+    /**
+     * Number of functions.
+     */
     public final short cFuncs;        // Number of functions.
+    /**
+     * Number of variables/data members.
+     */
     public final short cVars;        // Number of variables/data members.
+    /**
+     * Number of implemented interfaces.
+     */
     public final short cImplTypes;    // Number of implemented interfaces.
+    /**
+     * The size of this type's VTBL.
+     */
     public final short cbSizeVft;    // The size of this type's VTBL.
+    /**
+     * Byte alignment for an instance of this type.
+     */
     public final short cbAlignment;    // Byte alignment for an instance 
                                 // of this type.
     public final short wTypeFlags;
+    /**
+     * Major version number.
+     */
     public final short wMajorVerNum;    // Major version number.
+    /**
+     * Minor version number.
+     */
     public final short wMinorVerNum;    // Minor version number.
+    /**
+     * if TypeKind == TKIND_ALIAS, specifies the type for which this type is an alias.
+     */
     public final TypeDesc tdescAlias;            // If TypeKind == TKIND_ALIAS, 
                                 // specifies the type for which 
                                 // this type is an alias.
+    /**
+     * IDL attributes of the described type.
+     */
     public final IdlDesc idldescType;        // IDL attributes of the 
                                 // described type.
 

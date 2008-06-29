@@ -22,8 +22,10 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIString;
 
 
-/**From MSDN :-
- * <i>
+/**
+ *  Represents the Windows COM <code>ITypeInfo</code> Interface. <p>
+ *  
+ * Definition from MSDN: <i> 
  * ITypeInfo, an interface typically used for reading information about objects. For example, an object browser 
  * tool can use ITypeInfo to extract information about the characteristics and capabilities of objects from type
  * libraries. Type information interfaces are intended to describe the parts of the application that can be called 
@@ -32,9 +34,9 @@ import org.jinterop.dcom.core.JIString;
  * <li>The set of function descriptions associated with the type. For interfaces, this contains the set of member
  * functions in the interface.<li> The set of data member descriptions associated with the type. For structures, 
  * this contains the set of fields of the type. <li>The general attributes of the type, such as whether it describes 
- * a structure, an interface, and so on. <br> 
+ * a structure, an interface, and so on.  
  * </i>
- * 
+ * <p>
  * Please note that all APIs of <code>ITypeInfo</code> have not been implemented. <br>
  * @since 1.0
  *
@@ -43,13 +45,13 @@ import org.jinterop.dcom.core.JIString;
 public interface IJITypeInfo extends IJIComObject {
 	
 	/**
-	 * IID representing the COM <code>IEnumVARIANT</code>.
+	 * IID representing the COM <code>ITypeInfo</code>.
 	 */
 	public final String IID = "00020401-0000-0000-C000-000000000046";
 	
 	/**Retrieves the FuncDesc structure that contains information about a specified function.
 	 * 
-	 * @param index Index of the function whose description is to be returned. The index should be in the range 
+	 * @param index index of the function whose description is to be returned. The index should be in the range 
 	 * of 0 to 1 less than the number of functions in this type. 
 	 * @return
 	 * @throws JIException
@@ -81,7 +83,7 @@ public interface IJITypeInfo extends IJIComObject {
 	/**Retrieves a description or specification of an entry point for a function in a DLL. <br>
 	 * 
 	 * @param memberId ID of the member function whose DLL entry description is to be returned. 
-	 * @param invKind Specifies the kind of member identified by memid. This is important for properties, <br>
+	 * @param invKind Specifies the kind of member identified by <code>memberId</code>. This is important for properties, 
 	 * because one memid can identify up to three separate functions. 
 	 * @return Object[0] = JIString of BSTR type, Object[1]  = JIString of BSTR type, Object[2] = Short
 	 * @throws JIException
@@ -90,7 +92,7 @@ public interface IJITypeInfo extends IJIComObject {
 	
 	/**Retrieves a VARDESC structure that describes the specified variable. <br>
 	 * 
-	 * @param index Index of the variable whose description is to be returned. The index should be in the range <br>
+	 * @param index index of the variable whose description is to be returned. The index should be in the range
 	 * of 0 to 1 less than the number of variables in this type. 
 	 * @return
 	 * @throws JIException
@@ -100,7 +102,7 @@ public interface IJITypeInfo extends IJIComObject {
 	/**Retrieves the variable with the specified member ID (or the name of the property or method and its parameters) 
 	 * that correspond to the specified function ID. <br>
 	 * 
-	 * @param memberId The ID of the member whose name (or names) is to be returned. 
+	 * @param memberId ID of the member whose name (or names) is to be returned. 
 	 * @param maxNames Length of the passed-in array.
 	 * @return Object[0] = JIString[] of BSTR type, Object[1] = Integer
 	 * @throws JIException
@@ -111,7 +113,7 @@ public interface IJITypeInfo extends IJIComObject {
 	 * interface types. For an interface, getRefTypeOfImplType returns the type information for inherited interfaces, 
 	 * if any exist. <br>
 	 * 
-	 * @param index Index of the implemented type whose handle is returned. The valid range is 0 to the 
+	 * @param index index of the implemented type whose handle is returned. The valid range is 0 to the 
 	 * cImplTypes field in the TypeAttr structure. 
 	 * @return
 	 * @throws JIException
@@ -120,7 +122,7 @@ public interface IJITypeInfo extends IJIComObject {
     
     /**Retrieves the IMPLTYPEFLAGS enumeration for one implemented interface or base interface in a type description. <br>
      * 
-     * @param index Index of the implemented interface or base interface for which to get the flags. 
+     * @param index index of the implemented interface or base interface for which to get the flags. 
      * @return
      * @throws JIException
      */
@@ -128,7 +130,7 @@ public interface IJITypeInfo extends IJIComObject {
     
     /** If a type description references other type descriptions, it retrieves the referenced type descriptions. <br>
      * 
-     * @param hrefType Handle to the referenced type description to be returned. 
+     * @param hrefType handle to the referenced type description to be returned. 
      * @return
      * @throws JIException
      */
@@ -144,7 +146,7 @@ public interface IJITypeInfo extends IJIComObject {
     
     /**Retrieves marshaling information.
      * 
-     * @param memberId The member ID that indicates which marshaling information is needed. 
+     * @param memberId member ID that indicates which marshaling information is needed. 
 
      * @return
      * @throws JIException

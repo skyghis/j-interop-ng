@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 import org.jinterop.dcom.core.JIStruct;
 
-/**
+/** Implements the <i>SAFEARRAYBOUNDS</i> structure of COM Automation.
  * 
  * @since 1.0
  *

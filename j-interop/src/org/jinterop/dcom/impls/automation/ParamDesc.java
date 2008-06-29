@@ -22,7 +22,9 @@ import java.io.Serializable;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**Contains information needed for transferring a structure element, parameter, or function return value between processes
+/** Implements the <i>PARAMDESC</i> structure of COM Automation. Contains 
+ * information needed for transferring a structure element, parameter, 
+ * or function return value between processes.
  * 
  * @since 1.0
  *
@@ -41,7 +43,10 @@ public final class ParamDesc implements Serializable {
 
 	
 	public final JIPointer lpVarValue;
-	//public final JIVariant lpVarValue;
+
+	/**
+	 * IN, OUT, etc
+	 */
 	public final short wPARAMFlags;
 	
 	ParamDesc(JIStruct values)

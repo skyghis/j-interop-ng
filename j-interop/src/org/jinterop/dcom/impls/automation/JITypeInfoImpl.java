@@ -253,15 +253,15 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 	
 //	HRESULT GetDllEntry( 
 //			  MEMBERID  memid,                
-//			  INVOKEKIND  invKind,            
+//			  InvokeKind  invKind,            
 //			  BSTR FAR*  pBstrDllName,        
 //			  BSTR FAR*  pBstrName,           
 //			  unsigned short FAR*  pwOrdinal  
 //			);
 	public Object[] getDllEntry(int memberId, int invKind) throws JIException
 	{
-		if (invKind != INVOKEKIND.INVOKE_FUNC.intValue() && invKind != INVOKEKIND.INVOKE_PROPERTYGET.intValue() 
-				&& invKind != INVOKEKIND.INVOKE_PROPERTYPUTREF.intValue() && invKind != INVOKEKIND.INVOKE_PROPERTYPUT.intValue())
+		if (invKind != InvokeKind.INVOKE_FUNC.intValue() && invKind != InvokeKind.INVOKE_PROPERTYGET.intValue() 
+				&& invKind != InvokeKind.INVOKE_PROPERTYPUTREF.intValue() && invKind != InvokeKind.INVOKE_PROPERTYPUT.intValue())
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.E_INVALIDARG));
 		}

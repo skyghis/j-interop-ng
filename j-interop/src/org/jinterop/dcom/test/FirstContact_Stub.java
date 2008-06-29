@@ -330,7 +330,7 @@ public class FirstContact_Stub implements FirstContact {
 			//Object[] ry = typeLib.getDocumentation(funcDesc.memberId);
 			type = typeLib.getTypeInfoType(0);
 			//IJITypeInfo type2 = typeLib.getTypeInfo(type);
-			//typeInfo.getDllEntry(funcDesc.memberId, INVOKEKIND.INVOKE_FUNC.intValue());
+			//typeInfo.getDllEntry(funcDesc.memberId, InvokeKind.INVOKE_FUNC.intValue());
 			//typeInfo.getTypeAttr();
 
 

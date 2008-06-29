@@ -23,17 +23,26 @@ import java.io.Serializable;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**From MSDN:- <br>
- * <i>Includes the type description and process-transfer information for a variable <br>
- * , a function, or a function parameter. <br> <br>
+/**Implements the <i>ELEMDESC</i> structure of COM Automation.
+ * <p> 
+ * Definition from MSDN: <i> Includes the type description and process-transfer 
+ * information for a variable a function, or a function parameter. 
  * </i>
+ *
+ * 
  * @since 1.0
  *
  */
 public final class ElemDesc implements Serializable{
 	
 	private static final long serialVersionUID = 3022259075461969376L;
+	/**
+	 * Type of the element.
+	 */
 	public final TypeDesc typeDesc;
+	/**
+	 * Information about the parameter.
+	 */
 	public final ParamDesc paramDesc; 
 	
 	public ElemDesc(JIStruct values)

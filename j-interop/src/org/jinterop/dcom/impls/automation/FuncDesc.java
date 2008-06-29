@@ -23,18 +23,20 @@ import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/** From MSDN:- <br>
- * <i>Describes a function.</i> <br> <br>
+/** Implements the <i>FUNCDESC</i> structure of COM Automation.
+ * <p> 
+ * Definition from MSDN: <i> Describes a function.</i>
+ * 
+ * More information can be obtained here http://msdn.microsoft.com/en-us/library/ms221425(VS.85).aspx .
  * 
  * @since 1.0
- *
  */
 public final class FuncDesc implements Serializable{
 
   private static final long serialVersionUID = -1361861233072624432L;
   public static final int FUNCFLAG_FRESTRICTED = 0x1;
   public static final int FUNCFLAG_FSOURCE = 0x2;
-  public static final int   FUNCFLAG_FBINDABLE = 0x4;
+  public static final int FUNCFLAG_FBINDABLE = 0x4;
   public static final int FUNCFLAG_FREQUESTEDIT = 0x8;
   public static final int FUNCFLAG_FDISPLAYBIND = 0x10;
   public static final int FUNCFLAG_FDEFAULTBIND = 0x20;
@@ -50,9 +52,9 @@ public final class FuncDesc implements Serializable{
 //    MEMBERID memid;                        // Function member ID.
 ///* [size_is] */ SCODE __RPC_FAR *lprgscode;
 ///* [size_is] */ ELEMDESC __RPC_FAR *lprgelemdescParam;    
-//	FUNCKIND funckind;           // Specifies whether the function is virtual, static, or dispatch-only.
-//    INVOKEKIND invkind;        // Invocation kind. Indicates if this is a property function, and if so, what kind.
-//    CALLCONV callconv;        // Specifies the function's calling 
+//	FuncKind funckind;           // Specifies whether the function is virtual, static, or dispatch-only.
+//    InvokeKind invkind;        // Invocation kind. Indicates if this is a property function, and if so, what kind.
+//    CallConv callconv;        // Specifies the function's calling 
 //                            // convention.
 //    short cParams;            // Count of total number of parameters.
 //    short cParamsOpt;        // Count of optional parameters (detailed 
@@ -63,17 +65,52 @@ public final class FuncDesc implements Serializable{
 //    WORD wFuncFlags;     // Definition of flags follows.
 
 	private JIStruct values = null;
+	/**
+	 * Function member ID.
+	 */
 	public final  int memberId;
 	public final JIPointer lprgscode;
 	public final JIPointer lprgelemdescParam;
+	
+	/**
+	 * Specifies whether the function is virtual, static, or dispatch-only.
+	 */
 	public final int funcKind;
+
+	/**
+	 * Invocation kind. Indicates if this is a property function, and if so, what kind.
+	 */
 	public final int invokeKind;
+
+	/**
+	 * Specifies the function's calling convention.
+	 */
 	public final int callConv;
+	
+	/**
+	 *  Count of total number of parameters.
+	 */
 	public final short cParams;
+	
+	/**
+	 * Count of optional parameters (detailed description follows).
+	 */
 	public final short cParamsOpt;
+	/**
+	 * For FUNC_VIRTUAL, specifies the offset in the VTBL.
+	 */
 	public final short oVft;
+	/**
+	 * Count of permitted return values. 
+	 */
 	public final short cScodes;
+	/**
+	 * Contains the return type of the function.
+	 */
 	public final ElemDesc elemdescFunc;
+	/**
+	 * Definition of flags follows.
+	 */
 	public final short wFuncFlags;
 	
 	
