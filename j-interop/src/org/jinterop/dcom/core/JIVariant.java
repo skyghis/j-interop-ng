@@ -35,14 +35,20 @@ import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-/**<p>Class representing the <code>VARIANT</code> datatype. Please use the <code>byRef</code> flag based CTORs for constructing "by reference"
- * parameters in COM calls. Also note that the library is unaware of <code>[OPTIONAL]</code> parameters , hence they have to be sent as 
- * <code>JIVariant.OPTIONAL_PARAM</code>.<p> Please note that if the <code>byRef</code> flag is set then  
- * that Variant should also be added as the outparam to the JICallBuilder. For developers using the <code>IJIDispatch </code>
- * variant would be returned back to them via the return type JIVariant[] associated with <code>IJIDispatch</code> Apis. <br> <br>
+/**<p>Class representing the <code>VARIANT</code> datatype. 
+ * <p>Please use the <code>byRef</code> flag based constructors for <i>by reference</i>
+ * parameters in COM calls. For <code>[optional]</code> parameters use the 
+ * {@link #OPTIONAL_PARAM()}
+ * <p>In case of direct calls to COM server using <code>JICallBuilder</code>, if the <code>byRef</code> flag is set then  
+ * that variant should also be added as the <code>[out]</code> parameter in the <code>JICallBuilder</code>. 
+ * For developers using the <code>IJIDispatch </code> this is not required and variant would be returned back to them 
+ * via <code>JIVariant[]</code> associated with <code>IJIDispatch</code> apis. 
+ * <p>
  * 
- * An <b>important</b> note for Boolean Arrays (JIArray of Boolean), please set the JIFlag.FLAG_REPRESENTATION_VARIANT_BOOL using the <i>setFlag</i>
- * API before making a call on this JIVariant. This is required since in DCOM , Variant bools are 2 bytes and standard bools are 1 byte in length.
+ * An <b>important</b> note for <code>Boolean</code> Arrays (<code>JIArray</code> of <code>Boolean</code>), 
+ * please set the <code>JIFlag.FLAG_REPRESENTATION_VARIANT_BOOL</code> using the {@link #setFlag(int)}
+ * method before making a call on this object. This is required since in DCOM ,  <code>VARIANT_BOOL</code> are 2 bytes 
+ * and standard <code>boolean</code>s are 1 byte in length.
  * </p>
  * @since 1.0
  */
@@ -282,7 +288,8 @@ public final class JIVariant implements Serializable {
 	public static final JIVariant OPTIONAL_PARAM = new JIVariant(JIVariant.SCODE,JIErrorCodes.DISP_E_PARAMNOTFOUND);
 	
 	/**
-	 * OPTIONAL PARAM. Pass this when a parameter is optional for a COM api call. This is not Thread Safe , hence a new instance must be taken each time.
+	 * OPTIONAL PARAM. Pass this when a parameter is <code>[optional]</code> for a COM call. 
+	 * This is not Thread Safe , hence a new instance must be taken each time.
 	 * 
 	 */
 	public static JIVariant OPTIONAL_PARAM()
@@ -296,7 +303,8 @@ public final class JIVariant implements Serializable {
 	 */
 	public static final SCODE SCODE = new SCODE();
 	
-	/** Helper method for creating an Array of BSTRs , IDL signature [in, out] SAFEARRAY(BSTR) *p. The return value can directly be used in an IJIDispatch call.
+	/** Helper method for creating an array of <code>BSTR</code>s , IDL signature <code>[in, out] SAFEARRAY(BSTR) *p</code>. 
+	 * The return value can directly be used in an <code>IJIDispatch</code>call.
 	 * 
 	 * @return
 	 */
@@ -305,7 +313,8 @@ public final class JIVariant implements Serializable {
 		return new JIVariant(new JIArray(new JIString[]{new JIString("")}, true),true);
 	}
 	
-	/** Helper method for creating an Array of VARIANTs , IDL signature [in, out] SAFEARRAY(VARIANT) *p OR [in,out] VARIANT *pArray. The return value can directly be used in an IJIDispatch call.
+	/** Helper method for creating an array of <code>VARIANT</code>s , IDL signature <code>[in, out] SAFEARRAY(VARIANT) *p</code> 
+	 * OR <code>[in,out] VARIANT *pArray</code>. The return value can directly be used in an <code>IJIDispatch</code> call.
 	 * 
 	 * @return
 	 */
@@ -393,7 +402,7 @@ public final class JIVariant implements Serializable {
 		}
 	}
 	
-	/** Sets a JIFlags value to be used while encoding (marshalling) this Variant.  
+	/** Sets a <code>JIFlags</code> value to be used while encoding (marshalling) this Variant.  
 	 * 
 	 * @param FLAG
 	 */
@@ -414,9 +423,9 @@ public final class JIVariant implements Serializable {
 	}
 	
 	
-	/**Returns whether this Variant is a NULL variant.
+	/**Returns whether this variant is a <code>NULL</code> variant.
 	 * 
-	 * @return
+	 * @return <code>true</code> if the variant is a <code>NULL</code>
 	 */
 	public boolean isNull()
 	{
@@ -428,7 +437,7 @@ public final class JIVariant implements Serializable {
 		return variantBody == null ? true: variantBody.isNull();
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a VARIANT. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> as reference to another. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param variant
 	 */
@@ -439,22 +448,22 @@ public final class JIVariant implements Serializable {
 	
 
 	
-	/**Setting up a <code>VARIANT</code> with an int. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an <code>int</code>. Used via serializing the <code>VARIANT</code>.
 	 * Used when the variant type is VT_I4.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. LONG*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. LONG*
 	 */
 	public JIVariant(int value, boolean isByRef)
 	{
 		this(new Integer(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a long. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>long</code>. Used via serializing the <code>VARIANT</code>.
 	 * Used when the variant type is VT_I8.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. 
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. 
 	 */
 	public JIVariant(long value, boolean isByRef)
 	{
@@ -464,79 +473,79 @@ public final class JIVariant implements Serializable {
 	
 	
 	/**
-	 * Setting up a <code>VARIANT</code> with a float. Used via serializing the <code>VARIANT</code>.
+	 * Setting up a <code>VARIANT</code> with a <code>float</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. FLOAT*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. FLOAT*
 	 */
 	public JIVariant(float value, boolean isByRef)
 	{
 		this(new Float(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a  boolean. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>boolean</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. VARIANT_BOOL*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. VARIANT_BOOL*
 	 */
 	public JIVariant(boolean value, boolean isByRef)
 	{
 		this(Boolean.valueOf(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a double. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>double</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. DOUBLE*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. DOUBLE*
 	 */
 	public JIVariant(double value, boolean isByRef)
 	{
 		this(new Double(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a short. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>short</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. SHORT*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. SHORT*
 	 */
 	public JIVariant(short value, boolean isByRef)
 	{
 		this(new Short(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a char. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>char</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. CHAR*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. CHAR*
 	 */
 	public JIVariant(char value, boolean isByRef)
 	{
 		this(new Character(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JIString. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>JIString</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. BSTR*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. BSTR*
 	 */
 	public JIVariant(JIString value, boolean isByRef)
 	{
 		this((Object)value,isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a String. Used via serializing the <code>VARIANT</code>. Internally a 
-	 * JIString is formed with it's default type BSTR. 
+	/**Setting up a <code>VARIANT</code> with a <code>String</code>. Used via serializing the <code>VARIANT</code>. Internally a 
+	 * <code>JIString</code> is formed with it's default type <code>BSTR</code>. 
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. BSTR*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. BSTR*
 	 */
 	public JIVariant(String value, boolean isByRef)
 	{
 		this(new JIString(value),isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a String. Used via serializing the <code>VARIANT</code>. Internally a 
-	 * JIString is formed with it's default type BSTR. 
+	/**Setting up a <code>VARIANT</code> with a <code>String</code>. Used via serializing the <code>VARIANT</code>. Internally a 
+	 * <code>JIString</code> is formed with it's default type <code>BSTR</code>. 
 	 * 
 	 * @param value
 	 */
@@ -555,11 +564,10 @@ public final class JIVariant implements Serializable {
 //		this((Object)value,isByRef);
 //	}
 	
-	/**Setting up a <code>VARIANT</code> with an IJIComObject. Used via serializing the <code>VARIANT</code>. If the IID of this reference is IDispatch then 
-	 * VT_DISPATCH is sent otherwise VT_UNKNOWN is sent.
+	/**Setting up a <code>VARIANT</code> with an <code>IJIComObject</code>. Used via serializing the <code>VARIANT</code>. 
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. IJIComObject**
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. IJIComObject**
 	 */
 	public JIVariant(IJIComObject value, boolean isByRef)
 	{
@@ -576,12 +584,12 @@ public final class JIVariant implements Serializable {
 	
 	
 	
-	/**Setting up a <code>VARIANT</code> with a SCODE value and it's errorCode. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>SCODE</code> value and it's <code>errorCode</code>. Used via serializing the <code>VARIANT</code>.
 	 *
 	 * 
 	 * @param value
 	 * @param errorCode
-	 * @param isByRef true if the value is to be represented as a pointer. SCODE*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. SCODE*
 	 */
 	public JIVariant(SCODE value,int errorCode, boolean isByRef)
 	{
@@ -589,7 +597,7 @@ public final class JIVariant implements Serializable {
 	}
 	
 	
-	/**Setting up a <code>VARIANT</code> with an int. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an <code>int</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -599,7 +607,7 @@ public final class JIVariant implements Serializable {
 	}
 	
 	/**
-	 * Setting up a <code>VARIANT</code> with a float. Used via serializing the <code>VARIANT</code>.
+	 * Setting up a <code>VARIANT</code> with a <code>float</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -608,7 +616,7 @@ public final class JIVariant implements Serializable {
 		this(new Float(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a  boolean. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a  <code>boolean</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -617,7 +625,7 @@ public final class JIVariant implements Serializable {
 		this(Boolean.valueOf(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a double. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>double</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -626,7 +634,7 @@ public final class JIVariant implements Serializable {
 		this(new Double(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a short. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>short</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -635,7 +643,7 @@ public final class JIVariant implements Serializable {
 		this(new Short(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a char. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>char</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -644,7 +652,7 @@ public final class JIVariant implements Serializable {
 		this(new Character(value));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JIString. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>JIString</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -662,8 +670,7 @@ public final class JIVariant implements Serializable {
 //		this((Object)value);
 //	}
 	
-	/**Setting up a <code>VARIANT</code> with an IJIComObject. Used via serializing the <code>VARIANT</code>. If the IID of this reference is IDispatch then 
-	 * VT_DISPATCH is sent otherwise VT_UNKNOWN is sent.
+	/**Setting up a <code>VARIANT</code> with an <code>IJIComObject</code>. Used via serializing the <code>VARIANT</code>. 
 	 * 
 	 * @param value
 	 */
@@ -680,7 +687,7 @@ public final class JIVariant implements Serializable {
 		}
 	}
 	
-	/**Setting up a <code>VARIANT</code> with an java.util.Date. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an <code>java.util.Date</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -689,17 +696,17 @@ public final class JIVariant implements Serializable {
 		this((Object)value);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with an java.util.Date. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with an <code>java.util.Date</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. Date*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. Date*
 	 */
 	public JIVariant(Date value, boolean isByRef)
 	{
 		this((Object)value,isByRef);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JICurrency. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>JICurrency</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -708,10 +715,10 @@ public final class JIVariant implements Serializable {
 		this((Object)value);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JICurrency. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>JICurrency</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
-	 * @param isByRef true if the value is to be represented as a pointer. JICurrency*
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. JICurrency*
 	 */
 	public JIVariant(JICurrency value, boolean isByRef)
 	{
@@ -719,7 +726,7 @@ public final class JIVariant implements Serializable {
 	}
 	
 	
-	/** Setting up a <code>VARIANT</code> with an EMPTY value. Used via serializing the <code>VARIANT</code>.
+	/** Setting up a <code>VARIANT</code> with an <code>EMPTY</code> value. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -729,7 +736,7 @@ public final class JIVariant implements Serializable {
 	}
 	
 	
-	/**Setting up a <code>VARIANT</code> with a NULL value. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>NULL</code> value. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 */
@@ -738,7 +745,7 @@ public final class JIVariant implements Serializable {
 		this(new VariantBody(VariantBody.NULL)); 
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a SCODE value and it's errorCode. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>SCODE</code> value and it's <code>errorCode</code>. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param value
 	 * @param errorCode
@@ -748,8 +755,8 @@ public final class JIVariant implements Serializable {
 		this(new VariantBody(VariantBody.SCODE,errorCode,false));
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JIArray. Used via serializing the <code>VARIANT</code>.
-	 * Only 1 and 2 dimensional array is supported. The elements within the array cannot be JIVariants.
+	/**Setting up a <code>VARIANT</code> with a <code>JIArray</code>. Used via serializing the <code>VARIANT</code>.
+	 * Only 1 and 2 dimensional array is supported.
 	 * 
 	 * @param array
 	 * @param FLAG JIFlag value
@@ -759,8 +766,8 @@ public final class JIVariant implements Serializable {
 		this(array,false,FLAG);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a JIArray. Used via serializing the <code>VARIANT</code>.
-	 * Only 1 and 2 dimensional array is supported. The elements within the array cannot be JIVariants.
+	/**Setting up a <code>VARIANT</code> with a <code>JIArray</code>. Used via serializing the <code>VARIANT</code>.
+	 * Only 1 and 2 dimensional array is supported.
 	 * 
 	 * @param array
 	 * @param isByRef
@@ -770,8 +777,8 @@ public final class JIVariant implements Serializable {
 	{
 		initArrays(array, isByRef, FLAG);
 	}
-	/** Setting up a <code>VARIANT</code> with a JIArray. Used via serializing the <code>VARIANT</code>.
-	 * Only 1 and 2 dimensional array is supported. The elements within the array cannot be JIVariants.
+	/** Setting up a <code>VARIANT</code> with a <code>JIArray</code>. Used via serializing the <code>VARIANT</code>.
+	 * Only 1 and 2 dimensional array is supported. 
 	 * 
 	 * @param array
 	 * @param isByRef
@@ -952,8 +959,8 @@ public final class JIVariant implements Serializable {
 		
 	}
 	
-	/** Setting up a <code>VARIANT</code> with a JIArray. Used via serializing the <code>VARIANT</code>. <br>
-	 * Only 1 and 2 dimensional array is supported. The elements within the array cannot be JIVariants. <br>
+	/** Setting up a <code>VARIANT</code> with a <code>JIArray</code>. Used via serializing the <code>VARIANT</code>. <br>
+	 * Only 1 and 2 dimensional array is supported. 
 	 * 
 	 * @param array
 	 */	
@@ -962,7 +969,7 @@ public final class JIVariant implements Serializable {
 		this(array,false);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a unsigned value. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>unsigned</code> value. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param number
 	 */
@@ -971,10 +978,10 @@ public final class JIVariant implements Serializable {
 		this((Object)number);
 	}
 	
-	/**Setting up a <code>VARIANT</code> with a unsigned value. Used via serializing the <code>VARIANT</code>.
+	/**Setting up a <code>VARIANT</code> with a <code>unsigned</code> value. Used via serializing the <code>VARIANT</code>.
 	 * 
 	 * @param number
-	 * @param isByRef true if the value is to be represented as a pointer. 
+	 * @param isByRef <code>true</code> if the value is to be represented as a pointer. 
 	 */
 	public JIVariant(IJIUnsigned number, boolean isByRef)
 	{
@@ -992,7 +999,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObject();
 	}
 	
-	/**Retrieves the contained object as int. 
+	/**Retrieves the contained object as <code>int</code>. 
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1003,7 +1010,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsInt();
 	}
 	
-	/**Retrieves the contained object as float.
+	/**Retrieves the contained object as <code>float</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1025,7 +1032,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsSCODE();
 	}
 	
-	/**Retrieves the contained object as double.
+	/**Retrieves the contained object as <code>double</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1036,7 +1043,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsDouble();
 	}
 	
-	/**Retrieves the contained object as short.
+	/**Retrieves the contained object as <code>short</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1047,7 +1054,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsShort();
 	}
 	
-	/**Retrieves the contained object as boolean.
+	/**Retrieves the contained object as <code>boolean</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1058,7 +1065,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsBoolean();
 	}
 	
-	/**Retrieves the contained object as JIString.
+	/**Retrieves the contained object as <code>JIString</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1069,7 +1076,7 @@ public final class JIVariant implements Serializable {
 		return  ((VariantBody)member.getReferent()).getObjectAsString();
 	}
 
-	/**Retrieves the contained object as Java String.
+	/**Retrieves the contained object as <code>String</code>.
 	 * 
 	 * @return
 	 * @throws JIException
@@ -1080,7 +1087,7 @@ public final class JIVariant implements Serializable {
 		return  ((VariantBody)member.getReferent()).getObjectAsString().getString();
 	}
 	
-	/**Retrieves the contained object as Date.
+	/**Retrieves the contained object as <code>java.util.Date</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1091,7 +1098,7 @@ public final class JIVariant implements Serializable {
 		return  ((VariantBody)member.getReferent()).getObjectAsDate();
 	}
 	
-	/**Retrieves the contained object as char.
+	/**Retrieves the contained object as <code>char</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1129,8 +1136,9 @@ public final class JIVariant implements Serializable {
 //		return JIObjectFactory.createCOMInstance(template,((VariantBody)member.getReferent()).getObjectAsInterfacePointer());
 //	}
 
-	/**Retrieves the contained object as IJIComObject. Return value must be "narrowed" to get the expected type. for e.g. :- If expected type is an IJIDispatch , 
-	 * then the return value must pass through JIObjectFactory.narrowInstance(IJIComObject) to get to the right type.
+	/**Retrieves the contained object as <code>IJIComObject</code>. Return value must be "narrowed" to get the expected type. 
+	 * <p>for example :- If expected type is an <code>IJIDispatch</code>, 
+	 * then the return value must pass through <code>JIObjectFactory.narrowInstance(IJIComObject)</code> to get to the right type.
 	 * 
 	 * @return
 	 * @throws JIException
@@ -1141,7 +1149,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsComObject();
 	}
 	
-	/**Retrieves the contained object as JIVariant.
+	/**Retrieves the contained object as <code>JIVariant</code>.
 	 * 
 	 * @return
 	 * @throws JIException 
@@ -1152,9 +1160,10 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsVariant();
 	}
 
-	/**Retrieves the contained object as JIArray. Only 1 and 2 dim arrays are supported currently.
-	 * Please note that this array is not backed by the Variant and is a new Copy. If the Array is IJIComObjects, please make sure 
-	 * to use JIObjectFactory.narrowObject() to get the right instance.
+	/**Retrieves the contained object as <code>JIArray</code>. Only 1 and 2 dim arrays are supported currently.
+	 * Please note that this array is <b>not</b> backed by this variant and is a <b>new</b> copy. If the array 
+	 * is <code>IJIComObject</code>s, please make sure to use <code>JIObjectFactory.narrowObject()</code> to 
+	 * get the right instance.
 	 * 
 	 * @return
 	 * @throws JIException
@@ -1165,7 +1174,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getArray();
 	}
 
-	/**Retrieves the contained object as long, used when the expected type is VT_I8.
+	/**Retrieves the contained object as <code>long</code>, used when the expected type is VT_I8.
 	 * 
 	 * @return
 	 * @throws JIException
@@ -1176,7 +1185,7 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).getObjectAsLong();
 	}
 		
-	/**Retrieves the contained object as unsigned number.
+	/**Retrieves the contained object as <code>unsigned</code> number.
 	 * 
 	 * @return
 	 * @throws JIException
