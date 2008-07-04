@@ -20,6 +20,7 @@ package org.jinterop.dcom.core;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,67 +115,100 @@ final class JIComOxidRuntimeHelper extends Stub {
 	{
 	    final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 	    final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
-	    serverSocket.setSoTimeout(120*1000); //2 min timeout.
+//	    serverSocket.setSoTimeout(120*1000); //2 min timeout.
 	    serverSocket.bind(null);
         int remUnknownPort = serverSocket.getLocalPort();
-		Thread remUnknownThread = new Thread(new Runnable() {
+        //have to pick up a random name so adding the ipid of remunknown this is a uuid so the string is quite random.
+        final ThreadGroup remUnknownForThisListener = new ThreadGroup("ThreadGroup - " + baseIID + "[" + ipidOfRemUnknown + "]");
+        remUnknownForThisListener.setDaemon(true);
+		Thread remUnknownThread = new Thread(remUnknownForThisListener,new Runnable() {
 			public void run() {
-				try{
-					if (JISystem.getLogger().isLoggable(Level.INFO))
-					{
-						JISystem.getLogger().info("started startRemUnknown thread: " + Thread.currentThread().getName());
-					}
-					Socket socket = serverSocket.accept();
-					if (JISystem.getLogger().isLoggable(Level.INFO))
-					{
-						JISystem.getLogger().info("RemUnknown Thread: Got Connection from " + socket.getPort());
-					}
-					synchronized (JIComOxidRuntime.mutex) {
-			    		JISystem.internal_setSocket(socket);
-				    	//now create the JIComOxidRuntimeHelper Object and start it.
-			    		attach();
-			    		//getEndpoint().getSyntax().getUuid().toString();
-					}
-					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown,ipidOfComponent),baseIID);
-				}catch(SmbAuthException e)
+				if (JISystem.getLogger().isLoggable(Level.INFO))
 				{
-					JISystem.getLogger().throwing("JIComOxidRuntimeHelper","startRemUnknown",e);
-					throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_AUTH_FAILURE);
+					JISystem.getLogger().info("started RemUnknown listener thread for : " + Thread.currentThread().getName());
 				}
-				catch(SmbException e)
+				try{
+					
+					while(true)
+					{
+						final Socket socket = serverSocket.accept();
+						if (JISystem.getLogger().isLoggable(Level.INFO))
+						{
+							JISystem.getLogger().info("RemUnknown listener: Got Connection from " + socket.getPort());
+						}
+						
+						//now create the JIComOxidRuntimeHelper Object and start it. We need a new one since the old one is already attached to the listener.
+						final JIComOxidRuntimeHelper remUnknownHelper = new JIComOxidRuntimeHelper(getProperties());
+						synchronized (JIComOxidRuntime.mutex) {
+				    		JISystem.internal_setSocket(socket);
+					    	remUnknownHelper.attach();
+				    	}
+						
+						//now start a new thread with this socket 
+						Thread remUnknown = new Thread(remUnknownForThisListener,new Runnable() {
+							public void run() {
+								try {
+									((JIComRuntimeEndpoint)remUnknownHelper.getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown,ipidOfComponent),baseIID);
+								} catch(SmbAuthException e)
+								{
+									JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownThread (not listener)",e);
+									throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_AUTH_FAILURE);
+								}
+								catch(SmbException e)
+								{
+									//System.out.println(e.getMessage());
+									JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownThread (not listener)",e);
+									throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_SMB_FAILURE);
+								}catch(ClosedByInterruptException e)
+								{
+									JISystem.getLogger().info("JIComOxidRuntimeHelper RemUnknownThread (not listener)" + Thread.currentThread().getName() 
+											+ " is purposefully closed by interruption.");
+								}
+								catch (IOException e) {
+									JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownThread (not listener)",e);
+								}finally{
+									try {
+										remUnknownHelper.detach();
+									} catch (IOException e){}
+								}		
+								
+							}
+						},"jI_RemUnknown[" + baseIID + " , L(" + socket.getLocalPort() + "):R(" + socket.getPort() + ")]");
+						remUnknown.setDaemon(true);
+						remUnknown.start();
+					}
+				}catch(ClosedByInterruptException e)
 				{
-					//System.out.println(e.getMessage());
-					JISystem.getLogger().throwing("JIComOxidRuntimeHelper","startRemUnknown",e);
-					throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_SMB_FAILURE);
-				}		
+					JISystem.getLogger().info("JIComOxidRuntimeHelper RemUnknownListener" + Thread.currentThread().getName() 
+							+ " is purposefully closed by interruption.");
+				}	
 				catch(IOException e)
 				{ 
 					if(JISystem.getLogger().isLoggable(Level.WARNING))
 					{
-						JISystem.getLogger().throwing("JIComOxidRuntimeHelper","startRemUnknown",e);
-						JISystem.getLogger().warning("RemUnknown Thread: " +  e.getMessage() + " , on thread Id: " + (Thread.currentThread().getName()));
+						JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownListener",e);
+						JISystem.getLogger().warning("RemUnknownListener Thread: " +  e.getMessage() + " , on thread Id: " + (Thread.currentThread().getName()));
 					}
 					//e.printStackTrace();
 				}catch(Throwable e)
 				{
-					JISystem.getLogger().throwing("JIComOxidRuntimeHelper","startRemUnknown",e);
+					if(JISystem.getLogger().isLoggable(Level.WARNING))
+					{
+						JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownListener",e);
+					}
 				}
-				finally{
-					try {
-						((JIComRuntimeEndpoint)getEndpoint()).detach();
-					} catch (IOException e){}
-				}
+				
 				
 				if (JISystem.getLogger().isLoggable(Level.INFO))
 				{
-					JISystem.getLogger().info("terminating startRemUnknown thread: " + Thread.currentThread().getName());
+					JISystem.getLogger().info("terminating RemUnknownListener thread: " + Thread.currentThread().getName());
 				}
 			}
-		},"jI_RemUnknown[" + baseIID + " , " + remUnknownPort + "]");
+		},"jI_RemUnknownListener[" + baseIID + " , " + remUnknownPort + "]");
 		
 		remUnknownThread.setDaemon(true);
 		remUnknownThread.start();
-		return new Object[]{new Integer(remUnknownPort),remUnknownThread};
+		return new Object[]{new Integer(remUnknownPort),remUnknownForThisListener};
 	}
 }
 
@@ -413,7 +447,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 //		
 		
 		//randomly create IPID and send, this is the ipid of the remunknown, we store it with remunknown object
-        UUID uuid = new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()));
+        UUID uuid = details.getRemUnknownIpid() == null ? new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString())) : new UUID(details.getRemUnknownIpid());
         
 		//create the bindings for this Java Object.
 		//this port will go in the new bindings sent to the COM client.
@@ -423,9 +457,11 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 			port = details.getPortForRemUnknown();
 			if (port == -1)
 			{
-			    Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(),uuid.toString(),details.getIpid());
+				String remunknownipid = uuid.toString();
+			    Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(),remunknownipid,details.getIpid());
 			    port = ((Integer)portandthread[0]).intValue();
-			    details.setRemUnknownThread((Thread)portandthread[1]);
+			    details.setRemUnknownThreadGroup((ThreadGroup)portandthread[1]);
+			    details.setRemUnknownIpid(remunknownipid);
 			}
 			details.setPortForRemUnknown(port);
 		} catch (IOException e) {
@@ -682,7 +718,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			//alter context or bind, again made some calls before.
 			if (component == null)
 			{
-			    int i = 0;
+				JISystem.getLogger().severe("JIComOxidRuntimeHelper RemUnknownObject read(): component is null , opnum is " + opnum + " , IPID is " + ipid + " , selfIpid is " + selfIPID);
 			}
 			byte b[] = null;
 			Object result = null;

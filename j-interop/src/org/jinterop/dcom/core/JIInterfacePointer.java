@@ -198,7 +198,7 @@ final class JIInterfacePointer implements Serializable {
 
     public String toString()
 	{
-		String retVal = "MEOW:" + getIID() + " , " + getObjectReference(JIInterfacePointer.OBJREF_STANDARD);
+		String retVal = "JIInterfacePointer[IID:" + getIID() + " , ObjRef: " + getObjectReference(JIInterfacePointer.OBJREF_STANDARD) + "]";
 		return retVal;
 	}
 

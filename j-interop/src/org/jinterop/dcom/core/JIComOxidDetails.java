@@ -17,6 +17,8 @@
 
 package org.jinterop.dcom.core;
 
+import org.jinterop.dcom.common.JISystem;
+
 
 /**Stores the oxid details in memory.
  * 
@@ -27,14 +29,14 @@ final class JIComOxidDetails {
 
 	private JILocalCoClass referent = null;
 	private String ipid = null;
+	private String remUnknownIpid = null;
 	private JIOxid oxid = null;
 	private JIObjectId oid = null;
 	private String iid = null;
-	private JIInterfacePointer ptr = null;
 	private JIComOxidRuntimeHelper comRuntimeHelper = null;
 	private int portForRemUnknown = -1;
 	private int protectionLevel = 2;
-	private Thread remUnknownThread = null;
+	private ThreadGroup remUnknownThread = null;
 	
 	JIComOxidDetails(JILocalCoClass javaInstance, JIOxid oxid, JIObjectId oid
 					,String iid,String ipid,JIInterfacePointer ptr, JIComOxidRuntimeHelper helper,int protectionLevel)
@@ -44,7 +46,6 @@ final class JIComOxidDetails {
 		this.oxid = oxid;
 		this.oid = oid;
 		this.iid = iid;
-		this.ptr = ptr;
 		this.protectionLevel = protectionLevel;
 		comRuntimeHelper = helper;
 	}
@@ -69,6 +70,16 @@ final class JIComOxidDetails {
 		return ipid;
 	}
 
+	String getRemUnknownIpid() 
+	{
+		return remUnknownIpid;
+	}
+	
+	void setRemUnknownIpid(String ipid)
+	{
+		this.remUnknownIpid = ipid;
+	}
+	
 	JIObjectId getOid() 
 	{
 		return oid;
@@ -84,10 +95,6 @@ final class JIComOxidDetails {
 		return referent;
 	}
 	
-	JIInterfacePointer getInterfacePtr()
-	{
-		return ptr;
-	}
 	
 	JIComOxidRuntimeHelper getCOMRuntimeHelper()
 	{
@@ -99,16 +106,23 @@ final class JIComOxidDetails {
 		return protectionLevel;
 	}
 	
-	void setRemUnknownThread(Thread remUnknown)
+	void setRemUnknownThreadGroup(ThreadGroup remUnknown)
 	{
 	    this.remUnknownThread = remUnknown;
 	}
 	
-	void interruptRemUnknownThread()
+	void interruptRemUnknownThreadGroup()
 	{
 		if (remUnknownThread != null)
 		{
-			remUnknownThread.interrupt();
+			try
+			{
+				remUnknownThread.interrupt();
+//				remUnknownThread.destroy();
+			}catch(Exception e)
+			{
+				JISystem.getLogger().info("JIComOxidDetails interruptRemUnknownThreadGroup " +  e.toString());
+			}
 		}
 	}
 }

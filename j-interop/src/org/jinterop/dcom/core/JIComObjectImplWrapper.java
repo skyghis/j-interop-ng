@@ -31,7 +31,7 @@ public class JIComObjectImplWrapper implements IJIComObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 6142976024482507753L;
-	protected IJIComObject comObject = null;
+	protected final IJIComObject comObject;
 	
 	protected JIComObjectImplWrapper(IJIComObject comObject)
 	{
@@ -152,5 +152,10 @@ public class JIComObjectImplWrapper implements IJIComObject {
 
 	public boolean isLocalReference() {
 		return comObject.isLocalReference();
+	}
+	
+	public String toString()
+	{
+		return comObject.toString();
 	}
 }

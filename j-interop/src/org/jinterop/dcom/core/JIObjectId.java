@@ -44,11 +44,16 @@ final class JIObjectId implements Serializable {
 		}
 		else
 		{
-			lastPingTime = System.currentTimeMillis();
+//			lastPingTime = System.currentTimeMillis(); 
 			return false;
 		}
 	}
  
+	void updateLastPingTime()
+	{
+		lastPingTime = System.currentTimeMillis();
+	}
+	
 	void setIPIDRefCountTo0()
 	{
 		refcountofIPID = 0;
@@ -100,7 +105,7 @@ final class JIObjectId implements Serializable {
 	{
 	   	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 	   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), oid, 0, oid.length);
-	   	return  "{ IPID ref count is " + refcountofIPID + " } \n and OID in bytes[] " + byteArrayOutputStream.toString() + " } "; 
+	   	return  "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + byteArrayOutputStream.toString() + " , hasExpired " + hasExpired() + " } "; 
 	}
 	
 //	void addIpid(String IPID)

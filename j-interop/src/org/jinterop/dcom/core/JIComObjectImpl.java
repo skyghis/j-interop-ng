@@ -279,4 +279,9 @@ final class JIComObjectImpl implements IJIComObject {
 		this.dualInfo = true;
 		this.isDual = isDual;
 	}
+	
+	public String toString()
+	{
+		return "IJIComObject[" + internal_getInterfacePointer() + " , session: " + getAssociatedSession().getSessionIdentifier() + ", isLocal: " + isLocalReference() + "]";
+	}
 }

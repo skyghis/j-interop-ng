@@ -42,9 +42,6 @@ import com.iwombat.foundation.IdentifierFactory;
 import com.iwombat.util.GUIDUtil;
 
 
-
-
-
 /** Thread for Oxid Resolver. Creates and accepts socket
  * connections for resolving oxids. Gets started once for each instance
  * of the library.
@@ -134,6 +131,12 @@ final class JIComOxidRuntime {
 					{
 						//remove all
 						JILocalCoClass component = (JILocalCoClass)mapOfOIDVsComponents.get(oid);
+						//this means the local system still has references and we cannot delete this object
+						//since the user may reuse it.
+						if (component.isAssociatedReferenceAlive())
+						{
+							continue;
+						}
 						JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
 						mapOfOxidVsOxidDetails.remove(details.getOxid());
 						mapOfIPIDVsComponent.remove(details.getIpid());
@@ -142,7 +145,7 @@ final class JIComOxidRuntime {
 						itr.remove();
 						
 						//the thread associated with this will also stop.
-						details.interruptRemUnknownThread();
+						details.interruptRemUnknownThreadGroup();
 						
 						component = null;
 						details = null;
@@ -175,12 +178,18 @@ final class JIComOxidRuntime {
                 //remove all
                 JILocalCoClass component = (JILocalCoClass)mapOfOIDVsComponents.remove(oid);
                 JIComOxidDetails details = (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
-                mapOfOxidVsOxidDetails.remove(details.getOxid());
-                mapOfIPIDVsComponent.remove(details.getIpid());
+                if (details != null)
+                {
+                	mapOfOxidVsOxidDetails.remove(details.getOxid());
+                	mapOfIPIDVsComponent.remove(details.getIpid());
+                }
                 mapOfJavaVsOxidDetails.remove(component);
                 listOfExportedJavaComponents.remove(component);
                 //the thread associated with this will also stop.
-                details.interruptRemUnknownThread();
+                if (details != null)
+                {
+                	details.interruptRemUnknownThreadGroup();
+                }
                 component = null;
                 details = null;
                 oid = null;
@@ -529,19 +538,19 @@ final class JIComOxidRuntime {
 		
 		synchronized (mutex2) 
 		{
-			if (component.getAssociatedInterfacePointer() != null)
+			if (component.isAlreadyExported())
 			{
 				throw new JIException(JIErrorCodes.JI_JAVACOCLASS_ALREADY_EXPORTED);
 			}
 
 			component.setSession(session);
-
-			JIComOxidDetails details = 	(JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
-			
-			if (details != null)
-			{
-				return details.getInterfacePtr();
-			}
+//
+//			JIComOxidDetails details = 	(JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
+//			
+//			if (details != null)
+//			{
+//				return details.getInterfacePtr();
+//			}
 			
 			//as the ID could be repeated, this is the ipid of the interface being requested.
 			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
@@ -586,7 +595,7 @@ final class JIComOxidRuntime {
 			//now create a new JIComOxidDetails
 			//this carries a reference to the javaInstance , incase we do not get pings from the client
 			//at the right times, the cleaup thread will remove this entry and it's OXID as well from both the maps.
-			details = new JIComOxidDetails(component,oxid,oid,iid,ipid,ptr,remUnknown,protecttionLevel);
+    		JIComOxidDetails details = new JIComOxidDetails(component,oxid,oid,iid,ipid,ptr,remUnknown,protecttionLevel);
 			
 			
 			mapOfJavaVsOxidDetails.put(component,details);
@@ -661,7 +670,7 @@ final class JIComOxidRuntime {
 					JIObjectId oid = (JIObjectId)listOfOIDs.get(i);
 					if(!objectIdsDel.contains(oid))
 					{
-						oid.hasExpired();
+						oid.updateLastPingTime();
 					}
 				}
 				

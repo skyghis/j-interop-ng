@@ -672,5 +672,8 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return lastExcepInfo;
     }
 	
-	
+    public String toString()
+	{
+		return "IJIDispatch[" + super.toString() + "]";
+	}
 }

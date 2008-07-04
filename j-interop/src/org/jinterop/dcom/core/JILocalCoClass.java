@@ -18,6 +18,7 @@
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,7 +51,8 @@ public final class JILocalCoClass implements Serializable
 	private static final long serialVersionUID = 5542223845228327383L;
 	private static Random randomGen = new Random(Double.doubleToRawLongBits(Math.random()));
 	private final int identifier ; 
-	private JIInterfacePointer interfacePointer = null;
+	private WeakReference interfacePointer = null;
+	private boolean isAlreadyExported = false;
 	private byte[] objectID = null;
 	private JILocalInterfaceDefinition interfaceDefinition = null;
 	
@@ -266,21 +268,27 @@ public final class JILocalCoClass implements Serializable
 	 */
 	 void setAssociatedInterfacePointer(JIInterfacePointer interfacePointer)
 	{
-		this.interfacePointer = interfacePointer;
-		String ipid = interfacePointer.getIPID().toUpperCase();
-		String iid = interfacePointer.getIID().toUpperCase();
-		IIDvsIpid.put(iid,ipid);
-		ipidVsIID.put(ipid,iid);
+		 isAlreadyExported = true; 
+		 this.interfacePointer = new WeakReference(interfacePointer);
+		 String ipid = interfacePointer.getIPID().toUpperCase();
+		 String iid = interfacePointer.getIID().toUpperCase();
+		 IIDvsIpid.put(iid,ipid);
+		 ipidVsIID.put(ipid,iid);
 	}
 	
 	/**
+	 * 
 	 * @exclude
 	 */
-	 JIInterfacePointer getAssociatedInterfacePointer()
+	boolean isAssociatedReferenceAlive()
 	{
-		return this.interfacePointer;
+		return interfacePointer == null ? false : (interfacePointer.get() == null ? false : true);
 	}
 	
+	 boolean isAlreadyExported()
+	 {
+		 return isAlreadyExported;
+	 }
 	
 	/**
 	 * @exclude
