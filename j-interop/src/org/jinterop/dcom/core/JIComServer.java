@@ -483,11 +483,12 @@ public class JIComServer extends Stub {
 			return;
 		}
 		
+		boolean attachcomplete = false;
 		try {
-			
-			
 			syntax = "99fcfec4-5260-101b-bbcb-00aa0021347a:0.0";
 			attach();
+			// socket to COM server is established
+			attachcomplete = true;
 			//first send an AlterContext to the IID of the IOxidResolver
 			getEndpoint().getSyntax().setUuid(new rpc.core.UUID("99fcfec4-5260-101b-bbcb-00aa0021347a"));
 			getEndpoint().getSyntax().setVersion(0,0);
@@ -513,6 +514,21 @@ public class JIComServer extends Stub {
 		{
 			remoteActivation = null;
 			throw new JIException(e1);
+		}
+		finally
+		{
+			//the only time remactivation will be null will be case of an exception.
+			if (attachcomplete && remoteActivation == null)
+			{
+				try {
+					detach();
+				} catch (IOException e) {
+					if (JISystem.getLogger().isLoggable(Level.WARNING))
+					{
+						JISystem.getLogger().warning("Unable to detach during init: " + e);
+					}
+				}
+			}
 		}
 
 		// Now will setup syntax for IRemUnknown and the address.
