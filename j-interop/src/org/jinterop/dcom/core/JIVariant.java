@@ -237,9 +237,8 @@ public final class JIVariant implements Serializable {
 	
 	/**
 	 * EMPTY <code>VARIANT</code>
-	 * @deprecated
 	 */
-	public static final JIVariant EMPTY = new JIVariant(new EMPTY());
+	static final JIVariant EMPTY = new JIVariant(new EMPTY());
 
 	/**
 	 * EMPTY <code>VARIANT</code>. This is not Thread Safe , hence a new instance must be taken each time.
@@ -252,9 +251,8 @@ public final class JIVariant implements Serializable {
 	
 	/**
 	 * EMPTY BYREF <code>VARIANT</code>
-	 * @deprecated
 	 */
-	public static final JIVariant EMPTY_BYREF = new JIVariant(EMPTY);
+	static final JIVariant EMPTY_BYREF = new JIVariant(EMPTY);
 
 
 	/**
@@ -268,9 +266,8 @@ public final class JIVariant implements Serializable {
 	
 	/**
 	 * NULL <code>VARIANT</code>
-	 * @deprecated
 	 */
-	public static final JIVariant NULL = new JIVariant(new NULL());
+	static final JIVariant NULL = new JIVariant(new NULL());
 	
 	/**
 	 * NULL <code>VARIANT</code> . This is not Thread Safe , hence a new instance must be taken each time.
@@ -283,9 +280,8 @@ public final class JIVariant implements Serializable {
 	
 	/**
 	 * OPTIONAL PARAM. Pass this when a parameter is optional for a COM api call.
-	 * @deprecated
 	 */
-	public static final JIVariant OPTIONAL_PARAM = new JIVariant(JIVariant.SCODE,JIErrorCodes.DISP_E_PARAMNOTFOUND);
+	static final JIVariant OPTIONAL_PARAM = new JIVariant(JIVariant.SCODE,JIErrorCodes.DISP_E_PARAMNOTFOUND);
 	
 	/**
 	 * OPTIONAL PARAM. Pass this when a parameter is <code>[optional]</code> for a COM call. 
@@ -1358,6 +1354,7 @@ class VariantBody implements Serializable
 			FLAG = JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL;
 		}
 		
+		
 		this.isByRef = isByRef;
 		variantType = getMaxLength(this.obj.getClass(),isByRef,obj);
 		
@@ -1370,6 +1367,16 @@ class VariantBody implements Serializable
 		}else
 		{
 			throw new JIRuntimeException(JIErrorCodes.JI_VARIANT_UNSUPPORTED_TYPE);
+		}
+		
+//		if (JISystem.getLogger().isLoggable(Level.INFO))
+//		{
+//			JISystem.getLogger().info("In VariantBody(Object,boolean,int) : dataType is " + dataType + " , referent class is " + this.obj.getClass() + " , byRef is " + isByRef);
+//		}
+		if (dataType == JIVariant.VT_NULL)
+		{
+			isNull = true;
+			obj = new Integer(0);
 		}
 	}
 		
