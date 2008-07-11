@@ -558,7 +558,7 @@ final class JIComOxidRuntime {
 			byte[] bytes = new byte[8];
 			randomGen.nextBytes(bytes);
 			JIOxid oxid = new JIOxid(bytes);
-			byte[] bytes2 = new byte[8];
+			byte[] bytes2 = new byte[8]; 
 			randomGen.nextBytes(bytes2);
 			
 			JIObjectId oid = new JIObjectId(bytes2);

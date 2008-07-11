@@ -2003,7 +2003,7 @@ class VariantBody implements Serializable
 				for (int i = 0;i < array.length;i++)
 				{
 					JIVariant variant = (JIVariant)array[i];
-					length += variant.getLengthInBytes(FLAG) * 8;//((VariantBody)(variant.member.getReferent())).variantType * 8;
+					length += variant.getLengthInBytes(FLAG) ;//* 8;//((VariantBody)(variant.member.getReferent())).variantType * 8;
 				}
 				
 				//now for the "user" pointer part
@@ -2497,7 +2497,7 @@ class VariantBody implements Serializable
 			{
 				c = IJIComObject.class;
 			}
-			return JIMarshalUnMarshalHelper.getLengthInBytes(c,obj,FLAG);
+			return 24 + JIMarshalUnMarshalHelper.getLengthInBytes(c,obj,FLAG);
 		}
 	}
 	

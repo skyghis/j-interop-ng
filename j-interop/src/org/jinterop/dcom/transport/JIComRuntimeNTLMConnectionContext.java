@@ -54,6 +54,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 	      this.properties = properties;
 	      listOfInterfacesSupported.add(((String)properties.getProperty(IID)).toUpperCase());
 	      listOfInterfacesSupported.add(((String)properties.getProperty(IID2)).toUpperCase() + ":0.0");
+	      updateListOfInterfacesSupported2((List)properties.get("LISTOFSUPPORTEDINTERFACES"));
 	      return null;
 	   }
 	
@@ -149,6 +150,14 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  synchronized (listOfInterfacesSupported) {
 			listOfInterfacesSupported.addAll(newList);
 		  }
+	  }
+	  
+	  void updateListOfInterfacesSupported2(List newList)
+	  {
+		for (int i = 0;i < newList.size();i++)
+		{
+			listOfInterfacesSupported.add(newList.get(i) + ":0.0");	
+		}
 	  }
 	  
 }

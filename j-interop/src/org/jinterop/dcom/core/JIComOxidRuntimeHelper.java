@@ -86,7 +86,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 						JISystem.getLogger().info("started startOxid thread: " + Thread.currentThread().getName());
 					}
 					attach();
-					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new OxidResolverImpl(getProperties()),null);
+					((JIComRuntimeEndpoint)getEndpoint()).processRequests(new OxidResolverImpl(getProperties()),null,new ArrayList());
 				}catch(Exception e)
 				{
 					if (JISystem.getLogger().isLoggable(Level.WARNING))
@@ -111,7 +111,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 	}
 	
 	//returns the port to which the server is listening.
-	Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent) throws IOException
+	Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent, final List listOfSupportedInterfaces) throws IOException
 	{
 	    final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 	    final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
@@ -148,7 +148,7 @@ final class JIComOxidRuntimeHelper extends Stub {
 						Thread remUnknown = new Thread(remUnknownForThisListener,new Runnable() {
 							public void run() {
 								try {
-									((JIComRuntimeEndpoint)remUnknownHelper.getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown,ipidOfComponent),baseIID);
+									((JIComRuntimeEndpoint)remUnknownHelper.getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown,ipidOfComponent),baseIID,listOfSupportedInterfaces);
 								} catch(SmbAuthException e)
 								{
 									JISystem.getLogger().log(Level.WARNING,"JIComOxidRuntimeHelper RemUnknownThread (not listener)",e);
@@ -458,7 +458,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 			if (port == -1)
 			{
 				String remunknownipid = uuid.toString();
-			    Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(),remunknownipid,details.getIpid());
+			    Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(),remunknownipid,details.getIpid(), details.getReferent().getSupportedInterfaces());
 			    port = ((Integer)portandthread[0]).intValue();
 			    details.setRemUnknownThreadGroup((ThreadGroup)portandthread[1]);
 			    details.setRemUnknownIpid(remunknownipid);

@@ -164,7 +164,7 @@ public final class JIFrameworkHelper {
      * @return
      * @throws JIException
      */
-    public static IJIComObject instantiateComObject(JISession session,byte[] rawBytes) throws JIException
+    public static IJIComObject instantiateComObject(JISession session,byte[] rawBytes, String ipAddress) throws JIException
     {
     	NetworkDataRepresentation ndr = new NetworkDataRepresentation();
 		NdrBuffer ndrBuffer = new NdrBuffer(rawBytes,0);
@@ -174,11 +174,16 @@ public final class JIFrameworkHelper {
 		//this is a brand new session.
 		if (session.getStub() == null)
 		{
-			 JIComServer comServer = new JIComServer(session,JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2, new HashMap()),null);
+			 JIComServer comServer = new JIComServer(session,JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2, new HashMap()),ipAddress);
 			 return comServer.getInstance();
 		}
 		else
-    	return instantiateComObject(session, JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2, new HashMap()));
+		{
+			IJIComObject retval = instantiateComObject(session, JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2, new HashMap()));
+			//increasing the reference count.
+			retval.addRef();
+			return retval;
+		}
     }
     
     /** Typically used in the Man-In-The-Middle scenario, where one j-Interop system interacts with another over the wire. 

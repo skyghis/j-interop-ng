@@ -629,7 +629,8 @@ public class JIComServer extends Stub {
 			}
 			
 			retval = JIFrameworkHelper.instantiateComObject(session, reqUnknown.getInterfacePointer());
-			
+			//increasing the reference count.
+			retval.addRef();
 			//for querying dispatch we can't send another call
 			if (!iid.equalsIgnoreCase("00020400-0000-0000-c000-000000000046"))
 			{
@@ -704,6 +705,8 @@ public class JIComServer extends Stub {
 			{
 				((JIComObjectImpl)comObject).setIsDual(false);
 			}
+			//increasing the reference count.
+			comObject.addRef();
 			serverInstantiated = true;
 		}
 		
@@ -735,6 +738,8 @@ public class JIComServer extends Stub {
 //			JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
 //			comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
 			comObject = JIFrameworkHelper.instantiateComObject(session,interfacePtrCtor);
+			//increasing the reference count.
+			comObject.addRef();
 			serverInstantiated = true;
 		}
 		

@@ -952,7 +952,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 //		}
 		//interpret based on the out params flags
 		JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
-		readPacket(ndr);
+		readPacket(ndr,false);
 		readResult(ndr);
 	}
 	
@@ -966,12 +966,12 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	void read2(NetworkDataRepresentation ndr)
 	{
 		JIOrpcThis.decode(ndr);
-		readPacket(ndr);
+		readPacket(ndr,true);
 		//readResult(ndr);
 		//hresult = 0;
 	}
 	
-	private void readPacket(NetworkDataRepresentation ndr)
+	private void readPacket(NetworkDataRepresentation ndr, boolean fromCallback)
 	{
 		
 		if (session == null)
@@ -1026,8 +1026,29 @@ public class JICallBuilder extends NdrObject implements Serializable {
 			{
 				JIComObjectImpl comObjectImpl = (JIComObjectImpl)comObjects.get(i);
 				try {
-					comObjectImpl.replaceMembers(JIFrameworkHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer()));
+					IJIComObject comObject = null;
+					if (fromCallback)
+					{
+						//this is a new IP , so make a new JIComServer for this.
+						JISession newsession = JISession.createSession(session);
+					    newsession.setGlobalSocketTimeout(session.getGlobalSocketTimeout());
+					    newsession.useSessionSecurity(session.isSessionSecurityEnabled());
+					    JIComServer comServer = new JIComServer(newsession,comObjectImpl.internal_getInterfacePointer(),null);
+					    comObject = comServer.getInstance();
+					    JIFrameworkHelper.link2Sessions(session, newsession);
+					}
+					else
+					{
+						comObject = JIFrameworkHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer());
+					}
+					
+					comObjectImpl.replaceMembers(comObject);
 					JIFrameworkHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
+					if (!fromCallback)
+					{
+						comObjectImpl.addRef();
+					}
+					
 				} catch (JIException e) {
 					JISystem.getLogger().throwing("JICallBuilder", "readPacket", e);
 					throw new JIRuntimeException(e.getErrorCode());

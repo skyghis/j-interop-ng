@@ -20,6 +20,7 @@ package org.jinterop.dcom.transport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.logging.Level;
 
 import ndr.NdrBuffer;
@@ -68,7 +69,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 	}
 	
 	//use this oxidObject, it is actually OxidResolverImpl extends NdrObject. 
-	public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID) throws IOException 
+	public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List listOfSupportedInterfaces) throws IOException 
 	{
 
 		if (JISystem.getLogger().isLoggable(Level.INFO))
@@ -80,8 +81,11 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 		{
 			getTransport().getProperties().setProperty("IID2", baseIID);
 		}
+		
+		getTransport().getProperties().put("LISTOFSUPPORTEDINTERFACES",listOfSupportedInterfaces);
+		
 		bind();// will bind to the server and perform the initial bind\bind ack.
-		//this will start listening on the port and replying.		
+		
 		while (true)
 		{
 			

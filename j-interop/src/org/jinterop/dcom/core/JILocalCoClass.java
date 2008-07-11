@@ -33,6 +33,7 @@ import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.impls.JIObjectFactory;
 
 import rpc.core.UUID;
 
@@ -116,17 +117,20 @@ public final class JILocalCoClass implements Serializable
 	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
 	 * @param clazz <code>class</code> to instantiate for serving requests from COM client. Must implement 
 	 * the <code>interfaceDefinition</code> fully.
-	 * @param realIID <code>true</code> if the <code>interfaceDefinition</code> implements a real COM <code>IID</code>.
+	 * @param useInterfaceDefinitionIID <code>true</code> if the <code>IID</code> of <code>interfaceDefinition</code 
+	 * should be used as to create the local COM Object. Use this when a reference other than <code>IUnknown*</code> is required.
+	 * For all {@link JIObjectFactory#attachEventHandler(IJIComObject, String, IJIComObject)} operations this should be set to 
+	 * <code>false</code> since the <code>IConnectionPoint::Advise</code> method takes in a <code>IUnknown*</code> reference.
 	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>clazz</code> are <code>null</code>. 
 	 */
-	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Class clazz, boolean realIID)
+	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Class clazz, boolean useInterfaceDefinitionIID)
 	{
 		if (interfaceDefinition == null || clazz == null)
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
 		}
 		this.identifier = clazz.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
-		init(interfaceDefinition,clazz,null,realIID);
+		init(interfaceDefinition,clazz,null,useInterfaceDefinitionIID);
 	}
 	
 	/**Creates a local class instance. 
@@ -151,17 +155,20 @@ public final class JILocalCoClass implements Serializable
 	 * @param interfaceDefinition implementing structurally the definition of the COM callback interface.
 	 * @param instance instance for serving requests from COM client. Must implement 
 	 * the <code>interfaceDefinition</code> fully.
-	 * @param realIID <code>true</code> if the <code>interfaceDefinition</code> implements a real COM <code>IID</code>.
+	 * @param useInterfaceDefinitionIID <code>true</code> if the <code>IID</code> of <code>interfaceDefinition</code 
+	 * should be used as to create the local COM Object. Use this when a reference other than <code>IUnknown*</code> is required.
+	 * For all {@link JIObjectFactory#attachEventHandler(IJIComObject, String, IJIComObject)} operations this should be set to 
+	 * <code>false</code> since the <code>IConnectionPoint::Advise</code> method takes in a <code>IUnknown*</code> reference. 
 	 * @throws IllegalArgumentException if <code>interfaceDefinition</code> or <code>instance</code> are <code>null</code>.
 	 */
-	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Object instance,boolean realIID)
+	public JILocalCoClass(JILocalInterfaceDefinition interfaceDefinition,Object instance,boolean useInterfaceDefinitionIID)
 	{
 		if (interfaceDefinition == null || instance == null)
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COM_RUNTIME_INVALID_CONTAINER_INFO));
 		}
 		this.identifier = instance.hashCode() ^ new Object().hashCode() ^ randomGen.nextInt();
-		init(interfaceDefinition,null,instance,realIID);	
+		init(interfaceDefinition,null,instance,useInterfaceDefinitionIID);	
 	}
 	
 	
@@ -687,5 +694,10 @@ public final class JILocalCoClass implements Serializable
 	 */
 	JISession getSession() {
 		return session;
+	}
+	
+	List getSupportedInterfaces()
+	{
+		return listOfSupportedInterfaces;
 	}
 }

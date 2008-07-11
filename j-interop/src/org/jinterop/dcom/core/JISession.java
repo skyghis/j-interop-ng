@@ -665,7 +665,7 @@ public final class JISession {
 	{
 		JIStruct remInterface = new JIStruct();
 		remInterface.addMember(new rpc.core.UUID(IPID));
-		remInterface.addMember(new Integer(5));
+		remInterface.addMember(new Integer(5 + 5)); // 5 of the original and 5 for the addRef done later on.
 		remInterface.addMember(new Integer(0));//private refs = 0
 		return remInterface;
 	}

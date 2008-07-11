@@ -122,7 +122,27 @@ public class JIObjectFactory {
 	 */
 	public static IJIComObject buildObject(JISession session, byte[] rawBytes) throws JIException
 	{
-		return narrowObject(JIFrameworkHelper.instantiateComObject(session, rawBytes));
+		return narrowObject(JIFrameworkHelper.instantiateComObject(session, rawBytes,null));
+	}
+	
+	/** Returns a COM Object from raw bytes. These bytes must conform to the Marshalled Interface Pointer template as per DCOM specifications.
+	 * 
+	 * @param session session to attach <code>comObject</code> to. If required the framework will create a new session
+     * for this <code>comObject</code> and link the <code>session</code> to the new one. This new session will be 
+     * destroyed when the parent <code>session</code> is destroyed.
+	 * @param rawBytes bytes representing the interface pointer.
+	 * @param ipAddress	can be <code>null</code>. Sometimes there are many adapters (virtual as well) on the Target machine to which this interface pointer belongs,
+	 * which may get sent as part of the interface pointer and consequently this call will fail since it is a possibility that IP is not reachable via this machine.
+	 * The developer can send in the valid IP and if found in the interface pointer list will be used to talk to the target machine, overriding the other IP addresses 
+	 * present in the interface pointer. If this IP is not found then the "machine name" binding will be used. If this param is <code>null</code> then the first 
+	 * binding obtained from the interface pointer is used. 
+	 * @return
+	 * @throws JIException
+	 * @throws IllegalArgumentException if <code>rawBytes</code> is an invalid representation.
+	 */
+	public static IJIComObject buildObject(JISession session, byte[] rawBytes, String ipAddress) throws JIException
+	{
+		return narrowObject(JIFrameworkHelper.instantiateComObject(session, rawBytes,ipAddress));
 	}
 	
 	 /** Typically used in the Man-In-The-Middle scenario. 
