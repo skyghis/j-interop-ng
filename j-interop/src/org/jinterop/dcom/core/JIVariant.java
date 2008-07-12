@@ -1882,73 +1882,73 @@ class VariantBody implements Serializable
 	}
 	
 	//multiple of 8.
-	private int getMaxLength(Class c, boolean isByRef, Object obj)
-	{
-		int length = 3; //Empty
-		if (type3.contains(c))
-		{
-			length = 3;
-			if (isByRef)
-			{
-				length = length + 1; //for the pointer
-			}
-		}
-		else
-		if(c.equals(Long.class) || c.equals(Double.class) || c.equals(Date.class) || c.equals(JICurrency.class))
-		{
-			length = 4;
-			//here the byref can be left out since it will cover 24 bytes properly
-		}
-		else
-		if(c.equals(JIString.class))
-		{
-	
-			int strlen = 0;
-			if (obj != null && ((JIString)obj).getString() != null)
-			{
-				strlen = ((JIString)obj).getString().length();
-			}
-			
-			//20 is of variant, 4+4+4+4 of bstr(user,maxlen,actlen,offset) , (strlen*2) of the actual array
-			double value = 20 + 16 + strlen*2;
-			if (isByRef)
-			{
-				value = value + 4;
-			}
-			double d = value%8.0;
-			length = (int)value/8;
-			if (d != 0.0)
-			{
-				length++;
-			}
-			
-			
-		}else // for Interface pointers without  
-		if((obj instanceof IJIComObject))
-		{
-			double value = ((IJIComObject)obj).internal_getInterfacePointer().getLength();
-			if (isByRef)
-			{
-				value = value + 4;
-			}
-			
-			value = value + 20 + 4 + 4 + 4; //20 of variant , 4 of the ptr, 4 of max count, 4 of actual count
-			
-			double d = value%8.0;
-			length = (int)value/8;
-			if (d != 0.0)
-			{
-				length++;
-			}
-			//length += 4;
-			//double a = ((IJIComObject)obj).getInterfacePointer().getLength()/8.0;
-			//length = 4 + (int)Math.ceil(a);
-		}
-	
-		
-		return length;
-		
-	}
+//	private int getMaxLength(Class c, boolean isByRef, Object obj)
+//	{
+//		int length = 3; //Empty
+//		if (type3.contains(c))
+//		{
+//			length = 3;
+//			if (isByRef)
+//			{
+//				length = length + 1; //for the pointer
+//			}
+//		}
+//		else
+//		if(c.equals(Long.class) || c.equals(Double.class) || c.equals(Date.class) || c.equals(JICurrency.class))
+//		{
+//			length = 4;
+//			//here the byref can be left out since it will cover 24 bytes properly
+//		}
+//		else
+//		if(c.equals(JIString.class))
+//		{
+//	
+//			int strlen = 0;
+//			if (obj != null && ((JIString)obj).getString() != null)
+//			{
+//				strlen = ((JIString)obj).getString().length();
+//			}
+//			
+//			//20 is of variant, 4+4+4+4 of bstr(user,maxlen,actlen,offset) , (strlen*2) of the actual array
+//			double value = 20 + 16 + strlen*2;
+//			if (isByRef)
+//			{
+//				value = value + 4;
+//			}
+//			double d = value%8.0;
+//			length = (int)value/8;
+//			if (d != 0.0)
+//			{
+//				length++;
+//			}
+//			
+//			
+//		}else // for Interface pointers without  
+//		if((obj instanceof IJIComObject))
+//		{
+//			double value = ((IJIComObject)obj).internal_getInterfacePointer().getLength();
+//			if (isByRef)
+//			{
+//				value = value + 4;
+//			}
+//			
+//			value = value + 20 + 4 + 4 + 4; //20 of variant , 4 of the ptr, 4 of max count, 4 of actual count
+//			
+//			double d = value%8.0;
+//			length = (int)value/8;
+//			if (d != 0.0)
+//			{
+//				length++;
+//			}
+//			//length += 4;
+//			//double a = ((IJIComObject)obj).getInterfacePointer().getLength()/8.0;
+//			//length = 4 + (int)Math.ceil(a);
+//		}
+//	
+//		
+//		return length;
+//		
+//	}
 	
 	//returns the length in bytes
 	private int getMaxLength2(Class c, Object obj)
@@ -1987,12 +1987,12 @@ class VariantBody implements Serializable
 //		return safeArrayStruct == null ? variantType : getArrayLengthForVarType();
 //	}
 	
-	private int fillArrayType(NetworkDataRepresentation ndr) throws JIException
-	{
-		int length = getArrayLengthForVarType();
-		ndr.writeUnsignedLong(length);
-		return length;
-	}
+//	private int fillArrayType(NetworkDataRepresentation ndr) throws JIException
+//	{
+//		int length = getArrayLengthForVarType();
+//		ndr.writeUnsignedLong(length);
+//		return length;
+//	}
 	
 	private int getArrayLengthForVarType() throws JIException
 	{
