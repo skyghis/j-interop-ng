@@ -1305,12 +1305,18 @@ final class JIMarshalUnMarshalHelper {
 		
 		public int getLengthInBytes(Object value,int FLAG)
 		{
+			int length = 4;
+			
 			if (((JIString)value).getString() == null)
 			{
-				return 4;
+				return length;
 			}
+			
+			
+			//for LPWSTR and BSTR adding 2 for the null character.
+			length = length + (((JIString)value).getType() == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR ? 0 : 2); 
 			//Pointer referentId --> USER
-			return 4 + JIMarshalUnMarshalHelper.getLengthInBytes(String.class,((JIString)value).getString(),((JIString)value).getType() | FLAG);
+			return length + JIMarshalUnMarshalHelper.getLengthInBytes(String.class,((JIString)value).getString(),((JIString)value).getType() | FLAG);
 		}
 		
 		

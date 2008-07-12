@@ -371,15 +371,15 @@ public final class JIVariant implements Serializable {
 		{
 			VariantBody variantBody = new VariantBody(obj,isByRef);
 			member = new JIPointer(variantBody);
-			if (obj != null && obj instanceof JIVariant)
-			{
-				VariantBody var = (VariantBody)((JIVariant)obj).member.getReferent();
-				try {
-					variantBody.variantType = var.getVariantType() + 3 + 1;
-				} catch (JIException e) {
-					throw new JIRuntimeException(e.getErrorCode());
-				}
-			}
+//			if (obj != null && obj instanceof JIVariant)
+//			{
+//				VariantBody var = (VariantBody)((JIVariant)obj).member.getReferent();
+//				try {
+//					variantBody.variantType = var.getVariantType() + 3 + 1;
+//				} catch (JIException e) {
+//					throw new JIRuntimeException(e.getErrorCode());
+//				}
+//			}
 		}
 		
 		member.setReferent(0x72657355);//"User" in LEndian.
@@ -1296,7 +1296,7 @@ class VariantBody implements Serializable
 	private boolean isByRef = false;
 	
 	int FLAG = JIFlags.FLAG_NULL;
-	int variantType = 0x1d; //base jump
+//	int variantType = 0x1d; //base jump
 	
 	static
 	{
@@ -1356,7 +1356,7 @@ class VariantBody implements Serializable
 		
 		
 		this.isByRef = isByRef;
-		variantType = getMaxLength(this.obj.getClass(),isByRef,obj);
+//		variantType = getMaxLength(this.obj.getClass(),isByRef,obj);
 		
 		//for an unsupported type this could be null
 		//but then this is my bug, any thread entering this ctor , will support a type.
@@ -1712,8 +1712,9 @@ class VariantBody implements Serializable
 	void encode(NetworkDataRepresentation ndr,List defferedPointers, int FLAG)
 	{
 
-		try{
-			FLAG |= this.FLAG;
+//		try
+		{
+			FLAG |= this.FLAG; 
 			//align with 8 boundary
 			double index = new Integer(ndr.getBuffer().getIndex()).doubleValue(); 
 			if (index%8.0 != 0)
@@ -1723,16 +1724,19 @@ class VariantBody implements Serializable
 			}
 	
 			int start = ndr.getBuffer().getIndex();
-			int length = variantType;
-			if (safeArrayStruct != null)
-			{
-				//length for the array 
-				length = fillArrayType(ndr);
-			}
-			else
-			{
-				ndr.writeUnsignedLong(variantType);
-			}
+			
+//			if (safeArrayStruct != null)
+//			{
+//				//length for the array 
+//				length = fillArrayType(ndr);
+//			}
+//			else
+//			{
+//				ndr.writeUnsignedLong(variantType);
+//			}
+			
+			//just a place holder for length
+			ndr.writeUnsignedLong(0xFFFFFFFF);
 			
 			ndr.writeUnsignedLong(0);
 			
@@ -1806,59 +1810,75 @@ class VariantBody implements Serializable
 				varDefferedPointers.addAll(x,newList);
 			}
 			
-			if (safeArrayStruct != null && isArray)
+			int currentIndex = 0;
+			int length = (currentIndex = ndr.getBuffer().getIndex()) - start;
+			int value =  (int) length/8;
+			if (length%8.0 != 0) //entire variant is aligned by 8 bytes.
 			{
-				//SafeArray have the alignment rule , that all Size <=4 are aligned by 4 and size 8 is aligned by 8.
-				//Variant is aligned by 4, Interface pointers are aligned by 4 as well.
-				//but this should not exceed the length
-				index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
-				length = length * 8 + start;
-				if (index < length)
-				{
-					Integer size = (Integer)safeArrayStruct.getMember(2);
-					long i = 0;
-					if (size.intValue() == 8)
-					{
-						if (index%8.0 != 0)
-						{
-							i = (i=Math.round(index%8.0)) == 0 ? 0 : 8 - i ;
-							if (index + i <= length)
-							{
-								ndr.writeOctetArray(new byte[(int)i],0,(int)i);
-							}
-							else
-							{
-								ndr.writeOctetArray(new byte[(length - (int)index)],0,(int)(length - (int)index));
-							}
-						}
-					}
-					else
-					{
-						//align by 4...
-						//TODO this needs to be tested for Structs and Unions.
-						if (index%4.0 != 0)
-						{
-							i = (i=Math.round(index%4.0)) == 0 ? 0 : 4 - i ;
-							if (index + i <= length)
-							{
-								ndr.writeOctetArray(new byte[(int)i],0,(int)i);
-							}
-							else
-							{
-								ndr.writeOctetArray(new byte[(length - (int)index)],0,(int)(length - (int)index));
-							}
-						}
-					}
-					
-					
-				}
+				value++;
 			}
+			ndr.getBuffer().setIndex(start);
+			ndr.writeUnsignedLong(value);
+			ndr.getBuffer().setIndex(currentIndex);
+			
+			if (JISystem.getLogger().isLoggable(Level.FINEST))
+			{
+				JISystem.getLogger().finest("Variant length is " + length + " , value " + value + " , variant type" + type);
+			}
+//			if (safeArrayStruct != null && isArray)
+//			{
+//				//SafeArray have the alignment rule , that all Size <=4 are aligned by 4 and size 8 is aligned by 8.
+//				//Variant is aligned by 4, Interface pointers are aligned by 4 as well.
+//				//but this should not exceed the length
+//				index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
+//				length = length * 8 + start;
+//				if (index < length)
+//				{
+//					Integer size = (Integer)safeArrayStruct.getMember(2);
+//					long i = 0;
+//					if (size.intValue() == 8)
+//					{
+//						if (index%8.0 != 0)
+//						{
+//							i = (i=Math.round(index%8.0)) == 0 ? 0 : 8 - i ;
+//							if (index + i <= length)
+//							{
+//								ndr.writeOctetArray(new byte[(int)i],0,(int)i);
+//							}
+//							else
+//							{
+//								ndr.writeOctetArray(new byte[(length - (int)index)],0,(int)(length - (int)index));
+//							}
+//						}
+//					}
+//					else
+//					{
+//						//align by 4...
+//						//TODO this needs to be tested for Structs and Unions.
+//						if (index%4.0 != 0)
+//						{
+//							i = (i=Math.round(index%4.0)) == 0 ? 0 : 4 - i ;
+//							if (index + i <= length)
+//							{
+//								ndr.writeOctetArray(new byte[(int)i],0,(int)i);
+//							}
+//							else
+//							{
+//								ndr.writeOctetArray(new byte[(length - (int)index)],0,(int)(length - (int)index));
+//							}
+//						}
+//					}
+//					
+//					
+//				}
+//			}
 			
 			
-		}catch (JIException e)
-		{
-			throw new JIRuntimeException(e.getErrorCode());
 		}
+//		catch (JIException e)
+//		{
+//			throw new JIRuntimeException(e.getErrorCode());
+//		}
 	}
 	
 	//multiple of 8.
@@ -1962,10 +1982,10 @@ class VariantBody implements Serializable
 		
 	}
 	
-	int getVariantType() throws JIException
-	{
-		return safeArrayStruct == null ? variantType : getArrayLengthForVarType();
-	}
+//	int getVariantType() throws JIException
+//	{
+//		return safeArrayStruct == null ? variantType : getArrayLengthForVarType();
+//	}
 	
 	private int fillArrayType(NetworkDataRepresentation ndr) throws JIException
 	{
