@@ -91,7 +91,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
 
     private int flags = PFC_FIRST_FRAG | PFC_LAST_FRAG;
 
-    protected static int callIdCounter = -1;
+    protected static int callIdCounter = 0;
     
     private int callId = callIdCounter;
     
@@ -221,7 +221,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
         // skip the fragment and auth lengths, since we don't have them yet.
         ndr.writeUnsignedShort(0);
         ndr.writeUnsignedShort(0);
-        ndr.writeUnsignedLong(useCallIdCounter ? ++callIdCounter : callId);
+        ndr.writeUnsignedLong(useCallIdCounter ? callIdCounter++ : callId);
     }
 
     protected void readBody(NetworkDataRepresentation ndr) { }

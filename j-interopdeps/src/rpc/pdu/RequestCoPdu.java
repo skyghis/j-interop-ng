@@ -218,7 +218,9 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 
         private int index = 0;
 
-        private boolean firstfragsent = false;
+//        private boolean firstfragsent = false;
+        
+        private int callId = callIdCounter++;
         
         public FragmentIterator(int stubSize) {
             this.stubSize = stubSize;
@@ -243,18 +245,21 @@ public class RequestCoPdu extends ConnectionOrientedPdu
             if (index >= stub.length) flags |= PFC_LAST_FRAG;
             fragment.setFlags(flags);
             
-            if (firstfragsent)
-            {
-            	//this is so that all fragments have the same callid.
-            	fragment.setCallId(callIdCounter);
-            }
-            else
-            {
-            	firstfragsent = true;
-            }
+            //always use the same callId now
+            fragment.setCallId(callId);
+            
+//            if (firstfragsent)
+//            {
+//            	//this is so that all fragments have the same callid.
+//            	fragment.setCallId(callId);
+//            }
+//            else
+//            {
+//            	firstfragsent = true;
+//            }
             if (logger.isLoggable(Level.FINEST))
             {
-            	logger.finest("In FragementIterator:next(): callIdCounter is " + callIdCounter + " ,  for thread: " + Thread.currentThread());
+            	logger.finest("In FragementIterator:next(): callIdCounter is " + callId + " ,  for thread: " + Thread.currentThread());
             }
             return fragment;
         }

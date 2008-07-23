@@ -162,42 +162,46 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             	Integer cid = (Integer)uuidsVsContextIds.get(getSyntax().toString().toUpperCase());
             	ConnectionOrientedPdu pdu = context.alter(
                         new PresentationContext(cid == null ? ++contextIdCounter : cid.intValue(), getSyntax()));
-            	
+            	boolean sendAlter = false;
                 if (cid == null)
                 {
                 	uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
                 	contextIdToUse = contextIdCounter;
+                	sendAlter = true;
                 }
                 else
                 {
                 	contextIdToUse = cid.intValue();
                 }
                 
-                if (pdu != null) send(pdu);
-                while (!context.isEstablished()) {
-                	ConnectionOrientedPdu recieved = receive(); 
-                    if ((pdu = context.accept(recieved)) != null)
-                    { 
-                    	switch(pdu.getType())
-                    	{
-                    		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
-                    			if (((BindAcknowledgePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-                    			{
-                    				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-                    			}
-                    			break;	
-                    		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
-                    			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
-                    			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-                    			{
-                    				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-                    			}	
-                    			break;
-                    		default:	
-                    			//nothing
-                    	}
-                    	send(pdu);
-                    }
+                if (sendAlter)
+                {
+                	if (pdu != null) send(pdu);
+	                while (!context.isEstablished()) {
+	                	ConnectionOrientedPdu recieved = receive(); 
+	                    if ((pdu = context.accept(recieved)) != null)
+	                    { 
+	                    	switch(pdu.getType())
+	                    	{
+	                    		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
+	                    			if (((BindAcknowledgePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
+	                    			{
+	                    				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+	                    			}
+	                    			break;	
+	                    		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
+	                    			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
+	                    			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
+	                    			{
+	                    				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+	                    			}	
+	                    			break;
+	                    		default:	
+	                    			//nothing
+	                    	}
+	                    	send(pdu);
+	                    }
+	                }
                 }
             } catch (IOException ex) {
                 bound = false;
