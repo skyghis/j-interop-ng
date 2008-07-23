@@ -20,13 +20,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -65,7 +69,8 @@ public final class JISystem {
 	private static boolean autoRegister = false;
 	private static boolean autoCollection = true;
 	private static final Logger logger = Logger.getLogger("org.jinterop");
-
+	private static final Map mapOfHostnamesVsIPs = new HashMap();
+	
 	/** Returns the framework logger identified by the name "org.jinterop".
 	 * 
 	 * @return
@@ -406,4 +411,49 @@ public final class JISystem {
 		logger.addHandler(fileHandler);
 	}
 	
+	/** Adds a mapping between the <code>hostname</code> and its <code>IP</code>. This method should be used when there is a possibility
+	 * of multiple adapters (for example from a Virtual Machine) on the COM server. j-Interop Framework only uses
+	 * the host name and ignores the I.P addresses supplied in the interface reference of a COM object. If this hostname
+	 * is not reachable from the machine where library is currently running (such as a Linux machine with no name mappings)
+	 * then the call to this COM server would fail with an <code>UnknownHostException</code>. To avoid that either add the
+	 * binding in the host machine or add the binding here. 
+	 * <p>
+	 * This method stores the name vs I.P binding in a <code>Map</code>. Providing the same <code>hostname</code> will overwrite 
+	 * the binding specified before.
+	 * 
+	 * @param hostname name of target machine.
+	 * @param IP address of target machine in I.P format.
+	 * @throws UnknownHostException if the <code>IP</code> is invalid or cannot be reached.
+	 * @throws IllegalArgumentException if any parameter is <code>null</code> or of 0 length.
+	 */
+	public static synchronized void mapHostNametoIP(String hostname, String IP) throws UnknownHostException 
+	{
+		if (hostname == null || IP == null || hostname.trim().length() == 0 || IP.trim().length() == 0)
+		{
+			throw new IllegalArgumentException();
+		}
+		
+		//just check the validity of IP
+		InetAddress.getByName(IP.trim());
+		
+		mapOfHostnamesVsIPs.put(hostname.trim().toUpperCase(), IP.trim());
+	}
+	
+	/** Returns I.P address for the given <code>hostname</code>.
+	 * 
+	 * @param hostname
+	 * @return <code>null</code> if a mapping could not be found.
+	 */
+	public static synchronized String getIPForHostName(String hostname)
+	{
+		return (String)mapOfHostnamesVsIPs.get(hostname.trim().toUpperCase());
+	}
+	
+	public static synchronized void internal_dumpMap()
+	{
+		if (JISystem.getLogger().isLoggable(Level.INFO))
+		{
+			getLogger().info("mapOfHostnamesVsIPs: " + mapOfHostnamesVsIPs);
+		}
+	}
 }

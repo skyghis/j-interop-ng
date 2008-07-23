@@ -26,6 +26,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,7 +61,7 @@ public final class JISession {
 	private String password = null;
 	private String domain = null;
 	private String targetServer = null;
-	private static Map mapOfObjects = new HashMap();
+	private static Map mapOfObjects = Collections.synchronizedMap(new HashMap());
 	private static Object mutex = new Object();
 	private IJIAuthInfo authInfo = null;
 	private JIComServer stub = null; 
@@ -77,6 +78,7 @@ public final class JISession {
 	private boolean useSessionSecurity = false;
 	private ArrayList links = new ArrayList();
 	private static final Map mapOfOxidsVsJISessions = new HashMap();
+	private boolean sessionInDestroy = false;
 	
 	private static class IPID_SessionID_Holder
 	{
@@ -103,21 +105,20 @@ public final class JISession {
 		            Reference r = referenceQueueOfCOMObjects.remove();
 		            if (r != null) {
 		                // Object is no longer referenced.
-		            	synchronized (mutex) {
-			        		//get from hash map and call release ref on that object
-			    			IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.remove(r);
-			    			JISession session = null;
-			    			if (holder == null)
+		            	//get from hash map and call release ref on that object
+		            	IPID_SessionID_Holder holder = null;
+		    			synchronized (mapOfObjects) {
+		    				holder = (IPID_SessionID_Holder)mapOfObjects.remove(r);
+		    				if (holder == null)
 			    			{
-//			    				//it may be a session
-//			    				session = (JISession)r.get();
 			    				continue;
 			    			}
-			    			else
-			    			{
-			    				session = (JISession)mapOfSessionIdsVsSessions.get(holder.sessionID);
-			    			}
-			    			//this means that the session got lost...but this logic does not work, since 
+						}
+		            	
+		            	synchronized (mutex) {
+			        		JISession session = (JISession)mapOfSessionIdsVsSessions.get(holder.sessionID);
+			    			
+			        		//this means that the session got lost...but this logic does not work, since 
 			    			//session is strongly referenced from mapOfSessionIdsVsSessions and listOfSessions and even putting
 			    			//WeakReference for JISession when adding it to the mapOfSessionIdsVsSessions/listOfSessions does not
 			    			//make a difference as we always loose the session to GC before it come here.
@@ -466,26 +467,28 @@ public final class JISession {
 				{
 					return;
 				}
+				session.sessionInDestroy = true;
 				ArrayList list = new ArrayList();
 				//take all the objects registered with this session and call release on them.
 				Iterator iterator = mapOfObjects.keySet().iterator();
-				while(iterator.hasNext())
-				{
-					//String ipid = (String)session.mapOfObjects.get(iterator.next());
-					IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
-					if (session.getSessionIdentifier() != holder.sessionID.intValue())
+				synchronized (mapOfObjects) {
+					while(iterator.hasNext())
 					{
-						continue;
+						//String ipid = (String)session.mapOfObjects.get(iterator.next());
+						IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
+						if (session.getSessionIdentifier() != holder.sessionID.intValue())
+						{
+							continue;
+						}
+		    			String ipid = holder.IPID;
+						if (ipid == null)
+						{
+							continue;
+						}
+						list.add(session.prepareForReleaseRef(ipid));
+						//iterator.remove();
 					}
-	    			String ipid = holder.IPID;
-					if (ipid == null)
-					{
-						continue;
-					}
-					list.add(session.prepareForReleaseRef(ipid));
-					//iterator.remove();
 				}
-				
 				//now for the list of dereferenced IPIDs
 				for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
 				{
@@ -571,9 +574,14 @@ public final class JISession {
 	 */
 	void addToSession(IJIComObject comObject, byte[] oid)
 	{
+		//nothing will be done if the session is being destroyed.
+		if (sessionInDestroy)
+		{
+			return;
+		}
 		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(),getSessionIdentifier(),false,oid);
 		//mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
-		synchronized (mutex) 
+		synchronized (mapOfObjects) 
 		{
 			mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		}

@@ -59,7 +59,7 @@ import rpc.Stub;
  * @since 1.0
  * 
  */
-public class JIComServer extends Stub {
+public final class JIComServer extends Stub {
 	
 	private static Properties defaults = new Properties();
 	static {
@@ -124,6 +124,10 @@ public class JIComServer extends Stub {
 			throw new JIException(JIErrorCodes.JI_SESSION_ALREADY_ESTABLISHED);
 		}
 
+		if (JISystem.getLogger().isLoggable(Level.INFO))
+		{
+			JISystem.internal_dumpMap();
+		}
 		
 		super.setTransportFactory(JIComTransportFactory.getSingleTon());
 		//now read the session and prepare information for the stub.
@@ -199,8 +203,23 @@ public class JIComServer extends Stub {
 		String address = binding.getNetworkAddress();
 		if (address.indexOf("[") == -1 )//this does not contain the port
 		{
+			String ipAddr = JISystem.getIPForHostName(address); //to use the binding supplied by the user.
+			if (ipAddr != null)
+			{
+				address = ipAddr;
+			}
 			//use 135
 			address = address + "[135]";
+		}
+		else
+		{
+			int index = address.indexOf("[");
+			String hostname = binding.getNetworkAddress().substring(0,index);
+			String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
+			if (ipAddr != null)
+			{
+				address = ipAddr + address.substring(index);
+			}
 		}
 		super.setAddress("ncacn_ip_tcp:" + address);
 		this.session = session;
@@ -300,8 +319,17 @@ public class JIComServer extends Stub {
 			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
 		}
 		
+		address = binding.getNetworkAddress(); //this will always have the port.
+		int index = address.indexOf("[");
+		String hostname = binding.getNetworkAddress().substring(0,index);
+		String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
+		if (ipAddr != null)
+		{
+			address = ipAddr + address.substring(index);
+		}
+		
 		//and currently only TCPIP is supported.
-		setAddress("ncacn_ip_tcp:" + binding.getNetworkAddress());
+		setAddress("ncacn_ip_tcp:" + address);
 		remunknownIPID = oxidResolver.getIPID();
 		interfacePtrCtor = interfacePointer;
 		this.session.setStub(this);
@@ -338,7 +366,7 @@ public class JIComServer extends Stub {
 	/**<p>Refer {@link #JIComServer(JIProgId, JISession)} for details. 
 	 *  
 	 * @param progId user-friendly string such as "Excel.Application" , "TestCOMServer.Test123" etc.
-	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
+	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or a resolvable HostName.
 	 * @param session session to be associated with. 
 	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
 	 * @throws IllegalArgumentException raised when any of the parameters is <code>null</code>.
@@ -372,7 +400,7 @@ public class JIComServer extends Stub {
 	 *  
 	 *  
 	 * @param clsid 128 bit string such as "00024500-0000-0000-C000-000000000046".
-	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or HostName.
+	 * @param address address of the host where the <code>COM</code> object resides.This should be in the IEEE IP format (e.g. 192.168.170.6) or a resolvable HostName.
 	 * @param session session to be associated with. 
 	 * @throws JIException will <i>also</i> get thrown in case the <code>session</code> is associated with another server already.
 	 * @throws IllegalArgumentException raised when any of the parameters is <code>null</code>.
@@ -417,6 +445,12 @@ public class JIComServer extends Stub {
 //			super.getProperties().setProperty("rpc.ntlm.keyLength", "128");
 //			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
 //		}
+		
+		if (JISystem.getLogger().isLoggable(Level.INFO))
+		{
+			JISystem.internal_dumpMap();
+		}
+		
 		this.clsid = clsid.getCLSID().toUpperCase();
 		this.session = session;
 		this.session.setTargetServer(address.substring(address.indexOf(":") + 1,address.indexOf("[")));
@@ -595,7 +629,19 @@ public class JIComServer extends Stub {
 			super.getProperties().setProperty("rpc.ntlm.keyLength", "128");
 			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
 		}
-		setAddress("ncacn_ip_tcp:" + binding.getNetworkAddress());
+		
+		String address = binding.getNetworkAddress(); //this will always have the port.
+		int index = address.indexOf("[");
+		String hostname = binding.getNetworkAddress().substring(0,index);
+		String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
+		if (ipAddr != null)
+		{
+			address = ipAddr + address.substring(index);
+		}
+		
+		//and currently only TCPIP is supported.
+		setAddress("ncacn_ip_tcp:" + address);
+//		setAddress("ncacn_ip_tcp:" + binding.getNetworkAddress());
 		remunknownIPID = remoteActivation.getIPID();
  	}
 

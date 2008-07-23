@@ -98,6 +98,15 @@ public class MSExcel2_Test {
 			System.out.println();
 		}
 
+		//Now write the value down
+		dispRange.put("Value2", new JIVariant(newValue2));
+
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		dispatchOfWorkBook.callMethod("close", new Object[] { Boolean.FALSE, JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM() });
 		dispatch.callMethod("Quit");
 		JISession.destroySession(session);
@@ -119,7 +128,7 @@ public class MSExcel2_Test {
 			//Logger l = Logger.getLogger("org.jinterop");
 			//l.setLevel(Level.FINEST);
 
-			int nRow = 100;
+			int nRow = 600;
 
 			if (args.length > 4) {
     			try {

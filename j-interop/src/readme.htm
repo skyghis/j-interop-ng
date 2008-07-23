@@ -314,7 +314,7 @@ see <code> MSInternetExplorer --> DWebBrowserEvents (BeforeNavigate2 and NewWind
 <p>
 <A Name="A11">(A11)</A>  No, the library does all this on it's own (including pinging the COM server for keeping it alive).
 <p>
-<A Name="A12">(A12)</A> Yes, please make sure that the Server service is running on the
+<A Name="A12">(A12)</A> Yes, please make sure that the Server service and Remote Registry service is running on the
 target workstation (where the COM Server is hosted). This is required for reading the registry to map the ProgIds to their
 clsids. If you can't have this , then please use clsid instead of progId. The <code>progIdVsClsidDB.properties</code> maintains a
 mapping of progId Vs there clsids, if this file is present in the classpath. This file is consulted before the registry
@@ -333,7 +333,8 @@ There is also a method in <code>JISystem.setInBuiltLogHandler</code> which creat
 <A Name="license"><h4><U>License</U></h4></A>
 
 This library is distributed under the LGPL v3.0 (http://www.gnu.org/licenses/lgpl-3.0.html). Please refer
-to the accompanying lgpl.txt for more details. <br>Those not speaking 'legal'ise can have a look <a href="http://www.gnu.org/licenses/lgpl-java.html">here</a> as to what it means.
+to the accompanying lgpl.txt for more details. <br>Those not speaking 'legal'ise can have a look <a href="http://www.gnu.org/licenses/lgpl-java.html">here</a> as to what it means. Incase you would
+like to get a LGPL v2.1 exception for your library , please write to us.
 <p> 
 <hr align=left>
 <A Name="tpd"><h4><U>Third Party Dependencies

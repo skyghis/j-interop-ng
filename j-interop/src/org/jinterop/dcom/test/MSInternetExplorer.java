@@ -30,8 +30,9 @@ public class MSInternetExplorer {
 	private String identifier = null;
 	public MSInternetExplorer(String address, String[] args) throws JIException, UnknownHostException
 	{
+		JISystem.mapHostNametoIP("locutus", "192.168.0.130");
 		session = JISession.createSession(args[1],args[2],args[3]);
-//		session.useSessionSecurity(true);
+		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf("InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
 		IJIComObject ieObjectWebBrowser2 = (IJIComObject)ieObject.queryInterface("D30C1661-CDAF-11D0-8A3E-00C04FC9E26E");
@@ -323,10 +324,15 @@ public class MSInternetExplorer {
 	private void detachCallBack() throws JIException
 	{
 		JIObjectFactory.detachEventHandler(ieObject,identifier);
-		JISession.destroySession(ieObjectDispatch.getAssociatedSession());
 	}
 
 
+	private void quit () throws JIException
+	{
+		ieObjectDispatch.callMethod("Quit");
+		JISession.destroySession(ieObjectDispatch.getAssociatedSession());
+	}
+	
 	public static void main(String[] args) {
 
 		 try {
@@ -346,7 +352,8 @@ public class MSInternetExplorer {
 				internetExplorer.navigateToUrl("http://j-interop.sourceforge.net");
 				Thread.sleep(30000); //for call backs
 				internetExplorer.detachCallBack();
-
+				Thread.sleep(5000); //wait for 5 secs
+				internetExplorer.quit();
 		 } catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

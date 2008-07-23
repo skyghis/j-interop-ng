@@ -1227,7 +1227,20 @@ public final class JIVariant implements Serializable {
 		return ((VariantBody)member.getReferent()).isByRef();
 	}
 	
-	/** Returns the referent as integer.
+	/** Returns the referent as integer. This can be used along with the 
+	 * <code>JIVariant.VT_<i>XX</i></code> flags to find out the type of the referent.
+	 * <P> 
+	 * For example :-
+	 * <p>
+	 * <code>
+	 * switch(variant.getType())<br>
+	 * {<br>
+	 * 	case JIVariant.JI_VARIANT: value = variant.getObjectAsVariant();<br>
+	 *  break; <br>
+	 *  case JIVariant.JI_NULL: ... <br>
+	 *  break; <br>
+	 * }<br>
+	 * </code>
 	 * 
 	 * @return
 	 * @throws JIException 
