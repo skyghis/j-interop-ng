@@ -1235,9 +1235,9 @@ public final class JIVariant implements Serializable {
 	 * <code>
 	 * switch(variant.getType())<br>
 	 * {<br>
-	 * 	case JIVariant.JI_VARIANT: value = variant.getObjectAsVariant();<br>
+	 * 	case JIVariant.VT_VARIANT: value = variant.getObjectAsVariant();<br>
 	 *  break; <br>
-	 *  case JIVariant.JI_NULL: ... <br>
+	 *  case JIVariant.VT_NULL: ... <br>
 	 *  break; <br>
 	 * }<br>
 	 * </code>
