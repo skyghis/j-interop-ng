@@ -96,7 +96,7 @@ final class JIComOxidRuntime {
 		String domain = null;
 		boolean modified = false;
 		boolean closed = false;
-		int seqNum = 0;
+		int seqNum = 1;
 		//JISession session  = null;
 		ArrayList currentSetOIDs = new ArrayList();//list of JIObjectId, this list is iterated and if the IPID ref count is 0 , 
 												//it is added as a delete in set and a complex ping is sent.
