@@ -381,7 +381,7 @@ public final class JISystem {
 	 * , it is sent back an <i>Exception</i>. Please use this flag to set the Auto Collection status 
 	 * to ON or OFF. By Default, it is ON. </p>  
 	 * 
-	 * @param autoCollection <code>true</code> if auto collection should be turned off.
+	 * @param autoCollection <code>false</code> if auto collection should be turned off.
 	 */
 	public static void setJavaCoClassAutoCollection(boolean autoCollection)
 	{
