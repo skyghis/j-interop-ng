@@ -191,6 +191,13 @@ final class JIInterfacePointer implements Serializable {
     
     void encode (NetworkDataRepresentation ndr,List defferedPointers, int FLAG)
     {
+
+    	if ((FLAG & JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT) == JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT)
+		{
+    		//just encode a null.
+    		JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(0),defferedPointers,FLAG);
+    		return;
+		}
     	JIMarshalUnMarshalHelper.serialize(ndr,member.getClass(),member,defferedPointers,FLAG);	
     }
     

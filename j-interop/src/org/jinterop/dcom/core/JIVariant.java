@@ -120,7 +120,7 @@ public final class JIVariant implements Serializable {
 	public static final int FADF_VARIANT    = 0x0800;  /* an array of VARIANTs */
 	public static final int FADF_RESERVED   = 0xF008;  /* reserved bits */
 
-	
+
 	static HashMap supportedTypes = new HashMap();
 	static HashMap supportedTypes_classes = new HashMap();
 	static
@@ -265,6 +265,28 @@ public final class JIVariant implements Serializable {
 	}
 	
 	/**
+	 * <code>VARIANT</code> for <code>([out] IUnknown*)</code>. This is not Thread Safe , hence a new instance must be taken each time.
+	 */
+	public static JIVariant OUT_IUNKNOWN()
+	{
+		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)));
+		retval.setFlag(JIFlags.FLAG_REPRESENTATION_IUNKNOWN_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
+		return retval;
+	}
+	
+	/**
+	 * <code>VARIANT</code> for <code>([out] IDispatch*)</code>. This is not Thread Safe , hence a new instance must be taken each time.
+	 * <br/>Note that this must also be used when the interface pointer is a subclass of <code>IDispatch</code> i.e. supports automation (or is a 
+	 * <code>dispinterface</code>).
+	 */
+	public static JIVariant OUT_IDISPATCH()
+	{
+		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)));
+		retval.setFlag(JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
+		return retval;
+	}
+	
+	/**
 	 * NULL <code>VARIANT</code>
 	 */
 	static final JIVariant NULL = new JIVariant(new NULL());
@@ -324,10 +346,6 @@ public final class JIVariant implements Serializable {
 	
 	private JIVariant(){}
 	
-	//private boolean isArray = false;
-	//private boolean isByRef = false;
-	//private boolean isNull = false;
-	
 	//The class of the object determines its type.
 	/**
 	 * Setting up a <code>VARIANT</code> with an object. Used via serializing the <code>VARIANT</code>.
@@ -339,7 +357,8 @@ public final class JIVariant implements Serializable {
 		init(obj,false);
 	}
 	
-	/** For internal use only !. 
+	/** For internal use only !. Please do not call this directly from outside. It will lead to unexpected results.
+	 * 
 	 * @exclude
 	 * @param obj
 	 * @param isByRef
@@ -1756,6 +1775,12 @@ class VariantBody implements Serializable
 			
 			//Type
 			int varType = getVarType(obj != null ? obj.getClass() : nestedArraysRealClass, obj);
+			
+			//For IUnknown , since the inner object is a JIComObjectImpl it will be fine.
+			if ((FLAG & JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT) == JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT)
+			{
+				varType = JIVariant.VT_DISPATCH;
+			}
 			ndr.writeUnsignedShort(varType);
 			
 			//reserved bytes

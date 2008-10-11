@@ -128,5 +128,20 @@ public final class JIFlags {
 	 * Used in JIVariant when sending a IDispatch Pointer. This is also how COM runtime does it.
 	 */
 	static final int FLAG_REPRESENTATION_USE_IDISPATCH_IID = 131072;
+
+	/**
+	 * Used in JIVariant to identify an ([out] IUnknown*) variable.
+	 */
+	static final int FLAG_REPRESENTATION_IUNKNOWN_NULL_FOR_OUT = 262144;
+	
+	/**
+	 * Used in JIVariant to identify an ([out] IDispatch*) variable.
+	 */
+	static final int FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT = 524288;
+	
+	/**
+	 * Used in JIVariant to send JIInterfacePointer as null.
+	 */
+	static final int FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT = 1048576;
 	
 }
