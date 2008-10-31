@@ -229,6 +229,7 @@ public final class JISession {
 						} catch (JIException e) {
 							JISystem.getLogger().throwing("JISession","addShutDownHook Thread:run()",e);  
 						}
+						i++;
 					}
 					JISystem.internal_writeProgIdsToFile();
 					JIComOxidRuntime.stopResolver();
