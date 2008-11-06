@@ -269,7 +269,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public static JIVariant OUT_IUNKNOWN()
 	{
-		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)));
+		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)),true);
 		retval.setFlag(JIFlags.FLAG_REPRESENTATION_IUNKNOWN_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
 		return retval;
 	}
@@ -281,7 +281,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public static JIVariant OUT_IDISPATCH()
 	{
-		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)));
+		JIVariant retval = new JIVariant(new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null)),true);
 		retval.setFlag(JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
 		return retval;
 	}
@@ -1779,7 +1779,7 @@ class VariantBody implements Serializable
 			//For IUnknown , since the inner object is a JIComObjectImpl it will be fine.
 			if ((FLAG & JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT) == JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT)
 			{
-				varType = JIVariant.VT_DISPATCH;
+				varType = isByRef ? 0x4000 | JIVariant.VT_DISPATCH : JIVariant.VT_DISPATCH;
 			}
 			ndr.writeUnsignedShort(varType);
 			
@@ -2284,12 +2284,12 @@ class VariantBody implements Serializable
 		
 		if (obj instanceof IJIDispatch)
 		{
-			return JIVariant.VT_DISPATCH;
+			return isByRef ? 0x4000 | JIVariant.VT_DISPATCH : JIVariant.VT_DISPATCH;
 		}
 		
 		if (obj instanceof IJIComObject)
 		{
-			return JIVariant.VT_UNKNOWN;
+			return isByRef ? 0x4000 | JIVariant.VT_UNKNOWN : JIVariant.VT_UNKNOWN;
 		}
 		
 		if (c != null)
