@@ -20,6 +20,8 @@ package org.jinterop.dcom.impls.automation;
 /**
  * Exposes error code , exception source, exception description and help file path
  * for an unsuccessful {@link IJIDispatch} operation.
+ * 
+ * @since 2.0
  */
 public final class JIExcepInfo
 {

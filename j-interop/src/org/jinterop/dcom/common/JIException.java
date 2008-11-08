@@ -23,7 +23,7 @@ package org.jinterop.dcom.common;
  * @since 1.0
  */
 
-public final class JIException extends Exception
+public class JIException extends Exception
 {
 
 	

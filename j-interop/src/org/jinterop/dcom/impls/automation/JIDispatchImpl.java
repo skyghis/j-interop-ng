@@ -330,8 +330,11 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 				                                                                    ((Integer)excepInfoRet.getMember(8)).intValue();
 				
 				
-				throw new JIException(obj.getHRESULT(),JISystem.getLocalizedMessage(obj.getHRESULT()) + " ==> Message from Server: " +
-				text1 + text2 + text3);
+				JIAutomationException automationException = new JIAutomationException(e);
+				automationException.setExcepInfo(lastExcepInfo);
+				throw automationException;
+//				throw new JIException(obj.getHRESULT(),JISystem.getLocalizedMessage(obj.getHRESULT()) + " ==> Message from Server: " +
+//				text1 + text2 + text3);
 			}
 			else
 			{
