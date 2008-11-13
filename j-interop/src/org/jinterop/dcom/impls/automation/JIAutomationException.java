@@ -29,11 +29,14 @@ public final class JIAutomationException extends JIException {
 		super(e.getErrorCode(),e.getMessage(),e.getCause());
 	}
 
-	private JIExcepInfo excepInfo = null;
+	private JIExcepInfo excepInfo = new JIExcepInfo();
 	
 	void setExcepInfo(JIExcepInfo excepInfo)
 	{
-		this.excepInfo = excepInfo;
+		this.excepInfo.errorCode = excepInfo.errorCode;
+		this.excepInfo.excepDesc = excepInfo.excepDesc;
+		this.excepInfo.excepHelpfile = excepInfo.excepHelpfile;
+		this.excepInfo.excepSource = excepInfo.excepSource;
 	}
 	
 	/** Returns the <code>EXCEPINFO</code> structure.
