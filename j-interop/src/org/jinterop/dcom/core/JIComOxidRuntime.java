@@ -203,111 +203,108 @@ final class JIComOxidRuntime {
 	{
 		public void run() {
 
-			synchronized (mutex3) {
+			Iterator itr = null;
+			synchronized (mutex3) 
+			{
+				itr = ((Map)mapOfSessionVsPingSetHolder.clone()).entrySet().iterator();
+			}
 
 				
-				if (JISystem.getLogger().isLoggable(Level.INFO))
+			if (JISystem.getLogger().isLoggable(Level.INFO))
+			{
+				JISystem.getLogger().info("Running ClientPingTimerTask !");
+			}
+			//iterate over the map and get the corresponding stubs and use there sessions to 
+			//stub is created here and used per address
+			
+			//if set id is null send a complex ping to get back the set id for all the OIDs in the
+			//PingSetHolder
+			
+			while(itr.hasNext())
+			{
+				Map.Entry entry = (Map.Entry)itr.next();
+				PingSetHolder holder = (PingSetHolder)(entry).getValue();
+				String address = ((JISession)entry.getKey()).getTargetServer();
+				//will get it from the cache, since it is getting called after every 4 minutes
+				//what if this stub has timed out, I guess I will have to ask the developers to increase the timeout for now.
+				JIComOxidStub stub = (JIComOxidStub)mapOfAddressVsStub.get(address);
+				if (stub == null)
 				{
-					JISystem.getLogger().info("Running ClientPingTimerTask !");
+					stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password);
+					mapOfAddressVsStub.put(address, stub);
 				}
-				//iterate over the map and get the corresponding stubs and use there sessions to 
-				//stub is created here and used per address
-				
-				//if set id is null send a complex ping to get back the set id for all the OIDs in the
-				//PingSetHolder
-				
-				Iterator itr = mapOfSessionVsPingSetHolder.entrySet().iterator();
-				
-				while(itr.hasNext())
+				ArrayList listOfAddedOIDs = new ArrayList();
+				ArrayList listOfRemovedOIDs = new ArrayList();
+				//form a list if OID is 0 ref
+				synchronized (mutex3) 
 				{
-					Map.Entry entry = (Map.Entry)itr.next();
-					PingSetHolder holder = (PingSetHolder)(entry).getValue();
-					String address = ((JISession)entry.getKey()).getTargetServer();
-					//will get it from the cache, since it is getting called after every 4 minutes
-					//what if this stub has timed out, I guess I will have to ask the developers to increase the timeout for now.
-					JIComOxidStub stub = (JIComOxidStub)mapOfAddressVsStub.get(address);
-					if (stub == null)
+					for (Iterator itr2 = holder.currentSetOIDs.iterator();itr2.hasNext();)
 					{
-						stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password);
-						mapOfAddressVsStub.put(address, stub);
-					}
-					ArrayList listOfAddedOIDs = new ArrayList();
-					ArrayList listOfRemovedOIDs = new ArrayList();
-//					if (holder.setId == null)
-//					{
-//						//complex ping, with all as additions
-//						listOfAddedOIDs.addAll(holder.currentSetOIDs);
-//					}
-//					else
-					{
-						//form a list if OID is 0 ref
-						for (Iterator itr2 = holder.currentSetOIDs.iterator();itr2.hasNext();)
+						JIObjectId oid = (JIObjectId)itr2.next();
+						if (oid.getIPIDRefCount() == 0)
 						{
-							JIObjectId oid = (JIObjectId)itr2.next();
-							if (oid.getIPIDRefCount() == 0)
+							listOfRemovedOIDs.add(oid);
+							holder.modified = true;
+							itr2.remove();
+							holder.pingedOnce.remove(oid);
+						}
+						else
+						{
+							if (!holder.pingedOnce.containsKey(oid))
 							{
-								listOfRemovedOIDs.add(oid);
-								//listOfAddedOIDs.add(oid); //just in case this was never actually added to the set.
+								listOfAddedOIDs.add(oid);
+								holder.pingedOnce.put(oid, oid);
 								holder.modified = true;
-								itr2.remove();
-								holder.pingedOnce.remove(oid);
-							}
-							else
-							{
-								if (!holder.pingedOnce.containsKey(oid))
-								{
-									listOfAddedOIDs.add(oid);
-									holder.pingedOnce.put(oid, oid);
-									holder.modified = true;
-								}
 							}
 						}
-						
-						if (JISystem.getLogger().isLoggable(Level.INFO))
-                        {
-							JISystem.getLogger().info("Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is " + holder.currentSetOIDs.size());
-                        }
 					}
-					
-					//this is the first time this is going and objects with no references will not be added to ping set.
-					if (holder.setId == null)
-					{
-						listOfRemovedOIDs.clear();
-					}
-					
-					boolean isSimplePing = false;
-					
-					//No additions and no deletions
-					if (holder.setId != null && !holder.modified)
-					{
-						//send simple set ping
-						isSimplePing = true;
-					}
-					
-					//seqNum will be 0 for simple ping, but incremented for complex pings. seqNum is per setId. first one will be 0 and increments
-					//there on...
-					holder.setId = stub.call(isSimplePing,holder.setId,listOfAddedOIDs,listOfRemovedOIDs, isSimplePing ? 0 : holder.seqNum++);
-					
-					if (JISystem.getLogger().isLoggable(Level.FINEST))
+				}				
+				if (JISystem.getLogger().isLoggable(Level.INFO))
+                {
+					JISystem.getLogger().info("Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is " + holder.currentSetOIDs.size());
+                }
+				
+				//this is the first time this is going and objects with no references will not be added to ping set.
+				if (holder.setId == null)
+				{
+					listOfRemovedOIDs.clear();
+				}
+				
+				boolean isSimplePing = false;
+				
+				//No additions and no deletions
+				if (holder.setId != null && !holder.modified)
+				{
+					//send simple set ping
+					isSimplePing = true;
+				}
+				
+				//seqNum will be 0 for simple ping, but incremented for complex pings. seqNum is per setId. first one will be 0 and increments
+				//there on...
+				holder.setId = stub.call(isSimplePing,holder.setId,listOfAddedOIDs,listOfRemovedOIDs, isSimplePing ? 0 : holder.seqNum++);
+				
+				if (JISystem.getLogger().isLoggable(Level.FINEST))
+                {
+					JISystem.getLogger().info("Within ClientPingTimerTask: holder.seqNum " + holder.seqNum);
+                }
+				
+				holder.modified = false;
+				//stub.close(); commenting this since we are caching the stub.
+				if (holder.closed)
+				{
+					//this means that this set is empty and there is no need for it. The set has emptied  itself and
+					//will get removed from COM servers side as well.
+					if (JISystem.getLogger().isLoggable(Level.INFO))
                     {
-						JISystem.getLogger().info("Within ClientPingTimerTask: holder.seqNum " + holder.seqNum);
+						JISystem.getLogger().info("Within ClientPingTimerTask: Holder " + holder + " is empty, will remove this from mapOfSessionVsPingSetHolder, whose curent size is: " + mapOfSessionVsPingSetHolder.size());
                     }
-					
-					holder.modified = false;
-					//stub.close(); commenting this since we are caching the stub.
-					if (holder.closed)
+					itr.remove();
+					synchronized (mutex3) 
 					{
-						//this means that this set is empty and there is no need for it. The set has emptied  itself and
-						//will get removed from COM servers side as well.
-						if (JISystem.getLogger().isLoggable(Level.INFO))
-                        {
-							JISystem.getLogger().info("Within ClientPingTimerTask: Holder " + holder + " is empty, will remove this from mapOfSessionVsPingSetHolder, whose curent size is: " + mapOfSessionVsPingSetHolder.size());
-                        }
-						itr.remove();
+						mapOfSessionVsPingSetHolder.remove(entry.getKey());
 					}
 				}
 			}
-		
 		}
 	}
 	
