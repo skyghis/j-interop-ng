@@ -838,6 +838,11 @@ public final class JIComServer extends Stub {
 	{
 		synchronized (mutex) {
 			
+			if (session.isSessionInDestroy() && !obj.fromDestroySession)
+			{
+				throw new JIException(JIErrorCodes.JI_SESSION_DESTROYED);
+			}
+
 			if (socketTimeout != 0)
 			{
 				setSocketTimeOut(socketTimeout);

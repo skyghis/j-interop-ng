@@ -616,5 +616,12 @@ public final class JIErrorCodes {
   */
  public static final int JI_SESSION_NOT_ATTACHED = 0x00001050;
  
+ /**
+  * The associated session is being destroyed. Current call to COM server has been terminated.
+  */
+ public static final int JI_SESSION_DESTROYED = 0x00001051;
+ 
+ 
+ 
  
 }

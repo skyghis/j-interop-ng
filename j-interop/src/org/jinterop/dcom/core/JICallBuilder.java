@@ -77,6 +77,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	private boolean executed = false;
 	private Object[] resultsOfException = null;
 	private JISession session = null;
+	boolean fromDestroySession = false;
 	
 	/** Constructs a builder object.
 	 * 

@@ -280,7 +280,7 @@ public final class JISession {
 				{
 					JIArray array = new JIArray(listToKill.toArray(new JIStruct[listToKill.size()]),true);
 					try{
-						session.releaseRefs(array);
+						session.releaseRefs(array,false);
 					}catch(JIException e)
 					{
 						//This release cycle has to go on.
@@ -460,103 +460,126 @@ public final class JISession {
 	 */
 	public static void destroySession(JISession session) throws JIException
 	{
-		if (session == null || session.stub == null)
+		//null session
+		if (session == null)
 		{
 			return;
 		}
-		//synchronized (mutex) 
+		
+		//if stub is null then cleanup datastructures holding the session object only
+		if (session.stub == null)
 		{
-			try{
-				//session may have been destroyed and this call is from finalize.
-				ArrayList list = new ArrayList();
-				synchronized (mutex)
-				{
-					session.sessionInDestroy = true;
-					//list of dereferenced IPIDs
-					for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
-					{
-						list.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
-					}
-					
-					session.listOfDeferencedIpids.clear();
-				}
-				//now take all the objects registered with this session and call release on them.
-				Iterator iterator = mapOfObjects.keySet().iterator();
-				synchronized (mapOfObjects) {
-					while(iterator.hasNext())
-					{
-						//String ipid = (String)session.mapOfObjects.get(iterator.next());
-						IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
-						if (session.getSessionIdentifier() != holder.sessionID.intValue())
-						{
-							continue;
-						}
-		    			String ipid = holder.IPID;
-						if (ipid == null)
-						{
-							continue;
-						}
-						list.add(session.prepareForReleaseRef(ipid));
-						//iterator.remove();
-					}
-				}
-				
-				//now to kill the stub itself
-				if(session.stub.getServerInterfacePointer() != null)
-				{
-					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
-				}
-				
-				//release is performed if only something is in the session.
-				if (list.size() > 0)
-				{
-					JIArray array = new JIArray(list.toArray(new JIStruct[list.size()]),true);
-					try{
-						session.releaseRefs(array);
-					}catch(JIException e)
-					{
-						//This release cycle has to go on.
-						JISystem.getLogger().throwing("JISession","destroySession",e);
-					}
-				}
-				
-				JIComOxidRuntime.clearIPIDsforSession(session);
-				if (JISystem.getLogger().isLoggable(Level.INFO))
-				{
-					JISystem.getLogger().info("Destroyed Session: " + session.sessionIdentifier);
-				}
-			}finally
+			synchronized (mutex)
 			{
-				synchronized (mutex)
-				{
-					mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
-					listOfSessions.remove(session);
-					// and remove its entry from the map
-					if(session.stub.getServerInterfacePointer() != null)
-					{
-						mapOfOxidsVsJISessions.remove(new JIOxid(session.stub.getServerInterfacePointer().getOXID()));
-					}
-				}
-				session.stub.closeStub();
-				session.stub = null;
+				mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
+				listOfSessions.remove(session);
 			}
 			
-			//now destroy all linked sessions
-			if (JISystem.getLogger().isLoggable(Level.INFO))
-			{
-				JISystem.getLogger().info("About to destroy links for Session: " + session.getSessionIdentifier() + " , size of which is " + session.links.size());
-			}
-			
-			for (int i = 0; i < session.links.size();i++)
-			{
-				JISession.destroySession((JISession)session.links.get(i));
-			}
-			session.links.clear();
+			//now remove the links and the OIDs
+			postDestroy(session);
+			return;
 		}
 		
+		try{
+			//session may have been destroyed and this call is from finalize.
+			ArrayList list = new ArrayList();
+			synchronized (mutex)
+			{
+				if (session.sessionInDestroy)
+				{
+					return;
+				}
+				session.sessionInDestroy = true;
+				//list of dereferenced IPIDs
+				for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
+				{
+					list.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
+				}
+				
+				session.listOfDeferencedIpids.clear();
+			}
+			
+			synchronized (mapOfObjects) {
+				//now take all the objects registered with this session and call release on them.
+				Iterator iterator = mapOfObjects.keySet().iterator();
+				while(iterator.hasNext())
+				{
+					//String ipid = (String)session.mapOfObjects.get(iterator.next());
+					IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
+					if (session.getSessionIdentifier() != holder.sessionID.intValue())
+					{
+						continue;
+					}
+	    			String ipid = holder.IPID;
+					if (ipid == null)
+					{
+						continue;
+					}
+					list.add(session.prepareForReleaseRef(ipid));
+					//iterator.remove();
+				}
+			}
+			
+			//now to kill the stub itself
+			if(session.stub.getServerInterfacePointer() != null)
+			{
+				list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
+			}
+			
+			//release is performed if only something is in the session.
+			if (list.size() > 0)
+			{
+				JIArray array = new JIArray(list.toArray(new JIStruct[list.size()]),true);
+				try{
+					session.stub.closeStub(); //close the existing connection, next call will reopen it.
+					session.releaseRefs(array,true);
+				}catch(JIException e)
+				{
+					//This release cycle has to go on.
+					JISystem.getLogger().throwing("JISession","destroySession",e);
+				}
+			}
+			
+			JIComOxidRuntime.clearIPIDsforSession(session);
+			if (JISystem.getLogger().isLoggable(Level.INFO))
+			{
+				JISystem.getLogger().info("Destroyed Session: " + session.sessionIdentifier);
+			}
+		}finally
+		{
+			synchronized (mutex)
+			{
+				mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
+				listOfSessions.remove(session);
+				// and remove its entry from the map
+				if(session.stub.getServerInterfacePointer() != null)
+				{
+					mapOfOxidsVsJISessions.remove(new JIOxid(session.stub.getServerInterfacePointer().getOXID()));
+				}
+			}
+			session.stub.closeStub();
+		}
+		
+		postDestroy(session);
+		session.stub = null; //setting it null in the end.
+	}
+	
+	private static void postDestroy(JISession session) throws JIException
+	{
+		//now destroy all linked sessions
+		if (JISystem.getLogger().isLoggable(Level.INFO))
+		{
+			JISystem.getLogger().info("About to destroy links for Session: " + session.getSessionIdentifier() + " , size of which is " + session.links.size());
+		}
+		
+		for (int i = 0; i < session.links.size();i++)
+		{
+			JISession.destroySession((JISession)session.links.get(i));
+		}
+		
+		session.links.clear();
 		//finally any oids exported by this session.
 		JIComOxidRuntime.destroySessionOIDs(session.getSessionIdentifier());
-		
 	}
 	
 	//each session is associated with 1 and only 1 stub.
@@ -661,17 +684,19 @@ public final class JISession {
 		JIComOxidRuntime.delIPIDReference(IPID,new JIObjectId(oid),this);
 	}
 	
-	private void releaseRefs(JIArray arrayOfStructs) throws JIException
+	private void releaseRefs(JIArray arrayOfStructs, boolean fromDestroy) throws JIException
 	{
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info("In releaseRefs for session : " + getSessionIdentifier() + " , array length is: " + (short)(((Object[])arrayOfStructs.getArrayInstance()).length));
 		}
+		
 		JICallBuilder obj = new JICallBuilder(true);
 		obj.setOpnum(2);//release
 		//length
 		obj.addInParamAsShort((short)(((Object[])arrayOfStructs.getArrayInstance()).length),JIFlags.FLAG_NULL);
 		obj.addInParamAsArray(arrayOfStructs,JIFlags.FLAG_NULL);
+		obj.fromDestroySession = fromDestroy;
 		stub.addRef_ReleaseRef(obj);
 		
 		//ignore the results
@@ -876,7 +901,10 @@ public final class JISession {
 		}
 	}
 	
-	
+	boolean isSessionInDestroy()
+	{
+		return sessionInDestroy;
+	}
    
 	
 }
