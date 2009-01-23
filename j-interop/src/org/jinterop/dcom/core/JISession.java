@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.jinterop.dcom.common.IJIAuthInfo;
@@ -501,11 +502,14 @@ public final class JISession {
 			
 			synchronized (mapOfObjects) {
 				//now take all the objects registered with this session and call release on them.
-				Iterator iterator = mapOfObjects.keySet().iterator();
+//				Iterator iterator = mapOfObjects.keySet().iterator();
+				Iterator iterator = mapOfObjects.entrySet().iterator();
 				while(iterator.hasNext())
 				{
 					//String ipid = (String)session.mapOfObjects.get(iterator.next());
-					IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
+					Entry entry = (Entry)iterator.next();
+//					IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
+					IPID_SessionID_Holder holder = (IPID_SessionID_Holder)entry.getValue();
 					if (session.getSessionIdentifier() != holder.sessionID.intValue())
 					{
 						continue;
@@ -516,7 +520,7 @@ public final class JISession {
 						continue;
 					}
 					list.add(session.prepareForReleaseRef(ipid));
-					//iterator.remove();
+					iterator.remove();
 				}
 			}
 			
