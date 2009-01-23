@@ -114,10 +114,10 @@ final class JIComTransport implements Transport {
         try {
             if (socket != null) 
         	{
-            	input.close();
-            	output.close();
-//            	socket.shutdownInput();
-//            	socket.shutdownOutput();
+//            	input.close();
+//            	output.close();
+            	socket.shutdownInput();
+            	socket.shutdownOutput();
             	socket.close();
             	if (JISystem.getLogger().isLoggable(Level.FINEST))
             	{
