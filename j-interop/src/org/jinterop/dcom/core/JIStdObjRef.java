@@ -70,7 +70,8 @@ final class JIStdObjRef implements Serializable {
 //		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //	   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), objRef.oid, 0, objRef.oid.length);
 //	   	objRef.oidString = byteArrayOutputStream.toString();
-	   		
+
+		
 		try {
 			rpc.core.UUID ipid2 = new rpc.core.UUID();
 			ipid2.decode(ndr,ndr.getBuffer());
@@ -79,6 +80,15 @@ final class JIStdObjRef implements Serializable {
 			
 			JISystem.getLogger().throwing("JIStdObjRef","decode",e);  
 		}
+
+//		if (JISystem.getLogger().isLoggable(Level.WARNING))
+//        {
+//			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//		   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), objRef.oid, 0, objRef.oid.length);
+//		   	JISystem.getLogger().warning("Decode of StdObjref Adding references for " + objRef.ipidOfthisObjectRef + " , num references recieved from COM server: " + objRef.publicRefs + " , the OID is " + byteArrayOutputStream.toString());
+//		   	JISession.debug_addIpids(objRef.ipidOfthisObjectRef, 5);
+//        }
+
 		
 		return objRef;
 	}

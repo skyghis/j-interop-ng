@@ -17,7 +17,7 @@
 
 package org.jinterop.dcom.impls.automation;
 
-import org.jinterop.dcom.common.JIException;;
+import org.jinterop.dcom.common.JIException;
 
 /** Class for signifying Automation related exceptions. 
  * 

@@ -110,6 +110,10 @@ public final class JIFrameworkHelper {
 		JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
 		if (!JIInterfacePointer.isOxidEqual(stubPtr, ptr))
 		{
+			if (JISystem.getLogger().isLoggable(Level.WARNING))
+			{
+				JISystem.getLogger().warning("NEW SESSION IDENTIFIED ! for ptr " + ptr);
+			}
 		    //first check if a session for this OXID does not already exist and thus its stub
 			JISession newsession = JIFrameworkHelper.resolveSessionForOXID(ptr.getOXID());
 			if (newsession == null)

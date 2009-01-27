@@ -484,6 +484,7 @@ public final class JISession {
 		try{
 			//session may have been destroyed and this call is from finalize.
 			ArrayList list = new ArrayList();
+			ArrayList listOfFreeIPIDs = new ArrayList();
 			synchronized (mutex)
 			{
 				if (session.sessionInDestroy)
@@ -496,7 +497,7 @@ public final class JISession {
 				{
 					list.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
 				}
-				
+				listOfFreeIPIDs.addAll(session.listOfDeferencedIpids);
 				session.listOfDeferencedIpids.clear();
 			}
 			
@@ -519,7 +520,11 @@ public final class JISession {
 					{
 						continue;
 					}
-					list.add(session.prepareForReleaseRef(ipid));
+					if (!listOfFreeIPIDs.contains(ipid))
+					{
+						list.add(session.prepareForReleaseRef(ipid));
+						listOfFreeIPIDs.add(ipid);
+					}
 					iterator.remove();
 				}
 			}
@@ -527,9 +532,14 @@ public final class JISession {
 			//now to kill the stub itself
 			if(session.stub.getServerInterfacePointer() != null)
 			{
-				list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
+				if (!listOfFreeIPIDs.contains(session.stub.getServerInterfacePointer().getIPID()))
+				{
+					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
+					listOfFreeIPIDs.add(session.stub.getServerInterfacePointer().getIPID());
+				}
 			}
 			
+			listOfFreeIPIDs.clear();
 			//release is performed if only something is in the session.
 			if (list.size() > 0)
 			{
@@ -606,6 +616,7 @@ public final class JISession {
 	 */
 	void addToSession(IJIComObject comObject, byte[] oid)
 	{
+		
 		//nothing will be done if the session is being destroyed.
 		if (sessionInDestroy)
 		{
@@ -622,6 +633,30 @@ public final class JISession {
 		{
 			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier());
 		}
+		
+//		Integer value = (Integer)mapOfIPIDSvsCount.get(comObject.getIpid());
+//		if (value == null)
+//		{
+//			mapOfIPIDSvsCount.put(comObject.getIpid(), new Integer(0));
+//		}
+		
+//		debug_addIpids(comObject.getIpid(),((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs());
+	}
+	
+	static void debug_addIpids(String ipid,int num)
+	{
+//		Integer value = (Integer)mapOfIPIDSvsCount.get(ipid);
+//		if (value == null)
+//		{
+//			value = new Integer(0);
+//		}
+//		mapOfIPIDSvsCount.put(ipid, new Integer(value.intValue() + num));
+	}
+	
+	static void debug_delIpids(String ipid,int num)
+	{
+//		Integer value = (Integer)mapOfIPIDSvsCount.get(ipid);
+//		mapOfIPIDSvsCount.put(ipid, new Integer(value.intValue() - num));
 	}
 	
 	/**
@@ -641,6 +676,17 @@ public final class JISession {
 		}
 	}
 	
+//	private static Map mapOfIPIDSvsCount = new HashMap();
+	
+	
+	
+//	public static void debug_dumpIpidVsCountMap()
+//	{
+//		if (JISystem.getLogger().isLoggable(Level.WARNING))
+//		{
+//			JISystem.getLogger().warning("Dumping mapOfIPIDSvsCount " + mapOfIPIDSvsCount.toString());
+//		}
+//	}
 	
 	//this gets called from the cleanupthread and no place else and it calls the releaseRef of session which 
 	//internally calls the add_releaseRef of the JIComServer, that method is synched at the instance level.
@@ -668,6 +714,11 @@ public final class JISession {
 		// same with release.
 		obj.addInParamAsInt(5,JIFlags.FLAG_NULL);
 		obj.addInParamAsInt(0,JIFlags.FLAG_NULL);//private refs = 0
+		if (JISystem.getLogger().isLoggable(Level.WARNING))
+        {
+			JISystem.getLogger().warning("releaseRef: Releasing 5 references of IPID: " + IPID + " session: " + getSessionIdentifier());
+			debug_delIpids(IPID, 5);
+        }
 		stub.addRef_ReleaseRef(obj);
 	}
 
@@ -680,7 +731,10 @@ public final class JISession {
 		}
 		
 		synchronized (mutex) {
-			listOfDeferencedIpids.add(IPID);	
+			if (!listOfDeferencedIpids.contains(IPID))
+			{
+				listOfDeferencedIpids.add(IPID);
+			}
 		}
 		
 		//Will call the JIComOxidRuntime, and that is synched on mutex3, but that will not cause a deadlock, since
@@ -712,6 +766,11 @@ public final class JISession {
 		remInterface.addMember(new rpc.core.UUID(IPID));
 		remInterface.addMember(new Integer(5 + 5)); // 5 of the original and 5 for the addRef done later on.
 		remInterface.addMember(new Integer(0));//private refs = 0
+		if (JISystem.getLogger().isLoggable(Level.WARNING))
+        {
+			JISystem.getLogger().warning("prepareForReleaseRef: Releasing 10 references of IPID: " + IPID + " session: " + getSessionIdentifier());
+			debug_delIpids(IPID, 10);
+        }
 		return remInterface;
 	}
 
