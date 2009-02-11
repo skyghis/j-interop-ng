@@ -21,6 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.logging.Level;
+
+import org.jinterop.dcom.common.JISystem;
 
 final class JIObjectId implements Serializable {
 
@@ -28,7 +31,7 @@ final class JIObjectId implements Serializable {
 	private final byte[] oid ;
 	private int refcountofIPID = 0;
 	private long lastPingTime = System.currentTimeMillis();
-//	private List listOfIpids = new ArrayList();
+	final boolean dontping;
 	
 	int getIPIDRefCount()
 	{
@@ -69,9 +72,17 @@ final class JIObjectId implements Serializable {
 		refcountofIPID++;
 	}
 	
-	JIObjectId(byte[] oid)
+	JIObjectId(byte[] oid, boolean dontping)
 	{
 		this.oid = oid;
+		this.dontping = dontping;
+		if (dontping)
+		{
+			if (JISystem.getLogger().isLoggable(Level.INFO))
+            {
+				JISystem.getLogger().info("DONT PING is true for OID: " + toString());
+            }
+		}
 	}
 	
 	byte[] getOID()

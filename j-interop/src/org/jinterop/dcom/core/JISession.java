@@ -628,7 +628,8 @@ public final class JISession {
 		{
 			mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
 		}
-		addToSession(comObject.getIpid(),oid);
+		//setting if NO PING flag has been set to true.
+		addToSession(comObject.getIpid(),oid,((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getFlags() == 0x00001000 );
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier());
@@ -663,12 +664,12 @@ public final class JISession {
 	 * @exclude
 	 * @param IPID
 	 */
-	private void addToSession(String IPID,byte[] oid)
+	private void addToSession(String IPID,byte[] oid, boolean dontping)
 	{
 		//Weak reference of the object
 		//mapOfObjects.put(new WeakReference(IPID,referenceQueueOfCOMObjects),IPID);
 		//it does not matter if we create a new OID here, the OxidCOMRunttime API uses the OID in the MAP , and not this one.
-		JIObjectId joid = new JIObjectId(oid);
+		JIObjectId joid = new JIObjectId(oid,dontping);
 		JIComOxidRuntime.addUpdateOXIDs(this,IPID,joid);
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
@@ -714,7 +715,7 @@ public final class JISession {
 		// same with release.
 		obj.addInParamAsInt(5,JIFlags.FLAG_NULL);
 		obj.addInParamAsInt(0,JIFlags.FLAG_NULL);//private refs = 0
-		if (JISystem.getLogger().isLoggable(Level.WARNING))
+		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
 			JISystem.getLogger().warning("releaseRef: Releasing 5 references of IPID: " + IPID + " session: " + getSessionIdentifier());
 			debug_delIpids(IPID, 5);
@@ -739,7 +740,7 @@ public final class JISession {
 		
 		//Will call the JIComOxidRuntime, and that is synched on mutex3, but that will not cause a deadlock, since
 		//it or rather any method of JIComOxidRuntime does not call back into JISession.
-		JIComOxidRuntime.delIPIDReference(IPID,new JIObjectId(oid),this);
+		JIComOxidRuntime.delIPIDReference(IPID,new JIObjectId(oid,false),this);
 	}
 	
 	private void releaseRefs(JIArray arrayOfStructs, boolean fromDestroy) throws JIException
@@ -766,7 +767,7 @@ public final class JISession {
 		remInterface.addMember(new rpc.core.UUID(IPID));
 		remInterface.addMember(new Integer(5 + 5)); // 5 of the original and 5 for the addRef done later on.
 		remInterface.addMember(new Integer(0));//private refs = 0
-		if (JISystem.getLogger().isLoggable(Level.WARNING))
+		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
 			JISystem.getLogger().warning("prepareForReleaseRef: Releasing 10 references of IPID: " + IPID + " session: " + getSessionIdentifier());
 			debug_delIpids(IPID, 10);

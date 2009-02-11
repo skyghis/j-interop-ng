@@ -243,14 +243,17 @@ final class JIComOxidRuntime {
 						JIObjectId oid = (JIObjectId)itr2.next();
 						if (oid.getIPIDRefCount() == 0)
 						{
-							listOfRemovedOIDs.add(oid);
-							holder.modified = true;
+							if (!oid.dontping)
+							{
+								listOfRemovedOIDs.add(oid);
+								holder.pingedOnce.remove(oid);
+								holder.modified = true;
+							}
 							itr2.remove();
-							holder.pingedOnce.remove(oid);
 						}
 						else
 						{
-							if (!holder.pingedOnce.containsKey(oid))
+							if (!oid.dontping && !holder.pingedOnce.containsKey(oid))
 							{
 								listOfAddedOIDs.add(oid);
 								holder.pingedOnce.put(oid, oid);
@@ -437,7 +440,7 @@ final class JIComOxidRuntime {
 	static synchronized void startResolverTimer()
 	{
 		//schedule only 1 timer task , the task to ping the OIDs obtained.
-		pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(),0,(int) (5 * 60 * 1000));
+		pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(),0,(int) (2 * 60 * 1000));
 		if (JISystem.isJavaCoClassAutoCollectionSet())
 		{
 			pingTimer_8minutes.scheduleAtFixedRate(new ServerPingTimerTask(),0,8 * 60 * 1000);
@@ -558,7 +561,7 @@ final class JIComOxidRuntime {
 			byte[] bytes2 = new byte[8]; 
 			randomGen.nextBytes(bytes2);
 			
-			JIObjectId oid = new JIObjectId(bytes2);
+			JIObjectId oid = new JIObjectId(bytes2,false);
 			
 			component.setObjectId(oid.getOID());
 			

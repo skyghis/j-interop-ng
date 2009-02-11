@@ -317,14 +317,14 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 		ArrayList listOfAdds = new ArrayList();
 		for (int i = 0; i < lengthAdds.intValue(); i++ )
 		{
-			listOfAdds.add(new JIObjectId(JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8)));
+			listOfAdds.add(new JIObjectId(JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8),false));
 		}
 		
 		JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,null,JIFlags.FLAG_NULL,null);//length
 		ArrayList listOfDels = new ArrayList();
 		for (int i = 0; i < lengthDels.intValue(); i++ )
 		{
-			listOfDels.add(new JIObjectId(JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8)));
+			listOfDels.add(new JIObjectId(JIMarshalUnMarshalHelper.readOctetArrayLE(ndr,8),false));
 		}
 		
 		if (Arrays.equals(b,new byte[]{0,0,0,0,0,0,0,0}))
