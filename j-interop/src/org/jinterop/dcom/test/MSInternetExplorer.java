@@ -349,7 +349,7 @@ public class MSInternetExplorer {
 				MSInternetExplorer internetExplorer = new MSInternetExplorer(args[0],args);
 				internetExplorer.setVisible();
 				internetExplorer.attachCallBack();
-				internetExplorer.navigateToUrl("http://j-interop.sourceforge.net");
+				internetExplorer.navigateToUrl("http://www.sqlshark.com");
 				Thread.sleep(30000); //for call backs
 				internetExplorer.detachCallBack();
 				Thread.sleep(5000); //wait for 5 secs
