@@ -58,7 +58,7 @@ final class JIComOxidRuntime {
 	private static Properties defaults2 = new Properties();
 	private static boolean stopSystem = false;
 	private static boolean resolverStarted = false;
-	private static ArrayList listOfSockets = new ArrayList();
+//	private static ArrayList listOfSockets = new ArrayList();
 	private static int oxidResolverPort = -1; 
 	
 	private static HashMap mapOfIPIDVsComponent = new HashMap(); //java client , com server
@@ -467,7 +467,7 @@ final class JIComOxidRuntime {
 				    // server infinite loop
 				    while(!stopSystem) {
 				    	Socket socket = serverSocket.accept();
-				    	listOfSockets.add(socket);
+				    	//listOfSockets.add(socket);
 				    	//System.err.println("VIKRAM: Accepting new Call from " + socket.getPort());
 				    	//in a multithreaded scenario this will be serialized.
 				    	synchronized (mutex) {
@@ -485,13 +485,13 @@ final class JIComOxidRuntime {
 			   }
 				
 				 //close all sockets.
-			    for (int i = 0; i < listOfSockets.size(); i++)
-			    {
-			    	Socket s = (Socket)listOfSockets.get(i);
-			    	try {
-						s.close();
-					} catch (IOException e) {}
-			    }
+//			    for (int i = 0; i < listOfSockets.size(); i++)
+//			    {
+//			    	Socket s = (Socket)listOfSockets.get(i);
+//			    	try {
+//						s.close();
+//					} catch (IOException e) {}
+//			    }
 			}
 		};
 		
