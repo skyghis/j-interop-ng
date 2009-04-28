@@ -520,7 +520,11 @@ public final class JISession {
 					{
 						continue;
 					}
-					if (!listOfFreeIPIDs.contains(ipid))
+					
+					//Commenting the line below since there could be more than one reference of a COM object taken in by 
+					//j-Interop (via the client of j-Interop) and mapOfObjects will contain two references in this case.
+					//This was identified for the issue reported by Aquafold in sql dbg.
+//					if (!listOfFreeIPIDs.contains(ipid))
 					{
 						list.add(session.prepareForReleaseRef(ipid));
 						listOfFreeIPIDs.add(ipid);
@@ -643,6 +647,9 @@ public final class JISession {
 		
 //		debug_addIpids(comObject.getIpid(),((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs());
 	}
+	
+	//just for testing
+	private static Map mapOfIPIDSvsCount = Collections.synchronizedMap(new HashMap());
 	
 	static void debug_addIpids(String ipid,int num)
 	{
@@ -770,8 +777,8 @@ public final class JISession {
 		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
 			JISystem.getLogger().warning("prepareForReleaseRef: Releasing 10 references of IPID: " + IPID + " session: " + getSessionIdentifier());
-			debug_delIpids(IPID, 10);
         }
+		debug_delIpids(IPID, 10);
 		return remInterface;
 	}
 
