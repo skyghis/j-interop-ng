@@ -111,9 +111,10 @@ final class JIComObjectImpl implements IJIComObject {
 		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
 			JISystem.getLogger().warning("addRef: Adding 5 references for " + ptr.getIPID() + " session: " + session.getSessionIdentifier());
-			JISession.debug_addIpids(ptr.getIPID(), 5);
         }
 
+		JISession.debug_addIpids(ptr.getIPID(), 5);
+		
 		session.getStub().addRef_ReleaseRef(obj);
 		
 		if (obj.getResultAsIntAt(1) != 0)
