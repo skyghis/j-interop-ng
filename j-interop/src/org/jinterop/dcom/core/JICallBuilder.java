@@ -1045,7 +1045,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
 					
 					comObjectImpl.replaceMembers(comObject);
 					JIFrameworkHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
-					if (!fromCallback)
+					//Why did I put this here. We should do an addRef regardless of whether we give a pointer to COM or it gives us one.
+//					if (!fromCallback)
 					{
 						comObjectImpl.addRef();
 					}
