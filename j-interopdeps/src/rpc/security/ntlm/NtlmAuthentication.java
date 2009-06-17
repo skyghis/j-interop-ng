@@ -1,10 +1,9 @@
-/* Jarapac DCE/RPC Framework
- * Copyright (C) 2003  Eric Glass
+/* Donated by Jarapac (http://jarapac.sourceforge.net/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,8 +12,10 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
+
+
 
 package rpc.security.ntlm;
 
@@ -35,25 +36,25 @@ public class NtlmAuthentication {
 
     public static final int AUTHENTICATION_SERVICE_NTLM = 10;
 
-   
+
 
     private static final boolean UNICODE_SUPPORTED =
             Config.getBoolean("jcifs.smb.client.useUnicode", true);
 
-   
+
     private static final int BASIC_FLAGS = NtlmFlags.NTLMSSP_NEGOTIATE_NTLM |
             NtlmFlags.NTLMSSP_NEGOTIATE_OEM |
                     NtlmFlags.NTLMSSP_NEGOTIATE_ALWAYS_SIGN |
                             (UNICODE_SUPPORTED ?
                                     NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE : 0);
 
-    
-    private Security security; 
-    
+
+    private Security security;
+
     protected Properties properties;
 
     private NtlmPasswordAuthentication credentials;
-    
+
     private AuthenticationSource authenticationSource;
 
     private boolean lanManagerKey;
@@ -65,9 +66,9 @@ public class NtlmAuthentication {
     private boolean keyExchange;
 
     private int keyLength = 40;
-    
+
     private boolean usentlmv2 = false;
-    
+
     private static final Random RANDOM = new Random();
 
     public NtlmAuthentication(Properties properties) {
@@ -95,18 +96,18 @@ public class NtlmAuthentication {
             }
 
             usentlmv2 = Boolean.valueOf(properties.getProperty(
-            "rpc.ntlm.ntlm2")).booleanValue();	
-            
+            "rpc.ntlm.ntlm2")).booleanValue();
+
             domain = properties.getProperty("rpc.ntlm.domain");
             user = properties.getProperty(Security.USERNAME);
             password = properties.getProperty(Security.PASSWORD);
         }
         credentials = new NtlmPasswordAuthentication(domain, user, password);
-        
-        
+
+
     }
 
-    public Security getSecurity() throws IOException 
+    public Security getSecurity() throws IOException
     {
        return security;
     }
@@ -140,7 +141,7 @@ public class NtlmAuthentication {
         {
         	flags |= NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2;
         }
-        
+
         return flags;
     }
 
@@ -179,11 +180,11 @@ public class NtlmAuthentication {
             flags = adjustFlags(type1.getFlags());
         }
         flags |= 0x00020000; //challenge accept response flag
-        
+
         Type2Message type2Message = new Type2Message(flags,
                     new byte[]{1,2,3,4,5,6,7,8}, //generate our own, since SMB will throw exception here
                     credentials.getDomain());
-        
+
 //        String domainName = InetAddress.getByName(credentials.getDomain()).getHostName();
 //        byte[] domain = new byte[0];
 //        if (domainName != null) {
@@ -221,9 +222,9 @@ public class NtlmAuthentication {
 //            offset += 2;
 //            System.arraycopy(server, 0, targetInfo, offset, serverLength);
 //        }
-//        
+//
 //        type2Message.setTargetInformation(targetInfo);
-        
+
         return type2Message;
     }
 
@@ -231,17 +232,17 @@ public class NtlmAuthentication {
 //        dest[offset] = (byte) (ushort & 0xff);
 //        dest[offset + 1] = (byte) (ushort >> 8 & 0xff);
 //    }
-    
+
     public Type3Message createType3(Type2Message type2) throws IOException {
         int flags = type2.getFlags();
-        if ((flags & NtlmFlags.NTLMSSP_NEGOTIATE_DATAGRAM_STYLE) != 0) 
+        if ((flags & NtlmFlags.NTLMSSP_NEGOTIATE_DATAGRAM_STYLE) != 0)
         {
             flags = adjustFlags(flags);
             flags &= ~0x00020000;
         }
-        
+
         Type3Message type3 = null;
-       
+
         //we have to now form lmv2 and ntlmv2 response with regards to the session security
         //the type3message also has to be altered
         if (usentlmv2)
@@ -262,13 +263,13 @@ public class NtlmAuthentication {
 			{
 				throw new RuntimeException("Exception occured while forming Session Security Type3Response",e);
 			}
-            
+
             type3 = new Type3Message(flags, lmResponse, ntResponse,
                    credentials.getDomain(), credentials.getUsername(),
                     Type3Message.getDefaultWorkstation());
             NTLMKeyFactory ntlmKeyFactory = new NTLMKeyFactory();
-            //now create the key for the session 
-            //this key will be used to RC4 a 16 byte random key and set to the type3 message 
+            //now create the key for the session
+            //this key will be used to RC4 a 16 byte random key and set to the type3 message
             byte[] servernonce = new byte[16];
             System.arraycopy(challenge, 0, servernonce, 0, challenge.length);
             System.arraycopy(clientNonce, 0, servernonce, 8, clientNonce.length);
@@ -283,11 +284,11 @@ public class NtlmAuthentication {
 			{
 				throw new RuntimeException("Exception occured while forming Session Security for Type3Response",e);
 			}
-            
+
         }
         else
         {
-        
+
         	byte[] challenge = type2.getChallenge();
             byte[] lmResponse = NtlmPasswordAuthentication.getPreNTLMResponse(
                     credentials.getPassword(), challenge);
@@ -300,9 +301,9 @@ public class NtlmAuthentication {
             	throw new RuntimeException("Key Exchange not supported by Library !");
             }
         }
-        
-        
-        
+
+
+
         return type3;
     }
 
@@ -322,8 +323,8 @@ public class NtlmAuthentication {
     	}
     	else
     	{
-    		 //now create the key for the session 
-            //this key will be used to RC4 a 16 byte random key and set to the type3 message 
+    		 //now create the key for the session
+            //this key will be used to RC4 a 16 byte random key and set to the type3 message
             byte[] servernonce = new byte[16];
             byte[] challenge = new byte[]{1,2,3,4,5,6,7,8}; //challenge is fixed
             System.arraycopy(challenge, 0, servernonce, 0, challenge.length);
@@ -334,7 +335,7 @@ public class NtlmAuthentication {
 				throw new RuntimeException("Exception occured while forming Session Security from Type3 AUTH",e);
 			}
     	}
-    	
+
     	try {
 			//now RC4 decrypt the session key
     		secondayMasterKey = ntlmKeyFactory.decryptSecondarySessionKey(type3Message.getSessionKey(), sessionResponseUserSessionKey);

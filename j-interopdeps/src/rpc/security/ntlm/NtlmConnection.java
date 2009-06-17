@@ -1,3 +1,20 @@
+/* Donated by Jarapac (http://jarapac.sourceforge.net/)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
+ */
+
 package rpc.security.ntlm;
 
 import java.io.IOException;
@@ -51,9 +68,9 @@ public class NtlmConnection extends DefaultConnection {
             break;
         case 3:
             // server gets authenticate from client
-            Type2Message type2 = (Type2Message) ntlm; 
+            Type2Message type2 = (Type2Message) ntlm;
             ntlm = new Type3Message(verifier.body);
-            boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();	
+            boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();
 			if (usentlmv2)
 			{
 				authentication.createSecurityWhenServer(ntlm);
@@ -80,7 +97,7 @@ public class NtlmConnection extends DefaultConnection {
             // client sends authenticate to server
             Type2Message type2 = (Type2Message) ntlm;
             ntlm = authentication.createType3(type2);
-			boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();	
+			boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();
 			if (usentlmv2)
 			{
 				setSecurity(authentication.getSecurity());

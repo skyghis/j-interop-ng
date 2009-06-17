@@ -1,10 +1,9 @@
-/* Jarapac DCE/RPC Framework
- * Copyright (C) 2003  Eric Glass
+/* Donated by Jarapac (http://jarapac.sourceforge.net/)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,7 +12,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 
@@ -59,14 +58,14 @@ public class ConnectionOrientedEndpoint implements Endpoint {
     private int callId;
 
     private int contextIdCounter = 0;
-    
+
     private int contextIdToUse = contextIdCounter;
-    
+
     private static final Logger logger = Logger.getLogger("org.jinterop");
 
     //This is so as to reuse the contextids for already exported contexts.
     private Map uuidsVsContextIds = new HashMap();
-    
+
     public ConnectionOrientedEndpoint(Transport transport,
             PresentationSyntax syntax) {
         this.transport = transport;
@@ -100,7 +99,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
 		   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), stub, 0, stub.length);
 		   	logger.finest("\n" + byteArrayOutputStream.toString());
 		}
-		
+
 
 
         request.setStub(stub);
@@ -111,22 +110,22 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             request.setFlag(ConnectionOrientedPdu.PFC_MAYBE, true);
         }
         send(request);
-        
+
 //        if (semantics == 100)
 //        try{
 //        	Thread.sleep(100);
 //        }catch(Exception e)
 //        {
-//        	
+//
 //        }
-        
+
         if (request.getFlag(ConnectionOrientedPdu.PFC_MAYBE)) return;
         ConnectionOrientedPdu reply = receive();
         if (reply instanceof ResponseCoPdu) {
             ndr.setFormat(reply.getFormat());
 
             buffer = new NdrBuffer(((ResponseCoPdu) reply).getStub(), 0);
-            
+
             if (logger.isLoggable(Level.FINEST))
     		{
             	//jcifs.util.Hexdump.hexdump(System.err, buffer.buf, 0, buffer.buf.length);
@@ -153,7 +152,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         bind();
     }
 
-    
+
     protected void bind() throws IOException {
         if (bound) return;
         if (context != null) {
@@ -173,14 +172,14 @@ public class ConnectionOrientedEndpoint implements Endpoint {
                 {
                 	contextIdToUse = cid.intValue();
                 }
-                
+
                 if (sendAlter)
                 {
                 	if (pdu != null) send(pdu);
 	                while (!context.isEstablished()) {
-	                	ConnectionOrientedPdu recieved = receive(); 
+	                	ConnectionOrientedPdu recieved = receive();
 	                    if ((pdu = context.accept(recieved)) != null)
-	                    { 
+	                    {
 	                    	switch(pdu.getType())
 	                    	{
 	                    		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
@@ -188,15 +187,15 @@ public class ConnectionOrientedEndpoint implements Endpoint {
 	                    			{
 	                    				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
 	                    			}
-	                    			break;	
+	                    			break;
 	                    		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
 	                    			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
 	                    			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
 	                    			{
 	                    				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-	                    			}	
+	                    			}
 	                    			break;
-	                    		default:	
+	                    		default:
 	                    			//nothing
 	                    	}
 	                    	send(pdu);
@@ -234,7 +233,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
     }
 
     protected String currentIID = null;
-    
+
     private void connect() throws IOException {
         bound = true;
         contextIdCounter = 0;
@@ -248,9 +247,9 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             contextIdToUse = contextIdCounter;
             if (pdu != null) send(pdu);
             while (!context.isEstablished()) {
-            	ConnectionOrientedPdu recieved = receive(); 
+            	ConnectionOrientedPdu recieved = receive();
                 if ((pdu = context.accept(recieved)) != null)
-                { 
+                {
                 	switch(pdu.getType())
                 	{
                 		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
@@ -258,15 +257,15 @@ public class ConnectionOrientedEndpoint implements Endpoint {
                 			{
                 				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
                 			}
-                			break;	
+                			break;
                 		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
                 			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
                 			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
                 			{
                 				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-                			}	
+                			}
                 			break;
-                		default:	
+                		default:
                 			//nothing
                 	}
                 	send(pdu);

@@ -1,3 +1,20 @@
+/* Donated by Jarapac (http://jarapac.sourceforge.net/)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
+ */
+
 package rpc;
 
 import java.io.ByteArrayOutputStream;
@@ -36,8 +53,8 @@ public class DefaultConnection implements Connection {
 
     protected int contextId;
 
-    private static final Logger logger = Logger.getLogger("org.jinterop"); 
-    
+    private static final Logger logger = Logger.getLogger("org.jinterop");
+
     public DefaultConnection() {
         this(ConnectionOrientedPdu.MUST_RECEIVE_FRAGMENT_SIZE,
         		ConnectionOrientedPdu.MUST_RECEIVE_FRAGMENT_SIZE);
@@ -115,8 +132,8 @@ public class DefaultConnection implements Connection {
         fragment.encode(ndr, transmitBuffer);
 
         processOutgoing();
-        
-        
+
+
         //jcifs.util.Hexdump.hexdump(System.err, transmitBuffer.getBuffer(), 0, transmitBuffer.length);
         if (logger.isLoggable(Level.FINEST))
         {
@@ -127,15 +144,15 @@ public class DefaultConnection implements Connection {
         transport.send(transmitBuffer);
     }
 
-    
+
     private boolean bytesRemainingInRecieveBuffer = false;
     protected ConnectionOrientedPdu receiveFragment(Transport transport)
     throws IOException {
-    	
+
     	int fragmentLength = -1;
     	int type = -1;
     	boolean read = true;
-    	
+
     	if (bytesRemainingInRecieveBuffer)
     	{
     		if (receiveBuffer.length > ConnectionOrientedPdu.TYPE_OFFSET)
@@ -154,7 +171,7 @@ public class DefaultConnection implements Connection {
 						System.arraycopy(tmpBuffer.buf, 0, receiveBuffer.buf, receiveBuffer.length, tmpBuffer.length);
 						receiveBuffer.length = receiveBuffer.length + tmpBuffer.length;
 					}
-					read = false;	
+					read = false;
 				}
 				else
 				{
@@ -163,12 +180,12 @@ public class DefaultConnection implements Connection {
 		            	logger.finest("\n" + " bytesRemainingInRecieveBuffer is TRUE, RecieveBuffer size =  " + receiveBuffer.buf.length);
 		            }
 				}
-    		
+
     		}
-    		
+
 			bytesRemainingInRecieveBuffer = false;
     	}
-    	
+
     	//will be true for all cases and false if anything valid is already in the buffer
     	if (read)
     	{
@@ -180,7 +197,7 @@ public class DefaultConnection implements Connection {
             }
 
     		transport.receive(receiveBuffer);
-    		
+
     		if (logger.isLoggable(Level.FINEST))
     	    {
 	    		logger.finest("[RECIEVER BUFFER] Full packet is dumped below...");
@@ -191,7 +208,7 @@ public class DefaultConnection implements Connection {
             }
 
     	}
-    	
+
     	byte[] newbuffer = null;
 		int counter = 0;
 		int trimSize = -1;
@@ -206,9 +223,9 @@ public class DefaultConnection implements Connection {
             	logger.finest("\n" + " length of the fragment " + fragmentLength + "\n" + " size in bytes of the buffer [] " + receiveBuffer.buf.length);
             }
 
-			//the new buffer should be equal to fragment size 
+			//the new buffer should be equal to fragment size
 			newbuffer = new byte[fragmentLength];
-			
+
 			if (fragmentLength > receiveBuffer.length)//this means the socket buffer is not fully read, this packet is bigger than the reciever buffer size
 			{
 				int remainingBytes = fragmentLength - receiveBuffer.length;
@@ -216,9 +233,9 @@ public class DefaultConnection implements Connection {
 	            {
 	            	logger.finest("\n" + " Some bytes from RecieveBuffer Socket have not been read: Remaining  " + remainingBytes);
 	            }
-				
-				 
-				
+
+
+
 				//now reset and read again.
 
 				while (fragmentLength > counter)
@@ -240,12 +257,12 @@ public class DefaultConnection implements Connection {
 					//or it may not ...and reads only the partial packet.
 					if (fragmentLength - counter >= receiveBuffer.length )
 					{
-						lengthOfArrayTobeRead =  receiveBuffer.length; 	
+						lengthOfArrayTobeRead =  receiveBuffer.length;
 					}
 					else
 					{
 						//this would be the last one. Now we need to trim the buffer to it's read length as well.
-						lengthOfArrayTobeRead = fragmentLength - counter; 
+						lengthOfArrayTobeRead = fragmentLength - counter;
 						trimSize = receiveBuffer.length - lengthOfArrayTobeRead;
 					}
 
@@ -256,13 +273,13 @@ public class DefaultConnection implements Connection {
 		    	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), receiveBuffer.getBuffer(), 0, receiveBuffer.length);
 		    	        logger.finest("\n" + byteArrayOutputStream.toString());
-		    	    	
+
 		            }
-		    		
+
 				}
-				
-				
-				
+
+
+
 			}
 			else
 			{
@@ -270,14 +287,14 @@ public class DefaultConnection implements Connection {
 	    	    {
 					logger.finest("\n" + "fragmentLength is less than  receiveBuffer.length");
 				}
-				
-				//Since fragment length is smaller, There might be 2 or more packets in here 
+
+				//Since fragment length is smaller, There might be 2 or more packets in here
 				//just read what is your packet.
 				System.arraycopy(receiveBuffer.buf,0,newbuffer,0,fragmentLength);
 				//there might be more. Now we need to trim the buffer to it's read length as well.
 				trimSize = receiveBuffer.length - fragmentLength;
 			}
-			
+
 			if (trimSize > 0)
 			{
 				if (logger.isLoggable(Level.FINEST))
@@ -291,10 +308,10 @@ public class DefaultConnection implements Connection {
 				bytesRemainingInRecieveBuffer = true; //reciever buffer read more than it should , after we trim only the additionally read bytes will be left.
 				//these have to be read in the next call to recieveFragment.
 			}
-			
+
 			NdrBuffer bufferToBeUsed = new NdrBuffer(newbuffer,0);
 			bufferToBeUsed.length = newbuffer.length;//this will be fully utilized  and not left empty.
-			
+
 			if (logger.isLoggable(Level.FINEST))
     	    {
 				logger.finest("\n" + "bufferToBeUsed Size = " + bufferToBeUsed.length);
@@ -304,12 +321,12 @@ public class DefaultConnection implements Connection {
     	        logger.finest("\n" + byteArrayOutputStream.toString());
     	        logger.finest("\n*********************************************************************************");
     	    }
-			
+
 			 //caution , frag length is changed here...it is void of security info.
 	        processIncoming(bufferToBeUsed);
 	        bufferToBeUsed.setIndex(ConnectionOrientedPdu.TYPE_OFFSET);
 	        type = bufferToBeUsed.dec_ndr_small();
-	        
+
 	        ConnectionOrientedPdu pdu = null;
 	        switch (type) {
 	        case AlterContextPdu.ALTER_CONTEXT_TYPE:
@@ -352,23 +369,23 @@ public class DefaultConnection implements Connection {
 	            throw new IOException("Unknown PDU type: 0x" +
 	                    Integer.toHexString(type));
 	        }
-	        
-	        
+
+
 	        bufferToBeUsed.setIndex(0);
 	        pdu.decode(ndr, bufferToBeUsed);
 	        return pdu;
-			
-			
-		}	
+
+
+		}
     	else
     	{
     		//socket has been closed.
     		throw new IOException("Socket Closed"); //Vikram
     	}
-    	
-    	
+
+
     }
-    
+
     private boolean isValidType(int type)
     {
         switch (type) {
@@ -390,7 +407,7 @@ public class DefaultConnection implements Connection {
         }
 
     }
-    
+
     protected void processIncoming(NdrBuffer buffer) throws IOException {
     	buffer.setIndex(ConnectionOrientedPdu.TYPE_OFFSET);
     	boolean logMsg = true;
@@ -429,7 +446,7 @@ public class DefaultConnection implements Connection {
         		incomingRebind(verifier);
         	}
             break;
-      
+
         case FaultCoPdu.FAULT_TYPE:
         	if (logMsg)
         	{
@@ -465,7 +482,7 @@ public class DefaultConnection implements Connection {
         		logMsg = false;
         	}
 
-        	if (security != null) 
+        	if (security != null)
     		{
         		NetworkDataRepresentation ndr2 = new NetworkDataRepresentation();
         		ndr2.setBuffer(buffer);
@@ -485,7 +502,7 @@ public class DefaultConnection implements Connection {
 
             incomingRebind(detachAuthentication2(buffer));
             break;
-        
+
         case BindNoAcknowledgePdu.BIND_NO_ACKNOWLEDGE_TYPE:
         case ShutdownPdu.SHUTDOWN_TYPE:
             return;
@@ -498,8 +515,8 @@ public class DefaultConnection implements Connection {
         ndr.getBuffer().setIndex(ConnectionOrientedPdu.TYPE_OFFSET);
         boolean logMsg = true;
         switch (ndr.readUnsignedSmall()) {
-        
-      
+
+
         case BindPdu.BIND_TYPE:
         	if (logMsg)
         	{
@@ -512,7 +529,7 @@ public class DefaultConnection implements Connection {
         		logger.info("\n Sending AUTH3");
         		logMsg = false;
         	}
-        	
+
         case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
         	if (logMsg)
         	{
@@ -520,7 +537,7 @@ public class DefaultConnection implements Connection {
         		logMsg = false;
         	}
 
-      
+
 
         case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
         	if (logMsg)
@@ -608,7 +625,7 @@ public class DefaultConnection implements Connection {
                     ex.getMessage());
         }
     }
-    
+
     private AuthenticationVerifier detachAuthentication2(NdrBuffer buffer) throws IOException {
         try {
             //NdrBuffer buffer = ndr.getBuffer();
@@ -639,7 +656,7 @@ public class DefaultConnection implements Connection {
             //NdrBuffer buffer = ndr.getBuffer();
             buffer.setIndex(ConnectionOrientedPdu.AUTH_LENGTH_OFFSET);
             int length = buffer.dec_ndr_short();//ndr.readUnsignedShort(); // auth body size
-            
+
             if (length == 0)
             {
             	if (logger.isLoggable(Level.FINEST))
@@ -648,7 +665,7 @@ public class DefaultConnection implements Connection {
            	    }
             	return null;
             }
-            
+
             int index = buffer.getLength() - length - 8; // 8 = auth header size
             buffer.setIndex(index);
             AuthenticationVerifier verifier =
@@ -664,7 +681,7 @@ public class DefaultConnection implements Connection {
        	    {
             	logger.finest("\n" + "In [detachAuthentication] (after stripping authn info) setting new FRAG_LENGTH_OFFSET for the packet as = " + length);
        	    }
-            
+
             return verifier;
         } catch (Exception ex) {
             throw new IOException("Error stripping authentication from PDU: " +
@@ -757,9 +774,9 @@ public class DefaultConnection implements Connection {
         default:
             throw new IntegrityException("Not an authenticated PDU type.");
         }
-     
+
         length -= index;
-        
+
         boolean isFragmented = true;
         buffer.setIndex(ConnectionOrientedPdu.FLAGS_OFFSET);
         int flags = ndr.readUnsignedSmall();
@@ -768,7 +785,7 @@ public class DefaultConnection implements Connection {
         {
         	isFragmented = false;
         }
-        
+
         security.processIncoming(ndr, index, length, verifierIndex,isFragmented);
         buffer.setIndex(verifierIndex - 6); // auth padding field
         length = verifierIndex - ndr.readUnsignedSmall() - 8;
