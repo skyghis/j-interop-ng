@@ -1,18 +1,18 @@
-/**j-Interop (Pure Java implementation of DCOM protocol) 
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 package org.jinterop.dcom.transport;
 
@@ -42,11 +42,11 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 
 	  private static final String IID = "IID";
 	  private static final String IID2 = "IID2";
-	  
+
 	  private boolean established = false;
 	  private Properties properties = null;
 	  private List listOfInterfacesSupported = Collections.synchronizedList(new ArrayList());
-	  
+
 	  // this returns null, so that a recieve is performed first.
 	  public ConnectionOrientedPdu init(PresentationContext context,
 	            Properties properties) throws IOException {
@@ -57,7 +57,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 	      updateListOfInterfacesSupported2((List)properties.get("LISTOFSUPPORTEDINTERFACES"));
 	      return null;
 	   }
-	
+
 	  public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
       throws IOException {
 		  ConnectionOrientedPdu reply = null;
@@ -70,7 +70,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  		for (int i = 0; i < presentationContexts.length;i++)
 		  		{
 		  			PresentationContext presentationContext = presentationContexts[i];
-		  			
+
 		  			boolean contains = false;
 		  			synchronized (listOfInterfacesSupported) {
 		  				contains = listOfInterfacesSupported.contains(presentationContext.abstractSyntax.toString().toUpperCase());
@@ -83,7 +83,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  				break;
 		  			}
 		  		}
-		  		
+
 		  		//all okay
 		  		if (((BindAcknowledgePdu)reply).getResultList() == null)
 		  		{
@@ -92,15 +92,15 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  			((BindAcknowledgePdu)reply).setResultList(result);
 		  		}
 		  		((BindAcknowledgePdu)reply).setCallId(pdu.getCallId());
-		  		
-		  		
+
+
 		  		//issue a challenge against the request info
-		  		
-		  		
+
+
 		  		break;
 		  	case AlterContextPdu.ALTER_CONTEXT_TYPE:
 		  		established = true;
-		  		
+
 		  		presentationContexts = ((AlterContextPdu)pdu).getContextList();
 		  		reply = new AlterContextResponsePdu();
   				result = new PresentationResult[1];
@@ -119,7 +119,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  				break;
 		  			}
 		  		}
-		  		
+
 		  		//all okay
 		  		if (((AlterContextResponsePdu)reply).getResultList() == null)
 		  		{
@@ -127,37 +127,37 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 		  			((AlterContextResponsePdu)reply).setAssociationGroupId(new Object().hashCode()); //TODO should I save this ?
 		  			((AlterContextResponsePdu)reply).setResultList(result);
 		  		}
-		  		
+
 		  		((AlterContextResponsePdu)reply).setCallId(pdu.getCallId());
 
 		  		//issue a challenge against the request info
-		  		
-		  		
-		  	break;	
+
+
+		  	break;
 		  	default:
 		  		reply = super.accept(reply);
 		  }
-		  
+
 		  return reply;
 	  }
-	  
+
 	  public boolean isEstablished() {
 	        return super.isEstablished() | established;
 	    }
-	  
+
 	  void updateListOfInterfacesSupported(List newList)
 	  {
 		  synchronized (listOfInterfacesSupported) {
 			listOfInterfacesSupported.addAll(newList);
 		  }
 	  }
-	  
+
 	  void updateListOfInterfacesSupported2(List newList)
 	  {
 		for (int i = 0;i < newList.size();i++)
 		{
-			listOfInterfacesSupported.add(newList.get(i) + ":0.0");	
+			listOfInterfacesSupported.add(newList.get(i) + ":0.0");
 		}
 	  }
-	  
+
 }

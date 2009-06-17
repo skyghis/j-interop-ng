@@ -4,15 +4,15 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 
@@ -46,7 +46,7 @@ import rpc.Stub;
  */
 public class JIWinRegStub extends Stub implements IJIWinReg {
 
-	
+
 	//"ncacn_np:" + servername + "[\\PIPE\\winreg]"
 	public JIWinRegStub(IJIAuthInfo authInfo, String serverName) throws UnknownHostException
 	{
@@ -55,7 +55,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_AUTH_NOT_SUPPLIED));
 		}
-		
+
 		super.setTransportFactory(new rpc.ncacn_np.TransportFactory());
 		super.setProperties(new Properties());
 		super.getProperties().setProperty("rpc.ncacn_np.username", authInfo.getUserName());
@@ -68,30 +68,30 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 			} catch (UnsupportedEncodingException e1) {
 				throw new JIRuntimeException(JIErrorCodes.JI_WINREG_EXCEPTION2);
 			}
-		}	
+		}
 		//some strange issue with the space character, it gets encoded to '+' (which is right) , but Windows refuses it.
 		//Manually changing + to %20
 		StringBuffer password_ = new StringBuffer();
 		for (int i = 0 ; i < password.length(); i++)
 		{
-			char ch = password.charAt(i); 
+			char ch = password.charAt(i);
 			if (ch == '+')
 			{
 				password_.append("%20");
 				continue;
 			}
-			
+
 			password_.append(ch);
 		}
-		
+
 		super.getProperties().setProperty("rpc.ncacn_np.password", password_.toString());
 		super.getProperties().setProperty("rpc.ncacn_np.domain", authInfo.getDomain());
 		serverName = serverName.trim();
 		serverName = InetAddress.getByName(serverName).getHostAddress();
 		super.setAddress("ncacn_np:" + serverName + "[\\PIPE\\winreg]");
-		
+
 	}
-	
+
 	public JIPolicyHandle winreg_OpenHKLM() throws JIException
 	{
 		openHKLM openhklm = new openHKLM();
@@ -105,12 +105,12 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		System.arraycopy(openhklm.policyhandle,0,handle.handle,0,20);
-		
+
 		return handle;
 	}
-	
+
 	public JIPolicyHandle winreg_OpenHKCR() throws JIException
 	{
 		openHKCR openhkcr = new openHKCR();
@@ -124,12 +124,12 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		System.arraycopy(openhkcr.policyhandle,0,handle.handle,0,20);
-		
+
 		return handle;
 	}
-	
+
 	public JIPolicyHandle winreg_OpenHKCU() throws JIException
 	{
 		openHKCU openhkcu = new openHKCU();
@@ -143,12 +143,12 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		System.arraycopy(openhkcu.policyhandle,0,handle.handle,0,20);
-		
+
 		return handle;
 	}
-	
+
 	public JIPolicyHandle winreg_OpenHKU() throws JIException
 	{
 		openHKU openhku = new openHKU();
@@ -162,9 +162,9 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		System.arraycopy(openhku.policyhandle,0,handle.handle,0,20);
-		
+
 		return handle;
 	}
 	public JIPolicyHandle winreg_OpenKey(JIPolicyHandle handle,String key, int accessMask) throws JIException
@@ -183,13 +183,13 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		System.arraycopy(openkey.policyhandle,0,newHandle.handle,0,20);
-		
+
 		return newHandle;
 	}
-	
-		
+
+
 	public void winreg_CloseKey(JIPolicyHandle handle) throws JIException
 	{
 		closeKey closekey = new closeKey();
@@ -204,7 +204,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 			throw new JIException(e);
 		}
 	}
-	
+
 	public void winreg_DeleteKeyOrValue(JIPolicyHandle handle,String valueName, boolean isKey) throws JIException
 	{
 		deleteValueOrKey delete = new deleteValueOrKey();
@@ -221,7 +221,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 			throw new JIException(e);
 		}
 	}
-	
+
 	public byte[] winreg_QueryValue(JIPolicyHandle handle,int bufferSize) throws JIException
 	{
 		queryValue queryvalue = new queryValue();
@@ -236,7 +236,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		//return queryvalue.key;
 		return queryvalue.buffer;
 	}
@@ -247,7 +247,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		queryvalue.parentKey = handle;
 		queryvalue.bufferLength = bufferSize;
 		queryvalue.key = valueName;
-		
+
 		try {
 			call(Endpoint.IDEMPOTENT,queryvalue);
 		} catch(SmbException e){
@@ -257,16 +257,16 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		return new Object[]{new Integer(queryvalue.type),(queryvalue.buffer != null ? (Object)queryvalue.buffer : (Object)queryvalue.buffer2)};
 	}
-	
+
 	public void winreg_SaveFile(JIPolicyHandle handle, String fileName) throws JIException
 	{
 		saveFile savefile = new saveFile();
 		savefile.parentKey = handle;
 		savefile.fileName = fileName;
-		
+
 		try {
 			call(Endpoint.IDEMPOTENT,savefile);
 		} catch(SmbException e){
@@ -276,9 +276,9 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 	}
-	
+
 	public JIPolicyHandle winreg_CreateKey(JIPolicyHandle handle, String subKey, int options,int accessMask) throws JIException
 	{
 		createKey createkey = new createKey();
@@ -286,7 +286,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		createkey.key = subKey;
 		createkey.parentKey = handle;
 		createkey.options = options;
-		
+
 		try {
 			call(Endpoint.IDEMPOTENT,createkey);
 		} catch(SmbException e){
@@ -296,20 +296,20 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		JIPolicyHandle newHandle = new JIPolicyHandle(createkey.actiontaken == 1 ? true : false);
 		System.arraycopy(createkey.policyhandle,0,newHandle.handle,0,20);
-		
+
 		return newHandle;
 	}
-	
+
 	public void winreg_SetValue(JIPolicyHandle handle,String valueName,byte[][] data) throws JIException
 	{
 		if (data == null)
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_WINREG_EXCEPTION5));
 		}
-		
+
 		//calculate length of all strings + extra null in the end
 		int totalStrings = data.length;
 		int length = 0;
@@ -318,9 +318,9 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 			int j = data[i].length;
 			length = length + (j + 1) * 2; //including null termination
 		}
-		
+
 		length = length + 2; //final termination
-		
+
 		setValue setvalue = new setValue();
 		setvalue.clazzType = REG_MULTI_SZ;
 		setvalue.data2 = data;
@@ -329,7 +329,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		setvalue.valueName = valueName;
 		setValue(setvalue);
 	}
-	
+
 	public void winreg_SetValue(JIPolicyHandle handle,String valueName) throws JIException
 	{
 		setValue setvalue = new setValue();
@@ -338,13 +338,13 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		setvalue.valueName = valueName;
 		setValue(setvalue);
 	}
-	
+
 	public void winreg_SetValue(JIPolicyHandle handle,String valueName, byte[] data, boolean isBinary, boolean expand_sz) throws JIException
 	{
 		setValue setvalue = new setValue();
 		if (isBinary)
 		{
-			setvalue.clazzType = REG_BINARY;	
+			setvalue.clazzType = REG_BINARY;
 		}
 		else
 		{
@@ -357,14 +357,14 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 				setvalue.clazzType = REG_SZ;
 			}
 		}
-		
+
 		setvalue.data = data;
 		setvalue.lengthInBytes = data.length;
 		setvalue.parentKey = handle;
 		setvalue.valueName = valueName;
 		setValue(setvalue);
 	}
-	
+
 	public void winreg_SetValue(JIPolicyHandle handle,String valueName, int data) throws JIException
 	{
 		setValue setvalue = new setValue();
@@ -375,13 +375,13 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		setvalue.valueName = valueName;
 		setValue(setvalue);
 	}
-	
+
 	public String[] winreg_EnumKey(JIPolicyHandle handle,int index) throws JIException
 	{
 		enumKey enumkey = new enumKey();
 		enumkey.parentKey = handle;
 		enumkey.index = index;
-		
+
 		try {
 			call(Endpoint.IDEMPOTENT,enumkey);
 		} catch (IOException e) {
@@ -389,16 +389,16 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		return enumkey.retval;
 	}
-	
+
 	public Object[] winreg_EnumValue(JIPolicyHandle handle,int index) throws JIException
 	{
 		enumValue enumvalue = new enumValue();
 		enumvalue.parentKey = handle;
 		enumvalue.index = index;
-		
+
 		try {
 			call(Endpoint.IDEMPOTENT,enumvalue);
 		} catch (IOException e) {
@@ -406,10 +406,10 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 		} catch (JIRuntimeException e) {
 			throw new JIException(e);
 		}
-		
+
 		return enumvalue.retval;
 	}
-	
+
 	private void setValue(setValue setvalue) throws JIException
 	{
 		try {
@@ -420,7 +420,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 			throw new JIException(e);
 		}
 	}
-	
+
 	protected String getSyntax() {
 		// WinReg Service
 		return "338cd001-2244-31f1-aaaa-900038001003:1.0";

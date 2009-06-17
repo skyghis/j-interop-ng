@@ -1,18 +1,18 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)  
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 package org.jinterop.dcom.impls.automation;
@@ -24,11 +24,11 @@ import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
 /** Implements the <i>FUNCDESC</i> structure of COM Automation.
- * <p> 
+ * <p>
  * Definition from MSDN: <i> Describes a function.</i>
- * 
+ *
  * More information can be obtained here http://msdn.microsoft.com/en-us/library/ms221425(VS.85).aspx .
- * 
+ *
  * @since 1.0
  */
 public final class FuncDesc implements Serializable{
@@ -48,19 +48,19 @@ public final class FuncDesc implements Serializable{
   public static final int FUNCFLAG_FREPLACEABLE = 0x800;
   public static final int FUNCFLAG_FIMMEDIATEBIND = 0x1000;
 
-	
+
 //    MEMBERID memid;                        // Function member ID.
 ///* [size_is] */ SCODE __RPC_FAR *lprgscode;
-///* [size_is] */ ELEMDESC __RPC_FAR *lprgelemdescParam;    
+///* [size_is] */ ELEMDESC __RPC_FAR *lprgelemdescParam;
 //	FuncKind funckind;           // Specifies whether the function is virtual, static, or dispatch-only.
 //    InvokeKind invkind;        // Invocation kind. Indicates if this is a property function, and if so, what kind.
-//    CallConv callconv;        // Specifies the function's calling 
+//    CallConv callconv;        // Specifies the function's calling
 //                            // convention.
 //    short cParams;            // Count of total number of parameters.
-//    short cParamsOpt;        // Count of optional parameters (detailed 
+//    short cParamsOpt;        // Count of optional parameters (detailed
 //                            // description follows).
 //    short oVft;                // For FUNC_VIRTUAL, specifies the offset in the VTBL.
-//    short cScodes;    // Count of permitted return values. 
+//    short cScodes;    // Count of permitted return values.
 //    ELEMDESC elemdescFunc;    // Contains the return type of the function.
 //    WORD wFuncFlags;     // Definition of flags follows.
 
@@ -71,7 +71,7 @@ public final class FuncDesc implements Serializable{
 	public final  int memberId;
 	public final JIPointer lprgscode;
 	public final JIPointer lprgelemdescParam;
-	
+
 	/**
 	 * Specifies whether the function is virtual, static, or dispatch-only.
 	 */
@@ -86,12 +86,12 @@ public final class FuncDesc implements Serializable{
 	 * Specifies the function's calling convention.
 	 */
 	public final int callConv;
-	
+
 	/**
 	 *  Count of total number of parameters.
 	 */
 	public final short cParams;
-	
+
 	/**
 	 * Count of optional parameters (detailed description follows).
 	 */
@@ -101,7 +101,7 @@ public final class FuncDesc implements Serializable{
 	 */
 	public final short oVft;
 	/**
-	 * Count of permitted return values. 
+	 * Count of permitted return values.
 	 */
 	public final short cScodes;
 	/**
@@ -112,13 +112,13 @@ public final class FuncDesc implements Serializable{
 	 * Definition of flags follows.
 	 */
 	public final short wFuncFlags;
-	
-	
+
+
 	FuncDesc(JIPointer values)
 	{
 		this(values.isNull() ? null : (JIStruct)values.getReferent());
 	}
-	FuncDesc(JIStruct filledStruct) 
+	FuncDesc(JIStruct filledStruct)
 	{
 		if (filledStruct == null)
 		{
@@ -151,11 +151,11 @@ public final class FuncDesc implements Serializable{
 //			{
 //				arry2[i] = new ElemDesc((JIStruct)obj[i]);
 //			}
-			
+
 //			arrayOfElemDesc = new JIArray(arry2);
 			arrayOfElemDesc = new JIArray(obj);
 		}
-		
+
 		lprgelemdescParam =  new JIPointer(arrayOfElemDesc);
 		funcKind = ((Integer)values.getMember(3)).intValue();
 		invokeKind = ((Integer)values.getMember(4)).intValue();
@@ -167,5 +167,5 @@ public final class FuncDesc implements Serializable{
 		elemdescFunc = new ElemDesc(((JIStruct)values.getMember(10)));
 		wFuncFlags = ((Short)values.getMember(11)).shortValue();
 	}
-	
+
 }

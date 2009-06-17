@@ -4,15 +4,15 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 package org.jinterop.dcom.core;
@@ -27,13 +27,13 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 
 
-/** Representation of a COM pointer. 
- * 
+/** Representation of a COM pointer.
+ *
  * @since 1.0
  */
 public final class JIPointer implements Serializable {
 
-	
+
 	private static final long serialVersionUID = -3434037097460692619L;
 	private Object referent = null;
 	private boolean isReferenceTypePtr = false;
@@ -42,10 +42,10 @@ public final class JIPointer implements Serializable {
 	private boolean isNull = false;
 	private int flags = JIFlags.FLAG_NULL;
 	private JIPointer() {}
-	
-	/** Creates an instance of this class where the referent is of the type <code>value</code>. 
-	 * Used when deserializing this pointer. 
-	 * 
+
+	/** Creates an instance of this class where the referent is of the type <code>value</code>.
+	 * Used when deserializing this pointer.
+	 *
 	 * @param value <code>null</code> is acceptable
 	 * @param isReferenceTypePtr <code>true</code> if a referent identifier will not precede this ptr.
 	 */
@@ -60,16 +60,16 @@ public final class JIPointer implements Serializable {
 		}
 
 		//Should not defer since the enclosing struct,union,array will defer it by itself
-		// this is important since , ptr to a ptr to a ptr (and more) will need to 
+		// this is important since , ptr to a ptr to a ptr (and more) will need to
 		//deserialize completely after the first deferement i.e they are not further deffered.
-		
+
 		this.referent = value;
 		this.isReferenceTypePtr = isReferenceTypePtr;
 	}
-	
-	/** Creates an instance of this class where the referent is <code>value</code>. 
+
+	/** Creates an instance of this class where the referent is <code>value</code>.
 	 *  Used when serializing this pointer.
-	 * 
+	 *
 	 * @param value <code>null</code> is acceptable
 	 * @param isReferenceTypePtr <code>true</code> if a referent Identifier will not precede this ptr.
 	 */
@@ -83,35 +83,35 @@ public final class JIPointer implements Serializable {
 			isReferenceTypePtr = true;
 			isNull = true;
 		}
-		
+
 //		if (value.getClass().equals(JIArray.class))
 //		{
 //			if (((JIArray)value).getDimensions() > 1)
 //				throw new IllegalArgumentException("Only single dimension arrays accepted");
 //		}
-		
+
 	//Should not defer since the enclosing struct,union,array will defer it by itself
-	// this is important since , ptr to a ptr to a ptr (and more) will need to 
+	// this is important since , ptr to a ptr to a ptr (and more) will need to
 	//deserialize completely after the first deferement i.e they are not further deffered.
-		
+
 		this.referent = value;
 		this.referentId = new Object().hashCode();
 		this.isReferenceTypePtr = isReferenceTypePtr;
 	}
 
 	/** Sets the flags associated with the referent.
-	 * 
+	 *
 	 * @exclude
 	 * @param flags JIFlags only.
 	 */
 	void setFlags(int flags)
 	{
-		this.flags = flags; 
+		this.flags = flags;
 	}
-	
-	/**Creates an instance of this class where the referent is <code>value</code>. 
+
+	/**Creates an instance of this class where the referent is <code>value</code>.
 	 * Used when serializing this pointer. This pointer is <b>not</b> of reference type.
-	 * 
+	 *
 	 * @param value
 	 */
 	public JIPointer(Object value)
@@ -120,7 +120,7 @@ public final class JIPointer implements Serializable {
 	}
 
 	/** Returns the referent encapsulated by this pointer.
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getReferent()
@@ -130,7 +130,7 @@ public final class JIPointer implements Serializable {
 
 	void encode(NetworkDataRepresentation ndr,List defferedPointers, int FLAG)
 	{
-		
+
 		FLAG = FLAG | flags;
 		if (isNull)
 		{
@@ -139,7 +139,7 @@ public final class JIPointer implements Serializable {
 		}
 		//it is deffered or part of an array, this logic will not get called twice since the
 		//deffered list will come in withb FLAG_NULL
-		if (!isNull && (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY /*|| 
+		if (!isNull && (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY /*||
 					(FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER*/))
 		{
 			int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
@@ -154,13 +154,13 @@ public final class JIPointer implements Serializable {
 //			}
 			return;
 		}
-		
+
 		if (!isNull && !isReferenceTypePtr)
 		{
 			int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
 			JIMarshalUnMarshalHelper.serialize(ndr,Integer.class,new Integer(referentIdToPut),defferedPointers,FLAG);
 		}
-		
+
 		try {
 			if (!isNull && referent.getClass().equals(JIVariant.class) && ((JIVariant)referent).isArray())
 			{
@@ -171,24 +171,24 @@ public final class JIPointer implements Serializable {
 		} catch (JIException e) {
 			throw new JIRuntimeException(e.getErrorCode());
 		}
-		
-		
-		
+
+
+
 		JIMarshalUnMarshalHelper.serialize(ndr,referent.getClass(),referent,defferedPointers,FLAG);
-		
-		
+
+
 	}
-	
+
 	//class of type being decoded. If the type being expected is an array , the varType
 	//should be the actual array type and not JIArray.
 	JIPointer decode(NetworkDataRepresentation ndr,List defferedPointers, int FLAG,Map additionalData)
 	{
 		//shallowClone();
 		FLAG = FLAG | flags;
-		
+
 		JIPointer retVal = new JIPointer();
 		retVal.setFlags(flags);
-		retVal.isNull = isNull; 
+		retVal.isNull = isNull;
 		//retVal.isDeffered = isDeffered;
 		if (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY
 				/*|| (FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER */)
@@ -203,7 +203,7 @@ public final class JIPointer implements Serializable {
 				retVal.isDeffered = false;
 				return retVal;
 			}
-			
+
 			retVal.isDeffered = false;
 			retVal.isReferenceTypePtr = true;
 			defferedPointers.add(retVal);
@@ -223,8 +223,8 @@ public final class JIPointer implements Serializable {
 				return retVal;
 			}
 		}
-		
-		
+
+
 		retVal.referent = JIMarshalUnMarshalHelper.deSerialize(ndr,referent,defferedPointers,FLAG,additionalData);
 		return retVal;
 	}
@@ -233,35 +233,35 @@ public final class JIPointer implements Serializable {
 	{
 		isDeffered = deffered;
 	}
-	
+
 	boolean getDeffered()
 	{
 		return isDeffered;
 	}
-	
+
 	void setReferent(int referent)
 	{
 		this.referentId = referent;
 	}
-	
+
 	/** Returns status whether this is a reference type pointer or not.
-	 * 
+	 *
 	 * @return <code>true</code> if this is a reference type pointer.
 	 */
 	public boolean isReference()
 	{
 		return isReferenceTypePtr;
 	}
-	
+
 	/** Returns the referent identifier.
-	 * 
+	 *
 	 * @return
 	 */
 	public Integer getReferentIdentifier()
 	{
 		return new Integer(referentId);
 	}
-	
+
 	/**
 	 * @exclude
 	 * @return
@@ -275,11 +275,11 @@ public final class JIPointer implements Serializable {
 		//4 for pointer
 		if (referent instanceof Class)
 		{
-			return 4 + JIMarshalUnMarshalHelper.getLengthInBytes((Class)referent,referent,JIFlags.FLAG_NULL);	
+			return 4 + JIMarshalUnMarshalHelper.getLengthInBytes((Class)referent,referent,JIFlags.FLAG_NULL);
 		}
 		return 4 + JIMarshalUnMarshalHelper.getLengthInBytes(referent.getClass(),referent,JIFlags.FLAG_NULL);
 	}
-	
+
 
 
 	void replaceSelfWithNewPointer(JIPointer replacement)
@@ -291,18 +291,18 @@ public final class JIPointer implements Serializable {
 	}
 
 	/** Returns status if this pointer is <code>null</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if the pointer is <code>null</code>.
 	 */
 	public boolean isNull() {
 		return isNull;
 	}
-	
+
 	void setValue(Object value)
 	{
 		referent = value;
 	}
-	
+
 	public String toString()
 	{
 		return referent == null ? "[null]" : "[" + referent.toString() + "]";

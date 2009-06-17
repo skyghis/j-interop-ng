@@ -4,15 +4,15 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 package org.jinterop.dcom.core;
@@ -32,27 +32,27 @@ import rpc.core.UUID;
 
 final class JIOrpcThat implements Serializable{
 
-	
+
 	private static final long serialVersionUID = -9167101165773840248L;
 	private int flags = -1;
 	private JIOrpcExtentArray[] arry = null;
-	
+
 	private JIOrpcThat() {}
-	
+
 	private void setFlags(int value)
 	{
 		flags = value;
 	}
-	
+
 	//Returns an array of flags present (JIOrpcFlags).
 	//For now only 2 flags are returned to the user
 	// 0 and 1. Reserved flags are not returned.
 	public int[] getSupportedFlags()
 	{
-		
+
 		if (flags == -1)
 			return null;
-		
+
 		if ((flags & 1) == 1)
 		{
 			return new int[]{1};
@@ -60,38 +60,38 @@ final class JIOrpcThat implements Serializable{
 		else
 			return new int[]{0};
 	}
-	
+
 	private void setExtentArray(JIOrpcExtentArray[] arry)
 	{
 		this.arry = arry;
 	}
-	
+
 	public JIOrpcExtentArray[]  getExtentArray()
 	{
 		return arry;
 	}
-	
+
 	static void encode(NetworkDataRepresentation ndr)
 	{
 		ndr.writeUnsignedLong(0);
 		ndr.writeUnsignedLong(0);
 	}
-	
+
 	static JIOrpcThat decode(NetworkDataRepresentation ndr)
 	{
 		JIOrpcThat orpcthat = new JIOrpcThat();
 		orpcthat.setFlags(ndr.readUnsignedLong());
-		
+
 		//to throw JIRuntimeException from here.
-		if (orpcthat.flags != JIOrpcFlags.ORPCF_NULL && orpcthat.flags != JIOrpcFlags.ORPCF_LOCAL && 
-				orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED1 && orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED2 
+		if (orpcthat.flags != JIOrpcFlags.ORPCF_NULL && orpcthat.flags != JIOrpcFlags.ORPCF_LOCAL &&
+				orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED1 && orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED2
 			&& orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED3 && orpcthat.flags != JIOrpcFlags.ORPCF_RESERVED4)
 		{
 			throw new JIRuntimeException(orpcthat.flags);
 		}
-		
+
 		JIStruct orpcextentarray = new JIStruct();
-		try {	
+		try {
 		//create the orpcextent struct
 		/*
 		 *  typedef struct tagORPC_EXTENT
@@ -102,7 +102,7 @@ final class JIOrpcThat implements Serializable{
     } ORPC_EXTENT;
 
 		 */
-		
+
 			JIStruct orpcextent = new JIStruct();
 			orpcextent.addMember(UUID.class);
 			orpcextent.addMember(Integer.class); //length
@@ -117,8 +117,8 @@ final class JIOrpcThat implements Serializable{
     } ORPC_EXTENT_ARRAY;
 
 		 */
-		
-			
+
+
 			orpcextentarray.addMember(Integer.class);
 			orpcextentarray.addMember(Integer.class);
 			//this is since the pointer is [unique]
@@ -126,7 +126,7 @@ final class JIOrpcThat implements Serializable{
 		} catch (JIException e1) {
 			//this won't fail...i am certain :)...
 		}
-		
+
 		Map map = new HashMap();
 		List listOfDefferedPointers = new ArrayList();
 		JIPointer orpcextentarrayptr = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,new JIPointer(orpcextentarray),listOfDefferedPointers,JIFlags.FLAG_NULL,map);
@@ -136,11 +136,11 @@ final class JIOrpcThat implements Serializable{
 		{
 			ArrayList newList = new ArrayList();
 			JIPointer replacement = (JIPointer)JIMarshalUnMarshalHelper.deSerialize(ndr,(JIPointer)listOfDefferedPointers.get(x),newList,JIFlags.FLAG_NULL,map);
-			((JIPointer)listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.	
+			((JIPointer)listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
 			x++;
 			listOfDefferedPointers.addAll(x,newList);
 		}
-				
+
 		ArrayList extentArrays = new ArrayList();
 		//now read whether extend array exists or not
 		//int ptr = ndr.readUnsignedLong();
@@ -151,15 +151,15 @@ final class JIOrpcThat implements Serializable{
 			{
 				if (pointers[i].isNull())
 					continue;
-				
+
 				JIStruct orpcextent2 = (JIStruct)pointers[i].getReferent();
 				Byte[] byteArray = (Byte[])((JIArray)orpcextent2.getMember(2)).getArrayInstance();
-				
+
 				extentArrays.add(new JIOrpcExtentArray(((UUID)orpcextent2.getMember(0)).toString(),byteArray.length,byteArray));
 			}
-			
+
 		}
-		
+
 		orpcthat.setExtentArray((JIOrpcExtentArray[])extentArrays.toArray(new JIOrpcExtentArray[extentArrays.size()]));
 
 		return orpcthat;

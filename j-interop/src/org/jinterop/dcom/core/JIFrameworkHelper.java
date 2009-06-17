@@ -4,15 +4,15 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 package org.jinterop.dcom.core;
@@ -29,12 +29,12 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 
 /** Internal Framework Helper class. Do not use outside of framework.
- * 
+ *
  * @exclude
  */
 public final class JIFrameworkHelper {
 
-	/** 
+	/**
 	 * @exclude
 	 * @param src
 	 * @param target
@@ -45,11 +45,11 @@ public final class JIFrameworkHelper {
 		{
 			throw new NullPointerException();
 		}
-		
+
 		JISession.linkTwoSessions(src, target);
 	}
-	
-	/** 
+
+	/**
 	 * @exclude
 	 * @param src
 	 * @param target
@@ -60,11 +60,11 @@ public final class JIFrameworkHelper {
 		{
 			throw new NullPointerException();
 		}
-		
+
 		JISession.unLinkSession(src, unlinkedSession);
 	}
-	
-	/** 
+
+	/**
 	 * @exclude
 	 * @param src
 	 * @param target
@@ -73,8 +73,8 @@ public final class JIFrameworkHelper {
 	{
 		return JISession.resolveSessionForOxid(new JIOxid(oxid));
 	}
-	
-	/** 
+
+	/**
 	 * @exclude
 	 * @param src
 	 * @param target
@@ -83,10 +83,10 @@ public final class JIFrameworkHelper {
 	{
 		return session.getStub().getServerInterfacePointer();
 	}
-	
-	 /** Must be called once and only once from JICallBuilder "read" to create the right pointer in case of man in the middle scenario and 
+
+	 /** Must be called once and only once from JICallBuilder "read" to create the right pointer in case of man in the middle scenario and
 	  * add it to the session.
-	  * 
+	  *
 	  * @param session
 	  * @param ptr
 	  * @return
@@ -98,14 +98,14 @@ public final class JIFrameworkHelper {
 		addComObjectToSession(retval.getAssociatedSession(), retval);
 		return retval;
 	}
-	
+
 	static IJIComObject instantiateComObject2(JISession session, final JIInterfacePointer ptr) throws JIException
 	{
 		if (ptr == null)
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMFACTORY_ILLEGAL_ARG));
 		}
-		
+
 		IJIComObject retval = null;
 		JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
 		if (!JIInterfacePointer.isOxidEqual(stubPtr, ptr))
@@ -130,27 +130,27 @@ public final class JIFrameworkHelper {
 //			{
 //				retval = new JIComObjectImpl(newsession,ptr);
 //			}
-				
+
 			//this is so that the reference gets added correctly.
 			session = newsession;
 		}
-	
+
 		if (retval == null)
 		{
 			retval = new JIComObjectImpl(session,ptr);
 		}
-		
+
 		return retval;
 	}
-	
+
 	static void addComObjectToSession(JISession session,IJIComObject comObject)
 	{
 		session.addToSession(comObject,comObject.internal_getInterfacePointer().getOID());
 	}
-	
- 
+
+
     /** Returns an Interface Pointer representation for the Java Component
-     * 
+     *
      * @exclude
      * @param javaComponent
      * @return
@@ -161,7 +161,7 @@ public final class JIFrameworkHelper {
     }
 
     /** Returns an Interface Pointer representation from raw bytes.
-     * 
+     *
      * @exclude
      * @param session
      * @param rawBytes
@@ -174,7 +174,7 @@ public final class JIFrameworkHelper {
 		NdrBuffer ndrBuffer = new NdrBuffer(rawBytes,0);
 		ndr.setBuffer(ndrBuffer);
 		ndrBuffer.length = rawBytes.length;
-		
+
 		//this is a brand new session.
 		if (session.getStub() == null)
 		{
@@ -189,10 +189,10 @@ public final class JIFrameworkHelper {
 			return retval;
 		}
     }
-    
-    /** Typically used in the Man-In-The-Middle scenario, where one j-Interop system interacts with another over the wire. 
+
+    /** Typically used in the Man-In-The-Middle scenario, where one j-Interop system interacts with another over the wire.
      * Or the IJIComObject is deserialized from a Database and is right now drifting.
-     * 
+     *
      * @exclude
      * @param session
      * @param comObject
@@ -205,15 +205,15 @@ public final class JIFrameworkHelper {
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_SESSION_ALREADY_ATTACHED));
 		}
-    	
+
     	if (comObject.isLocalReference())
     	{
     		throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMOBJ_LOCAL_REF));
     	}
-    	
+
     	return instantiateComObject(session, comObject.internal_getInterfacePointer());
     }
-    
+
     /**
      * @exclude
      * @param comObject
@@ -227,14 +227,14 @@ public final class JIFrameworkHelper {
 		{
 			throw new JIException(JIErrorCodes.JI_CALLBACK_INVALID_ID);
 		}
-		
+
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info("Detaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , identifier: " + identifier);
 		}
-		
+
 		IJIComObject connectionPointer = (IJIComObject)connectionInfo[0];
-		
+
 		//first use the cookie to detach.
 		JICallBuilder object = new JICallBuilder(true);
 		object.setOpnum(3);
@@ -243,7 +243,7 @@ public final class JIFrameworkHelper {
 		//now release the connectionPointer.
 		connectionPointer.release();
     }
-    
+
     /**
      * @exclude
      * @param comObject
@@ -258,7 +258,7 @@ public final class JIFrameworkHelper {
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_CALLBACK_INVALID_PARAMS));
 		}
-		
+
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
 			JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.getIpid());
@@ -271,13 +271,13 @@ public final class JIFrameworkHelper {
 		object.addOutParamAsObject(IJIComObject.class,JIFlags.FLAG_NULL);
 		Object[] objects = (Object[])connectionPointContainer.call(object); //find connection point
 		IJIComObject connectionPointer  = (IJIComObject)objects[0];
-		
+
 		object.reInit();
 		object.setOpnum(2);
 		object.addInParamAsComObject(eventListener, JIFlags.FLAG_NULL);
 		object.addOutParamAsType(Integer.class,JIFlags.FLAG_NULL);
 		Object[] obj = connectionPointer.call(object);
-		
+
 		//used to unadvise from the connectionpoint
 		Integer dwcookie = ((Integer)obj[0]);
 
@@ -286,11 +286,11 @@ public final class JIFrameworkHelper {
 			JISystem.getLogger().info("Event handler returned cookie " + dwcookie);
 		}
 		connectionPointContainer.release();
-		
+
 		return comObject.internal_setConnectionInfo(connectionPointer,dwcookie);
-		
+
 	}
-    
+
     public static int reverseArrayForDispatch(JIArray arrayToReverse)
     {
     	return arrayToReverse.reverseArrayForDispatch();

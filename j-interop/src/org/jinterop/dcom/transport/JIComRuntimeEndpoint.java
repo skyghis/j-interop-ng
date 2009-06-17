@@ -1,18 +1,18 @@
-/**j-Interop (Pure Java implementation of DCOM protocol) 
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 
 package org.jinterop.dcom.transport;
@@ -63,13 +63,13 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
         super(transport,syntax);
     }
 
-	public void call(int semantics, UUID object, int opnum, NdrObject ndrobj) throws IOException 
+	public void call(int semantics, UUID object, int opnum, NdrObject ndrobj) throws IOException
 	{
 		throw new JIRuntimeException(JIErrorCodes.JI_ILLEGAL_CALL);
 	}
-	
-	//use this oxidObject, it is actually OxidResolverImpl extends NdrObject. 
-	public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List listOfSupportedInterfaces) throws IOException 
+
+	//use this oxidObject, it is actually OxidResolverImpl extends NdrObject.
+	public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List listOfSupportedInterfaces) throws IOException
 	{
 
 		if (JISystem.getLogger().isLoggable(Level.INFO))
@@ -77,22 +77,22 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 			JISystem.getLogger().info("processRequests: [JIComRuntimeEndPoint] started new thread " + Thread.currentThread().getName());
 		}
 		//this iid is the component IID just in case.
-		if (baseIID != null) 
+		if (baseIID != null)
 		{
 			getTransport().getProperties().setProperty("IID2", baseIID);
 		}
-		
+
 		getTransport().getProperties().put("LISTOFSUPPORTEDINTERFACES",listOfSupportedInterfaces);
-		
+
 		bind();// will bind to the server and perform the initial bind\bind ack.
-		
+
 		while (true)
 		{
-			
+
 			  // first recieve and then answer
-			  ConnectionOrientedPdu response = null; 	
+			  ConnectionOrientedPdu response = null;
 			  ConnectionOrientedPdu request = receive();
-			  
+
 			  if (!workerObject.isResolver())
 			  {
 				  int j = 0;
@@ -123,9 +123,9 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 				  //sets the current object, this is used to identify the JILocalCoClass to work on.
 				  //for most cases this will be null , till there is an actual COM interface request.
 				  workerObject.setCurrentObjectID(((RequestCoPdu) request).getObject());
-				  
+
 				  try{
-					  
+
 					  ((NdrObject)workerObject).decode(ndr, buffer);
 					  ResponseCoPdu responseCoPdu = new ResponseCoPdu();
 					  responseCoPdu.setContextId(((RequestCoPdu) request).getContextId());
@@ -140,12 +140,12 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 					  responseCoPdu.setStub(responsebytes);
 //					  responseCoPdu.setStub(ndr.getBuffer().getBuffer());
 					  response = responseCoPdu;
-					  
-					  
-					  
+
+
+
 				  }catch(JIRuntimeException e)
 				  {
-					  JISystem.getLogger().throwing("JIComRuntimeEndpoint","processRequests",e);  
+					  JISystem.getLogger().throwing("JIComRuntimeEndpoint","processRequests",e);
 					  //create a fault PDU
 					  response = new FaultCoPdu();
 					  response.setCallId(((RequestCoPdu) request).getCallId());
@@ -154,14 +154,14 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 			  }
 			  else if (request instanceof BindPdu || request instanceof AlterContextPdu)
 			  {
-				  
+
 				  if (!workerObject.isResolver())
 				  {
 					  //this list will be clear after this call.
 					  /* Basically the cycle expected is like this...first a bind call comes, then a RemQI, that populates the
-					   * list internally (Remunknownobject), then an alter context comes for the QIed interface, this clears the set 
+					   * list internally (Remunknownobject), then an alter context comes for the QIed interface, this clears the set
 					   * object (if any) , then a normal request comes through.
-					   * 
+					   *
 					   */
 					  //this call is only valid when the workerObject is RemUnknownObject.
 					  //so the context us NTLMConnectionContext
@@ -169,25 +169,25 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 					  {
 						  ((JIComRuntimeNTLMConnectionContext)context).updateListOfInterfacesSupported(workerObject.getQIedIIDs());
 					  }
-					  
-					  
+
+
 					    switch(request.getType())
 	                  	{
 	                  		case BindPdu.BIND_TYPE:
 	                  				currentIID = ((BindPdu)request).getContextList()[0].abstractSyntax.getUuid().toString();
-	                  			break;	
+	                  			break;
 	                  		case AlterContextPdu.ALTER_CONTEXT_TYPE:
 	                  				//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
 	                  				currentIID = ((AlterContextPdu)request).getContextList()[0].abstractSyntax.getUuid().toString();
 	                  			break;
-	                  		default:	
+	                  		default:
 	                  			//nothing
 	                  	}
-					  
+
 				  }
 
 				  response = context.accept(request);
-				  
+
 				  if (!workerObject.isResolver())
 				  {
 					  PresentationResult[] result = null;
@@ -204,14 +204,14 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 						  successful = result[0].result == PresentationResult.ACCEPTANCE;
 						  context = ((AlterContextPdu)request).getContextList()[0]; //am expecting only one
 					  }
-					  
+
 //					  if (successful)
 //					  {
 //						  //now select the Interface from the request and set that as the object expected to come.
 //						  workerObject.setCurrentJavaInstanceFromIID(context.abstractSyntax.toString().toUpperCase());
 //						  //set the component null;
 //					  }
-					  
+
 				  }
 			  }
 			  else if (request instanceof FaultCoPdu) {
@@ -238,13 +238,13 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 			  }
 			  //now send the response.
 			  send(response);
-		     
+
 			  if (workerObject.workerOver())
 			  {
 			      JISystem.getLogger().info("processRequests: [JIComRuntimeEndPoint] Worker is over, all IPID references have been released. Thread " + Thread.currentThread().getName() + " will now exit.");
 			      break;
 			  }
 		}
-				
+
 	}
 }

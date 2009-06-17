@@ -1,18 +1,18 @@
-/**j-Interop (Pure Java implementation of DCOM protocol) 
+/**j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * version 3.0 of the License, or (at your option) any later version.
  *
- * Though a sincere effort has been made to deliver a professional, 
- * quality product,the library itself is distributed WITHOUT ANY WARRANTY; 
+ * Though a sincere effort has been made to deliver a professional,
+ * quality product,the library itself is distributed WITHOUT ANY WARRANTY;
  * See the GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
 package org.jinterop.dcom.transport;
 
@@ -38,12 +38,12 @@ import rpc.core.PresentationSyntax;
  */
 final class JIComRuntimeTransport implements Transport {
 
-	
+
 	public static final String PROTOCOL = "ncacn_ip_tcp";
 
     private Properties properties;
 
-   
+
     private Socket socket;
 
     private OutputStream output;
@@ -52,7 +52,7 @@ final class JIComRuntimeTransport implements Transport {
 
     private boolean attached;
 
-   
+
     public JIComRuntimeTransport(String address, Properties properties)
             throws ProviderException {
         this.properties = properties;
@@ -69,7 +69,7 @@ final class JIComRuntimeTransport implements Transport {
 
     public Endpoint attach(PresentationSyntax syntax) throws IOException {
         if (attached) throw new RpcException("Transport already attached.");
-       
+
         Endpoint endPoint = null;
         try {
             socket = (Socket)JISystem.internal_getSocket();
@@ -110,5 +110,5 @@ final class JIComRuntimeTransport implements Transport {
                 buffer.getCapacity()));
     }
 
-	 
+
 }
