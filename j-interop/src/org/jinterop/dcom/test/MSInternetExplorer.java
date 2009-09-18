@@ -308,6 +308,7 @@ public class MSInternetExplorer {
 
 		ArrayList list = new ArrayList();
 		list.add("34A715A0-6587-11D0-924A-0020AFC7AC4D");
+		list.add("00020400-0000-0000-c000-000000000046");
 		javaComponent.setSupportedEventInterfaces(list);
 
 
