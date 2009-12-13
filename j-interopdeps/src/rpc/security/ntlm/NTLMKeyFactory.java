@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
+import jcifs.util.Encdec;
+
 
 class NTLMKeyFactory {
 
@@ -70,6 +72,19 @@ class NTLMKeyFactory {
 	     return key;
 	}
 
+	byte[] getNTLMv2UserSessionKey(String target, String user, String password,
+            byte[] challenge,byte[] blob) throws Exception
+    {
+        byte key[] = new byte[16];
+        byte[] ntlm2Hash = Responses.ntlmv2Hash(target, user, password);
+        byte[] data = new byte[challenge.length + blob.length];
+        System.arraycopy(challenge, 0, data, 0, challenge.length);
+        System.arraycopy(blob, 0, data, challenge.length,
+                blob.length);
+        byte[] mac = Responses.hmacMD5(data, ntlm2Hash);
+        key = Responses.hmacMD5(mac, ntlm2Hash);
+        return key;
+    }
 	/** Password of the user
 	 *
 	 * @param password

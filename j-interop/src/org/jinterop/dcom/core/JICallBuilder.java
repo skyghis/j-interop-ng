@@ -1034,6 +1034,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 						JISession newsession = JISession.createSession(session);
 					    newsession.setGlobalSocketTimeout(session.getGlobalSocketTimeout());
 					    newsession.useSessionSecurity(session.isSessionSecurityEnabled());
+					    newsession.useNTLMv2(session.isNTLMv2Enabled());
 					    JIComServer comServer = new JIComServer(newsession,comObjectImpl.internal_getInterfacePointer(),null);
 					    comObject = comServer.getInstance();
 					    JIFrameworkHelper.link2Sessions(session, newsession);

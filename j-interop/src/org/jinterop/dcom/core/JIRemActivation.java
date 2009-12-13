@@ -51,6 +51,7 @@ final class JIRemActivation extends NdrObject {
 	private JIInterfacePointer mInterfacePointer = null;
 	boolean isDual = false;
 	String dispIpid = null;
+	int dispRefs = 5;
 	byte[] dispOid = null;
 
 	public JIRemActivation(String clsid)
@@ -219,6 +220,7 @@ final class JIRemActivation extends NdrObject {
 			JIInterfacePointer ptr = arrayObjs[1];
 			dispIpid = ptr.getIPID();
 			dispOid = ptr.getOID();
+			dispRefs = ((JIStdObjRef)ptr.getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs();
 		}
 
 		array = new JIArray(Integer.class,null,1,true);

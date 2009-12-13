@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -64,6 +65,8 @@ final class JIComTransport implements Transport {
     private boolean attached;
 
     private boolean timeoutModifiedfrom0 = false;
+    
+    private SocketChannel channel = null;
 
     static {
         String localhost = null;
@@ -95,7 +98,7 @@ final class JIComTransport implements Transport {
         		JISystem.getLogger().finest("Opening socket on " + new InetSocketAddress(InetAddress.getByName(host),port));
         	}
 
-        	SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(host),port));
+        	channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(host),port));
         	socket = channel.socket();//new Socket(host, port);
             output = null;
             input = null;
@@ -119,6 +122,7 @@ final class JIComTransport implements Transport {
             	socket.shutdownInput();
             	socket.shutdownOutput();
             	socket.close();
+            	channel.close();
             	if (JISystem.getLogger().isLoggable(Level.FINEST))
             	{
             		JISystem.getLogger().finest("Socket closed... " + socket + " host " + host + " , port " + port);
@@ -129,12 +133,14 @@ final class JIComTransport implements Transport {
             socket = null;
             output = null;
             input = null;
+            channel = null;
         }
     }
 
     public void send(NdrBuffer buffer) throws IOException {
         if (!attached) throw new RpcException("Transport not attached.");
         if (output == null) output = socket.getOutputStream();
+        channel.configureBlocking(true);
         output.write(buffer.getBuffer(), 0, buffer.getLength());
         output.flush();
     }

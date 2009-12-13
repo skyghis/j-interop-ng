@@ -589,6 +589,11 @@ final class JIComOxidRuntime {
     			properties.setProperty("rpc.ntlm.ntlm2", "true");
     		}
     		
+    		if (session.isNTLMv2Enabled())
+    		{
+    			properties.setProperty("rpc.ntlm.ntlmv2", "true");
+    		}
+    		
     		JIComOxidRuntimeHelper remUnknown = new JIComOxidRuntimeHelper(properties);
 			
     		

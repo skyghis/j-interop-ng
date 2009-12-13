@@ -122,6 +122,7 @@ public final class JIFrameworkHelper {
 			    newsession = JISession.createSession(session);
 			    newsession.setGlobalSocketTimeout(session.getGlobalSocketTimeout());
 			    newsession.useSessionSecurity(session.isSessionSecurityEnabled());
+			    newsession.useNTLMv2(session.isNTLMv2Enabled());
 			    JIComServer comServer = new JIComServer(newsession,ptr,null);
 			    retval = comServer.getInstance();
 			    JIFrameworkHelper.link2Sessions(session, newsession);

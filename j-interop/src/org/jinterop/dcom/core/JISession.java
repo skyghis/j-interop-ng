@@ -77,6 +77,7 @@ public final class JISession {
 	private Map mapOfUnreferencedHandlers = new HashMap();
 	private int timeout = 0;
 	private boolean useSessionSecurity = false;
+	private boolean useNTLMv2 = false;
 	private ArrayList links = new ArrayList();
 	private static final Map mapOfOxidsVsJISessions = new HashMap();
 	private boolean sessionInDestroy = false;
@@ -247,52 +248,57 @@ public final class JISession {
 	private static class Release_References_TimerTask extends TimerTask
 	{
 		public void run() {
-			List listOfSessionsClone = null;
-			synchronized (mutex) {
-				listOfSessionsClone = (List)listOfSessions.clone();
-			}
 
-			int i = 0;
-
-			while(i < listOfSessionsClone.size())
-			{
-				JISession session = (JISession)listOfSessionsClone.get(i);
-
-
-				if (JISystem.getLogger().isLoggable(Level.INFO))
-	            {
-					JISystem.getLogger().info("Release_References_TimerTask:[RUN] Session:  " + session.getSessionIdentifier() + " , listOfDeferencedIpids: " + session.listOfDeferencedIpids);
-	            }
-				//now iterate over each sessions listOfDereferencedIpids and send a call to release for the entire lot.
-				ArrayList listToKill = new ArrayList();
+			try{
+				List listOfSessionsClone = null;
 				synchronized (mutex) {
-					for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
+					listOfSessionsClone = (List)listOfSessions.clone();
+				}
+	
+				int i = 0;
+	
+				while(i < listOfSessionsClone.size())
+				{
+					JISession session = (JISession)listOfSessionsClone.get(i);
+	
+					//now iterate over each sessions listOfDereferencedIpids and send a call to release for the entire lot.
+					ArrayList listToKill = new ArrayList();
+					synchronized (mutex) {
+						if (JISystem.getLogger().isLoggable(Level.INFO))
+			            {
+							JISystem.getLogger().info("Release_References_TimerTask:[RUN] Session:  " + session.getSessionIdentifier() + " , listOfDeferencedIpids.size(): " + session.listOfDeferencedIpids.size());
+			            }
+						for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
+						{
+							try {
+								listToKill.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
+							} catch (JIException e) {
+							//eaten, will never get thrown from the try block.
+							}
+						}
+						session.listOfDeferencedIpids.clear();
+					}
+	
+					if (listToKill.size() > 0)
 					{
-						try {
-							listToKill.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
-						} catch (JIException e) {
-						//eaten, will never get thrown from the try block.
+						JIArray array = new JIArray(listToKill.toArray(new JIStruct[listToKill.size()]),true);
+						try{
+							session.releaseRefs(array,false);
+						}catch(JIException e)
+						{
+							//This release cycle has to go on.
+							JISystem.getLogger().logp(Level.SEVERE,"JISession","Release_References_TimerTask:run()","Exception in internal GC",e);
 						}
 					}
-					session.listOfDeferencedIpids.clear();
+	
+					i++;
 				}
 
-				if (listToKill.size() > 0)
-				{
-					JIArray array = new JIArray(listToKill.toArray(new JIStruct[listToKill.size()]),true);
-					try{
-						session.releaseRefs(array,false);
-					}catch(JIException e)
-					{
-						//This release cycle has to go on.
-						JISystem.getLogger().throwing("JISession","Release_References_TimerTask:run()",e);
-					}
-				}
-
-				i++;
+			}catch(Exception e)
+			{
+				//This release cycle has to go on.
+				JISystem.getLogger().logp(Level.SEVERE,"JISession","Release_References_TimerTask:run()","Exception in internal GC",e);
 			}
-
-
 		}
 	}
 
@@ -538,7 +544,8 @@ public final class JISession {
 			{
 				if (!listOfFreeIPIDs.contains(session.stub.getServerInterfacePointer().getIPID()))
 				{
-					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
+					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID(),
+							((JIStdObjRef)session.stub.getServerInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs()));
 					listOfFreeIPIDs.add(session.stub.getServerInterfacePointer().getIPID());
 				}
 			}
@@ -706,9 +713,15 @@ public final class JISession {
 	//as getInterface. The remove will have to wait till that call gets over.
 	void releaseRef(String IPID) throws JIException
 	{
+		releaseRef(IPID, 5);
+	}
+
+	void releaseRef(String IPID,int numinstances) throws JIException
+	{
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
-			JISystem.getLogger().info("releaseRef:Reclaiming from Session: " + getSessionIdentifier() + " , the IPID: " + IPID);
+			JISystem.getLogger().info("releaseRef:Reclaiming from Session: " + 
+					getSessionIdentifier() + " , the IPID: " + IPID + ", numinstances is " + numinstances);
 		}
 		JICallBuilder obj = new JICallBuilder(true);
 		obj.setParentIpid(IPID);
@@ -720,12 +733,12 @@ public final class JISession {
 		obj.addInParamAsArray(array,JIFlags.FLAG_NULL);
 		//TODO requesting 5 for now, will later build caching mechnaism to exhaust 5 refs first before asking for more
 		// same with release.
-		obj.addInParamAsInt(5,JIFlags.FLAG_NULL);
+		obj.addInParamAsInt(numinstances,JIFlags.FLAG_NULL);
 		obj.addInParamAsInt(0,JIFlags.FLAG_NULL);//private refs = 0
 		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
-			JISystem.getLogger().warning("releaseRef: Releasing 5 references of IPID: " + IPID + " session: " + getSessionIdentifier());
-			debug_delIpids(IPID, 5);
+			JISystem.getLogger().warning("releaseRef: Releasing numinstances " + numinstances + " references of IPID: " + IPID + " session: " + getSessionIdentifier());
+			debug_delIpids(IPID, numinstances);
         }
 		stub.addRef_ReleaseRef(obj);
 	}
@@ -768,18 +781,25 @@ public final class JISession {
 		//ignore the results
 	}
 
-	private JIStruct prepareForReleaseRef(String IPID) throws JIException
+	private JIStruct prepareForReleaseRef(String IPID, int numInstancesfirsttime) throws JIException
 	{
 		JIStruct remInterface = new JIStruct();
 		remInterface.addMember(new rpc.core.UUID(IPID));
-		remInterface.addMember(new Integer(5 + 5)); // 5 of the original and 5 for the addRef done later on.
+		remInterface.addMember(new Integer(numInstancesfirsttime + 5)); // numInstancesfirsttime of the original and 5 for the addRef done later on.
 		remInterface.addMember(new Integer(0));//private refs = 0
 		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
-			JISystem.getLogger().warning("prepareForReleaseRef: Releasing 10 references of IPID: " + IPID + " session: " + getSessionIdentifier());
+			JISystem.getLogger().warning("prepareForReleaseRef: Releasing numInstancesfirsttime + 5 references of IPID: " 
+					+ IPID + " session: " + getSessionIdentifier() + " , numInstancesfirsttime is " + 
+					numInstancesfirsttime);
         }
-		debug_delIpids(IPID, 10);
-		return remInterface;
+		debug_delIpids(IPID, numInstancesfirsttime + 5);
+		return remInterface;	
+	}
+	
+	private JIStruct prepareForReleaseRef(String IPID) throws JIException
+	{
+		return prepareForReleaseRef(IPID, 5);
 	}
 
 	/** Gets the user name associated with this session.
@@ -909,6 +929,11 @@ public final class JISession {
 //		}
 	}
 
+	public void useNTLMv2(boolean enable)
+	{
+		useNTLMv2 = enable;
+	}
+	
 	/**<p> Flag indicating whether session security is enabled. </p>
 	 *
 	 * @return <code>true</code> for enabled.
@@ -918,6 +943,10 @@ public final class JISession {
 		return useSessionSecurity;
 	}
 
+	public boolean isNTLMv2Enabled()
+	{
+		return useNTLMv2;
+	}
 
 	/**<p> Links the src with target. These two sessions can now be destroyed in a cascade effect.
 	 * </p>

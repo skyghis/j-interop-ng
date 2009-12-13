@@ -20,6 +20,7 @@
 package rpc.security.ntlm;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.Random;
 
@@ -30,6 +31,7 @@ import jcifs.ntlmssp.Type1Message;
 import jcifs.ntlmssp.Type2Message;
 import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.util.Encdec;
 import rpc.Security;
 
 public class NtlmAuthentication {
@@ -42,7 +44,7 @@ public class NtlmAuthentication {
             Config.getBoolean("jcifs.smb.client.useUnicode", true);
 
 
-    private static final int BASIC_FLAGS = NtlmFlags.NTLMSSP_NEGOTIATE_NTLM |
+    private static final int BASIC_FLAGS = NtlmFlags.NTLMSSP_REQUEST_TARGET | NtlmFlags.NTLMSSP_NEGOTIATE_NTLM |
             NtlmFlags.NTLMSSP_NEGOTIATE_OEM |
                     NtlmFlags.NTLMSSP_NEGOTIATE_ALWAYS_SIGN |
                             (UNICODE_SUPPORTED ?
@@ -65,9 +67,12 @@ public class NtlmAuthentication {
 
     private boolean keyExchange;
 
-    private int keyLength = 40;
+    //we always go for 128
+    private int keyLength = 128;
 
-    private boolean usentlmv2 = false;
+    private boolean useNtlm2sessionsecurity = false;
+    
+    private boolean useNtlmV2 = false;
 
     private static final Random RANDOM = new Random();
 
@@ -95,9 +100,9 @@ public class NtlmAuthentication {
                 }
             }
 
-            usentlmv2 = Boolean.valueOf(properties.getProperty(
+            useNtlm2sessionsecurity = Boolean.valueOf(properties.getProperty(
             "rpc.ntlm.ntlm2")).booleanValue();
-
+            useNtlmV2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlmv2")).booleanValue();
             domain = properties.getProperty("rpc.ntlm.domain");
             user = properties.getProperty(Security.USERNAME);
             password = properties.getProperty(Security.PASSWORD);
@@ -137,7 +142,8 @@ public class NtlmAuthentication {
         if (keyExchange) flags |= NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
         if (keyLength >= 56) flags |= NtlmFlags.NTLMSSP_NEGOTIATE_56;
         if (keyLength >= 128) flags |= NtlmFlags.NTLMSSP_NEGOTIATE_128;
-        if (usentlmv2)
+        //We always negotiate for NTLM2 session security
+//        if (useNtlm2sessionsecurity)
         {
         	flags |= NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2;
         }
@@ -160,10 +166,10 @@ public class NtlmAuthentication {
         if (!keyExchange) flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
         if (keyLength < 128) flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_128;
         if (keyLength < 56) flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_56;
-        if (!usentlmv2)
-        {
-        	flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2;
-        }
+//        if (!useNtlm2sessionsecurity)
+//        {
+//        	flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2;
+//        }
         return flags;
     }
 
@@ -242,18 +248,49 @@ public class NtlmAuthentication {
         }
 
         Type3Message type3 = null;
-
-        //we have to now form lmv2 and ntlmv2 response with regards to the session security
-        //the type3message also has to be altered
-        if (usentlmv2)
+        
+        byte[] clientNonce = new byte[8];
+        byte[] blob = null;
+        
+        String target = null;//getTargetFromTargetInformation(type2.getTargetInformation());
+        
+        if (target == null)
         {
-         	flags = adjustFlags(flags);
+        	target = credentials.getDomain().toUpperCase();
+        	if (target.equals(""))
+        	{
+        		target = getTargetFromTargetInformation(type2.getTargetInformation());
+        	}
+        }
+        
+        if (useNtlmV2)
+        {
+        	RANDOM.nextBytes(clientNonce);
+        	try {
+        		byte[] lmv2Response = Responses.getLMv2Response(target, credentials.getUsername(), credentials.getPassword(), 
+            			type2.getChallenge(), clientNonce);
+        		byte[][] retval = Responses.getNTLMv2Response(target, credentials.getUsername(), credentials.getPassword(), type2.getTargetInformation(), type2.getChallenge(), clientNonce);
+        		byte[] ntlmv2Response = retval[0];
+        		blob = retval[1];
+        		type3 = new Type3Message(flags, lmv2Response, ntlmv2Response,
+        				target, credentials.getUsername(),
+ 	                    Type3Message.getDefaultWorkstation());
+			} catch (Exception e)
+			{
+				throw new RuntimeException("Exception occured while forming NTLMv2 Type3Response",e);
+			}
+			
+        }
+        else
+        if ((flags & NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2) != 0) //NTLM2 Session security response
+    	{
+    		flags = adjustFlags(flags);
             flags &= ~0x00020000;
         	//flags =  0xe2888235;
-        	byte[] challenge = type2.getChallenge();
+            byte[] challenge = type2.getChallenge();
         	//LMReponse is 24 bytes. 8 byte random client nonce and the rest is null padded.
             byte[] lmResponse = new byte[24];
-            byte[] clientNonce = new byte[8];
+            
             RANDOM.nextBytes(clientNonce);
             System.arraycopy(clientNonce, 0, lmResponse, 0, clientNonce.length);
             byte[] ntResponse;
@@ -265,48 +302,120 @@ public class NtlmAuthentication {
 			}
 
             type3 = new Type3Message(flags, lmResponse, ntResponse,
-                   credentials.getDomain(), credentials.getUsername(),
+            		target, credentials.getUsername(),
                     Type3Message.getDefaultWorkstation());
-            NTLMKeyFactory ntlmKeyFactory = new NTLMKeyFactory();
-            //now create the key for the session
-            //this key will be used to RC4 a 16 byte random key and set to the type3 message
-            byte[] servernonce = new byte[16];
-            System.arraycopy(challenge, 0, servernonce, 0, challenge.length);
-            System.arraycopy(clientNonce, 0, servernonce, 8, clientNonce.length);
-            byte[] sessionResponseUserSessionKey;
-            try {
-				sessionResponseUserSessionKey = ntlmKeyFactory.getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
-				//now RC4 encrypt a random 16 byte key
-				byte[] secondayMasterKey = ntlmKeyFactory.getSecondarySessionKey();
-				type3.setSessionKey(ntlmKeyFactory.encryptSecondarySessionKey(secondayMasterKey, sessionResponseUserSessionKey));
-				security = (Security) new Ntlm1(flags, secondayMasterKey,false);
-			} catch (Exception e)
-			{
-				throw new RuntimeException("Exception occured while forming Session Security for Type3Response",e);
-			}
-
-        }
-        else
-        {
-
-        	byte[] challenge = type2.getChallenge();
+    	}
+    	else //Plain NTLMv1 response
+    	{
+    		byte[] challenge = type2.getChallenge();
             byte[] lmResponse = NtlmPasswordAuthentication.getPreNTLMResponse(
                     credentials.getPassword(), challenge);
             byte[] ntResponse = NtlmPasswordAuthentication.getNTLMResponse(
                     credentials.getPassword(), challenge);
             type3 = new Type3Message(flags, lmResponse, ntResponse,
-                    credentials.getDomain(), credentials.getUsername(),
+            		target, credentials.getUsername(),
                             Type3Message.getDefaultWorkstation());
             if ((flags & NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH) != 0) {
             	throw new RuntimeException("Key Exchange not supported by Library !");
-            }
+            }	
+    	}
+        //we have to now form lmv2 and ntlmv2 response with regards to the session security
+        //the type3message also has to be altered
+        if (useNtlm2sessionsecurity && (flags & NtlmFlags.NTLMSSP_NEGOTIATE_NTLM2) != 0)
+        {
+        	NTLMKeyFactory ntlmKeyFactory = new NTLMKeyFactory();
+        	byte[] userSessionKey;
+        	if (useNtlmV2)
+        	{
+        		try {
+        			userSessionKey = ntlmKeyFactory.getNTLMv2UserSessionKey(target, credentials.getUsername(), credentials.getPassword(), type2.getChallenge(), blob);
+				} catch (Exception e) {
+					throw new RuntimeException("Exception occured while forming NTLMv2 with NTLM2 Session Security for Type3Response",e);
+				}
+        	}
+        	else
+        	{
+                //now create the key for the session
+                //this key will be used to RC4 a 16 byte random key and set to the type3 message
+                byte[] servernonce = new byte[16];
+                System.arraycopy(type2.getChallenge(), 0, servernonce, 0, type2.getChallenge().length);
+                System.arraycopy(clientNonce, 0, servernonce, 8, clientNonce.length);
+                try {
+    				userSessionKey = ntlmKeyFactory.getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
+    			} catch (Exception e)
+    			{
+    				throw new RuntimeException("Exception occured while forming Session Security for Type3Response",e);
+    			}
+                
+        	}
+        	
+        	try {
+				//now RC4 encrypt a random 16 byte key
+				byte[] secondayMasterKey = ntlmKeyFactory.getSecondarySessionKey();
+				type3.setSessionKey(ntlmKeyFactory.encryptSecondarySessionKey(secondayMasterKey, userSessionKey));
+				security = (Security) new Ntlm1(flags, secondayMasterKey,false);
+			} catch (Exception e)
+			{
+				throw new RuntimeException("Exception occured while forming Session Security for Type3Response",e);
+			}
         }
-
-
 
         return type3;
     }
 
+    private String getTargetFromTargetInformation(byte[] targetInformation)
+    {
+    	 String target = null;
+         
+         int i = 0;
+         while (i < targetInformation.length)
+         {
+             switch(Encdec.dec_uint16le(targetInformation, i))
+             {
+//                 case 2: //domain
+//                     i++;
+//                     i++; //advance two bytes
+//                     int length = Encdec.dec_uint16le(targetInformation, i);
+//                     i++;
+//                     i++;//advance two bytes
+//                     byte[] domainb = new byte[length];
+//                     System.arraycopy(targetInformation, i, domainb, 0, length);
+//					 try {
+//					 	 target = new String(domainb,"UTF-16LE");
+//					 } catch (UnsupportedEncodingException e) {
+//					     return null;
+//					 }
+//                     i = i + length;
+//                     i = targetInformation.length;
+//                     break;
+                 case 1: //Server name
+                     i++;
+                     i++; //advance two bytes
+                     int length = Encdec.dec_uint16le(targetInformation, i);
+                     i++;
+                     i++;//advance two bytes
+                     byte[] domainb = new byte[length];
+                     System.arraycopy(targetInformation, i, domainb, 0, length);
+					 try {
+					 	 target = new String(domainb,"UTF-16LE");
+					 } catch (UnsupportedEncodingException e) {
+					     return null;
+					 }
+                     i = i + length;
+                     i = targetInformation.length;
+                     break;
+                 default: //skip bytes   
+                     i++;
+                     i++; //advance two bytes
+                     length = Encdec.dec_uint16le(targetInformation, i);
+                     i++;
+                     i++;//advance two bytes
+                     i  = i + length;
+             }
+         }
+         
+         return target;
+    }
     void createSecurityWhenServer(NtlmMessage type3)
     {
     	Type3Message type3Message = (Type3Message)type3;
@@ -315,11 +424,17 @@ public class NtlmAuthentication {
     	int flags = type3Message.getFlags();
     	NTLMKeyFactory ntlmKeyFactory = new NTLMKeyFactory();
     	byte[] secondayMasterKey;
-    	byte[] sessionResponseUserSessionKey;
+    	byte[] sessionResponseUserSessionKey = null;
     	if (type3Message.getFlag(0x00000800))//anonymous flag
     	{
     		//if it is anonymous the user session key is new byte[16];
     		sessionResponseUserSessionKey = new byte[16];
+    	}
+    	else if(useNtlmV2) 
+    	{
+    		//TODO this needs to be checked here since the key logic will be totally different 
+    		//and we have to get the key out of Type3 message response (blob of the NTLMv2 response.)
+    		int h = 0;
     	}
     	else
     	{

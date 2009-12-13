@@ -71,12 +71,15 @@ public class Responses {
      *
      * @return The NTLMv2 Response.
      */
-    public static byte[] getNTLMv2Response(String target, String user,
+    public static byte[][] getNTLMv2Response(String target, String user,
             String password, byte[] targetInformation, byte[] challenge,
                     byte[] clientNonce) throws Exception {
+    	byte[][] retval = new byte[2][];
         byte[] ntlmv2Hash = ntlmv2Hash(target, user, password);
         byte[] blob = createBlob(targetInformation, clientNonce);
-        return lmv2Response(ntlmv2Hash, blob, challenge);
+        retval[1] = blob; 
+        retval[0] = lmv2Response(ntlmv2Hash, blob, challenge);
+        return retval;
     }
 
     /**
@@ -262,7 +265,7 @@ public class Responses {
      *
      * @return The blob, used in the calculation of the NTLMv2 Response.
      */
-    private static byte[] createBlob(byte[] targetInformation,
+    static byte[] createBlob(byte[] targetInformation,
             byte[] clientNonce) {
         byte[] blobSignature = new byte[] {
             (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00

@@ -136,7 +136,11 @@ public final class JIComServer extends Stub {
 		super.getProperties().setProperty("rpc.security.password", session.getPassword());
 		super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
 		super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
-
+		if (session.isNTLMv2Enabled())
+		{
+			super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
+		}
+		
 		JIStringBinding[] addressBindings = interfacePointer.getStringBindings().getStringBindings();
 
 		int i = 0;
@@ -319,6 +323,8 @@ public final class JIComServer extends Stub {
 			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
 		}
 
+		
+		
 		address = binding.getNetworkAddress(); //this will always have the port.
 		int index = address.indexOf("[");
 		String hostname = binding.getNetworkAddress().substring(0,index);
@@ -437,14 +443,10 @@ public final class JIComServer extends Stub {
 		super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
 		super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
 		super.setAddress(address);
-//		if (session.isSessionSecurityEnabled())
-//		{
-//			super.getProperties().setProperty("rpc.ntlm.seal", "true");
-//			super.getProperties().setProperty("rpc.ntlm.sign", "true");
-//			super.getProperties().setProperty("rpc.ntlm.keyExchange", "true");
-//			super.getProperties().setProperty("rpc.ntlm.keyLength", "128");
-//			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
-//		}
+		if (session.isNTLMv2Enabled())
+		{
+			super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
+		}
 
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
@@ -630,6 +632,8 @@ public final class JIComServer extends Stub {
 			super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
 		}
 
+		
+
 		String address = binding.getNetworkAddress(); //this will always have the port.
 		int index = address.indexOf("[");
 		String hostname = binding.getNetworkAddress().substring(0,index);
@@ -702,7 +706,7 @@ public final class JIComServer extends Stub {
 				if (success)
 				{
 					//which means that IDispatch is supported
-					session.releaseRef(dispatch.getInterfacePointer().getIPID());
+					session.releaseRef(dispatch.getInterfacePointer().getIPID(),((JIStdObjRef)dispatch.getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs());
 				}
 			}
 		}
@@ -743,7 +747,7 @@ public final class JIComServer extends Stub {
 				//IJIComObject comObject2 = getObject(remoteActivation.dispIpid,"00020400-0000-0000-c000-000000000046");
 				//this will get garbage collected and then removed.
 				//session.addToSession(comObject2,remoteActivation.dispOid);
-				session.releaseRef(remoteActivation.dispIpid);
+				session.releaseRef(remoteActivation.dispIpid,remoteActivation.dispRefs);
 				remoteActivation.dispIpid = null;
 				((JIComObjectImpl)comObject).setIsDual(true);
 			}
