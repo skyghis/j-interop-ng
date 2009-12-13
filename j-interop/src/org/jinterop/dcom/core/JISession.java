@@ -929,6 +929,13 @@ public final class JISession {
 //		}
 	}
 
+	/** <p> Sets the use of NTLMv2 Security (default is NTLM1). This can be used in combination with <code>useSessionSecurity</code> method.
+     * Once the <code>JIComServer</code> is bound to this session (using any of the <code>JIComServer</code> constructors)
+     * the use of session security <b>cannot</b> be enabled or disabled.
+     * <p>
+	 * 
+	 * @param enable <code>true</code> to enable.
+	 */
 	public void useNTLMv2(boolean enable)
 	{
 		useNTLMv2 = enable;
@@ -943,7 +950,11 @@ public final class JISession {
 		return useSessionSecurity;
 	}
 
-	public boolean isNTLMv2Enabled()
+	/**<p> Flag indicating whether NTLMv2 security is enabled. </p>
+    *
+    * @return <code>true</code> for enabled.
+    */
+   public boolean isNTLMv2Enabled()
 	{
 		return useNTLMv2;
 	}
