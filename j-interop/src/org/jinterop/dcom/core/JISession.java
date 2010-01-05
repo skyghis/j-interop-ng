@@ -66,6 +66,7 @@ public final class JISession {
 	private static Object mutex = new Object();
 	private IJIAuthInfo authInfo = null;
 	private JIComServer stub = null;
+	private JIRemUnknownServer stub2 = null;
 	private static int oxidResolverPort = -1;
 	private static byte[] localhost = new byte[]{127,0,0,1};
 	private static String localhostStr = "127.0.0.1";
@@ -556,7 +557,7 @@ public final class JISession {
 			{
 				JIArray array = new JIArray(list.toArray(new JIStruct[list.size()]),true);
 				try{
-					session.stub.closeStub(); //close the existing connection, next call will reopen it.
+					session.stub.closeStub(); //close the existing connection
 					session.releaseRefs(array,true);
 				}catch(JIException e)
 				{
@@ -583,10 +584,12 @@ public final class JISession {
 				}
 			}
 			session.stub.closeStub();
+			session.stub2.closeStub();
 		}
 
 		postDestroy(session);
 		session.stub = null; //setting it null in the end.
+		session.stub2 = null;
 	}
 
 	private static void postDestroy(JISession session) throws JIException
@@ -608,6 +611,7 @@ public final class JISession {
 	}
 
 	//each session is associated with 1 and only 1 stub.
+	//adding something new now another stub for IRemUnknown operations
 	void setStub(JIComServer stub)
 	{
 		this.stub = stub;
@@ -616,11 +620,23 @@ public final class JISession {
 		}
 	}
 
+	//IRemUnknown Stub
+	void setStub2(JIRemUnknownServer stub)
+	{
+		this.stub2 = stub;
+		//no need to add this to the Oxid vs Sessions map as we would be using the same interface pointer as the other stub.
+	}
+	
 	JIComServer getStub()
 	{
 		return this.stub;
 	}
 
+	JIRemUnknownServer getStub2()
+	{
+		return this.stub2;
+	}
+	
 	/**
 	 * @exclude
 	 * @param IPID
@@ -740,7 +756,7 @@ public final class JISession {
 			JISystem.getLogger().warning("releaseRef: Releasing numinstances " + numinstances + " references of IPID: " + IPID + " session: " + getSessionIdentifier());
 			debug_delIpids(IPID, numinstances);
         }
-		stub.addRef_ReleaseRef(obj);
+		stub2.addRef_ReleaseRef(obj);
 	}
 
 
@@ -776,7 +792,7 @@ public final class JISession {
 		obj.addInParamAsShort((short)(((Object[])arrayOfStructs.getArrayInstance()).length),JIFlags.FLAG_NULL);
 		obj.addInParamAsArray(arrayOfStructs,JIFlags.FLAG_NULL);
 		obj.fromDestroySession = fromDestroy;
-		stub.addRef_ReleaseRef(obj);
+		stub2.addRef_ReleaseRef(obj);
 
 		//ignore the results
 	}

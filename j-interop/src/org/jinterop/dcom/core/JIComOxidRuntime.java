@@ -98,7 +98,7 @@ final class JIComOxidRuntime {
 		boolean closed = false;
 		int seqNum = 1;
 		//JISession session  = null;
-		ArrayList currentSetOIDs = new ArrayList();//list of JIObjectId, this list is iterated and if the IPID ref count is 0 , 
+		Map currentSetOIDs = new HashMap();//list of JIObjectId, this list is iterated and if the IPID ref count is 0 , 
 												//it is added as a delete in set and a complex ping is sent.
 		Map pingedOnce = new HashMap();
 		public String toString()
@@ -238,7 +238,7 @@ final class JIComOxidRuntime {
 				//form a list if OID is 0 ref
 				synchronized (mutex3) 
 				{
-					for (Iterator itr2 = holder.currentSetOIDs.iterator();itr2.hasNext();)
+					for (Iterator itr2 = holder.currentSetOIDs.keySet().iterator();itr2.hasNext();)
 					{
 						JIObjectId oid = (JIObjectId)itr2.next();
 						if (oid.getIPIDRefCount() == 0)
@@ -333,18 +333,18 @@ final class JIComOxidRuntime {
 				holder.username = session.getUserName();
 				holder.password = session.getPassword();
 				holder.domain = session.getDomain();
-				holder.currentSetOIDs.add(oid);
+				holder.currentSetOIDs.put(oid,oid);
 				holder.modified = true;
 				holder.seqNum = 0;
 				mapOfSessionVsPingSetHolder.put(session,holder);
 			}
 			else //found , means it is another call for a new IPID
 			{
-				int index = holder.currentSetOIDs.indexOf(oid); 
-				if (index != -1)
+				JIObjectId oid2 = (JIObjectId)holder.currentSetOIDs.get(oid); 
+				if (oid2 != null)
 				{
 					//have to update this oid, since the one from parameters is a "new" one.
-					oid = (JIObjectId)holder.currentSetOIDs.get(index);
+					oid = oid2;
 				}
 				else
 				{
@@ -352,7 +352,7 @@ final class JIComOxidRuntime {
                     {
 						JISystem.getLogger().info("addUpdateOXIDs: Adding OID to holder " +  holder + ", current size of currentSetOIDs is " + holder.currentSetOIDs.size());
                     }
-					holder.currentSetOIDs.add(oid);
+					holder.currentSetOIDs.put(oid,oid);
 					holder.modified = true;
 				}
 			}
@@ -373,11 +373,11 @@ final class JIComOxidRuntime {
 			//this will be non-null, since we are trying to remove an IPID reference so the PingSet for its OID should exist
 			if (holder != null)
 			{
-				int index = holder.currentSetOIDs.indexOf(oid); 
-				if (index != -1)
+				JIObjectId oid2 = (JIObjectId)holder.currentSetOIDs.get(oid); 
+				if (oid2 != null)
 				{
 					//temp gets replaced by the real one.
-					oid = (JIObjectId)holder.currentSetOIDs.get(index);
+					oid = oid2;
 				}
 				else
 				{
@@ -423,11 +423,13 @@ final class JIComOxidRuntime {
                 {
 					JISystem.getLogger().info("clearIPIDsforSession: holder.currentSetOIDs's size is " + holder.currentSetOIDs.size());
                 }
-				for (int i = 0;i < holder.currentSetOIDs.size(); i++)
-				{
-					JIObjectId oid = (JIObjectId)holder.currentSetOIDs.get(i);
-					oid.setIPIDRefCountTo0();
-				}
+				
+				//No need to do this we are clearing the map anyways.
+//				for (Iterator itr2 = holder.currentSetOIDs.keySet().iterator();itr2.hasNext();)
+//				{
+//					JIObjectId oid = (JIObjectId)itr2.next();
+//					oid.setIPIDRefCountTo0();
+//				}
 
 				holder.modified = true;
 				holder.currentSetOIDs.clear(); //being done since this session is being destroyed and the corresponding COM server
@@ -440,7 +442,7 @@ final class JIComOxidRuntime {
 	static synchronized void startResolverTimer()
 	{
 		//schedule only 1 timer task , the task to ping the OIDs obtained.
-		pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(),0,(int) (2 * 60 * 1000));
+		pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(),0,(int) (4 * 60 * 1000));
 		if (JISystem.isJavaCoClassAutoCollectionSet())
 		{
 			pingTimer_8minutes.scheduleAtFixedRate(new ServerPingTimerTask(),0,8 * 60 * 1000);

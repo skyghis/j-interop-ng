@@ -339,6 +339,7 @@ public final class JIComServer extends Stub {
 		remunknownIPID = oxidResolver.getIPID();
 		interfacePtrCtor = interfacePointer;
 		this.session.setStub(this);
+		this.session.setStub2(new JIRemUnknownServer(session, remunknownIPID, getAddress()));
 
 	}
 
@@ -508,7 +509,7 @@ public final class JIComServer extends Stub {
 		}
 
 		this.session.setStub(this);
-
+		this.session.setStub2(new JIRemUnknownServer(session, remunknownIPID, getAddress()));
 	}
 
 
@@ -645,7 +646,6 @@ public final class JIComServer extends Stub {
 
 		//and currently only TCPIP is supported.
 		setAddress("ncacn_ip_tcp:" + address);
-//		setAddress("ncacn_ip_tcp:" + binding.getNetworkAddress());
 		remunknownIPID = remoteActivation.getIPID();
  	}
 
@@ -665,7 +665,7 @@ public final class JIComServer extends Stub {
 			//JIRemUnknown reqUnknown = new JIRemUnknown(unknownIPID,iid,5);
 			JIRemUnknown reqUnknown = new JIRemUnknown(ipidOfTheTargetUnknown,iid);
 			try {
-				call(Endpoint.IDEMPOTENT,reqUnknown);
+				this.session.getStub2().call(Endpoint.IDEMPOTENT,reqUnknown);
 			}catch(FaultException e)
 			{
 				throw new JIException(e.status,e);
@@ -690,7 +690,7 @@ public final class JIComServer extends Stub {
 				//IDispatch 00020400-0000-0000-c000-000000000046
 				JIRemUnknown dispatch = new JIRemUnknown(retval.getIpid(),"00020400-0000-0000-c000-000000000046");
 				try {
-					call(Endpoint.IDEMPOTENT,dispatch);
+					this.session.getStub2().call(Endpoint.IDEMPOTENT,dispatch);
 				}catch(FaultException e)
 				{
 					throw new JIException(e.status,e);
