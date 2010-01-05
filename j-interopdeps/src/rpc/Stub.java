@@ -106,7 +106,7 @@ public abstract class Stub {
                 getProperties()).attach(new PresentationSyntax(getSyntax())));
     }
 
-    protected void call(int semantics, NdrObject ndrobj) throws IOException {
+    public void call(int semantics, NdrObject ndrobj) throws IOException {
         attach();
         String object = getObject();
         UUID uuid = (object == null) ? null : new UUID(object);
