@@ -23,7 +23,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.channels.Channels;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
 import java.util.logging.Level;

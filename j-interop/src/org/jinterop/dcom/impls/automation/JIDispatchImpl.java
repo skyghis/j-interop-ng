@@ -374,7 +374,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 	    		}
 	    		else
 	    		{
-	    			variant = new JIVariant(obj,isRef);
+	    			variant = JIVariant.makeVariant(obj,isRef);
 	    		}
 
 	    	}
@@ -498,7 +498,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 	    		}
 	    		else
 	    		{
-	    			variant = new JIVariant(obj);
+	    			variant = JIVariant.makeVariant(obj);
 	    		}
 
 	    	}
@@ -581,7 +581,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 	    		}
 	    		else
 	    		{
-	    			variant = new JIVariant(obj);
+	    			variant = JIVariant.makeVariant(obj);
 	    		}
 	    	}
 	    	else

@@ -81,6 +81,7 @@ final class JIComOxidRuntime {
 	private static final Object mutex2 = new Object();//for access to the maps
 	private static final Object mutex3 = new Object(); //for access to the AddressVsSession,Stub Map
 
+	private static final Object mutex4 = new Object(); //for access to the mapOfAddressVsStub 
 	
 	private static ServerSocket serverSocket = null;
 	private static Random randomGen = new Random(Double.doubleToRawLongBits(Math.random()));
@@ -227,12 +228,16 @@ final class JIComOxidRuntime {
 				String address = ((JISession)entry.getKey()).getTargetServer();
 				//will get it from the cache, since it is getting called after every 4 minutes
 				//what if this stub has timed out, I guess I will have to ask the developers to increase the timeout for now.
-				JIComOxidStub stub = (JIComOxidStub)mapOfAddressVsStub.get(address);
-				if (stub == null)
-				{
-					stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password);
-					mapOfAddressVsStub.put(address, stub);
+				JIComOxidStub stub = null;
+				synchronized (mutex4) {
+					stub = (JIComOxidStub)mapOfAddressVsStub.get(address);
+					if (stub == null)
+					{
+						stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password);
+						mapOfAddressVsStub.put(address, stub);
+					}	
 				}
+				
 				ArrayList listOfAddedOIDs = new ArrayList();
 				ArrayList listOfRemovedOIDs = new ArrayList();
 				//form a list if OID is 0 ref
@@ -299,7 +304,7 @@ final class JIComOxidRuntime {
 					//will get removed from COM servers side as well.
 					if (JISystem.getLogger().isLoggable(Level.INFO))
                     {
-						JISystem.getLogger().info("Within ClientPingTimerTask: Holder " + holder + " is empty, will remove this from mapOfSessionVsPingSetHolder, whose curent size is: " + mapOfSessionVsPingSetHolder.size());
+						JISystem.getLogger().info("Within ClientPingTimerTask: Holder " + holder + " is empty, will remove this from mapOfSessionVsPingSetHolder");
                     }
 					itr.remove();
 					synchronized (mutex3) 
@@ -394,11 +399,21 @@ final class JIComOxidRuntime {
                 {
 					JISystem.getLogger().info("delIPIDReference: Decrementing reference count for IPID " + IPID + " on OID " + oid);
                 }
+				
+				//should we retain this now ??? , we need not send a ping for this as well. It is being retained for the last ping only. 
 				if (oid.getIPIDRefCount() <= 0)
 				{
+					holder.currentSetOIDs.remove(oid);
+					//everything is gone, remove the session
+					if (holder.currentSetOIDs.size() == 0)
+					{
+						holder.closed = true;
+						mapOfSessionVsPingSetHolder.remove(session);
+					}
 					if (JISystem.getLogger().isLoggable(Level.INFO))
                     {
-						JISystem.getLogger().info("delIPIDReference: Ref count is <= 0, for OID " + oid);
+						JISystem.getLogger().info("delIPIDReference: sessionid " + session.getSessionIdentifier() + 
+								"Ref count is <= 0, for OID " + oid + ", holder status: " + holder.closed);
                     }
 				}
 			}
@@ -435,8 +450,21 @@ final class JIComOxidRuntime {
 				holder.currentSetOIDs.clear(); //being done since this session is being destroyed and the corresponding COM server
 											   //need not be retained by us.
 				holder.closed = true;
+				
+				//Should be not remove this entry ??? I think it is being retained only for the pings ... we should let this go.
+				mapOfSessionVsPingSetHolder.remove(session);
 			}
 		}
+		
+		//remove the socket for this session associated with ping timer
+		synchronized (mutex4) {
+			JIComOxidStub stub = (JIComOxidStub)mapOfAddressVsStub.remove(session.getTargetServer());
+			if (stub != null)
+			{
+				stub.close();
+			}
+		}
+		
 	}
 	
 	static synchronized void startResolverTimer()

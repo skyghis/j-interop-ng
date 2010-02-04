@@ -881,8 +881,10 @@ final class JIMarshalUnMarshalHelper {
 			int units = currency.getUnits();
 			int fractionalUnits = currency.getFractionalUnits();
 
-			//scale the units by 10000
-			int toSend = units*10000 + fractionalUnits;
+			double p = units + fractionalUnits/10000;
+			
+			//scale the units by 10000 to remove the decimal and take two's compliment.
+			int toSend = ~((int)(p * 10000.00)) + 1;
 
 			String toSend2 =(Integer.toHexString(toSend));
 			int hibytes = 0;

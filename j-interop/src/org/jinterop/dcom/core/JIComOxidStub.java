@@ -103,7 +103,10 @@ final class JIComOxidStub extends Stub{
 	{
 		try {
 			detach();
-		} catch (IOException e) {JISystem.getLogger().throwing("JIComOxidStub","close",e);  }
+		} catch (Exception e) 
+		{
+			//JISystem.getLogger().throwing("JIComOxidStub","close",e);  
+		}
 	}
 	
 }

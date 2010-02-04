@@ -45,10 +45,28 @@ public final class JICurrency {
 	private int fractionalUnits = 0;
 
 //	private double value = 0;
-//	public JICurrency(double value)
-//	{
-//		this.value = value;
-//	}
+	
+	public JICurrency(String value)
+	{
+		if (value.startsWith("."))
+		{
+			value = "0" + value;
+		}
+		
+		if (value.endsWith("."))
+		{
+			value = value + "0";
+		}
+		
+		String[] str = value.split("\\.");
+		
+		units = Integer.parseInt(str[0]);
+		if (str.length > 1)
+		{
+			fractionalUnits = Integer.parseInt(str[1]);
+		}	
+		
+	}
 
 	public JICurrency(int units, int fractionalUnits)
 	{

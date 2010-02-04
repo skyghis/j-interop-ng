@@ -923,8 +923,9 @@ public final class JIComServer extends Stub {
 	{
 		try {
 			detach();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+//			No need to print this out.
+//			e.printStackTrace();
 		}
 	}
 

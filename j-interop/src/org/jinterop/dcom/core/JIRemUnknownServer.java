@@ -19,12 +19,10 @@ package org.jinterop.dcom.core;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.transport.JIComEndpoint;
 import org.jinterop.dcom.transport.JIComTransportFactory;
 
@@ -185,7 +183,7 @@ import rpc.Stub;
 		try {
 			detach();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 

@@ -20,6 +20,7 @@ package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -123,8 +124,31 @@ public final class JIVariant implements Serializable {
 
 	static HashMap supportedTypes = new HashMap();
 	static HashMap supportedTypes_classes = new HashMap();
+	static HashMap outTypesMap = new HashMap();
 	static
 	{
+		//CAUTION NO PTR TYPE SHOULD BE PART OF THIS MAP !!!
+		outTypesMap.put(int.class, new Integer(0));
+		outTypesMap.put(Integer.class, new Integer(0));
+		outTypesMap.put(short.class, new Short((short)0));
+		outTypesMap.put(Short.class, new Short((short)0));
+		outTypesMap.put(float.class, new Float(0.0));
+		outTypesMap.put(Float.class, new Float(0.0));
+		outTypesMap.put(double.class, new Double(0.0));
+		outTypesMap.put(Double.class, new Double(0.0));
+		outTypesMap.put(boolean.class, Boolean.FALSE);
+		outTypesMap.put(Boolean.class, Boolean.FALSE);
+		outTypesMap.put(String.class, "");
+		outTypesMap.put(JICurrency.class, new JICurrency("0.0"));
+		outTypesMap.put(Date.class, new Date());
+		outTypesMap.put(char.class, new Character('9'));
+		outTypesMap.put(Character.class, new Character('9'));
+		outTypesMap.put(JIUnsignedByte.class, JIUnsignedFactory.getUnsigned(new Short((short)0) , JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE));
+		outTypesMap.put(JIUnsignedShort.class, JIUnsignedFactory.getUnsigned(new Integer(0) , JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
+		outTypesMap.put(JIUnsignedInteger.class, JIUnsignedFactory.getUnsigned(new Long(0) , JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
+		outTypesMap.put(long.class, new Long(0));
+		outTypesMap.put(Long.class, new Long(0));
+		
 		supportedTypes.put(Object.class,new Integer(VT_VARIANT));
 		supportedTypes.put(JIVariant.class,new Integer(VT_VARIANT));
 		supportedTypes.put(Integer.class,new Integer(VT_I4));
@@ -177,11 +201,195 @@ public final class JIVariant implements Serializable {
 		supportedTypes_classes.put(new Integer(VT_I8),Long.class);
 
 		//for by ref types, do it at runtime.
-
-
-
 	}
 
+	
+	public static JIVariant OUTPARAMforType(Class c, boolean isArray)
+	{
+		JIVariant variant = null;
+		if (!isArray)
+		{
+			try{
+				variant = makeVariant(outTypesMap.get(c),true);
+			}catch(Exception e)
+			{
+				//eaten and now try from other types
+				
+			}
+			
+			if(c.equals(IJIDispatch.class))
+			{
+				return OUT_IDISPATCH();
+			}
+			else
+			if(c.equals(IJIComObject.class))
+			{
+				return OUT_IUNKNOWN();
+			}
+			else
+			if(c.equals(JIVariant.class))
+			{
+				return EMPTY_BYREF();
+			}
+			else
+			if(c.equals(JIString.class))
+			{
+				return new JIVariant("",true);
+			}
+		}
+		else
+		{
+			try{
+				Object oo = outTypesMap.get(c);
+				if (oo != null)
+				{
+					//we will always send a single dimension array.
+					Object x = Array.newInstance(c, 1);
+					Array.set(x, 0, oo);
+					variant = new JIVariant(new JIArray(x,true),true);
+				}
+			}catch(Exception e)
+			{
+				//eaten and now try from other types
+				
+			}
+			
+			if(c.equals(IJIDispatch.class))
+			{
+				IJIComObject[] arry = new IJIComObject[]{new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null))};
+				variant = new JIVariant(new JIArray(arry,true),true);
+				variant.setFlag(JIFlags.FLAG_REPRESENTATION_IDISPATCH_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
+			}
+			else
+			if(c.equals(IJIComObject.class))
+			{
+				IJIComObject[] arry = new IJIComObject[]{new JIComObjectImpl(null, new JIInterfacePointer(null,-1,null))};
+				variant = new JIVariant(new JIArray(arry,true),true);
+				variant.setFlag(JIFlags.FLAG_REPRESENTATION_IUNKNOWN_NULL_FOR_OUT | JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT);
+			}
+			else
+			if(c.equals(JIVariant.class))
+			{
+				return VARIANTARRAY();
+			}
+			else
+			if(c.equals(JIString.class) || c.equals(String.class))
+			{
+				return BSTRARRAY();
+			}
+		}
+		
+		
+		return variant;
+	}
+	
+	/** Returns a JIVariant (of the right type) based on the <code>o.getClass()</code>
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static JIVariant makeVariant(Object o)
+	{
+		return makeVariant(o,false);
+	}
+	
+	/** Returns a JIVariant (of the right type) based on the <code>o.getClass()</code>
+	 * 
+	 * @param o
+	 * @param isByRef
+	 * @return
+	 */
+	public static JIVariant makeVariant(Object o, boolean isByRef)
+	{
+		if (o == null || o.getClass().equals(Object.class))
+		{
+			if (isByRef)
+			{
+				return JIVariant.EMPTY_BYREF();
+			}
+			else
+			{
+				return JIVariant.EMPTY();
+			}
+		}
+		
+		Class c = o.getClass();
+		if (c.isArray())
+		{
+			throw new IllegalArgumentException(JISystem.getLocalizedMessage(0x00001029));
+		}
+		
+		if (c.equals(JIVariant.class))
+		{
+			return new JIVariant((JIVariant)o);
+		}
+		
+		
+		try{
+			
+			Constructor ctor = null;
+			//now we look at the class and return a JIVariant.
+			if (c.equals(Boolean.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{boolean.class,boolean.class});
+			}
+			else
+			if (c.equals(Character.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{char.class,boolean.class});
+			}	
+			else
+			if (c.equals(Byte.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{byte.class,boolean.class});
+			}	
+			else
+			if (c.equals(Short.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{short.class,boolean.class});
+			}	
+			else
+			if (c.equals(Integer.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{int.class,boolean.class});
+			}	
+			else
+			if (c.equals(Long.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{long.class,boolean.class});
+			}	
+			else
+			if (c.equals(Float.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{float.class,boolean.class});
+			}	
+			else
+			if (c.equals(Double.class))
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{double.class,boolean.class});
+			}
+			else
+			if (o instanceof IJIComObject)
+			{
+				ctor = JIVariant.class.getConstructor(new Class[]{IJIComObject.class,boolean.class});
+			}
+			else
+			{
+				//should cover all the rest cases.
+				ctor = JIVariant.class.getConstructor(new Class[]{c,boolean.class});
+			}
+			return (JIVariant)ctor.newInstance(new Object[]{o, Boolean.valueOf(isByRef)});
+		}catch(Exception e)
+		{
+			if (JISystem.getLogger().isLoggable(Level.WARNING))
+			{
+				JISystem.getLogger().warning("Could not create Variant for " + o + " , isByRef " + isByRef);
+			}
+		}
+		
+		return null;
+	}
+	
 	static Class getSupportedClass(Integer type)
 	{
 		return (Class)supportedTypes_classes.get(type);
@@ -256,7 +464,8 @@ public final class JIVariant implements Serializable {
 
 
 	/**
-	 * EMPTY BYREF <code>VARIANT</code>. This is not Thread Safe , hence a new instance must be taken each time.
+	 * EMPTY BYREF <code>VARIANT</code>. This is not Thread Safe , hence a new instance must be taken each time. Used for a 
+	 * <code>[out] VARIANT*</code> .
 	 *
 	 */
 	public static JIVariant EMPTY_BYREF()
@@ -347,26 +556,26 @@ public final class JIVariant implements Serializable {
 	private JIVariant(){}
 
 	//The class of the object determines its type.
-	/**
-	 * Setting up a <code>VARIANT</code> with an object. Used via serializing the <code>VARIANT</code>.
-	 *
-	 * @param obj
-	 */
-	public JIVariant(Object obj)
+//	/**
+//	 * Setting up a <code>VARIANT</code> with an object. Used via serializing the <code>VARIANT</code>.
+//	 *
+//	 * @param obj
+//	 */
+	private void init(Object obj)
 	{
 		init(obj,false);
 	}
 
-	/** For internal use only !. Please do not call this directly from outside. It will lead to unexpected results.
-	 *
-	 * @exclude
-	 * @param obj
-	 * @param isByRef
-	 */
-	public JIVariant(Object obj, boolean isByRef)
-	{
-		init(obj,isByRef);
-	}
+//	/** For internal use only !. Please do not call this directly from outside. It will lead to unexpected results.
+//	 *
+//	 * @exclude
+//	 * @param obj
+//	 * @param isByRef
+//	 */
+//	public JIVariant(Object obj, boolean isByRef)
+//	{
+//		init(obj,isByRef);
+//	}
 
 	private void init(Object obj, boolean isByRef)
 	{
@@ -458,7 +667,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(JIVariant variant)
 	{
-		this((Object)variant,true);
+		init((Object)variant,true);
 	}
 
 
@@ -471,7 +680,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(int value, boolean isByRef)
 	{
-		this(new Integer(value),isByRef);
+		init(new Integer(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>long</code>. Used via serializing the <code>VARIANT</code>.
@@ -482,7 +691,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(long value, boolean isByRef)
 	{
-		this(new Long(value),isByRef);
+		init(new Long(value),isByRef);
 	}
 
 
@@ -495,7 +704,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(float value, boolean isByRef)
 	{
-		this(new Float(value),isByRef);
+		init(new Float(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>boolean</code>. Used via serializing the <code>VARIANT</code>.
@@ -505,7 +714,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(boolean value, boolean isByRef)
 	{
-		this(Boolean.valueOf(value),isByRef);
+		init(Boolean.valueOf(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>double</code>. Used via serializing the <code>VARIANT</code>.
@@ -515,7 +724,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(double value, boolean isByRef)
 	{
-		this(new Double(value),isByRef);
+		init(new Double(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>short</code>. Used via serializing the <code>VARIANT</code>.
@@ -525,7 +734,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(short value, boolean isByRef)
 	{
-		this(new Short(value),isByRef);
+		init(new Short(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>char</code>. Used via serializing the <code>VARIANT</code>.
@@ -535,7 +744,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(char value, boolean isByRef)
 	{
-		this(new Character(value),isByRef);
+		init(new Character(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>JIString</code>. Used via serializing the <code>VARIANT</code>.
@@ -545,7 +754,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(JIString value, boolean isByRef)
 	{
-		this((Object)value,isByRef);
+		init(value,isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>String</code>. Used via serializing the <code>VARIANT</code>. Internally a
@@ -556,7 +765,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(String value, boolean isByRef)
 	{
-		this(new JIString(value),isByRef);
+		init(new JIString(value),isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>String</code>. Used via serializing the <code>VARIANT</code>. Internally a
@@ -586,7 +795,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(IJIComObject value, boolean isByRef)
 	{
-		this((Object)value,isByRef);
+		init((Object)value,isByRef);
 		if (value instanceof IJIDispatch)
 		{
 			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID);
@@ -608,7 +817,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(SCODE value,int errorCode, boolean isByRef)
 	{
-		this(new VariantBody(VariantBody.SCODE,errorCode,isByRef),isByRef);
+		init(new VariantBody(VariantBody.SCODE,errorCode,isByRef),isByRef);
 	}
 
 
@@ -618,7 +827,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(int value)
 	{
-		this(new Integer(value));
+		this(value,false);
 	}
 
 	/**
@@ -628,7 +837,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(float value)
 	{
-		this(new Float(value));
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a  <code>boolean</code>. Used via serializing the <code>VARIANT</code>.
@@ -637,7 +846,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(boolean value)
 	{
-		this(Boolean.valueOf(value));
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>double</code>. Used via serializing the <code>VARIANT</code>.
@@ -646,7 +855,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(double value)
 	{
-		this(new Double(value));
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>short</code>. Used via serializing the <code>VARIANT</code>.
@@ -655,7 +864,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(short value)
 	{
-		this(new Short(value));
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>char</code>. Used via serializing the <code>VARIANT</code>.
@@ -664,7 +873,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(char value)
 	{
-		this(new Character(value));
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>JIString</code>. Used via serializing the <code>VARIANT</code>.
@@ -673,7 +882,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(JIString value)
 	{
-		this((Object)value);
+		this(value,false);
 	}
 
 //	/**Setting up a <code>VARIANT</code> with a IJIDispatch. Used via serializing the <code>VARIANT</code>.
@@ -691,7 +900,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(IJIComObject value)
 	{
-		this((Object)value);
+		this(value,false);
 		if (value instanceof IJIDispatch)
 		{
 			setFlag(JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID);
@@ -708,7 +917,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(Date value)
 	{
-		this((Object)value);
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with an <code>java.util.Date</code>. Used via serializing the <code>VARIANT</code>.
@@ -718,7 +927,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(Date value, boolean isByRef)
 	{
-		this((Object)value,isByRef);
+		init((Object)value,isByRef);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>JICurrency</code>. Used via serializing the <code>VARIANT</code>.
@@ -727,7 +936,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(JICurrency value)
 	{
-		this((Object)value);
+		this(value,false);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>JICurrency</code>. Used via serializing the <code>VARIANT</code>.
@@ -737,7 +946,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(JICurrency value, boolean isByRef)
 	{
-		this((Object)value,isByRef);
+		init((Object)value,isByRef);
 	}
 
 
@@ -747,7 +956,7 @@ public final class JIVariant implements Serializable {
 	 */
 	private JIVariant(EMPTY value)
 	{
-		this((Object)null);
+		init((Object)null);
 	}
 
 
@@ -757,7 +966,7 @@ public final class JIVariant implements Serializable {
 	 */
 	private JIVariant(NULL value)
 	{
-		this(new VariantBody(VariantBody.NULL));
+		init(new VariantBody(VariantBody.NULL));
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>SCODE</code> value and it's <code>errorCode</code>. Used via serializing the <code>VARIANT</code>.
@@ -767,7 +976,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(SCODE value,int errorCode)
 	{
-		this(new VariantBody(VariantBody.SCODE,errorCode,false));
+		init(new VariantBody(VariantBody.SCODE,errorCode,false));
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>JIArray</code>. Used via serializing the <code>VARIANT</code>.
@@ -990,7 +1199,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(IJIUnsigned number)
 	{
-		this((Object)number);
+		init((Object)number);
 	}
 
 	/**Setting up a <code>VARIANT</code> with a <code>unsigned</code> value. Used via serializing the <code>VARIANT</code>.
@@ -1000,7 +1209,7 @@ public final class JIVariant implements Serializable {
 	 */
 	public JIVariant(IJIUnsigned number, boolean isByRef)
 	{
-		this((Object)number,isByRef);
+		init((Object)number,isByRef);
 	}
 
 	/** Returns the contained object.
