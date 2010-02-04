@@ -26,7 +26,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
 
     public static final int CONNECTION_ORIENTED_MAJOR_VERSION = 5;
 
-    public static final int MUST_RECEIVE_FRAGMENT_SIZE = 1432;
+    public static final int MUST_RECEIVE_FRAGMENT_SIZE = 7160;
 
     /**
      * Flag indicating the PDU is the first fragment.
