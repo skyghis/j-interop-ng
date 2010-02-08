@@ -42,7 +42,7 @@ public class MSExcel {
 	public void showExcel() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
-		JIVariant variant = new JIVariant(Boolean.TRUE);
+		JIVariant variant = new JIVariant(true);
 		dispatch.put(dispId,variant);
 	}
 
@@ -139,7 +139,7 @@ public class MSExcel {
 		dispId = dispatchActiveChart.getIDsOfNames("ChartType");
 		out = new Object[]{JIVariant.class};
 
-		dispatchActiveChart.put(dispId,new JIVariant(new Short((short)xlXYScatterLinesNoMarkers)));
+		dispatchActiveChart.put(dispId,new JIVariant((short)xlXYScatterLinesNoMarkers));
 
 		int[] dispIds = dispatchActiveChart.getIDsOfNames(new String[]{"SetSourceData","Source","PlotBy"});
 

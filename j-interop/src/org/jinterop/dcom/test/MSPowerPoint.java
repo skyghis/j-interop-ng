@@ -6,8 +6,8 @@ import java.net.UnknownHostException;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.IJIComObject;
+import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
-import org.jinterop.dcom.core.JIProgId;
 import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
@@ -23,7 +23,7 @@ public class MSPowerPoint {
 	public MSPowerPoint(String address, String[] args) throws JIException, UnknownHostException
 	{
 		JISession session = JISession.createSession(args[1],args[2],args[3]);
-		comStub = new JIComServer(JIProgId.valueOf("PowerPoint.Application"),address,session);
+		comStub = new JIComServer(JIClsid.valueOf("91493441-5A91-11CF-8700-00AA0060263B"),address,session);
 	}
 
 	public void startPowerPoint() throws JIException

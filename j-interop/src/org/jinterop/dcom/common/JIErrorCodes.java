@@ -621,6 +621,15 @@ public final class JIErrorCodes {
   */
  public static final int JI_SESSION_DESTROYED = 0x00001051;
  
+ /**
+  * The associated session is being destroyed. Current call to COM server has been terminated.
+  */
+ public static final int JI_WIN_ONLY = 0x00001052;
+ 
+ /**
+  * S.S.O cannot be used with ProgId based ctors.
+  */
+ public static final int JI_COMSTUB_ILLEGAL_ARGUMENTS2 = 0x00001053;
  
  
  

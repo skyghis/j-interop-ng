@@ -35,7 +35,7 @@ public class KainTest {
 	public void showWord() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
-		JIVariant variant = new JIVariant(Boolean.TRUE);
+		JIVariant variant = new JIVariant(true);
 		dispatch.put(dispId,variant);
 	}
 

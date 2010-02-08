@@ -70,7 +70,7 @@ public class QtpComTest {
 
                     int dispId = dispatch.getIDsOfNames("Visible");
 
-                    JIVariant variant = new JIVariant(Boolean.TRUE);
+                    JIVariant variant = new JIVariant(true);
 
                     dispatch.put(dispId,variant);
 
@@ -80,7 +80,7 @@ public class QtpComTest {
 
     public void envQtp() throws JIException{
 
-                    dispatch.callMethodA("Open", new Object[]{new JIString("C:\\Programme\\Mercury Interactive\\QuickTest Professional\\Tests\\Test1"), new JIVariant(Boolean.FALSE), new JIVariant(Boolean.TRUE)});
+                    dispatch.callMethodA("Open", new Object[]{new JIString("C:\\Programme\\Mercury Interactive\\QuickTest Professional\\Tests\\Test1"), new JIVariant(false), new JIVariant(true)});
 
                     JIVariant variant = dispatch.get("Test");
 

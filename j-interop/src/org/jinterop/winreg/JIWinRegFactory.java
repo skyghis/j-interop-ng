@@ -77,4 +77,21 @@ public class JIWinRegFactory {
 		}
 	}
 
+	/** Gets an Implementation of WinReg interface, currently only SMB transport is supported.
+	 *
+	 * @param smbTransport true if SMB transport is required , false will return null.
+	 * @return
+	 * @throws UnknownHostException
+	 */
+	public IJIWinReg getWinreg(String serverName, boolean smbTransport) throws UnknownHostException
+	{
+		if (smbTransport)
+		{
+			return new JIWinRegStub(serverName);
+		}
+		else
+		{
+			return null;
+		}
+	}
 }

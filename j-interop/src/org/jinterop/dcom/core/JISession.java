@@ -79,6 +79,7 @@ public final class JISession {
 	private int timeout = 0;
 	private boolean useSessionSecurity = false;
 	private boolean useNTLMv2 = false;
+	private boolean isSSO = false;
 	private ArrayList links = new ArrayList();
 	private static final Map mapOfOxidsVsJISessions = new HashMap();
 	private boolean sessionInDestroy = false;
@@ -457,6 +458,51 @@ public final class JISession {
 
 	}
 
+	/** Single Sign On capable session. 
+	 * 
+	 *  <b>Warning:</b> <ul><li>This method works <b>only</b> on Microsoft Windows Platform.</li>
+	 *  <li>It does <b>not</b> support NTLMv2 or NTLM1 Session Security.</li>
+	 *  <li>It supports only NTLM1 Authentication.</li>
+	 *  <li>This session <b>cannot</b> be used with <code>JIComServer(ProgId,...)</code> ctors. JCIFS will
+	 *  fail to setup a connection with Windows Registry if GUEST account is disabled.</li></ul> 
+	 * 
+	 * @return
+	 * @see JIComServer#JIComServer(JIClsid, JISession)
+	 * @see JIComServer#JIComServer(JIProgId, JISession)
+	 */
+	public static JISession createSession()
+	{
+    	if (!System.getProperty("os.name").toLowerCase().startsWith("windows"))
+    	{
+    		throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_WIN_ONLY));
+    	}
+    	
+    	JISession session = new JISession();
+		session.sessionIdentifier =  new Object().hashCode() ^ (int)Runtime.getRuntime().freeMemory() ^ randomGen.nextInt();
+		session.isSSO = true;
+
+		synchronized (mutex) {
+			mapOfSessionIdsVsSessions.put(new Integer(session.sessionIdentifier),session);
+			listOfSessions.add(session);
+		}
+
+		if (JISystem.getLogger().isLoggable(Level.INFO))
+		{
+			JISystem.getLogger().info("Created Session for SSO: " + session.sessionIdentifier);
+		}
+
+		return session;
+	}
+	
+	/** Returns whether this session is SSO or not.
+	 * 
+	 * @return
+	 */
+	public boolean isSSOEnabled()
+	{
+		return isSSO;
+	}
+	
 	/**<p>Used to destroy the <code>session</code>, this release all references of the COM server and it's interfaces.
 	 * It should be called in the end after the developer is done with the COM server.
 	 * <p>
@@ -963,7 +1009,7 @@ public final class JISession {
 	 */
 	public boolean isSessionSecurityEnabled()
 	{
-		return useSessionSecurity;
+		return !isSSO & useSessionSecurity;
 	}
 
 	/**<p> Flag indicating whether NTLMv2 security is enabled. </p>
@@ -972,7 +1018,7 @@ public final class JISession {
     */
    public boolean isNTLMv2Enabled()
 	{
-		return useNTLMv2;
+		return !isSSO & useNTLMv2;
 	}
 
 	/**<p> Links the src with target. These two sessions can now be destroyed in a cascade effect.

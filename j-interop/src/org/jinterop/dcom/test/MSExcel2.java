@@ -31,7 +31,7 @@ public class MSExcel2 {
 	public MSExcel2(String address, String[] args) throws JIException, UnknownHostException
 	{
 		session = JISession.createSession(args[1],args[2],args[3]);
-		session.useSessionSecurity(true);
+//		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf("Excel.Application"),address,session);
 	}
 
@@ -44,7 +44,7 @@ public class MSExcel2 {
 	public void showExcel() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
-		JIVariant variant = new JIVariant(Boolean.TRUE);
+		JIVariant variant = new JIVariant(true);
 		dispatch.put(dispId,variant);
 	}
 
@@ -78,9 +78,9 @@ public class MSExcel2 {
 
 
 	      JIVariant[][] newValue = {
-	    	        { new JIVariant(new JIString("defe")), new JIVariant(new Boolean(false)), new JIVariant(new Double(98765.0 / 12345.0))},
-	    	        { new JIVariant(new Date()), new JIVariant(new Integer(5454)),new JIVariant(new Float(22.0 / 7.0) )       },
-	    	        { new JIVariant(new Boolean(true)), new JIVariant(new JIString("dffe")),new JIVariant(new Date())}
+	    	        { new JIVariant(new JIString("defe")), new JIVariant(false), new JIVariant((double)(98765.0 / 12345.0))},
+	    	        { new JIVariant(new Date()), new JIVariant((int)5454),new JIVariant((float)(22.0 / 7.0) )       },
+	    	        { new JIVariant(true), new JIVariant(new JIString("dffe")),new JIVariant(new Date())}
 	    	      };
 
 	     // implement safe array XxX dimension

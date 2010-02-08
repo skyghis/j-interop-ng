@@ -92,6 +92,19 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 
 	}
 
+	public JIWinRegStub(String serverName) throws UnknownHostException
+	{
+		super();
+		super.setTransportFactory(new rpc.ncacn_np.TransportFactory());
+		super.setProperties(new Properties());
+		super.getProperties().setProperty("rpc.ntlm.sso", "true");
+		serverName = serverName.trim();
+		serverName = InetAddress.getByName(serverName).getHostAddress();
+		super.setAddress("ncacn_np:" + serverName + "[\\PIPE\\winreg]");
+
+	}
+
+	
 	public JIPolicyHandle winreg_OpenHKLM() throws JIException
 	{
 		openHKLM openhklm = new openHKLM();

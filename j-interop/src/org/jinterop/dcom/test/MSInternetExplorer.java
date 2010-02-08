@@ -44,10 +44,10 @@ public class MSInternetExplorer {
 	{
 
 		int dispId = ieObjectDispatch.getIDsOfNames("Visible");
-		ieObjectDispatch.put(dispId,new JIVariant(Boolean.TRUE));
-		ieObjectDispatch.put("AddressBar",new JIVariant(Boolean.TRUE));
-		ieObjectDispatch.put("MenuBar",new JIVariant(Boolean.TRUE));
-		ieObjectDispatch.put("ToolBar",new JIVariant(Boolean.TRUE));
+		ieObjectDispatch.put(dispId,new JIVariant(true));
+		ieObjectDispatch.put("AddressBar",new JIVariant(true));
+		ieObjectDispatch.put("MenuBar",new JIVariant(true));
+		ieObjectDispatch.put("ToolBar",new JIVariant(true));
 
 	}
 

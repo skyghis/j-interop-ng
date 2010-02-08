@@ -48,7 +48,7 @@ public class MSWMI2 {
 	{
 //		IJIDispatch securityDisp = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Security_").getObjectAsComObject());
 //		securityDisp.put("ImpersonationLevel", new JIVariant(3));
-		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{new JIString("locutus"),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
+		JIVariant results[] = dispatch.callMethodA("ConnectServer",new Object[]{JIVariant.OPTIONAL_PARAM(),new JIString("ROOT\\CIMV2"),JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM()
 				,JIVariant.OPTIONAL_PARAM(),JIVariant.OPTIONAL_PARAM(),new Integer(0),JIVariant.OPTIONAL_PARAM()});
 
 		IJIDispatch wbemServices_dispatch = (IJIDispatch)JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());

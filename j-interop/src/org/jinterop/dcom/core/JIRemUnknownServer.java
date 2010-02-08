@@ -66,15 +66,24 @@ import rpc.Stub;
 		this.session = session;
 		super.setTransportFactory(JIComTransportFactory.getSingleTon());
 		super.setProperties(new Properties(defaults));
-		super.getProperties().setProperty("rpc.security.username", session.getUserName());
-		super.getProperties().setProperty("rpc.security.password", session.getPassword());
-		super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
 		super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
+
 		if (session.isNTLMv2Enabled())
 		{
 			super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
 		}
 
+		if (session.isSSOEnabled())
+		{
+			super.getProperties().setProperty("rpc.ntlm.sso", "true");
+		}
+		else
+		{
+			super.getProperties().setProperty("rpc.security.username", session.getUserName());
+			super.getProperties().setProperty("rpc.security.password", session.getPassword());
+			super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
+		}
+		
 		//now set the NTLMv2 Session Security.
 		if (session.isSessionSecurityEnabled())
 		{

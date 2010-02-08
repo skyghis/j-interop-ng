@@ -114,7 +114,15 @@ public class JIProgId  {
 		}
 
 		try {
-			winreg = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),server,true);
+			if (session.isSSOEnabled())
+			{
+				winreg = JIWinRegFactory.getSingleTon().getWinreg(server,true);	
+			}
+			else
+			{
+				winreg = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),server,true);
+			}
+			
 		} catch (UnknownHostException e)
 		{
 			throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION3);

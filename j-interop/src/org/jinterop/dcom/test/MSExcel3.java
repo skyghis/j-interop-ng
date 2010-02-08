@@ -41,10 +41,10 @@ public class MSExcel3 {
 	public void showExcel() throws JIException
 	{
 		int dispId = dispatch.getIDsOfNames("Visible");
-		JIVariant variant = new JIVariant(Boolean.TRUE);
+		JIVariant variant = new JIVariant(true);
 		dispatch.put(dispId,variant);
 
-		dispatch.put("DisplayAlerts",new JIVariant(Boolean.TRUE));
+		dispatch.put("DisplayAlerts",new JIVariant(true));
 	}
 
 	public void createWorkSheet() throws JIException

@@ -139,7 +139,7 @@ public class MSWMI {
 			    	return;
 			    }
 
-				JISystem.getLogger().setLevel(Level.OFF);
+				JISystem.getLogger().setLevel(Level.INFO);
 				JISystem.setInBuiltLogHandler(false);
 				JISystem.setAutoRegisteration(true);
 				MSWMI test = new MSWMI(args[0],args);

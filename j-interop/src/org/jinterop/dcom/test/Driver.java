@@ -2,11 +2,18 @@ package org.jinterop.dcom.test;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.rmi.server.UID;
+import java.util.ArrayList;
 
 import jcifs.util.Encdec;
 
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.core.IJIUnsigned;
+import org.jinterop.dcom.core.JIArray;
+import org.jinterop.dcom.core.JIFlags;
+import org.jinterop.dcom.core.JIUnsignedFactory;
+import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 import rpc.core.UUID;
@@ -20,6 +27,169 @@ class Driver implements iota {
 	 */
 	public static void main(String[] args) {
 		  try {
+			 
+			  String n = "variant[index]sss".replaceFirst("index", Integer.toString(100));
+			  Short xxxs = new Short((short)1);
+			  Class ccccccc = JIVariant[][].class;
+			  System.out.println(ccccccc.getName());
+			  ccccccc = Integer[].class;
+			  System.out.println(ccccccc.getName());
+			  ccccccc = Short[][].class;
+			  System.out.println(ccccccc.getName());
+				 if (ccccccc.isArray())
+				 {
+					 String name2 = ccccccc.getName();
+					 int i = name2.lastIndexOf("L");
+					 System.out.println(name2.substring(i+1,name2.length() - 1));
+					 System.out.println(ccccccc.getSimpleName());
+				 }
+				 
+			  Object oi = new float[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new int[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new double[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new char[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new boolean[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new byte[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new short[10][10];
+			  System.out.println(oi.getClass().getComponentType().getName());
+			  oi = new long[][]{{1,2},{3,4,5,6,7},{8,9,10}};
+			  System.out.println(oi.getClass().getName() + " , " + oi.getClass().getComponentType().getName());
+			  
+			  boolean isPrimitive = false;
+			  Class d = oi.getClass().getComponentType();
+			  while (d != null)
+			  {
+				  Class dd = d.getComponentType();
+				  if (dd == null)
+				  {
+					  isPrimitive = d.isPrimitive();
+				  }
+				  d = dd;
+			  }
+			  //extract the class name
+			  String clazzName = null;
+			  if (isPrimitive)
+			  {
+				  clazzName = oi.getClass().getName();
+				  if (clazzName.endsWith("F"))
+				  {
+					  clazzName = Float.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("I"))
+				  {
+					  clazzName = Integer.class.getName();
+				  }	  
+				  else
+				  if (clazzName.endsWith("D"))
+				  {
+					  clazzName = Double.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("C"))
+				  {
+					  clazzName = Character.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("Z"))
+				  {
+					  clazzName = Boolean.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("B"))
+				  {
+					  clazzName = Byte.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("S"))
+				  {
+					  clazzName = Short.class.getName();
+				  }
+				  else
+				  if (clazzName.endsWith("J"))
+				  {
+					  clazzName = Long.class.getName();
+				  }
+			  }
+			  else
+			  {
+				  
+			  }
+			  
+			  JIArray arrrry = new JIArray(new Long[][]{{new Long(1),new Long(2)},{new Long(3), new Long(4), new Long(5)},{new Long(3), new Long(4), new Long(5)}});
+			  ArrayList upperBounds2 = new ArrayList();
+				String name = oi.getClass().getName();
+				Object subArray = oi;
+				int dimension = 0;
+				while (name.startsWith("["))
+				{
+					name = name.substring(1);
+					int x = Array.getLength(subArray);
+					upperBounds2.add(new Integer(x));
+					if (x == 0) //In which ever index the length is 0 , the array stops there, example Byte[0],Byte[0][10],Byte[10][0]
+					{
+						break;
+					}
+					subArray = Array.get(subArray,0);
+					dimension++;
+				}
+				
+				int[] upperBounds = new int[upperBounds2.size()];
+				for (int i = 0;i < upperBounds2.size(); i++)
+				{
+					upperBounds[i] = ((Integer)upperBounds2.get(i)).intValue(); 
+				}
+				
+//			 Object newArray = createArray(oi, Class.forName(clazzName), dimension);
+				Object newArray = createArray(new Long[][]{{new Long(1),new Long(2)},{new Long(3), new Long(4), new Long(5)},{new Long(3), new Long(4), new Long(5)}}, long.class, dimension);
+				
+			  int[][] g1 = new int[10][10];
+			  Integer[][] g = new Integer[10][10];
+			  
+			 Array.set(g, 0, Array.get(g1, 0)); 
+			 
+			 
+			 Class cx = ccccccc.getComponentType();
+			  Object rrr = new Integer(0);
+			  System.out.println(rrr.getClass().getSimpleName());
+			  System.out.println(rrr.getClass());
+			  Object hhhhh = Integer.class.cast(rrr);
+			  IJIUnsigned un = JIUnsignedFactory.getUnsigned(new Long(100), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
+			  System.out.println(un.getClass());
+			  Class xx = void.class;
+			  Integer y = new Integer(123);
+			  Class xxxx = y.getClass();
+			  System.out.println(xxxx.isPrimitive());
+			  Constructor cc = JIVariant.class.getConstructor(new Class[]{int.class, boolean.class});
+			  JIVariant vv = (JIVariant)cc.newInstance(new Object[]{y, Boolean.valueOf(true)});
+			  Object o007 = new Integer(1); 
+			  Driver.cc(o007);
+			  if (int.class == Integer.class)
+			  {
+				  System.out.println("same");
+			  }
+			  Object o123 = new int[][]{{1,2},{2,3}};
+			  Object o1234 = o123;
+			  Class c = o1234.getClass();
+			  Object o234 = Array.get(o123,0);
+			   c = o234.getClass();
+			  System.out.println(o123.getClass());
+			  
+			  String[] str = "123.9".split("\\.");
+			  int a = ~(Integer.MIN_VALUE);
+			  System.out.println(a);
+			  a = a + 1;
+			  System.out.println(a);
+			  if (a == Integer.MAX_VALUE)
+			  {
+				  
+			  }
 			  Object o = Array.newInstance(IJIDispatch.class,10);
 			  
 			  iota[] s = new Driver[100];
@@ -46,7 +216,7 @@ class Driver implements iota {
 			  System.out.println(uuid.toString());
 			  int toSend = 0xFFFFFFFF;
 			  System.out.println(Integer.toHexString(toSend));
-			  double g = 100020%10000;
+			  double gss = 100020%10000;
 			  String toSend2 =(Integer.toHexString(toSend));
 			  byte[] hibuffer = new byte[]{0,0,0,0,0,0,0,0};
 			  byte[] lowbuffer = new byte[]{0,0,0,0,0,0,0,0};
@@ -149,7 +319,42 @@ class Driver implements iota {
 			}
 	}
 
+	static Object createArray(Object srcArray,Class targetArrayType,int dimension)
+	{
+		Object array = null;
+		Class c = targetArrayType;
+		int len = Array.getLength(srcArray);
+		for (int j = 0; j < dimension; j++ )
+		{
+			array = Array.newInstance(c, len);
+			c = array.getClass();
+		}
 
+		for (int i = 0; i < len ; i++)
+		{
+			if(dimension == 1)
+			{
+				//fill value here
+				if (i == Array.getLength(srcArray))
+				{
+					//this means this array has less data than its upper bounds which is the max value.
+					//resize it.
+					Object array2 = Array.newInstance(targetArrayType, i);
+					System.arraycopy(array, 0, array2, 0, i);
+					array = array2;
+					break;
+				}
+				Array.set(array,i,Array.get(srcArray, i));
+			}
+			else
+			{
+				Array.set(array,i,createArray(Array.get(srcArray, i),targetArrayType,dimension - 1));
+			}
+
+		}
+
+		return array;
+	}
 
 	static void serializeArray(Object array)
 	{
@@ -217,6 +422,15 @@ class Driver implements iota {
 		return array;
 	}
 
+	public static void cc(Integer i)
+	{
+		System.out.println(i + " , " + i.getClass());
+	}
+
+	public static void cc(Object i)
+	{
+		System.out.println(i + " () , " + i.getClass());
+	}
 
 public void v(){}
 

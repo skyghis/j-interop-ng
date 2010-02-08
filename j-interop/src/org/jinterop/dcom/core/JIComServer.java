@@ -68,6 +68,7 @@ public final class JIComServer extends Stub {
 		defaults.put("rpc.ntlm.sign","false");
 		defaults.put("rpc.ntlm.seal","false");
 		defaults.put("rpc.ntlm.keyExchange","false");
+		defaults.put("rpc.ntlm.sso","false");
 		defaults.put("rpc.connectionContext","rpc.security.ntlm.NtlmConnectionContext");
 		defaults.put("rpc.socketTimeout", new Integer(0).toString());
 //		rpc.connectionContext = rpc.security.ntlm.NtlmConnectionContext
@@ -140,6 +141,11 @@ public final class JIComServer extends Stub {
 		{
 			super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
 		}
+		if (session.isSSOEnabled())
+		{
+			super.getProperties().setProperty("rpc.ntlm.sso", "true");
+		}
+		
 		
 		JIStringBinding[] addressBindings = interfacePointer.getStringBindings().getStringBindings();
 
@@ -393,6 +399,11 @@ public final class JIComServer extends Stub {
 			throw new JIException(JIErrorCodes.JI_SESSION_ALREADY_ESTABLISHED);
 		}
 
+		if (session.isSSOEnabled())
+		{
+			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMSTUB_ILLEGAL_ARGUMENTS2));
+		}
+		
 		address = address.trim();
 		address = InetAddress.getByName(address).getHostAddress();
 
@@ -439,14 +450,23 @@ public final class JIComServer extends Stub {
 		super.setTransportFactory(JIComTransportFactory.getSingleTon());
 		//now read the session and prepare information for the stub.
 		super.setProperties(new Properties(defaults));
-		super.getProperties().setProperty("rpc.security.username", session.getUserName());
-		super.getProperties().setProperty("rpc.security.password", session.getPassword());
-		super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
 		super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
 		super.setAddress(address);
+		
 		if (session.isNTLMv2Enabled())
 		{
 			super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
+		}
+		
+		if (session.isSSOEnabled())
+		{
+			super.getProperties().setProperty("rpc.ntlm.sso", "true");
+		}
+		else
+		{
+			super.getProperties().setProperty("rpc.security.username", session.getUserName());
+			super.getProperties().setProperty("rpc.security.password", session.getPassword());
+			super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
 		}
 
 		if (JISystem.getLogger().isLoggable(Level.INFO))
@@ -478,7 +498,14 @@ public final class JIComServer extends Stub {
 					//first create the registry entries.
 					try {
 						IJIWinReg registry = null;
-						registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),session.getTargetServer(),true);
+						if (session.isSSOEnabled())
+						{
+							registry = JIWinRegFactory.getSingleTon().getWinreg(session.getTargetServer(),true);	
+						}
+						else
+						{
+							registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),session.getTargetServer(),true);	
+						}
 						JIPolicyHandle hkcr = registry.winreg_OpenHKCR();
 						JIPolicyHandle key = registry.winreg_CreateKey(hkcr,"CLSID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
 						registry.winreg_SetValue(key,"AppID",("{" + this.clsid + "}").getBytes(),false,false);
