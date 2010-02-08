@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
-import jcifs.util.Encdec;
-
 
 class NTLMKeyFactory {
 
