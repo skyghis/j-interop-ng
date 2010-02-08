@@ -458,7 +458,7 @@ public final class JISession {
 
 	}
 
-	/** Single Sign On capable session. 
+	/** <b>Native</b> Single Sign On capable session. 
 	 * 
 	 *  <b>Warning:</b> <ul><li>This method works <b>only</b> on Microsoft Windows Platform.</li>
 	 *  <li>It does <b>not</b> support NTLMv2 or NTLM1 Session Security.</li>
