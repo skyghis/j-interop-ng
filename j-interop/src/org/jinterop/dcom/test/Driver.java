@@ -41,7 +41,7 @@ class Driver implements iota {
 					 String name2 = ccccccc.getName();
 					 int i = name2.lastIndexOf("L");
 					 System.out.println(name2.substring(i+1,name2.length() - 1));
-					 System.out.println(ccccccc.getSimpleName());
+					// System.out.println(ccccccc.getSimpleName());
 				 }
 				 
 			  Object oi = new float[10][10];
@@ -157,9 +157,9 @@ class Driver implements iota {
 			 
 			 Class cx = ccccccc.getComponentType();
 			  Object rrr = new Integer(0);
-			  System.out.println(rrr.getClass().getSimpleName());
+			 // System.out.println(rrr.getClass().getSimpleName());
 			  System.out.println(rrr.getClass());
-			  Object hhhhh = Integer.class.cast(rrr);
+			  //Object hhhhh = Integer.class.cast(rrr);
 			  IJIUnsigned un = JIUnsignedFactory.getUnsigned(new Long(100), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
 			  System.out.println(un.getClass());
 			  Class xx = void.class;
