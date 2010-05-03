@@ -97,6 +97,7 @@ final class JIComOxidRuntime {
 		String domain = null;
 		boolean modified = false;
 		boolean closed = false;
+		boolean useNTLMv2 = false;
 		int seqNum = 1;
 		//JISession session  = null;
 		Map currentSetOIDs = new HashMap();//list of JIObjectId, this list is iterated and if the IPID ref count is 0 , 
@@ -233,7 +234,7 @@ final class JIComOxidRuntime {
 					stub = (JIComOxidStub)mapOfAddressVsStub.get(address);
 					if (stub == null)
 					{
-						stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password);
+						stub = new JIComOxidStub(address,holder.domain,holder.username,holder.password,holder.useNTLMv2);
 						mapOfAddressVsStub.put(address, stub);
 					}	
 				}
@@ -341,6 +342,7 @@ final class JIComOxidRuntime {
 				holder.currentSetOIDs.put(oid,oid);
 				holder.modified = true;
 				holder.seqNum = 0;
+				holder.useNTLMv2 = session.isNTLMv2Enabled();
 				mapOfSessionVsPingSetHolder.put(session,holder);
 			}
 			else //found , means it is another call for a new IPID

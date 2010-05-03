@@ -60,7 +60,7 @@ final class JIComOxidStub extends Stub{
 		return "99fcfec4-5260-101b-bbcb-00aa0021347a:0.0";
 	}
 	
-	public JIComOxidStub(String address, String domain,String username, String password)
+	public JIComOxidStub(String address, String domain,String username, String password, boolean useNTLMv2)
 	{
 		super();
 		super.setTransportFactory(JIComTransportFactory.getSingleTon());
@@ -70,6 +70,7 @@ final class JIComOxidStub extends Stub{
 		super.getProperties().setProperty("rpc.ntlm.domain", domain);
 		super.setAddress("ncacn_ip_tcp:" + address + "[135]");
 		
+		super.getProperties().setProperty("rpc.ntlm.ntlmv2", Boolean.toString(useNTLMv2));
 	}
 	
 	public byte[] call(boolean isSimplePing,byte[] setId,ArrayList listOfAdds,ArrayList listOfDels, int seqNum)
