@@ -109,6 +109,18 @@ public class JIObjectFactory {
 	{
 		return JIFrameworkHelper.instantiateLocalComObject(session, javaComponent);
 	}
+	
+	/** To be called after one is done using the local Java CoClass. Recommended to be called from the <code>finalize()</code> method of the 
+	 * Java CoClass.
+	 * 
+	 * @param session
+	 * @param javaComponent
+	 * @throws JIException
+	 */
+	public static void releaseObject(JISession session, JILocalCoClass javaComponent) throws JIException
+	{
+	    JIFrameworkHelper.releaseLocalComponent(session, javaComponent);
+	}
 
 	/** Returns a COM Object from raw bytes. These bytes must conform to the Marshalled Interface Pointer template as per DCOM specifications.
 	 *

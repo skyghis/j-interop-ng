@@ -952,8 +952,11 @@ public class JICallBuilder extends NdrObject implements Serializable {
 //			read2(ndr2);
 //		}
 		//interpret based on the out params flags
-		JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
-		readPacket(ndr,false);
+		if (!readOnlyHRESULT)
+		{
+			JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
+			readPacket(ndr,false);
+		}
 		readResult(ndr);
 	}
 	
@@ -1116,5 +1119,11 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	JISession getSession()
 	{
 		return session;
+	}
+	
+	private boolean readOnlyHRESULT = false;
+	void setReadOnlyHRESULT()
+	{
+		readOnlyHRESULT = true;
 	}
 }

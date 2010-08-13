@@ -83,6 +83,8 @@ public final class JISession {
 	private ArrayList links = new ArrayList();
 	private static final Map mapOfOxidsVsJISessions = new HashMap();
 	private boolean sessionInDestroy = false;
+    private Map mapOfIPIDsVsRefcounts = new HashMap();
+    private Map mapOfIPIDsVsWeakReferences = new HashMap();
 
 	private static class IPID_SessionID_Holder
 	{
@@ -153,11 +155,34 @@ public final class JISession {
 		    				try
 		    				{
 		    					String IPID = holder.IPID;
+
+                                // Since we are freeing up all references for the given IPID together, ensure
+                                // that all weak-references for this IPID have been dereferenced before it to
+                                // the list of Dereferenced IPIDs. The Reference Queue mechanism ensures that
+                                // any reference only comes here once.
+
+                                int weakRefsRemaining = session.removeWeakReference(IPID);
+                                
+                                // Decrement the ref-count for the oid too.
+                                //Will call the JIComOxidRuntime, and that is synched on mutex3, but that will not cause a deadlock, since
+                                //it or rather any method of JIComOxidRuntime does not call back into JISession.
+                                JIComOxidRuntime.delIPIDReference(IPID, new JIObjectId(holder.oid, false), session);
+
+                                // Only proceed to de-list this IPID for clearance if all weak-references were
+                                // released.
+                                if (weakRefsRemaining > 0)
+                                    continue;
+                                
 		    					//JIComOxidRuntime.delIPIDReference(IPID);
 		    					//session.releaseRef(IPID); Not doing release anymore, this causes a lot of calls to
 		    					//go across, so will save these in this list and then the cleanup thread will deal with
 		    					//this every 3 minutes.
-		    					session.addDereferencedIpids(IPID,holder.oid);
+                                if (JISystem.getLogger().isLoggable(Level.FINEST))
+                                    {
+                                        JISystem.getLogger().finest("Adding Dereferenced IPID " + IPID + " session " + session.getSessionIdentifier());
+                                    }
+
+		    					session.addDereferencedIpids(IPID);
 		    					holder = null;
 		    					IJIUnreferenced unreferenced = (IJIUnreferenced)session.getUnreferencedHandler(IPID);
 		    					if (unreferenced != null)
@@ -220,7 +245,10 @@ public final class JISession {
 		JIComOxidRuntime.startResolver();
 		JIComOxidRuntime.startResolverTimer();
 		oxidResolverPort = JIComOxidRuntime.getOxidResolverPort();
-		releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(),0,3*60*1000);
+        // This schedule used to be every 3 mins. It was drastically reduced 
+        // to 10 seconds because otherwise it would try and release too 
+        // many IPIDS at once.
+		releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(),0,10*1*1000);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
@@ -250,52 +278,73 @@ public final class JISession {
 	private static class Release_References_TimerTask extends TimerTask
 	{
 		public void run() {
+            try{
+                // Use a clone so we dont hold on to the mutex for longer than required.
+                List listOfSessionsClone = null;
+                synchronized (mutex) {
+                    listOfSessionsClone = (List)listOfSessions.clone();
+                }
 
-			try{
-				List listOfSessionsClone = null;
-				synchronized (mutex) {
-					listOfSessionsClone = (List)listOfSessions.clone();
-				}
-	
-				int i = 0;
-	
-				while(i < listOfSessionsClone.size())
+                int i = 0;
+
+                while(i < listOfSessionsClone.size())
+                {
+                    JISession session = (JISession)listOfSessionsClone.get(i);
+
+
+                    if (JISystem.getLogger().isLoggable(Level.INFO))
+                    {
+                        JISystem.getLogger().info("Release_References_TimerTask:[RUN] Ipid Vs Count Map size " + session.mapOfIPIDsVsRefcounts.size() + " listOfDeferencedIpids size " + session.listOfDeferencedIpids.size());
+                        JISystem.getLogger().info("Release_References_TimerTask:[RUN] Session:  " + session.getSessionIdentifier() + " , listOfDeferencedIpids: " + session.listOfDeferencedIpids);
+                    }
+                
+                    //now iterate over each sessions listOfDereferencedIpids and send a call to release for the entire lot.
+                    ArrayList listToKill = new ArrayList();
+                    List dereferencedIpids = null;
+
+                    // Use a clone so we dont hold on to the mutex for longer than required.
+                    synchronized (mutex) {
+                        dereferencedIpids = (List)((ArrayList)session.listOfDeferencedIpids).clone();
+                    }
+                
+                    for (int j = 0;j < dereferencedIpids.size();j++)
+					{                        
+						try {
+                            String ipid = (String)dereferencedIpids.get(j);
+                            listToKill.add(session.prepareForReleaseRef(ipid));
+						} catch (JIException e) {
+                            //eaten, will never get thrown from the try block.
+                            if (JISystem.getLogger().isLoggable(Level.INFO))
+                                {
+                                    JISystem.getLogger().info("Release_References_TimerTask:[RUN] Exception preparing for release " + e);
+                                }
+						}
+					}
+                synchronized (mutex) {
+					session.listOfDeferencedIpids.removeAll(dereferencedIpids);				
+                }
+
+                dereferencedIpids.clear();
+                
+                if (JISystem.getLogger().isLoggable(Level.INFO))
+                    {
+                        JISystem.getLogger().info("Release_References_TimerTask:[RUN] Ipid Vs Count Map size after preparing release " + session.mapOfIPIDsVsRefcounts.size());
+                    }
+
+				if (listToKill.size() > 0)
 				{
-					JISession session = (JISession)listOfSessionsClone.get(i);
-	
-					//now iterate over each sessions listOfDereferencedIpids and send a call to release for the entire lot.
-					ArrayList listToKill = new ArrayList();
-					synchronized (mutex) {
-						if (JISystem.getLogger().isLoggable(Level.INFO))
-			            {
-							JISystem.getLogger().info("Release_References_TimerTask:[RUN] Session:  " + session.getSessionIdentifier() + " , listOfDeferencedIpids.size(): " + session.listOfDeferencedIpids.size());
-			            }
-						for (int j = 0;j < session.listOfDeferencedIpids.size();j++)
-						{
-							try {
-								listToKill.add(session.prepareForReleaseRef((String)session.listOfDeferencedIpids.get(j)));
-							} catch (JIException e) {
-							//eaten, will never get thrown from the try block.
-							}
-						}
-						session.listOfDeferencedIpids.clear();
-					}
-	
-					if (listToKill.size() > 0)
-					{
-						JIArray array = new JIArray(listToKill.toArray(new JIStruct[listToKill.size()]),true);
-						try{
-							session.releaseRefs(array,false);
-						}catch(JIException e)
-						{
-							//This release cycle has to go on.
-							JISystem.getLogger().logp(Level.SEVERE,"JISession","Release_References_TimerTask:run()","Exception in internal GC",e);
-						}
-					}
-	
-					i++;
+                    JIArray array = new JIArray(listToKill.toArray(new JIStruct[listToKill.size()]),true);
+                    try{
+                        session.releaseRefs(array,false);
+                    }catch(JIException e)
+                        {
+                            //This release cycle has to go on.
+                            JISystem.getLogger().logp(Level.SEVERE,"JISession","Release_References_TimerTask:run()","Exception in internal GC",e);
+                        }                    
 				}
 
+				i++;
+			}
 			}catch(Exception e)
 			{
 				//This release cycle has to go on.
@@ -318,7 +367,7 @@ public final class JISession {
 			this.targetServer = targetServer;
 
 			//will change the localhost to the actual address as well
-			if (localhostStr.equalsIgnoreCase("127.0.0.1"))
+			if (localhostStr.equalsIgnoreCase("127.0.0.1") || localhostStr.equalsIgnoreCase("0.0.0.0"))
 			{ //Bug in JDK , time to find alternate logic.
 				localhostStr = getLocalHost(targetServer);
 			}
@@ -591,8 +640,7 @@ public final class JISession {
 			{
 				if (!listOfFreeIPIDs.contains(session.stub.getServerInterfacePointer().getIPID()))
 				{
-					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID(),
-							((JIStdObjRef)session.stub.getServerInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs()));
+					list.add(session.prepareForReleaseRef(session.stub.getServerInterfacePointer().getIPID()));
 					listOfFreeIPIDs.add(session.stub.getServerInterfacePointer().getIPID());
 				}
 			}
@@ -695,18 +743,19 @@ public final class JISession {
 		{
 			return;
 		}
-		IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(),getSessionIdentifier(),false,oid);
-		//mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
-		synchronized (mapOfObjects)
-		{
-			mapOfObjects.put(new WeakReference(comObject,referenceQueueOfCOMObjects),holder);
-		}
+
+        addWeakReference(comObject, oid);
+        
 		//setting if NO PING flag has been set to true.
 		addToSession(comObject.getIpid(),oid,((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getFlags() == 0x00001000 );
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
-			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier());
+			JISystem.getLogger().info(" for IID: " + comObject.getInterfaceIdentifier() + " session: " + getSessionIdentifier());
 		}
+
+        int refcount = ((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs();
+        updateReferenceForIPID(comObject.getIpid(), refcount);
+        
 
 //		Integer value = (Integer)mapOfIPIDSvsCount.get(comObject.getIpid());
 //		if (value == null)
@@ -716,6 +765,92 @@ public final class JISession {
 
 //		debug_addIpids(comObject.getIpid(),((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs());
 	}
+
+    public void addRef_ReleaseRef(String IPID, JICallBuilder obj, int refcount) throws JIException
+    {
+        updateReferenceForIPID(IPID, refcount);
+        getStub2().addRef_ReleaseRef(obj);
+    }
+
+    private void updateReferenceForIPID(String ipid, int refcount)
+    {
+		Integer value = (Integer)mapOfIPIDsVsRefcounts.get(ipid);
+		if (value == null)
+		{
+            // Were we asked to release a ref that wasnt in our map?
+            if (refcount < 0)
+                {
+                    if (JISystem.getLogger().isLoggable(Level.INFO))
+                        {
+                            JISystem.getLogger().info("[updateReferenceForIPID] Released IPID not found: " + ipid);
+                        }
+                    return;
+                }
+            else
+                value = new Integer(0);
+		}
+        int newCount = value.intValue() + refcount;
+        if (newCount > 0)
+            mapOfIPIDsVsRefcounts.put(ipid, new Integer(newCount));
+        else
+            mapOfIPIDsVsRefcounts.remove(ipid);
+	}
+    
+    public void addWeakReference(IJIComObject comObject, byte[] oid)
+    {
+        IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(), getSessionIdentifier(), false, oid);
+		synchronized (mapOfObjects)
+		{
+			mapOfObjects.put(new WeakReference(comObject, referenceQueueOfCOMObjects), holder);
+		}
+        // Increment the count for the number of weak-references for this IPID
+        synchronized (mapOfIPIDsVsWeakReferences)
+        {
+            // Count all weak-references for a given IPID.
+            Integer count = (Integer) mapOfIPIDsVsWeakReferences.get(comObject.getIpid());
+            if (count == null)
+            {
+                count = new Integer(0);
+            }
+            mapOfIPIDsVsWeakReferences.put(comObject.getIpid(), new Integer(count.intValue() + 1));
+        }
+    }
+
+    
+    /* Reduce the count of weak-references stored in mapOfIPIDsVsWeakReferences and return the same. */
+    public int removeWeakReference(String ipid)
+    {
+        if (JISystem.getLogger().isLoggable(Level.FINEST))
+        {
+            JISystem.getLogger().finest("Dumping mapOfIPIDsVsWeakReferences " + mapOfIPIDsVsWeakReferences.toString());
+        }
+
+        int weakRefsRemaining = 0;
+        synchronized (mapOfIPIDsVsWeakReferences)
+        {
+            Integer count = (Integer)mapOfIPIDsVsWeakReferences.get(ipid);
+            if (count == null)
+            {
+                weakRefsRemaining = 0;
+            }
+            else
+            {
+                weakRefsRemaining = count.intValue() - 1;
+                if (weakRefsRemaining > 0)
+                {
+                    mapOfIPIDsVsWeakReferences.put(ipid, new Integer(weakRefsRemaining));
+                }
+                else
+                {
+                    mapOfIPIDsVsWeakReferences.remove(ipid);
+                }
+            }
+        }
+
+        return weakRefsRemaining;
+    }
+
+
 
 	//just for testing
 	private static Map mapOfIPIDSvsCount = Collections.synchronizedMap(new HashMap());
@@ -802,11 +937,11 @@ public final class JISession {
 			JISystem.getLogger().warning("releaseRef: Releasing numinstances " + numinstances + " references of IPID: " + IPID + " session: " + getSessionIdentifier());
 			debug_delIpids(IPID, numinstances);
         }
-		stub2.addRef_ReleaseRef(obj);
+		addRef_ReleaseRef(IPID, obj, -5);
 	}
 
 
-	private void addDereferencedIpids(String IPID, byte[] oid)
+	private void addDereferencedIpids(String IPID)
 	{
 		if (JISystem.getLogger().isLoggable(Level.INFO))
 		{
@@ -820,9 +955,6 @@ public final class JISession {
 			}
 		}
 
-		//Will call the JIComOxidRuntime, and that is synched on mutex3, but that will not cause a deadlock, since
-		//it or rather any method of JIComOxidRuntime does not call back into JISession.
-		JIComOxidRuntime.delIPIDReference(IPID,new JIObjectId(oid,false),this);
 	}
 
 	private void releaseRefs(JIArray arrayOfStructs, boolean fromDestroy) throws JIException
@@ -838,30 +970,35 @@ public final class JISession {
 		obj.addInParamAsShort((short)(((Object[])arrayOfStructs.getArrayInstance()).length),JIFlags.FLAG_NULL);
 		obj.addInParamAsArray(arrayOfStructs,JIFlags.FLAG_NULL);
 		obj.fromDestroySession = fromDestroy;
-		stub2.addRef_ReleaseRef(obj);
+		stub.addRef_ReleaseRef(obj);
 
 		//ignore the results
 	}
 
-	private JIStruct prepareForReleaseRef(String IPID, int numInstancesfirsttime) throws JIException
+	private JIStruct prepareForReleaseRef(String IPID) throws JIException
+    {
+        Integer refcount = (Integer)mapOfIPIDsVsRefcounts.get(IPID);
+        int releaseCount = 5 + 5; // 5 of the original and 5 for the addRef done later on.
+        if (refcount != null)
+            releaseCount = refcount.intValue();
+
+        return prepareForReleaseRef(IPID, releaseCount); 
+    }
+    
+    private JIStruct prepareForReleaseRef(String IPID, int refcount) throws JIException
 	{
 		JIStruct remInterface = new JIStruct();
 		remInterface.addMember(new rpc.core.UUID(IPID));
-		remInterface.addMember(new Integer(numInstancesfirsttime + 5)); // numInstancesfirsttime of the original and 5 for the addRef done later on.
+		remInterface.addMember(new Integer(refcount));
 		remInterface.addMember(new Integer(0));//private refs = 0
 		if (JISystem.getLogger().isLoggable(Level.INFO))
         {
-			JISystem.getLogger().warning("prepareForReleaseRef: Releasing numInstancesfirsttime + 5 references of IPID: " 
-					+ IPID + " session: " + getSessionIdentifier() + " , numInstancesfirsttime is " + 
-					numInstancesfirsttime);
+			JISystem.getLogger().warning("prepareForReleaseRef: Releasing " + refcount + "references of IPID: " + IPID + " session: " + getSessionIdentifier());
+            debug_delIpids(IPID, refcount);
         }
-		debug_delIpids(IPID, numInstancesfirsttime + 5);
-		return remInterface;	
-	}
-	
-	private JIStruct prepareForReleaseRef(String IPID) throws JIException
-	{
-		return prepareForReleaseRef(IPID, 5);
+		updateReferenceForIPID(IPID, -1 * refcount);
+        
+		return remInterface;
 	}
 
 	/** Gets the user name associated with this session.

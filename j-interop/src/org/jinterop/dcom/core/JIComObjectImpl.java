@@ -115,7 +115,8 @@ final class JIComObjectImpl implements IJIComObject {
 
 		JISession.debug_addIpids(ptr.getIPID(), 5);
 		
-		session.getStub2().addRef_ReleaseRef(obj);
+//		session.getStub2().addRef_ReleaseRef(obj);
+		session.addRef_ReleaseRef(ptr.getIPID(), obj, 5);
 		
 		if (obj.getResultAsIntAt(1) != 0)
 		{
@@ -143,7 +144,8 @@ final class JIComObjectImpl implements IJIComObject {
 			JISystem.getLogger().warning("RELEASE called directly ! removing 5 references for " + ptr.getIPID()+ " session: " + session.getSessionIdentifier());
 			JISession.debug_delIpids(ptr.getIPID(), 5);
         }
-		session.getStub2().addRef_ReleaseRef(obj);
+//		session.getStub2().addRef_ReleaseRef(obj);
+		session.addRef_ReleaseRef(ptr.getIPID(), obj, -5);
 	}
 
 

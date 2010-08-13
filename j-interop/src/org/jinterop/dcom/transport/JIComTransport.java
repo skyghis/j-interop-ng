@@ -17,12 +17,17 @@
 package org.jinterop.dcom.transport;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.IllegalBlockingModeException;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -37,11 +42,11 @@ import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
-/**Borrowed all from ncacn_ip_tcp.RpcTransport from jarapac, modified attach api to include SocketChannel.
+/**
+ * Borrowed all from ncacn_ip_tcp.RpcTransport from jarapac.
  *
  * @exclude
  * @since 1.0
- *
  */
 final class JIComTransport implements Transport {
 
@@ -57,21 +62,15 @@ final class JIComTransport implements Transport {
 
     private Socket socket;
 
-    private OutputStream output;
-
-    private InputStream input;
-
     private boolean attached;
 
-    private boolean timeoutModifiedfrom0 = false;
-    
     private SocketChannel channel = null;
-
+    
     static {
         String localhost = null;
         try {
             localhost = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) { }
+        } catch (UnknownHostException ex) { /*ignored*/ }
         LOCALHOST = localhost;
     }
 
@@ -97,84 +96,74 @@ final class JIComTransport implements Transport {
         		JISystem.getLogger().finest("Opening socket on " + new InetSocketAddress(InetAddress.getByName(host),port));
         	}
 
-        	channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(host),port));
-        	socket = channel.socket();//new Socket(host, port);
-            output = null;
-            input = null;
+        	channel = SocketChannel.open();
+        	
+        	// Connects without a timeout. If a timeout is needed then someone should
+        	// write a blockingConnect() method similar to the blockingRead() method.
+        	channel.connect(new InetSocketAddress(InetAddress.getByName(host), port));
+        	
+        	// Configure the channel to be non-blocking, we will handle simulating
+            // blocking mode using selectors. Using a blocking connect above is fine
+        	// as that does not cause the NIO code to generate temporary pipe on Linux/Unix.
+            channel.configureBlocking(false);
+        	
+        	socket = channel.socket();        	
             attached = true;
-            socket.setKeepAlive(true);//backup for not providing a timeout.
+            socket.setKeepAlive(true); //backup for not providing a timeout.
+            
             return new JIComEndpoint(this,syntax);
         } catch (IOException ex) {
             try {
                 close();
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) { /*ignored*/ }
             throw ex;
         }
     }
-
+    
     public void close() throws IOException {
+        
         try {
             if (socket != null)
         	{
-//            	input.close();
-//            	output.close();
             	socket.shutdownInput();
             	socket.shutdownOutput();
-            	socket.close();
-            	channel.close();
+            	socket.close();            	
             	if (JISystem.getLogger().isLoggable(Level.FINEST))
             	{
             		JISystem.getLogger().finest("Socket closed... " + socket + " host " + host + " , port " + port);
             	}
         	}
+            if ( channel != null ) {
+                // Even if the socket is null, we still need to close the channel as well.
+                channel.close();
+            }
         } finally {
             attached = false;
             socket = null;
-            output = null;
-            input = null;
             channel = null;
         }
     }
 
     public void send(NdrBuffer buffer) throws IOException {
         if (!attached) throw new RpcException("Transport not attached.");
-        if (output == null) output = socket.getOutputStream();
+        
+        // This will not cause the file descriptor leak
         channel.configureBlocking(true);
+        
+        // This is cached by the socket so we don't need to cache it ourselves.
+        final OutputStream output = socket.getOutputStream();
+         
         output.write(buffer.getBuffer(), 0, buffer.getLength());
         output.flush();
     }
 
     public void receive(NdrBuffer buffer) throws IOException {
         if (!attached) throw new RpcException("Transport not attached.");
-        applySocketTimeout();
-        if (input == null) input = socket.getInputStream();
-        buffer.length = (input.read(buffer.getBuffer(), 0,
-                buffer.getCapacity()));
-    }
-
-    private void applySocketTimeout ()
-    {
-	    int timeout = 0;
-	    try
-	    {
-	    	timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
-	    	if (timeout != 0)
-	    	{
-	    		socket.setSoTimeout(timeout);
-	    		timeoutModifiedfrom0 = true;
-	    	}
-	    	else
-	    	{
-	    		if (timeoutModifiedfrom0)
-	    		{
-	    			socket.setSoTimeout(timeout);
-	    			timeoutModifiedfrom0 = false;
-	    		}
-	    	}
-	    }
-	    catch ( Exception e )
-	    {
-	    }
+        
+        final int timeout = getCurentTimeout();
+        // We have to handle the read+timeout ourselves
+        final ByteBuffer wrapped = ByteBuffer.wrap(buffer.getBuffer());
+        buffer.length = blockingRead(wrapped, timeout);
     }
 
     protected void parse(String address) throws ProviderException {
@@ -203,6 +192,95 @@ final class JIComTransport implements Transport {
             throw new ProviderException("Invalid port specifier.");
         }
         host = server;
+    }
+    
+    /**
+     * Returns the current socket timeout.
+     */
+    private int getCurentTimeout() {
+        int timeout = 0;
+        try
+        {
+            timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
+        }
+        catch ( Exception e ) { /*ignored*/ }
+        
+        return timeout;
+    }
+    
+    /**
+     * Reads from the socket into the provided ByteBuffer. If a timeout has been specified
+     * a SocketTimeoutException will be generated if the read times out.
+     * 
+     * @return The number of bytes read, possibly zero, or -1 if the channel has reached end-of-stream.
+     */
+    private int blockingRead(ByteBuffer bb, int timeout)  throws IOException {
+        synchronized (channel.blockingLock()) {
+            if ( ! channel.isBlocking() ) {
+                throw new IllegalBlockingModeException();
+            }
+            
+            if ( timeout == 0 ) {
+                // that was easy.
+                return channel.read(bb);
+            }
+            
+            // We have to implement a timeout with a selector.
+            
+            SelectionKey sk = null;
+            Selector sel = null;
+            channel.configureBlocking(false);
+            
+            try {
+                int n;
+                if ( (n = channel.read(bb)) != 0 ) {
+                    // we got something right away, no need to wait
+                    return n;
+                }
+                
+                sel = Selector.open();
+                sk = channel.register(sel, SelectionKey.OP_READ);
+                
+                long to = timeout;
+                final long start = System.currentTimeMillis();
+                
+                for (;;) {
+                    if ( ! channel.isOpen() ) {
+                        // got closed while we were waiting
+                        throw new ClosedChannelException();
+                    }
+                    
+                    int numSelected = sel.select(to);
+                    
+                    if ( numSelected > 0 && sk.isReadable() ) {
+                        // there is something there to be read
+                        if ( (n = channel.read(bb)) != 0 ) {
+                            return n;
+                        }
+                    }
+                    
+                    // We timed out. Remove the key, reduce the remaining time
+                    // and try again. We might still have some time left before
+                    // the timeout expires.
+                    sel.selectedKeys().remove(sk);
+                    to -= System.currentTimeMillis() - start;
+                    if ( to <= 0 ) {
+                        // we ran out of time. A "timeout" if you will ...
+                        throw new SocketTimeoutException();
+                    }
+                }
+                
+            }
+            finally {
+                // Selector cleanup
+                if ( sk != null ) {
+                    sk.cancel();
+                }
+                if ( sel != null ) {
+                    sel.close();
+                }
+            }
+        }
     }
 
 }

@@ -558,6 +558,12 @@ public final class JIComServer extends Stub {
 			getEndpoint().getSyntax().setVersion(0,0);
 			((JIComEndpoint)getEndpoint()).rebindEndPoint();
 
+			JICallBuilder serverAlive = new JICallBuilder(true);
+			serverAlive.attachSession(session);
+			serverAlive.setOpnum(0);
+			serverAlive.setReadOnlyHRESULT();
+			call(Endpoint.IDEMPOTENT,serverAlive);
+			
 			//setup syntax for IRemoteActivation
 			syntax = "4d9f4ab8-7d1c-11cf-861e-0020af6e7c57:0.0";
 			getEndpoint().getSyntax().setUuid(new rpc.core.UUID("4d9f4ab8-7d1c-11cf-861e-0020af6e7c57"));

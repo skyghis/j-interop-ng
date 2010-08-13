@@ -644,6 +644,12 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 						        retvals[i] = 0x80000003;
 						        continue;
 	                        }
+                            else
+	                        {
+	                            // StoredIQ - Satwik - native C++ says 01 here 
+                            	retvals[i] = 0x1;
+                            }
+
 						    
 						    int total = ((Integer)mapOfIpidsVsRef.get(ipidref)).intValue() + publicRefs + privateRefs;
 						    mapOfIpidsVsRef.put(ipidref, new Integer(total));
@@ -918,6 +924,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 				if (!component.isPresent(iid.toString()))
 				{
 					hresult = JIErrorCodes.E_NOINTERFACE;
+					ipid2 = GUIDUtil.guidStringFromHexString("00000000000000000000000000000000");
 				}
 				else
 				{
@@ -951,16 +958,28 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 				JIMarshalUnMarshalHelper.serialize(ndr2,Integer.class,new Integer(0xCCCCCCCC),null,JIFlags.FLAG_NULL);
 				
 				//now generate the IPID and export a java instance with this.
-				JIStdObjRef objRef = new JIStdObjRef(ipid2,details.getOxid(),details.getOid());
+				JIStdObjRef objRef = null;
+                if (hresult == 0)
+                {
+                    objRef = new JIStdObjRef(ipid2,details.getOxid(),details.getOid());
+                }
+                else
+                {
+                    objRef = new JIStdObjRef(ipid2);
+                }
 				objRef.encode(ndr2);
 				
 				//add it to the exported Ipids map
-				mapOfIpidsVsRef.put(ipid2.toUpperCase(), new Integer(objRef.getPublicRefs()));
-				 
+				if (hresult == 0)
+				{
+					mapOfIpidsVsRef.put(ipid2.toUpperCase(), new Integer(objRef.getPublicRefs()));
+				}
+				
 				if (JISystem.getLogger().isLoggable(Level.FINEST))
                 {
 					JISystem.getLogger().finest("RemUnknownObject: [QI] for which the stdObjRef is " +  objRef);
                 }
+				
 			} catch (IllegalAccessException e) {
 				JISystem.getLogger().throwing("JIComOxidRuntimeHelper","QueryInterface",e);  
 			} catch (InstantiationException e) {

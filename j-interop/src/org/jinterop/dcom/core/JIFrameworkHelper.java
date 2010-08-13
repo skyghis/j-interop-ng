@@ -161,6 +161,11 @@ public final class JIFrameworkHelper {
     	return new JIComObjectImpl(session,JIComOxidRuntime.getInterfacePointer(session,javaComponent),true);
     }
 
+    public static void releaseLocalComponent(JISession session, JILocalCoClass javaComponent) throws JIException
+    {
+    	JIComOxidRuntime.releaseLocalComponent(session, javaComponent);
+    }
+    
     /** Returns an Interface Pointer representation from raw bytes.
      *
      * @exclude

@@ -54,6 +54,19 @@ final class JIStdObjRef implements Serializable {
 		this.publicRefs = 5;
 	}
 
+	
+    /** This is used to instantiate an empty StdObjRef for 
+     *   cases where the interface is not supported.
+     */
+    JIStdObjRef(String ipid)
+    {
+        this.ipidOfthisObjectRef = ipid;
+        this.flags = 0x0;
+        this.oxid = new byte[]{0,0,0,0,0,0,0,0};
+        this.oid = new byte[]{0,0,0,0,0,0,0,0};
+        this.publicRefs = 0;
+    }   
+	 
 
 
 	static JIStdObjRef decode(NetworkDataRepresentation ndr)
