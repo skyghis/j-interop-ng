@@ -20,6 +20,8 @@ package org.jinterop.dcom.core;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -89,6 +91,7 @@ public final class JIComServer extends Stub {
 	private final Object mutex = new Object();
 	private boolean timeoutModifiedfrom0 = false;
 	private JIInterfacePointer interfacePtrCtor = null;
+	private static final List<String> listOfIps = new ArrayList<String>();
 
 	private JIComServer(){}
 
@@ -130,6 +133,15 @@ public final class JIComServer extends Stub {
 			JISystem.internal_dumpMap();
 		}
 
+//		ipAddress="192.168.1.104";
+		if (ipAddress != null && !ipAddress.trim().equalsIgnoreCase(""))
+		{
+			if (!listOfIps.contains(ipAddress))
+			{
+				listOfIps.add(ipAddress.toLowerCase());
+			}
+		}
+		
 		super.setTransportFactory(JIComTransportFactory.getSingleTon());
 		//now read the session and prepare information for the stub.
 		super.setProperties(new Properties(defaults));
@@ -171,7 +183,8 @@ public final class JIComServer extends Stub {
 				{
 					try{
 
-						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+//						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+						if (listOfIps.contains(binding.getNetworkAddress().toLowerCase()))
 						{
 							nameBinding = null;
 							break;
@@ -179,7 +192,8 @@ public final class JIComServer extends Stub {
 
 						//now check for the one with port
 						index = binding.getNetworkAddress().indexOf("[");//this contains the port
-						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
+//						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
+						if (index != -1 && listOfIps.contains(binding.getNetworkAddress().substring(0,index).toLowerCase()))
 						{
 							nameBinding = null;
 							break;
@@ -284,7 +298,8 @@ public final class JIComServer extends Stub {
 				{
 					try{
 
-						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+//						if (binding.getNetworkAddress().equalsIgnoreCase(targetAddress))
+						if (listOfIps.contains(binding.getNetworkAddress().toLowerCase()))
 						{
 							nameBinding = null;
 							break;
@@ -292,7 +307,8 @@ public final class JIComServer extends Stub {
 
 						//now check for the one with port
 						index = binding.getNetworkAddress().indexOf("[");//this contains the port
-						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
+//						if (index != -1 && binding.getNetworkAddress().substring(0,index).equalsIgnoreCase(targetAddress))
+						if (index != -1 && listOfIps.contains(binding.getNetworkAddress().substring(0,index).toLowerCase()))
 						{
 							nameBinding = null;
 							break;
@@ -506,14 +522,50 @@ public final class JIComServer extends Stub {
 						{
 							registry = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),session.getTargetServer(),true);	
 						}
-						JIPolicyHandle hkcr = registry.winreg_OpenHKCR();
-						JIPolicyHandle key = registry.winreg_CreateKey(hkcr,"CLSID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
-						registry.winreg_SetValue(key,"AppID",("{" + this.clsid + "}").getBytes(),false,false);
-						registry.winreg_CloseKey(key);
-						key = registry.winreg_CreateKey(hkcr,"AppID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
-						registry.winreg_SetValue(key,"DllSurrogate","  ".getBytes(),false,false);
-						registry.winreg_CloseKey(key);
-						registry.winreg_CloseKey(hkcr);
+						
+						JIPolicyHandle hklm = null;
+						JIPolicyHandle hkwow6432 = null;
+						try
+						{
+						    // Try 64bit first...
+						    hklm = registry.winreg_OpenHKLM();
+						    hkwow6432 = registry.winreg_OpenKey(hklm,"SOFTWARE\\Classes\\Wow6432Node", IJIWinReg.KEY_ALL_ACCESS);
+						}
+						catch (JIException jie) { }
+
+						if (hklm != null)
+						    registry.winreg_CloseKey(hklm);
+
+						if (hkwow6432 != null)
+						{
+						    JISystem.getLogger().info("Attempting to register on 64 bit");
+						    // HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Wow6432Node\CLSID\{E4BE20A4-9EF1-4B05-9117-AF43EAB4B295}\ -- "AppID"
+						    JIPolicyHandle key = registry.winreg_CreateKey(hkwow6432, "CLSID\\{" + this.clsid + "}", IJIWinReg.REG_OPTION_NON_VOLATILE, IJIWinReg.KEY_ALL_ACCESS);
+						    registry.winreg_SetValue(key, "AppId", ("{" + this.clsid + "}").getBytes(), false, false);
+						    registry.winreg_CloseKey(key);
+						    JISystem.getLogger().info("--- winreg_SetValue --- SOFTWARE\\Classes\\Wow6432Node\\CLSID\\" + this.clsid + " -- AppID");
+
+						    // HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Wow6432Node\AppID\{E4BE20A4-9EF1-4B05-9117-AF43EAB4B295}\AppID\ -- "DllSurrogate"
+						    key = registry.winreg_CreateKey(hkwow6432, "AppID\\{" + this.clsid + "}", IJIWinReg.REG_OPTION_NON_VOLATILE, IJIWinReg.KEY_ALL_ACCESS);
+						    registry.winreg_SetValue(key, "DllSurrogate", "".getBytes(), false, false);
+						    registry.winreg_CloseKey(key);
+
+						    JISystem.getLogger().info("--- winreg_SetValue --- SOFTWARE\\Classes\\Wow6432Node\\AppID\\" + this.clsid + " -- DllSurrogate");
+						    registry.winreg_CloseKey(hkwow6432);
+						}
+						else
+						{
+							JISystem.getLogger().info("Attempting to register on 32 bit");
+						    JIPolicyHandle hkcr = registry.winreg_OpenHKCR();
+						    JIPolicyHandle key = registry.winreg_CreateKey(hkcr,"CLSID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
+						    registry.winreg_SetValue(key,"AppID",("{" + this.clsid + "}").getBytes(),false,false);
+						    registry.winreg_CloseKey(key);
+						    key = registry.winreg_CreateKey(hkcr,"AppID\\{" + this.clsid + "}",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS );
+						    registry.winreg_SetValue(key,"DllSurrogate", "  ".getBytes(),false,false);
+
+						    registry.winreg_CloseKey(key);
+						    registry.winreg_CloseKey(hkcr);
+						}
 						registry.closeConnection();
 					} catch (UnknownHostException e1) {
 						//auto registration failed as well...

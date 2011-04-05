@@ -16,38 +16,65 @@
  */
 package org.jinterop.dcom.transport;
 
+import java.io.IOException;
 import java.util.Properties;
+
+import org.jinterop.dcom.transport.niosupport.SelectorManager;
 
 import rpc.ProviderException;
 import rpc.Transport;
 
 /**
- * @exclude
- * @since 1.0
- *
+ * Factory for {@link JIComTransport}
  */
-public final class JIComTransportFactory extends rpc.TransportFactory {
+public final class JIComTransportFactory extends rpc.TransportFactory
+{
+    private static JIComTransportFactory instance;
 
-	private static JIComTransportFactory factory = null;
-	private JIComTransportFactory() {}
+    private final SelectorManager selectorManager;
 
-	public Transport createTransport(String address, Properties properties)
-    	throws ProviderException {
-			return new JIComTransport(address, properties);
-	}
+    /**
+     * Constructor for JIComTransportFactory.
+     */
+    private JIComTransportFactory() throws IOException
+    {
+        selectorManager = new SelectorManager();
+    }
 
-	public static JIComTransportFactory getSingleTon()
-	{
-		if (factory == null)
-		{
-			synchronized (JIComTransportFactory.class) {
-				if (factory == null)
-				{
-					factory = new JIComTransportFactory();
-				}
-			}
-		}
+    /**
+     * @see rpc.TransportFactory#createTransport(java.lang.String,
+     *      java.util.Properties)
+     */
+    public Transport createTransport(String address, Properties properties)
+            throws ProviderException
+    {
+        return new JIComTransport(address, selectorManager, properties);
+    }
 
-		return factory;
-	}
+    /**
+     * @return the singleton instance
+     */
+    public static JIComTransportFactory getSingleton()
+    {
+        synchronized (JIComTransportFactory.class)
+        {
+            if (instance == null)
+            {
+                try
+                {
+                    instance = new JIComTransportFactory();
+                }
+                catch (IOException e)
+                {
+                    throw new ExceptionInInitializerError(e);
+                }
+            }
+            return instance;
+        }
+    }
+
+    public static JIComTransportFactory getSingleTon()
+    {
+        return getSingleton();
+    }
 }
