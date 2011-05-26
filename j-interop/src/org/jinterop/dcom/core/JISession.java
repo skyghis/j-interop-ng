@@ -245,10 +245,8 @@ public final class JISession {
 		JIComOxidRuntime.startResolver();
 		JIComOxidRuntime.startResolverTimer();
 		oxidResolverPort = JIComOxidRuntime.getOxidResolverPort();
-        // This schedule used to be every 3 mins. It was drastically reduced 
-        // to 10 seconds because otherwise it would try and release too 
-        // many IPIDS at once.
-		releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(),0,10*1*1000);
+        // This schedule used to be every 2 mins. 
+		releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(),0,2*60*1000);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
@@ -275,6 +273,18 @@ public final class JISession {
 
 	}
 
+	/** Cancels the existing timer used to schedule collection of un-referenced COM Objects and then restarts the same with the new frequency. Default timer schedules the GC task 
+	 * every 2 mins.  
+	 * 
+	 * @param timeInMilliSec
+	 */
+	public static void setReleaseRefTimerFrequency(int timeInMilliSec)
+	{
+		releaseRefsTimer.cancel();
+		releaseRefsTimer = new Timer(true);
+		releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(), 0, timeInMilliSec);
+	}
+	
 	private static class Release_References_TimerTask extends TimerTask
 	{
 		public void run() {
@@ -766,7 +776,7 @@ public final class JISession {
 //		debug_addIpids(comObject.getIpid(),((JIStdObjRef)comObject.internal_getInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getPublicRefs());
 	}
 
-    public void addRef_ReleaseRef(String IPID, JICallBuilder obj, int refcount) throws JIException
+    void addRef_ReleaseRef(String IPID, JICallBuilder obj, int refcount) throws JIException
     {
         updateReferenceForIPID(IPID, refcount);
         getStub2().addRef_ReleaseRef(obj);
@@ -796,7 +806,7 @@ public final class JISession {
             mapOfIPIDsVsRefcounts.remove(ipid);
 	}
     
-    public void addWeakReference(IJIComObject comObject, byte[] oid)
+    void addWeakReference(IJIComObject comObject, byte[] oid)
     {
         IPID_SessionID_Holder holder = new IPID_SessionID_Holder(comObject.getIpid(), getSessionIdentifier(), false, oid);
 		synchronized (mapOfObjects)
@@ -818,7 +828,7 @@ public final class JISession {
 
     
     /* Reduce the count of weak-references stored in mapOfIPIDsVsWeakReferences and return the same. */
-    public int removeWeakReference(String ipid)
+    int removeWeakReference(String ipid)
     {
         if (JISystem.getLogger().isLoggable(Level.FINEST))
         {
