@@ -2,6 +2,12 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.kohsuke</groupId>
+    <artifactId>pom</artifactId>
+    <version>1</version>
+  </parent>
+
   <groupId>org.kohsuke.jinterop</groupId>
   <artifactId>j-interop-parent</artifactId>
   <packaging>pom</packaging>
@@ -13,22 +19,14 @@
     <module>j-interopdeps</module>
   </modules>
 
-  <distributionManagement>
-    <repository>
-      <id>java.net-m2-repository</id>
-      <url>java-net:/maven2-repository/trunk/www/repository/</url>
-    </repository>
-  </distributionManagement>
+  <scm>
+    <connection>scm:git:git@github.com/kohsuke/j-interop.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/kohsuke/j-interop.git</developerConnection>
+  </scm>
+
 
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.8</version>
-      </extension>
-    </extensions>
   </build>
   
   <repositories>
