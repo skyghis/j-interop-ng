@@ -37,6 +37,8 @@ public class NdrBuffer {
 	public int length;
     public NdrBuffer deferred;
 
+    public boolean ignoreAlign = false;
+    
     public NdrBuffer(byte[] buf, int start) {
         this.buf = buf;
 		this.start = index = start;
@@ -48,6 +50,7 @@ public class NdrBuffer {
 		NdrBuffer nb = new NdrBuffer(buf, start);
 		nb.index = idx;
 		nb.deferred = deferred;
+		nb.ignoreAlign = ignoreAlign;
 		return nb;
 	}
 
@@ -71,6 +74,10 @@ public class NdrBuffer {
         return buf;
     }
     public int align(int boundary, byte value) {
+    	if (ignoreAlign)
+    	{
+    		return 0;
+    	}
 		int n = align(boundary);
 		int i = n;
 		while (i > 0) {
@@ -99,6 +106,10 @@ public class NdrBuffer {
 		}
 	}
 	public int align(int boundary) {
+		if (ignoreAlign)
+    	{
+    		return 0;
+    	}
 		int m = boundary - 1;
 		int i = index - start;
 		int n = ((i + m) & ~m) - i;
