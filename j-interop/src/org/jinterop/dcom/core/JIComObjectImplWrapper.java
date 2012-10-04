@@ -158,4 +158,14 @@ public class JIComObjectImplWrapper implements IJIComObject {
 	{
 		return comObject.toString();
 	}
+
+
+	public JIComCustomMarshallerUnMarshaller getCustomObject() {
+		return comObject.getCustomObject();
+	}
+
+
+	public int getLengthOfInterfacePointer() {
+		return comObject.getLengthOfInterfacePointer();
+	}
 }

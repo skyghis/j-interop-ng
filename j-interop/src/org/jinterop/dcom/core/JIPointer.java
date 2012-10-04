@@ -67,6 +67,16 @@ public final class JIPointer implements Serializable {
 		this.isReferenceTypePtr = isReferenceTypePtr;
 	}
 
+	private boolean nullSpecial = false;
+	/**
+	 * Some COM servers send referentId (pointer) as null but the referent is not. To be used only when you know this is the case.
+	 * Better leave it unsed.
+	 */
+	public void treatNullSpecially()
+	{
+		nullSpecial = true;
+	}
+	
 	/** Creates an instance of this class where the referent is <code>value</code>.
 	 *  Used when serializing this pointer.
 	 *
@@ -189,13 +199,15 @@ public final class JIPointer implements Serializable {
 		JIPointer retVal = new JIPointer();
 		retVal.setFlags(flags);
 		retVal.isNull = isNull;
+		retVal.nullSpecial = nullSpecial;
+		
 		//retVal.isDeffered = isDeffered;
 		if (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY
 				/*|| (FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER */)
 		{
 			retVal.referentId = ((Integer)JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
 			retVal.referent = referent; //will only be the class or object
-			if (retVal.referentId ==  0)
+			if (retVal.referentId ==  0 && !nullSpecial)
 			{
 				//null pointer
 				// just return
@@ -215,7 +227,7 @@ public final class JIPointer implements Serializable {
 			//referentId = ndr.readUnsignedLong();
 			retVal.referentId = ((Integer)JIMarshalUnMarshalHelper.deSerialize(ndr,Integer.class,defferedPointers,FLAG,additionalData)).intValue();
 			retVal.referent = referent; //will only be the class or object
-			if (retVal.referentId ==  0)
+			if (retVal.referentId ==  0 && !nullSpecial)
 			{
 				//null pointer
 				// just return

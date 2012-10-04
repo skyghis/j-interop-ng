@@ -309,4 +309,13 @@ public interface IJIComObject extends Serializable {
 	 * @return <code>true</code> if this is a local reference , <code>false</code> otherwise.
 	 */
 	public boolean isLocalReference();
+	
+	/** Will return the Object decoded by the CustomMarshallerUnMarshaller if one is present and this
+	 * IJIComObject is of the type OBJREF_CUSTOM.
+	 * 
+	 * @return
+	 */
+	public JIComCustomMarshallerUnMarshaller getCustomObject();
+	
+	public int getLengthOfInterfacePointer();
 }

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import jcifs.util.Encdec;
+import jcifs.util.Hexdump;
 import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
 
@@ -599,13 +600,39 @@ final class JIMarshalUnMarshalHelper {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
 		{
-			serialize(ndr, JIInterfacePointer.class, ((IJIComObject)value).internal_getInterfacePointer(), defferedPointers, FLAG);
+			JIInterfacePointer ptr = ((IJIComObject)value).internal_getInterfacePointer();
+			serialize(ndr, JIInterfacePointer.class, ptr, defferedPointers, FLAG);
+			if (ptr.isCustomObjRef())
+			{
+				//ask the session now for its marshaller unmarshaller and that should write the object down into the JIInterfacePointer.
+				//Where we are right now is where our object needs to be written.
+				
+				//TODO we have just written a "reserved" member (before we write the body), it has been observed in WMIO that this reserved member 
+				//is the total length of the block, if this is so then the Custom Marshaller for WMIO should overwrite this with the full length.
+				
+				//First write the custom marshaller unmarshaller CLSID. Then the object definition.
+				int index = ndr.getBuffer().getIndex();
+				((IJIComObject)value).getCustomObject().encode(ndr, defferedPointers, FLAG);
+				int currentIndex = ndr.getBuffer().getIndex();
+				int totalLength = (currentIndex - index) + 48;
+				ndr.getBuffer().setIndex(ndr.getBuffer().getIndex() - totalLength - 8);
+				ndr.writeUnsignedLong(totalLength + 4);
+				ndr.writeUnsignedLong(totalLength + 4);
+				ndr.getBuffer().setIndex(currentIndex);
+//				Hexdump.hexdump(System.out, ndr.getBuffer().getBuffer(), 0, ndr.getBuffer().getIndex());
+			}
 		}
 
 		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
 		{
 			JISession session = (JISession)additionalData.get(JICallBuilder.CURRENTSESSION);
-			IJIComObject comObject = new JIComObjectImpl(session,(JIInterfacePointer)deSerialize(ndr, JIInterfacePointer.class, defferedPointers, FLAG, additionalData));
+			JIInterfacePointer ptr = (JIInterfacePointer)deSerialize(ndr, JIInterfacePointer.class, defferedPointers, FLAG, additionalData);
+			IJIComObject comObject = new JIComObjectImpl(session, ptr);
+			if (ptr != null && ptr.isCustomObjRef())
+			{
+				//now we need to ask the session for its marshaller unmarshaller based on the CLSID 
+				((JIComObjectImpl)comObject).setCustomObject(session.getCustomMarshallerUnMarshallerTemplate(ptr.getCustomCLSID()).decode(comObject, ndr, defferedPointers, FLAG, additionalData));
+			}
 			((ArrayList)additionalData.get(JICallBuilder.COMOBJECTS)).add(comObject);
 			return comObject;
 		}

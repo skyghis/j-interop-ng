@@ -72,6 +72,16 @@ final class JIInterfacePointer implements Serializable {
     static final int SORF_NOPING     = 0x1000;// Pinging is not required
 
 
+    boolean isCustomObjRef()
+    {
+    	return ((JIInterfacePointerBody)(member.getReferent())).isCustomObjRef();
+    }
+    
+    String getCustomCLSID()
+    {
+    	return ((JIInterfacePointerBody)(member.getReferent())).getCustomCLSID();
+    }
+    
     private JIInterfacePointer() {}
 
     /** Called from Oxid Resolver master, the resolver address are put in here itself
@@ -272,6 +282,7 @@ class JIInterfacePointerBody implements Serializable
 {
 		private static final long serialVersionUID = 2597456459096838320L;
 		private String iid = null;
+		private String customCLSID = null;
 	    private int objectType = -1;
 	    private JIStdObjRef stdObjRef = null;
 	    private int length = -1;
@@ -280,6 +291,25 @@ class JIInterfacePointerBody implements Serializable
 
 	    private JIInterfacePointerBody() {}
 
+	    
+	    
+//	    private byte[] customObjRefDefn = null;
+	    
+	    boolean isCustomObjRef()
+	    {
+	    	return this.objectType == JIInterfacePointer.OBJREF_CUSTOM;
+	    }
+	    
+	    String getCustomCLSID()
+	    {
+	    	return this.customCLSID;
+	    }
+	    
+//	    byte[] getCustomObjRefDefn()
+//	    {
+//	    	return this.customObjRefDefn;
+//	    }
+	    
 	    /** Called from Oxid Resolver master, the resolver address are put in here itself
 	     *
 	     * @param iid
@@ -304,12 +334,14 @@ class JIInterfacePointerBody implements Serializable
 			length = 40 + 4 + 4 + 16 + resolverAddr.getLength();
 		}
 
+//	    private static int ff = 0;
 		static JIInterfacePointerBody decode(NetworkDataRepresentation ndr, int Flags)
 		{
 			if((Flags & JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2) == JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2)
 			{
 				return decode2(ndr);
 			}
+			
 			int length = ndr.readUnsignedLong();
 			ndr.readUnsignedLong();//length
 
@@ -334,7 +366,44 @@ class JIInterfacePointerBody implements Serializable
 
 			if ((ptr.objectType = ndr.readUnsignedLong()) != JIInterfacePointer.OBJREF_STANDARD)
 			{
-				return null;
+				
+				try {
+					rpc.core.UUID ipid2 = new rpc.core.UUID();
+					ipid2.decode(ndr,ndr.getBuffer());
+					ptr.iid = ipid2.toString();
+				} catch (NdrException e) {
+					JISystem.getLogger().throwing("JIInterfacePointer","decode",e);
+				}
+				
+				//now for CLSID 
+				try {
+					rpc.core.UUID ipid2 = new rpc.core.UUID();
+					ipid2.decode(ndr,ndr.getBuffer());
+					ptr.customCLSID = ipid2.toString();
+				} catch (NdrException e) {
+					JISystem.getLogger().throwing("JIInterfacePointer","decode",e);
+				}
+				
+				//extension
+				ndr.readUnsignedLong();
+				
+				//reserved
+				ndr.readUnsignedLong();
+				
+				//We copy everything into the custom byte[] and return
+				//IID, CLSID, NULL
+//				byte[] header = new byte[16 + 16 + 4];
+//				ndr.readOctetArray(header, 0, header.length);
+//				System.out.println(ff++);
+//				jcifs.util.Hexdump.hexdump(System.out, header, 0, header.length);
+//				System.out.println();
+//				int index = ndr.getBuffer().index;
+//				//Header, length, size(length) 
+//				ptr.customObjRefDefn = new byte[header.length + ndr.readUnsignedLong() + 4];
+//				System.arraycopy(header, 0, ptr.customObjRefDefn, 0, header.length);
+//				ndr.getBuffer().setIndex(index);
+//				ndr.readOctetArray(ptr.customObjRefDefn, header.length, ptr.customObjRefDefn.length - header.length);
+				return ptr;
 			}
 
 			try {
@@ -474,12 +543,41 @@ class JIInterfacePointerBody implements Serializable
 	    	//the length for STDOBJREF is fixed 40 bytes : 4,4,8,8,16.
 	    	//Dual string array has to be computed, since that can vary. MEOW = 4., flag stdobjref = 4
 	    	// + 16 bytes of ipid
-	    	int length = 40 + 4 + 4 + 16 + resolverAddr.getLength();
-
+	    	int length = 0;
+	    	if (!isCustomObjRef())
+	    	{
+	    		length = 40 + 4 + 4 + 16 + resolverAddr.getLength();
+	    	}
+	    	
+	    	
 	    	ndr.writeUnsignedLong(length);
 	    	ndr.writeUnsignedLong(length);
 
+	    	//for OBJREF_CUSTOM we will correct this length after the custom object has been marshalled.
+	    	//this object is marshalled 4 + 4 + 40 bytes after this point. The length of the length itself is not included. 
+	    	
 	    	ndr.writeOctetArray(JIInterfacePointer.OBJREF_SIGNATURE,0,4);
+	    	
+	    	if (isCustomObjRef())
+	    	{
+	    		ndr.writeUnsignedLong(JIInterfacePointer.OBJREF_CUSTOM);
+	    		try {
+					rpc.core.UUID ipid2 = new rpc.core.UUID(iid);
+					ipid2.encode(ndr,ndr.getBuffer());
+					ipid2 = new rpc.core.UUID(customCLSID);
+					ipid2.encode(ndr,ndr.getBuffer());
+					ndr.writeUnsignedLong(0); //extension
+					ndr.writeUnsignedLong(0); //reserved, now the spec say that this is ignored by the server but the 
+					//the WMIO marshaller puts the length of the entire buffer here. If this is the case then we will have to go
+					//4 bytes back and rewrite this with total lengths in the custom marshaller.
+				} catch (NdrException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+	    		return;//rest will be filled by the Custom Marshaller.
+	    	}
+	    	
 	    	//std ref
 	    	ndr.writeUnsignedLong(JIInterfacePointer.SORF_OXRES1);
 

@@ -52,6 +52,8 @@ final class JIComObjectImpl implements IJIComObject {
 	private int timeout = 0;
 	private final boolean isLocal;
 	
+	private JIComCustomMarshallerUnMarshaller customObject = null;
+	
 	JIComObjectImpl(JISession session,JIInterfacePointer ptr)
 	{
 		this(session,ptr,false);
@@ -298,5 +300,18 @@ final class JIComObjectImpl implements IJIComObject {
 	public String toString()
 	{
 		return "IJIComObject[" + internal_getInterfacePointer() + " , session: " + getAssociatedSession().getSessionIdentifier() + ", isLocal: " + isLocalReference() + "]";
+	}
+
+	public JIComCustomMarshallerUnMarshaller getCustomObject() {
+		return customObject;
+	}
+	
+	void setCustomObject(JIComCustomMarshallerUnMarshaller customObject)
+	{
+		this.customObject = customObject;
+	}
+
+	public int getLengthOfInterfacePointer() {
+		return ptr.getLength();
 	}
 }

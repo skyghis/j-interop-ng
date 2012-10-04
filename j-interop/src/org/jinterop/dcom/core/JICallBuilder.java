@@ -1044,6 +1044,10 @@ public class JICallBuilder extends NdrObject implements Serializable {
 					}
 					else
 					{
+						if (comObjectImpl.internal_getInterfacePointer().isCustomObjRef())
+						{
+							continue;
+						}
 						comObject = JIFrameworkHelper.instantiateComObject2(session, comObjectImpl.internal_getInterfacePointer());
 					}
 					

@@ -82,6 +82,7 @@ public final class JISession {
 	private boolean isSSO = false;
 	private ArrayList links = new ArrayList();
 	private static final Map mapOfOxidsVsJISessions = new HashMap();
+	private static final Map<String, JIComCustomMarshallerUnMarshaller> mapOfCustomCLSIDs = new HashMap<String, JIComCustomMarshallerUnMarshaller>();
 	private boolean sessionInDestroy = false;
     private Map mapOfIPIDsVsRefcounts = new HashMap();
     private Map mapOfIPIDsVsWeakReferences = new HashMap();
@@ -1227,4 +1228,19 @@ public final class JISession {
 	}
 
 
+	/** Register handlers for OBJREF_CUSTOM. customClass only serves as a Template and is of no real consequence.
+	 * A new copy is returned from customClass.decode(...) and that is used by framework internally.
+	 *  
+	 * @param CLSID
+	 * @param customClass
+	 */
+	public void registerCustomMarshallerUnMarshallerTemplate(String CLSID, JIComCustomMarshallerUnMarshaller customClass)
+	{
+		mapOfCustomCLSIDs.put(CLSID.toLowerCase(),customClass);
+	}
+	
+	JIComCustomMarshallerUnMarshaller getCustomMarshallerUnMarshallerTemplate(String CLSID)
+	{
+		return mapOfCustomCLSIDs.get(CLSID.toLowerCase());
+	}
 }

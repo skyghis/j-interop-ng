@@ -415,6 +415,15 @@ public final class JIArray implements Serializable{
 			
 		return sizeOfNestedArrayInBytes;
 	}
+
+	/** Returns array size in bytes
+	 * 
+	 * @return
+	 */
+//	public int getArraySize()
+//	{
+//		return getSizeOfAllElementsInBytes();
+//	}
 	
 	
 	void encode(NetworkDataRepresentation ndr,Object array, List defferedPointers ,int FLAG)
