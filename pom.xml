@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.kohsuke</groupId>
     <artifactId>pom</artifactId>
-    <version>1</version>
+    <version>3</version>
   </parent>
 
   <groupId>org.kohsuke.jinterop</groupId>
   <artifactId>j-interop-parent</artifactId>
   <packaging>pom</packaging>
-  <version>2.0.8-kohsuke-1</version>
+  <version>2.0.8-kohsuke-2-SNAPSHOT</version>
   <name>Pure Java - COM bridge</name>
   
   <modules>
