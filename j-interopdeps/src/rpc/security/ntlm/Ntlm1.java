@@ -17,8 +17,8 @@
 
 package rpc.security.ntlm;
 
-import gnu.crypto.prng.IRandom;
-import gnu.crypto.util.Util;
+//import gnu.crypto.prng.IRandom;
+//import gnu.crypto.util.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +29,9 @@ import java.util.logging.Logger;
 import jcifs.ntlmssp.NtlmFlags;
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
+
+import org.bouncycastle.crypto.StreamCipher;
+
 import rpc.IntegrityException;
 import rpc.Security;
 
@@ -36,8 +39,10 @@ public class Ntlm1 implements NtlmFlags, Security {
 
     private static final int NTLM1_VERIFIER_LENGTH = 16;
 
-    private IRandom clientCipher = null;
-    private IRandom serverCipher = null;
+//    private IRandom clientCipher = null;
+//    private IRandom serverCipher = null;
+    private StreamCipher clientCipher = null;
+    private StreamCipher serverCipher = null;
     private byte[] clientSigningKey = null;
     private byte[] serverSigningKey = null;
     private NTLMKeyFactory keyFactory = null;
@@ -69,13 +74,13 @@ public class Ntlm1 implements NtlmFlags, Security {
 		//Used by the client to decrypt server messages
 		 serverCipher = keyFactory.getARCFOUR(serverSealingKey);
 
-		 if (logger.isLoggable(Level.FINEST))
- 	    {
-			 logger.finest("Client Signing Key derieved from the session key: [" + Util.dumpString(clientSigningKey) + "]");
-			 logger.finest("Client Sealing Key derieved from the session key: [" + Util.dumpString(clientSealingKey) + "]");
-			 logger.finest("Server Signing Key derieved from the session key: [" + Util.dumpString(serverSigningKey) + "]");
-			 logger.finest("Server Sealing Key derieved from the session key: [" + Util.dumpString(serverSealingKey) + "]");
- 	    }
+//		 if (logger.isLoggable(Level.FINEST))
+// 	    {
+//			 logger.finest("Client Signing Key derieved from the session key: [" + Util.dumpString(clientSigningKey) + "]");
+//			 logger.finest("Client Sealing Key derieved from the session key: [" + Util.dumpString(clientSealingKey) + "]");
+//			 logger.finest("Server Signing Key derieved from the session key: [" + Util.dumpString(serverSigningKey) + "]");
+//			 logger.finest("Server Sealing Key derieved from the session key: [" + Util.dumpString(serverSealingKey) + "]");
+// 	    }
     }
 
     public int getVerifierLength() {
@@ -96,7 +101,8 @@ public class Ntlm1 implements NtlmFlags, Security {
             NdrBuffer buffer = ndr.getBuffer();
 
             byte[] signingKey = null;
-            IRandom cipher = null;
+//            IRandom cipher = null;
+            StreamCipher cipher = null;
 
             //reverse of what it is
             if (!isServer)
@@ -168,7 +174,9 @@ public class Ntlm1 implements NtlmFlags, Security {
             NdrBuffer buffer = ndr.getBuffer();
 
             byte[] signingKey = null;
-            IRandom cipher = null;
+//            IRandom cipher = null;
+            StreamCipher cipher = null;
+            
             if (isServer)
             {
             	signingKey = serverSigningKey;

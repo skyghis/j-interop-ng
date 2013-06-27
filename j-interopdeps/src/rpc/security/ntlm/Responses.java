@@ -7,7 +7,7 @@ package rpc.security.ntlm;
 
 
 
-import gnu.crypto.hash.MD4;
+//import gnu.crypto.hash.MD4;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -20,6 +20,9 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.MD4Digest;
 
 /**
  * Calculates the various Type 3 responses.
@@ -170,9 +173,14 @@ public class Responses {
      */
     static byte[] ntlmHash(String password) throws UnsupportedEncodingException {
         byte[] unicodePassword = password.getBytes("UnicodeLittleUnmarked");
-        MD4 md4 = new MD4();
-        md4.update(unicodePassword,0,unicodePassword.length);
-        return md4.digest();
+//        MD4 md4 = new MD4();
+//        md4.update(unicodePassword,0,unicodePassword.length);
+//        return md4.digest();
+          Digest md4 = new MD4Digest();
+          byte[] ret = new byte[md4.getDigestSize()];
+          md4.update(unicodePassword,0,unicodePassword.length);
+          md4.doFinal(ret, 0);
+          return ret;
     }
 
     /**

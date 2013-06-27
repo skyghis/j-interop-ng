@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
 import rpc.core.AuthenticationVerifier;
@@ -114,6 +115,7 @@ public class DefaultConnection implements Connection {
                             }
                             currentFragment = receiveFragment(transport);
                         } catch (Exception ex) {
+                        	ex.printStackTrace();
                             throw new IllegalStateException();
                         }
                     }
@@ -155,14 +157,22 @@ public class DefaultConnection implements Connection {
 
     	if (bytesRemainingInRecieveBuffer)
     	{
-    		if (receiveBuffer.length > ConnectionOrientedPdu.TYPE_OFFSET)
+    		//Vikram - 26th Feb 2013.
+    		//receiver buffer always falls on the boundary of a new Fragment. 
+    		//
+    		
+    		//Vikram - 26th Feb 2013, commenting belwo as we were getting packets which are 2 bytes in length causing this logic to fail
+    		//and thus read was set to true (since the receiveBuffer.length was less than or equal to ConnectionOrientedPdu.TYPE_OFFSET)
+    		//so we read a fresh packet and whatever bytes were there in recieverBuffer already were lost !
+    		
+//    		if (receiveBuffer.length > ConnectionOrientedPdu.TYPE_OFFSET)
     		{
-    			receiveBuffer.setIndex(ConnectionOrientedPdu.TYPE_OFFSET);
-	    		type = receiveBuffer.dec_ndr_small();
-				if (isValidType(type))
+//    			receiveBuffer.setIndex(ConnectionOrientedPdu.TYPE_OFFSET);
+//	    		type = receiveBuffer.dec_ndr_small();
+//				if (isValidType(type))
 				{
-					//this is required so that the correct length for the next fragment can be obtained. If is < 8 bytes than the fraglength would be an arbitary length.
-					while (receiveBuffer.length <= ConnectionOrientedPdu.FRAG_LENGTH_OFFSET)
+					//this is required so that the correct length for the next fragment can be obtained. If is < 10 bytes than the fraglength would be an arbitary length.
+					while (receiveBuffer.length <= 10)
 					{
 						//perform a read again in a new buffer and assign that to the reciever buffer
 						//this needs to be a small buffer 10 bytes
@@ -173,14 +183,6 @@ public class DefaultConnection implements Connection {
 					}
 					read = false;
 				}
-				else
-				{
-					if (logger.isLoggable(Level.FINEST))
-		            {
-		            	logger.finest("\n" + " bytesRemainingInRecieveBuffer is TRUE, RecieveBuffer size =  " + receiveBuffer.buf.length);
-		            }
-				}
-
     		}
 
 			bytesRemainingInRecieveBuffer = false;
@@ -217,12 +219,21 @@ public class DefaultConnection implements Connection {
     	if (receiveBuffer.length > 0)
 		{
 			receiveBuffer.setIndex(ConnectionOrientedPdu.FRAG_LENGTH_OFFSET);
-			fragmentLength = receiveBuffer.dec_ndr_short();
+			byte[] frag = new byte[2];//short
+			receiveBuffer.readOctetArray(frag, 0, frag.length);
+			fragmentLength = ((frag[0] & 0xFF) | ((frag[1] & 0xFF) << 8));//receiveBuffer.dec_ndr_short(); is looping over.
+//			fragmentLength = receiveBuffer.dec_ndr_short(); 
 			if (logger.isLoggable(Level.FINEST))
             {
             	logger.finest("\n" + " length of the fragment " + fragmentLength + "\n" + " size in bytes of the buffer [] " + receiveBuffer.buf.length);
             }
 
+			if (fragmentLength < 0)
+			{
+				int h = 0;
+				h++;
+				Hexdump.hexdump(System.out, receiveBuffer.buf, 0, receiveBuffer.buf.length);
+			}
 			//the new buffer should be equal to fragment size
 			newbuffer = new byte[fragmentLength];
 
@@ -301,6 +312,7 @@ public class DefaultConnection implements Connection {
 	    	    {
 					logger.finest("\n" + "trimSize = " + trimSize);
 	    	    }
+				
 				System.arraycopy(receiveBuffer.buf,receiveBuffer.length - trimSize,receiveBuffer.buf,0,trimSize);
 				receiveBuffer.length = trimSize;
 				receiveBuffer.index = 0;
