@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**<p> Framework Internal.
  * This class represents the <code>COM</code> version of the currently 
- * supported COM protocol. Default version is 5.2.
+ * supported COM protocol. Default version is 5.4.
  * </p>
  * @exclude
  * @since 1.0
