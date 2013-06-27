@@ -58,6 +58,7 @@ public final class JIArray implements Serializable{
 	private boolean isVaryingProxy = false;
 	private List conformantMaxCounts = new ArrayList(); //list of integers
 	private Object template = null;
+	private boolean isArrayOfCOMObjects_5_6_DCOM = false;
 	private int sizeOfNestedArrayInBytes = 0; //used in both encoding and decoding.
 	
 	private JIArray()
@@ -191,6 +192,17 @@ public final class JIArray implements Serializable{
 			&& !template.getClass().equals(JIPointer.class) && !template.getClass().equals(JIString.class))
 		{
 			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_ARRAY_INCORRECT_TEMPLATE_PARAM));
+		}
+		
+		if (JISystem.getCOMVersion().getMinorVersion() == 6 && template.getClass().equals(JIPointer.class))
+		{
+			if (((JIPointer)template).getReferent() == IJIComObject.class)
+			{
+				//in this case this pointer will be a reference type pointer and not deffered one.
+				//change in MS specs since DCOM 5.4
+				isArrayOfCOMObjects_5_6_DCOM = true;
+				((JIPointer)template).setIsReferenceTypePtr();
+			}
 		}
 		
 		this.template = template;
@@ -609,7 +621,15 @@ public final class JIArray implements Serializable{
 				}
 				else
 				{
-					Array.set(array,i,JIMarshalUnMarshalHelper.deSerialize(ndr,template,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
+					if (isArrayOfCOMObjects_5_6_DCOM)
+					{
+						//not setting the array flag here.
+						Array.set(array,i,JIMarshalUnMarshalHelper.deSerialize(ndr,template,defferedPointers,FLAG,additionalData));	
+					}
+					else
+					{
+						Array.set(array,i,JIMarshalUnMarshalHelper.deSerialize(ndr,template,defferedPointers,FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY,additionalData));
+					}
 				}
 			}
 			else

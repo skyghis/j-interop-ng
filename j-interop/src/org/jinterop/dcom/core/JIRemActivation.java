@@ -32,10 +32,8 @@ import org.jinterop.dcom.common.JISystem;
 
 import rpc.core.UUID;
 
-final class JIRemActivation extends NdrObject {
+final class JIRemActivation extends NdrObject implements JIIServerActivation {
 
-	public static final int RPC_C_IMP_LEVEL_IDENTIFY = 2;
-	public static final int RPC_C_IMP_LEVEL_IMPERSONATE = 3;
 	private int impersonationLevel = RPC_C_IMP_LEVEL_IMPERSONATE;
 	private int mode = 0;
 	private String monikerName = null;
@@ -231,6 +229,9 @@ final class JIRemActivation extends NdrObject {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jinterop.dcom.core.JIIServerActivation#isActivationSuccessful()
+	 */
 	public boolean isActivationSuccessful()
 	{
 		return activationSuccessful;
@@ -246,6 +247,9 @@ final class JIRemActivation extends NdrObject {
 		return oxid;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jinterop.dcom.core.JIIServerActivation#getDualStringArrayForOxid()
+	 */
 	public JIDualStringArray getDualStringArrayForOxid()
 	{
 		return dualStringArrayForOxid;
@@ -266,13 +270,35 @@ final class JIRemActivation extends NdrObject {
 		return hresult;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jinterop.dcom.core.JIIServerActivation#getMInterfacePointer()
+	 */
 	public JIInterfacePointer getMInterfacePointer()
 	{
 		return mInterfacePointer;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jinterop.dcom.core.JIIServerActivation#getIPID()
+	 */
 	public String getIPID()
 	{
 		return ipid;
+	}
+
+	public boolean isDual() {
+		return isDual;
+	}
+
+	public String getDispIpid() {
+		return dispIpid;
+	}
+
+	public int getDispRefs() {
+		return dispRefs;
+	}
+
+	public void setDispIpid(String dispIpid) {
+		this.dispIpid = dispIpid;
 	}
 }

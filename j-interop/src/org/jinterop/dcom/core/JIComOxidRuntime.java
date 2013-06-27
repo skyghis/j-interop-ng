@@ -30,6 +30,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -38,8 +39,8 @@ import org.jinterop.dcom.common.JISystem;
 
 import rpc.Security;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
+//import com.iwombat.foundation.IdentifierFactory;
+//import com.iwombat.util.GUIDUtil;
 
 
 /** Thread for Oxid Resolver. Creates and accepts socket
@@ -616,7 +617,8 @@ final class JIComOxidRuntime {
 //			}
 			
 			//as the ID could be repeated, this is the ipid of the interface being requested.
-			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
+//			String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString()); 
+			String ipid = UUID.randomUUID().toString();
 			String iid = component.isCoClassUnderRealIID() ? component.getCoClassIID() : IJIComObject.IID;//has to be IUnknown's IID.
 			byte[] bytes = new byte[8];
 			randomGen.nextBytes(bytes);

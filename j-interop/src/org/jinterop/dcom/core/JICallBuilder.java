@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
+import org.jinterop.dcom.common.JIComVersion;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
@@ -954,8 +955,18 @@ public class JICallBuilder extends NdrObject implements Serializable {
 		//interpret based on the out params flags
 		if (!readOnlyHRESULT)
 		{
-			JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
-			readPacket(ndr,false);
+			if (splCOMVersion)
+			{
+				//during handshake and no other time. Kept for OxidResolver methods.
+				serverAlive2 = new JIComVersion(ndr.readUnsignedShort(), ndr.readUnsignedShort());
+				new JIPointer(new JIPointer(JIDualStringArray.class)).decode(ndr, new ArrayList(), JIFlags.FLAG_NULL, new HashMap());
+				ndr.readUnsignedLong();
+			}
+			else
+			{
+				JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
+				readPacket(ndr,false);
+			}
 		}
 		readResult(ndr);
 	}
@@ -1129,5 +1140,17 @@ public class JICallBuilder extends NdrObject implements Serializable {
 	void setReadOnlyHRESULT()
 	{
 		readOnlyHRESULT = true;
+	}
+	
+	private boolean splCOMVersion = false;
+	private JIComVersion serverAlive2 = null;
+	void internal_COMVersion()
+	{
+		splCOMVersion = true;
+	}
+	
+	JIComVersion internal_getComVersion()
+	{
+		return serverAlive2;
 	}
 }

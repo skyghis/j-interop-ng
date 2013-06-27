@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import jcifs.util.Encdec;
-import jcifs.util.Hexdump;
 import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
 
@@ -80,6 +79,7 @@ final class JIMarshalUnMarshalHelper {
 		mapOfSerializers.put(JIUnsignedByte.class,new JIMarshalUnMarshalHelper.JIUnsignedByteImpl());
 		mapOfSerializers.put(JIUnsignedShort.class,new JIMarshalUnMarshalHelper.JIUnsignedShortImpl());
 		mapOfSerializers.put(JIUnsignedInteger.class,new JIMarshalUnMarshalHelper.JIUnsignedIntImpl());
+		mapOfSerializers.put(JIDualStringArray.class,new JIMarshalUnMarshalHelper.JIDualStringArrayImpl());
 //		mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
 
 	}
@@ -402,6 +402,25 @@ final class JIMarshalUnMarshalHelper {
 
 	}
 
+	private static class JIDualStringArrayImpl implements SerializerDeserializer {
+
+		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
+		{
+			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
+		}
+
+		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
+		{
+			return JIDualStringArray.decode(ndr);
+		}
+
+		public int getLengthInBytes(Object value,int FLAG)
+		{
+			return ((JIDualStringArray)value).getLength();
+		}
+
+	}
+	
 	private static class JIUnsignedByteImpl implements SerializerDeserializer {
 
 		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)

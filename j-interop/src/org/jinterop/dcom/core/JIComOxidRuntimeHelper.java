@@ -49,8 +49,8 @@ import org.jinterop.dcom.transport.JIComRuntimeTransportFactory;
 import rpc.Stub;
 import rpc.core.UUID;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
+//import com.iwombat.foundation.IdentifierFactory;
+//import com.iwombat.util.GUIDUtil;
 
 
 
@@ -390,8 +390,13 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 		ndr2.setBuffer(ndrBuffer);
 		
 		//serialize COMVERSION
-		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMajorVersion()),null,JIFlags.FLAG_NULL);
-		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMinorVersion()),null,JIFlags.FLAG_NULL);
+//		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMajorVersion()),null,JIFlags.FLAG_NULL);
+//		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMinorVersion()),null,JIFlags.FLAG_NULL);
+		
+		//Vikram June 19th 2013: Forcing the JILocalCoClass's server to 5.4. This is so that we stay at 5.4 DCOM until we upgrade the 
+		//local server to 5.7 as well.
+		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)5),null,JIFlags.FLAG_NULL);
+		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)4),null,JIFlags.FLAG_NULL);
 		
 		JIMarshalUnMarshalHelper.serialize(ndr2,Integer.class, new Integer(0),null,JIFlags.FLAG_NULL);
 		JIMarshalUnMarshalHelper.serialize(ndr2,Integer.class, new Integer(dualStringArray.getLength()),null,JIFlags.FLAG_NULL);
@@ -447,8 +452,9 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 //		
 		
 		//randomly create IPID and send, this is the ipid of the remunknown, we store it with remunknown object
-        UUID uuid = details.getRemUnknownIpid() == null ? new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString())) : new UUID(details.getRemUnknownIpid());
-        
+//        UUID uuid = details.getRemUnknownIpid() == null ? new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString())) : new UUID(details.getRemUnknownIpid());
+		UUID uuid = details.getRemUnknownIpid() == null ? new UUID(java.util.UUID.randomUUID().toString()) : new UUID(details.getRemUnknownIpid());
+		
 		//create the bindings for this Java Object.
 		//this port will go in the new bindings sent to the COM client.
 		int port = -1;
@@ -492,8 +498,14 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker
 		
 		JIMarshalUnMarshalHelper.serialize(ndr2,UUID.class, uuid,null,JIFlags.FLAG_NULL);
 		JIMarshalUnMarshalHelper.serialize(ndr2,Integer.class, authnHint,null,JIFlags.FLAG_NULL);
-		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMajorVersion()),null,JIFlags.FLAG_NULL);
-		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMinorVersion()),null,JIFlags.FLAG_NULL);
+//		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMajorVersion()),null,JIFlags.FLAG_NULL);
+//		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)JISystem.getCOMVersion().getMinorVersion()),null,JIFlags.FLAG_NULL);
+		
+		//Vikram June 19th 2013: Forcing the JILocalCoClass's server to 5.4. This is so that we stay at 5.4 DCOM until we upgrade the 
+		//local server to 5.7 as well.
+		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)5),null,JIFlags.FLAG_NULL);
+		JIMarshalUnMarshalHelper.serialize(ndr2,Short.class, new Short((short)4),null,JIFlags.FLAG_NULL);
+		
 		JIMarshalUnMarshalHelper.serialize(ndr2,Integer.class, new Integer(0),null,JIFlags.FLAG_NULL); //hresult
 		
 		
@@ -920,11 +932,13 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker
 			//now for each QueryResult
 			try {
 				int hresult = 0;
-				String ipid2 = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());;
+//				String ipid2 = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());;
+				String ipid2 = java.util.UUID.randomUUID().toString();
 				if (!component.isPresent(iid.toString()))
 				{
 					hresult = JIErrorCodes.E_NOINTERFACE;
-					ipid2 = GUIDUtil.guidStringFromHexString("00000000000000000000000000000000");
+//					ipid2 = GUIDUtil.guidStringFromHexString("00000000000000000000000000000000");
+					ipid2 = java.util.UUID.fromString("00000000000000000000000000000000").toString();
 				}
 				else
 				{

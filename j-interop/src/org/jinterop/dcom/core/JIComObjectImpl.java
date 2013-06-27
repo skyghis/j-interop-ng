@@ -19,6 +19,7 @@ package org.jinterop.dcom.core;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.jinterop.dcom.common.IJIUnreferenced;
@@ -26,8 +27,8 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
+//import com.iwombat.foundation.IdentifierFactory;
+//import com.iwombat.util.GUIDUtil;
 
 
 
@@ -224,7 +225,9 @@ final class JIComObjectImpl implements IJIComObject {
 		{
 			connectionPointInfo = new HashMap();
 		}
-		String uniqueId = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+		
+//		String uniqueId = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+		String uniqueId = UUID.randomUUID().toString();
 		connectionPointInfo.put(uniqueId,new Object[]{connectionPoint,cookie});
 		return uniqueId;
 	}

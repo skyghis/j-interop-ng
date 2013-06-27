@@ -119,6 +119,11 @@ public final class JIPointer implements Serializable {
 		this.flags = flags;
 	}
 
+	void setIsReferenceTypePtr()
+	{
+		isReferenceTypePtr = true;
+	}
+	
 	/**Creates an instance of this class where the referent is <code>value</code>.
 	 * Used when serializing this pointer. This pointer is <b>not</b> of reference type.
 	 *

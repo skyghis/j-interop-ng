@@ -32,8 +32,8 @@ import org.jinterop.dcom.common.JISystem;
 
 import rpc.core.UUID;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
+//import com.iwombat.foundation.IdentifierFactory;
+//import com.iwombat.util.GUIDUtil;
 
 final class JIOrpcThis implements Serializable {
 
@@ -48,7 +48,8 @@ final class JIOrpcThis implements Serializable {
 
 	public JIOrpcThis()
 	{
-		cid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+//		cid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+		cid = java.util.UUID.randomUUID().toString();
 	}
 
 	public JIOrpcThis(UUID casualityIdentifier)

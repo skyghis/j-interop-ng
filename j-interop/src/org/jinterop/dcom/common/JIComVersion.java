@@ -31,7 +31,7 @@ public final class JIComVersion implements Serializable {
 	
 	private static final long serialVersionUID = -1252228963385487909L;
 	private int majorVersion = 5;
-	private int minorVersion = 2;
+	private int minorVersion = 4;
 	
 	public JIComVersion() {}
 	

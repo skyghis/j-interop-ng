@@ -81,7 +81,8 @@ public final class JIComServer extends Stub {
 	}
 
 	//private String address = null;
-	private JIRemActivation remoteActivation = null;
+//	private JIRemActivation remoteActivation = null;
+	private JIIServerActivation serverActivation = null;
 	private JIOxidResolver oxidResolver = null;
 	private String clsid = null;
 	private String syntax = null;
@@ -594,7 +595,7 @@ public final class JIComServer extends Stub {
 
 	private void init () throws JIException
 	{
-		if (remoteActivation != null && remoteActivation.isActivationSuccessful())
+		if (serverActivation != null && serverActivation.isActivationSuccessful())
 		{
 			return;
 		}
@@ -610,37 +611,69 @@ public final class JIComServer extends Stub {
 			getEndpoint().getSyntax().setVersion(0,0);
 			((JIComEndpoint)getEndpoint()).rebindEndPoint();
 
+			//3.2.4.1.1.1 Determining RPC Binding Information for Activation
+			//Commenting the below to dynamically identify DCOM versions.			
+//			JICallBuilder serverAlive = new JICallBuilder(true);
+//			serverAlive.attachSession(session);
+//			serverAlive.setOpnum(0);
+//			serverAlive.setReadOnlyHRESULT();
+//			call(Endpoint.IDEMPOTENT,serverAlive);
+			
 			JICallBuilder serverAlive = new JICallBuilder(true);
 			serverAlive.attachSession(session);
-			serverAlive.setOpnum(0);
-			serverAlive.setReadOnlyHRESULT();
-			call(Endpoint.IDEMPOTENT,serverAlive);
+			serverAlive.setOpnum(2);
+			serverAlive.internal_COMVersion();
+			try
+			{
+				call(Endpoint.IDEMPOTENT,serverAlive);
+				JISystem.setCOMVersion(serverAlive.internal_getComVersion());
+			}catch(JIRuntimeException e)
+			{
+				if (e.getHResult() == JIErrorCodes.RPC_S_PROCNUM_OUT_OF_RANGE)
+				{
+					JISystem.getCOMVersion().setMajorVersion(5);
+					JISystem.getCOMVersion().setMinorVersion(1);
+				}
+			}
 			
-			//setup syntax for IRemoteActivation
-			syntax = "4d9f4ab8-7d1c-11cf-861e-0020af6e7c57:0.0";
-			getEndpoint().getSyntax().setUuid(new rpc.core.UUID("4d9f4ab8-7d1c-11cf-861e-0020af6e7c57"));
-			getEndpoint().getSyntax().setVersion(0,0);
-			((JIComEndpoint)getEndpoint()).rebindEndPoint();
-
-			remoteActivation = new JIRemActivation(clsid);
-			call(Endpoint.IDEMPOTENT,remoteActivation);
+			if (JISystem.getCOMVersion() != null && JISystem.getCOMVersion().getMinorVersion() > 1) 
+			{
+				//use SCMActivator
+				syntax = "000001A0-0000-0000-C000-000000000046:0.0";
+				getEndpoint().getSyntax().setUuid(new rpc.core.UUID("000001A0-0000-0000-C000-000000000046"));
+				getEndpoint().getSyntax().setVersion(0,0);
+				((JIComEndpoint)getEndpoint()).rebindEndPoint();
+				serverActivation = new JIRemoteSCMActivator().new RemoteCreateInstance(session.getTargetServer(), clsid);
+				call(Endpoint.IDEMPOTENT, (JIRemoteSCMActivator.RemoteCreateInstance)serverActivation);
+				
+			}
+			else
+			{
+				//setup syntax for IRemoteActivation
+				syntax = "4d9f4ab8-7d1c-11cf-861e-0020af6e7c57:0.0";
+				getEndpoint().getSyntax().setUuid(new rpc.core.UUID("4d9f4ab8-7d1c-11cf-861e-0020af6e7c57"));
+				getEndpoint().getSyntax().setVersion(0,0);
+				((JIComEndpoint)getEndpoint()).rebindEndPoint();
+				serverActivation = new JIRemActivation(clsid);
+				call(Endpoint.IDEMPOTENT,(JIRemActivation)serverActivation);
+			}
 		}catch(FaultException e)
 		{
-			remoteActivation = null;
+			serverActivation = null;
 			throw new JIException(e.status,e);
 		}
 		catch (IOException e) {
-			remoteActivation = null;
+			serverActivation = null;
 			throw new JIException(JIErrorCodes.RPC_E_UNEXPECTED,e);
 		}catch (JIRuntimeException e1)
 		{
-			remoteActivation = null;
+			serverActivation = null;
 			throw new JIException(e1);
 		}
 		finally
 		{
 			//the only time remactivation will be null will be case of an exception.
-			if (attachcomplete && remoteActivation == null)
+			if (attachcomplete && serverActivation == null)
 			{
 				try {
 					detach();
@@ -657,7 +690,7 @@ public final class JIComServer extends Stub {
 		syntax = "00000143-0000-0000-c000-000000000046:0.0";
 		//now for the new ip and the port.
 
-		JIStringBinding[] bindings = remoteActivation.getDualStringArrayForOxid().getStringBindings();
+		JIStringBinding[] bindings = serverActivation.getDualStringArrayForOxid().getStringBindings();
 		int i = 0;
 		JIStringBinding binding = null;
 		JIStringBinding nameBinding = null;
@@ -731,7 +764,7 @@ public final class JIComServer extends Stub {
 
 		//and currently only TCPIP is supported.
 		setAddress("ncacn_ip_tcp:" + address);
-		remunknownIPID = remoteActivation.getIPID();
+		remunknownIPID = serverActivation.getIPID();
  	}
 
 
@@ -826,14 +859,14 @@ public final class JIComServer extends Stub {
 			}
 //			JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
 //			comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
-			comObject = JIFrameworkHelper.instantiateComObject(session, remoteActivation.getMInterfacePointer());
-			if (remoteActivation.isDual)
+			comObject = JIFrameworkHelper.instantiateComObject(session, serverActivation.getMInterfacePointer());
+			if (serverActivation.isDual())
 			{
 				//IJIComObject comObject2 = getObject(remoteActivation.dispIpid,"00020400-0000-0000-c000-000000000046");
 				//this will get garbage collected and then removed.
 				//session.addToSession(comObject2,remoteActivation.dispOid);
-				session.releaseRef(remoteActivation.dispIpid,remoteActivation.dispRefs);
-				remoteActivation.dispIpid = null;
+				session.releaseRef(serverActivation.getDispIpid(),serverActivation.getDispRefs());
+				serverActivation.setDispIpid(null);
 				((JIComObjectImpl)comObject).setIsDual(true);
 			}
 			else
@@ -980,7 +1013,7 @@ public final class JIComServer extends Stub {
 	JIInterfacePointer getServerInterfacePointer()
 	{
 		//remoteactivation can be null only incase of OxidResolver ctor getting called.
-		return remoteActivation == null ? interfacePtrCtor : remoteActivation.getMInterfacePointer();
+		return serverActivation == null ? interfacePtrCtor : serverActivation.getMInterfacePointer();
 	}
 
 	void addRef_ReleaseRef(JICallBuilder obj) throws JIException
