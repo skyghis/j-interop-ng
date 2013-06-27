@@ -32,6 +32,7 @@ public class MSInternetExplorer {
 	{
 		JISystem.mapHostNametoIP("locutus", "192.168.0.130");
 		session = JISession.createSession(args[1],args[2],args[3]);
+		session.useNTLMv2(true);
 		session.useSessionSecurity(true);
 		comServer = new JIComServer(JIProgId.valueOf("InternetExplorer.Application"),address,session);
 		ieObject = comServer.createInstance();
