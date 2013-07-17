@@ -27,6 +27,7 @@ import ndr.NetworkDataRepresentation;
 
 import org.jinterop.dcom.common.JIComVersion;
 import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 
 import rpc.core.UUID;
@@ -636,6 +637,13 @@ DWORD Reserved3[5];
 			
 			ArrayList listOfDefferedPointers = new ArrayList();
 			JIInterfacePointer ppActProperties = (JIInterfacePointer)JIMarshalUnMarshalHelper.deSerialize(ndr,JIInterfacePointer.class,listOfDefferedPointers ,JIFlags.FLAG_NULL,new HashMap());
+			
+			//Class not registered or any other exception probably.
+			if (ppActProperties == null)
+			{
+				int hResult = ndr.readUnsignedLong();
+				throw new JIRuntimeException(hResult);
+			}
 			
 			// we should now be standing at the Activation Properties Blob right now. 	
 			int totalLength = ndr.readUnsignedLong();
