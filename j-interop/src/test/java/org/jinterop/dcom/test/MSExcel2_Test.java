@@ -70,7 +70,7 @@ public class MSExcel2_Test {
 
         for (int i = 0; i < newValue.length; i++) {
             for (int j = 0; j < newValue[i].length; j++) {
-                newValue[i][j] = new JIVariant((double) (10.0 * Math.random()));
+                newValue[i][j] = new JIVariant((10.0 * Math.random()));
             }
         }
 

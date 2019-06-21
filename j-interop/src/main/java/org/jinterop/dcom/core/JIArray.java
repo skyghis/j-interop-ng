@@ -222,7 +222,7 @@ public final class JIArray implements Serializable {
         }
 
         for (int i = 0; upperBounds != null && i < upperBounds.length; i++) {
-            numElementsInAllDimensions = numElementsInAllDimensions + upperBounds[i];
+            numElementsInAllDimensions += upperBounds[i];
             if (isConformant) {
                 conformantMaxCounts.add(new Integer(upperBounds[i]));
             }
@@ -323,7 +323,7 @@ public final class JIArray implements Serializable {
             name = name.substring(1);
             int x = ((Object[]) subArray).length;
             upperBounds2.add(new Integer(x));
-            numElementsInAllDimensions = numElementsInAllDimensions * x;
+            numElementsInAllDimensions *= x;
             if (isConformant) {
                 conformantMaxCounts.add(new Integer(x));
             }
@@ -343,7 +343,7 @@ public final class JIArray implements Serializable {
 
         upperBounds = new int[upperBounds2.size()];
         for (int i = 0; i < upperBounds2.size(); i++) {
-            upperBounds[i] = ((Integer) upperBounds2.get(i)).intValue();
+            upperBounds[i] = ((Number) upperBounds2.get(i)).intValue();
         }
         dimension++; //since it starts from -1.
         sizeOfNestedArrayInBytes = computeLengthArray(array);
@@ -357,11 +357,11 @@ public final class JIArray implements Serializable {
             if (name.charAt(1) != '[') {
                 Object o1[] = (Object[]) array;
                 for (int j = 0; j < o1.length; j++) {
-                    length = length + JIMarshalUnMarshalHelper.getLengthInBytes(o1.getClass().getComponentType(), o1[j], JIFlags.FLAG_NULL);
+                    length += JIMarshalUnMarshalHelper.getLengthInBytes(o1.getClass().getComponentType(), o1[j], JIFlags.FLAG_NULL);
                 }
                 return length;
             }
-            length = length + computeLengthArray(Array.get(array, i));
+            length += computeLengthArray(Array.get(array, i));
         }
 
         return length;
@@ -494,8 +494,8 @@ public final class JIArray implements Serializable {
                 retVal.upperBounds = new int[retVal.conformantMaxCounts.size()];
                 i = 0;
                 while (i < retVal.conformantMaxCounts.size()) {
-                    retVal.upperBounds[i] = ((Integer) retVal.conformantMaxCounts.get(i)).intValue();
-                    retVal.numElementsInAllDimensions = retVal.numElementsInAllDimensions * retVal.upperBounds[i];
+                    retVal.upperBounds[i] = ((Number) retVal.conformantMaxCounts.get(i)).intValue();
+                    retVal.numElementsInAllDimensions *= retVal.upperBounds[i];
                     i++;
                 }
                 if (i == 0) {
@@ -529,8 +529,8 @@ public final class JIArray implements Serializable {
                 retVal.upperBounds = new int[retVal.conformantMaxCounts.size()];
                 i = 0;
                 while (i < retVal.conformantMaxCounts.size()) {
-                    retVal.upperBounds[i] = ((Integer) retVal.conformantMaxCounts.get(i)).intValue();
-                    retVal.numElementsInAllDimensions = retVal.numElementsInAllDimensions * retVal.upperBounds[i];
+                    retVal.upperBounds[i] = ((Number) retVal.conformantMaxCounts.get(i)).intValue();
+                    retVal.numElementsInAllDimensions *= retVal.upperBounds[i];
                     i++;
                 }
                 if (i == 0) {
@@ -622,8 +622,8 @@ public final class JIArray implements Serializable {
             upperBounds = new int[conformantMaxCounts.size()];
             int i = 0;
             while (i < conformantMaxCounts.size()) {
-                upperBounds[i] = ((Integer) conformantMaxCounts.get(i)).intValue();
-                numElementsInAllDimensions = numElementsInAllDimensions * upperBounds[i];
+                upperBounds[i] = ((Number) conformantMaxCounts.get(i)).intValue();
+                numElementsInAllDimensions *= upperBounds[i];
                 i++;
             }
             if (i == 0) {

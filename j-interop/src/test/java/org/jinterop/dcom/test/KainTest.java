@@ -43,8 +43,8 @@ public class KainTest {
         boolean tVisible = true;
         boolean tSaveOnExit = false;
 
-        System.out.println(((JIVariant) dispatch.get("Version")).getObjectAsString().getString());
-        System.out.println(((JIVariant) dispatch.get("Path")).getObjectAsString().getString());
+        System.out.println(dispatch.get("Version").getObjectAsString().getString());
+        System.out.println(dispatch.get("Path").getObjectAsString().getString());
 
         JIVariant variant = dispatch.get("Documents");
         IJIDispatch documents = (IJIDispatch) JIObjectFactory.narrowObject(variant.getObjectAsComObject());

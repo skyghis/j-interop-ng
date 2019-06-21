@@ -55,7 +55,7 @@ public final class ArrayDesc implements Serializable {
         }
 
         typeDesc = new TypeDesc((JIStruct) values.getMember(0));
-        cDims = ((Short) values.getMember(1)).shortValue();
+        cDims = ((Number) values.getMember(1)).shortValue();
         JIArray arry = (JIArray) values.getMember(2);
         Object[] arry2 = (Object[]) arry.getArrayInstance();
 

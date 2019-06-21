@@ -38,7 +38,7 @@ final class JIRemUnknownServer extends Stub {
         defaults.put("rpc.ntlm.seal", "false");
         defaults.put("rpc.ntlm.keyExchange", "false");
         defaults.put("rpc.connectionContext", "rpc.security.ntlm.NtlmConnectionContext");
-        defaults.put("rpc.socketTimeout", new Integer(0).toString());
+        defaults.put("rpc.socketTimeout", Integer.toString(0));
     }
 
     private JISession session = null;
@@ -63,7 +63,7 @@ final class JIRemUnknownServer extends Stub {
         this.session = session;
         super.setTransportFactory(JIComTransportFactory.getSingleTon());
         super.setProperties(new Properties(defaults));
-        super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
+        super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
 
         if (session.isNTLMv2Enabled()) {
             super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
@@ -177,13 +177,9 @@ final class JIRemUnknownServer extends Stub {
     }
 
     void setSocketTimeOut(int timeout) {
-        if (timeout == 0) {
-            timeoutModifiedfrom0 = false;
-        } else {
-            timeoutModifiedfrom0 = true;
-        }
+        timeoutModifiedfrom0 = timeout != 0;
 
-        getProperties().setProperty("rpc.socketTimeout", new Integer(timeout).toString());
+        getProperties().setProperty("rpc.socketTimeout", Integer.toString(timeout));
     }
 
 }

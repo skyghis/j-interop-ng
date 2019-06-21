@@ -57,7 +57,7 @@ public final class JICurrency {
         }
 
         if (value.endsWith(".")) {
-            value = value + "0";
+            value += "0";
         }
 
         String[] str = value.split("\\.");

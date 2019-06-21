@@ -36,12 +36,7 @@ final class JIObjectId implements Serializable {
 
     boolean hasExpired() {
         //8 minutes interval...giving COM Client some grace period.
-        if ((System.currentTimeMillis() - lastPingTime) > 8 * 60 * 1000) {
-            return true;
-        } else {
-//			lastPingTime = System.currentTimeMillis();
-            return false;
-        }
+        return (System.currentTimeMillis() - lastPingTime) > 8 * 60 * 1000;//			lastPingTime = System.currentTimeMillis();
     }
 
     void updateLastPingTime() {

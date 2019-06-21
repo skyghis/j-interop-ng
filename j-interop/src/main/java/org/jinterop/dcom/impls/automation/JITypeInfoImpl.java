@@ -227,7 +227,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(15);
         Object[] result = comObject.call(callObject);
         Object[] retVal = new Object[2];
-        retVal[0] = (IJITypeLib) JIObjectFactory.narrowObject((IJIComObject) result[0]);
+        retVal[0] = JIObjectFactory.narrowObject((IJIComObject) result[0]);
         retVal[1] = result[1];
         return retVal;
     }
@@ -377,7 +377,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(5);
         callObject.addInParamAsInt(index, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
-        return ((Integer) (((Object[]) comObject.call(callObject))[0])).intValue();
+        return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
     }
 
     public int getImplTypeFlags(int index) throws JIException {
@@ -385,7 +385,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(6);
         callObject.addInParamAsInt(index, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
-        return ((Integer) (((Object[]) comObject.call(callObject))[0])).intValue();
+        return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
     }
 
     public IJITypeInfo getRefTypeInfo(int hrefType) throws JIException {

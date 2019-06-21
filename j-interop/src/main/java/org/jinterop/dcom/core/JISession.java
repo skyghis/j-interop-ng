@@ -149,7 +149,7 @@ public final class JISession {
                                 //this every 3 minutes.
                                 session.addDereferencedIpids(IPID, holder.oid);
                                 holder = null;
-                                IJIUnreferenced unreferenced = (IJIUnreferenced) session.getUnreferencedHandler(IPID);
+                                IJIUnreferenced unreferenced = session.getUnreferencedHandler(IPID);
                                 if (unreferenced != null) {
                                     unreferenced.unReferenced();
                                 }
@@ -823,13 +823,15 @@ public final class JISession {
         return sessionIdentifier;
     }
 
-    protected void finalize() {
+    protected void finalize() throws Throwable {
         try {
             destroySession(this);
         } catch (JIException e) {
             if (JISystem.getLogger().isLoggable(Level.FINEST)) {
                 JISystem.getLogger().finest("Exception in finalize when destroying session " + e.getMessage());
             }
+        } finally {
+            super.finalize();
         }
     }
 
@@ -1001,5 +1003,4 @@ public final class JISession {
     boolean isSessionInDestroy() {
         return sessionInDestroy;
     }
-
 }

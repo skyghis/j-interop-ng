@@ -214,7 +214,7 @@ public final class JISystem {
             }
         }
         try {
-            if (locations.size() == 0) {
+            if (locations.isEmpty()) {
                 Enumeration resources = ClassLoader.getSystemResources("progIdVsClsidDB.properties");
                 while (resources.hasMoreElements()) {
                     locations.add(resources.nextElement());

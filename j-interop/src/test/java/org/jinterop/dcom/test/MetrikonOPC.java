@@ -23,7 +23,7 @@ public class MetrikonOPC {
 
     public void getOPC() throws JIException {
         unknown = comStub.createInstance();
-        opcServer = (IJIComObject) unknown.queryInterface("39C13A4D-011E-11D0-9675-0020AFD8ADB3");
+        opcServer = unknown.queryInterface("39C13A4D-011E-11D0-9675-0020AFD8ADB3");
     }
 
     public void performOp() throws JIException, InterruptedException {

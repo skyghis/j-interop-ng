@@ -52,19 +52,22 @@ public final class Internal_JIAutomationFactory {
         final String IID = comObject.getInterfaceIdentifier();
         if (IID.equalsIgnoreCase(IID_IDispatch))// && iUnknown.isIDispatchSupported())
         {
-            retval = new JIDispatchImpl((IJIComObject) retval);
+            retval = new JIDispatchImpl(retval);
         } else if (IID.equalsIgnoreCase(IID_ITypeInfo))// && iUnknown.isIDispatchSupported())
         {
-            retval = new JITypeInfoImpl((IJIComObject) retval);
+            retval = new JITypeInfoImpl(retval);
         } else if (IID.equalsIgnoreCase(IID_ITypeLib))// && iUnknown.isIDispatchSupported())
         {
-            retval = new JITypeLibImpl((IJIComObject) retval);
+            retval = new JITypeLibImpl(retval);
         } else if (IID.equalsIgnoreCase(IID_IEnumVariant))// && iUnknown.isIDispatchSupported())
         {
-            retval = new JIEnumVARIANTImpl((IJIComObject) retval);
+            retval = new JIEnumVARIANTImpl(retval);
         }
 
         return retval;
+    }
+
+    private Internal_JIAutomationFactory() {
     }
 
 }

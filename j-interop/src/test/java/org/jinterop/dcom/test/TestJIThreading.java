@@ -122,11 +122,11 @@ public class TestJIThreading {
                 // Create an intermediary instance?
                 IJIComObject unknown = baseComServer.createInstance();
 
-                IJIComObject baseComObject = (IJIComObject) unknown.queryInterface(comObjectId);
+                IJIComObject baseComObject = unknown.queryInterface(comObjectId);
 
                 IJIDispatch baseDispatch = (IJIDispatch) JIObjectFactory.narrowObject(baseComObject.queryInterface(IJIDispatch.IID));
 
-                JIVariant connectServer = (JIVariant) baseDispatch.callMethodA(
+                JIVariant connectServer = baseDispatch.callMethodA(
                         "ConnectServer",
                         new Object[]{
                             new JIString(host),

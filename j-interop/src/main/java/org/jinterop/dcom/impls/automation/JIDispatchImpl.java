@@ -71,11 +71,11 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         obj.addInParamAsInt(0, JIFlags.FLAG_NULL);
         obj.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
         Object[] result = comObject.call(obj);
-        return ((Integer) result[0]).intValue();
+        return ((Number) result[0]).intValue();
     }
 
     public int getIDsOfNames(String apiName) throws JIException {
-        if (apiName == null || apiName.trim().equals("")) {
+        if (apiName == null || apiName.trim().isEmpty()) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
         }
 
@@ -107,7 +107,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         cacheOfDispIds.put(apiName, innerMap);
 
         //first will be the length , and the next will be the actual value.
-        return ((Integer) ((Object[]) ((JIArray) result[0]).getArrayInstance())[0]).intValue();//will get the dispatch ID.
+        return ((Number) ((Object[]) ((JIArray) result[0]).getArrayInstance())[0]).intValue();//will get the dispatch ID.
     }
 
     public int[] getIDsOfNames(String[] apiName) throws JIException {
@@ -142,7 +142,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         JIPointer[] pointers = new JIPointer[apiName.length];
 
         for (int i = 0; i < apiName.length; i++) {
-            if (apiName[i] == null || apiName[i].trim().equals("")) {
+            if (apiName[i] == null || apiName[i].trim().isEmpty()) {
                 throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
             }
             pointers[i] = new JIPointer(new JIString(apiName[i].trim(), JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
@@ -282,8 +282,8 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
                 lastExcepInfo.excepDesc = text2;
                 lastExcepInfo.excepHelpfile = text3;
                 lastExcepInfo.excepSource = text1;
-                lastExcepInfo.errorCode = ((Short) excepInfoRet.getMember(0)).intValue() != 0 ? ((Short) excepInfoRet.getMember(0)).intValue()
-                        : ((Integer) excepInfoRet.getMember(8)).intValue();
+                lastExcepInfo.errorCode = ((Number) excepInfoRet.getMember(0)).intValue() != 0 ? ((Number) excepInfoRet.getMember(0)).intValue()
+                        : ((Number) excepInfoRet.getMember(8)).intValue();
 
                 JIAutomationException automationException = new JIAutomationException(e);
                 automationException.setExcepInfo(lastExcepInfo);

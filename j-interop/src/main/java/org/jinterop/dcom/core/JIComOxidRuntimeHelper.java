@@ -83,7 +83,7 @@ final class JIComOxidRuntimeHelper extends Stub {
                     }
                 } finally {
                     try {
-                        ((JIComRuntimeEndpoint) getEndpoint()).detach();
+                        getEndpoint().detach();
                     } catch (IOException e) {
                     }
                 }
@@ -191,7 +191,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     private NdrBuffer buffer = null;
     private Properties p = null;
 
-    public OxidResolverImpl(Properties p) {
+    OxidResolverImpl(Properties p) {
         super();
         this.p = p;
     }
@@ -361,7 +361,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
         JIOxid oxid = new JIOxid(JIMarshalUnMarshalHelper.readOctetArrayLE(ndr, 8));
 
         //now get the RequestedProtoSeq length.
-        int length = ((Short) JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null)).intValue();
+        int length = ((Number) JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null)).intValue();
 
         //now for the array.
         JIArray array = (JIArray) JIMarshalUnMarshalHelper.deSerialize(ndr, new JIArray(Short.class, null, 1, true), null, JIFlags.FLAG_REPRESENTATION_ARRAY, null);
@@ -405,7 +405,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
             if (port == -1) {
                 String remunknownipid = uuid.toString();
                 Object[] portandthread = details.getCOMRuntimeHelper().startRemUnknown(details.getIID(), remunknownipid, details.getIpid(), details.getReferent().getSupportedInterfaces());
-                port = ((Integer) portandthread[0]).intValue();
+                port = ((Number) portandthread[0]).intValue();
                 details.setRemUnknownThreadGroup((ThreadGroup) portandthread[1]);
                 details.setRemUnknownIpid(remunknownipid);
             }
@@ -559,9 +559,9 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                     //saving the ipids with there references. considering public + private references together for now.
                     JIStruct[] structs = (JIStruct[]) array.getArrayInstance();
                     for (int i = 0; i < length; i++) {
-                        String ipidref = ((UUID) structs[i].getMember(0)).toString().toUpperCase();
-                        int publicRefs = ((Integer) structs[i].getMember(1)).intValue();
-                        int privateRefs = ((Integer) structs[i].getMember(2)).intValue();
+                        String ipidref = structs[i].getMember(0).toString().toUpperCase();
+                        int publicRefs = ((Number) structs[i].getMember(1)).intValue();
+                        int privateRefs = ((Number) structs[i].getMember(2)).intValue();
 
                         if (!mapOfIpidsVsRef.containsKey(ipidref)) {
                             //this would be strange, since all the ipids we give should be part of the map already.
@@ -570,7 +570,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                             continue;
                         }
 
-                        int total = ((Integer) mapOfIpidsVsRef.get(ipidref)).intValue() + publicRefs + privateRefs;
+                        int total = ((Number) mapOfIpidsVsRef.get(ipidref)).intValue() + publicRefs + privateRefs;
                         mapOfIpidsVsRef.put(ipidref, new Integer(total));
                     }
 
@@ -595,14 +595,14 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                     //saving the ipids with there references. considering public + private references together for now.
                     structs = (JIStruct[]) array.getArrayInstance();
                     for (int i = 0; i < length; i++) {
-                        String ipidref = ((UUID) structs[i].getMember(0)).toString().toUpperCase();
-                        int publicRefs = ((Integer) structs[i].getMember(1)).intValue();
-                        int privateRefs = ((Integer) structs[i].getMember(2)).intValue();
+                        String ipidref = structs[i].getMember(0).toString().toUpperCase();
+                        int publicRefs = ((Number) structs[i].getMember(1)).intValue();
+                        int privateRefs = ((Number) structs[i].getMember(2)).intValue();
                         if (!mapOfIpidsVsRef.containsKey(ipidref)) {
                             continue;
                         }
 
-                        int total = ((Integer) mapOfIpidsVsRef.get(ipidref)).intValue() - publicRefs - privateRefs;
+                        int total = ((Number) mapOfIpidsVsRef.get(ipidref)).intValue() - publicRefs - privateRefs;
                         if (total == 0) {
                             mapOfIpidsVsRef.remove(ipidref);
                         } else {
@@ -765,9 +765,9 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             JISystem.getLogger().finest("RemUnknownObject: [QI] JIJavcCoClass is " + component.getCoClassIID());
         }
 
-        ((Integer) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();//refs , don't really care about this.
+        ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();//refs , don't really care about this.
 
-        int length = ((Short) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null))).intValue();//length of the requested Interfaces
+        int length = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null))).intValue();//length of the requested Interfaces
 
         JIArray array = (JIArray) JIMarshalUnMarshalHelper.deSerialize(ndr, new JIArray(UUID.class, null, 1, true), null, JIFlags.FLAG_REPRESENTATION_ARRAY, null);
 
@@ -796,7 +796,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             //now for each QueryResult
             try {
                 int hresult = 0;
-                String ipid2 = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());;
+                String ipid2 = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
                 if (!component.isPresent(iid.toString())) {
                     hresult = JIErrorCodes.E_NOINTERFACE;
                 } else {

@@ -25,10 +25,10 @@ public class MSShell {
 
     void doStuff() throws JIException {
         //this will return a reference to the IUnknown of the Shell coclass.
-        IJIComObject comUnknown = (IJIComObject) comServer.createInstance();
+        IJIComObject comUnknown = comServer.createInstance();
 
         //now we query for the IShellDispatch interface
-        IJIComObject shellDispatch = (IJIComObject) comUnknown.queryInterface("D8F015C0-C278-11CE-A49E-444553540000");
+        IJIComObject shellDispatch = comUnknown.queryInterface("D8F015C0-C278-11CE-A49E-444553540000");
 
         JICallBuilder callObject = new JICallBuilder();
 //		callObject.setOpnum(5);
@@ -80,7 +80,7 @@ public class MSShell {
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
         result = folderItems.call(callObject);
 
-        int count = ((Integer) result[0]).intValue();
+        int count = ((Number) result[0]).intValue();
 
         for (int i = 0; i < count; i++) {
             callObject.reInit();

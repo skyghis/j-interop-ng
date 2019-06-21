@@ -56,7 +56,7 @@ public final class ParamDesc implements Serializable {
 
         lpVarValue = (JIPointer) values.getMember(0);
         //lpVarValue = (JIVariant)values.getMember(0);
-        wPARAMFlags = ((Short) values.getMember(1)).shortValue();
+        wPARAMFlags = ((Number) values.getMember(1)).shortValue();
     }
 
 }

@@ -73,7 +73,7 @@ public final class JIComServer extends Stub {
         defaults.put("rpc.ntlm.keyExchange", "false");
         defaults.put("rpc.ntlm.sso", "false");
         defaults.put("rpc.connectionContext", "rpc.security.ntlm.NtlmConnectionContext");
-        defaults.put("rpc.socketTimeout", new Integer(0).toString());
+        defaults.put("rpc.socketTimeout", Integer.toString(0));
 //		rpc.connectionContext = rpc.security.ntlm.NtlmConnectionContext
 //		rpc.ntlm.sign = false
 //		rpc.ntlm.seal = false
@@ -156,7 +156,7 @@ public final class JIComServer extends Stub {
         super.getProperties().setProperty("rpc.security.username", session.getUserName());
         super.getProperties().setProperty("rpc.security.password", session.getPassword());
         super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
-        super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
+        super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
         if (session.isNTLMv2Enabled()) {
             super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
         }
@@ -182,7 +182,7 @@ public final class JIComServer extends Stub {
                     continue;
                 }
                 //get the one with IP address
-                int index = binding.getNetworkAddress().indexOf(".");
+                int index = binding.getNetworkAddress().indexOf('.');
                 if (index != -1) {
                     try {
 
@@ -192,7 +192,7 @@ public final class JIComServer extends Stub {
                         }
 
                         //now check for the one with port
-                        index = binding.getNetworkAddress().indexOf("[");//this contains the port
+                        index = binding.getNetworkAddress().indexOf('[');//this contains the port
                         if (index != -1 && binding.getNetworkAddress().substring(0, index).equalsIgnoreCase(targetAddress)) {
                             nameBinding = null;
                             break;
@@ -219,16 +219,16 @@ public final class JIComServer extends Stub {
         //will use this last binding .
         //and currently only TCPIP is supported.
         String address = binding.getNetworkAddress();
-        if (address.indexOf("[") == -1)//this does not contain the port
+        if (address.indexOf('[') == -1)//this does not contain the port
         {
             String ipAddr = JISystem.getIPForHostName(address); //to use the binding supplied by the user.
             if (ipAddr != null) {
                 address = ipAddr;
             }
             //use 135
-            address = address + "[135]";
+            address += "[135]";
         } else {
-            int index = address.indexOf("[");
+            int index = address.indexOf('[');
             String hostname = binding.getNetworkAddress().substring(0, index);
             String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
             if (ipAddr != null) {
@@ -237,7 +237,7 @@ public final class JIComServer extends Stub {
         }
         super.setAddress("ncacn_ip_tcp:" + address);
         this.session = session;
-        this.session.setTargetServer(getAddress().substring(getAddress().indexOf(":") + 1, getAddress().indexOf("[")));
+        this.session.setTargetServer(getAddress().substring(getAddress().indexOf(':') + 1, getAddress().indexOf('[')));
         oxidResolver = new JIOxidResolver(((JIStdObjRef) interfacePointer.getObjectReference(JIInterfacePointer.OBJREF_STANDARD)).getOxid());
         try {
 
@@ -278,7 +278,7 @@ public final class JIComServer extends Stub {
                     continue;
                 }
                 //get the one with IP address
-                int index = binding.getNetworkAddress().indexOf(".");
+                int index = binding.getNetworkAddress().indexOf('.');
                 if (index != -1) {
                     try {
 
@@ -288,7 +288,7 @@ public final class JIComServer extends Stub {
                         }
 
                         //now check for the one with port
-                        index = binding.getNetworkAddress().indexOf("[");//this contains the port
+                        index = binding.getNetworkAddress().indexOf('[');//this contains the port
                         if (index != -1 && binding.getNetworkAddress().substring(0, index).equalsIgnoreCase(targetAddress)) {
                             nameBinding = null;
                             break;
@@ -321,7 +321,7 @@ public final class JIComServer extends Stub {
         }
 
         address = binding.getNetworkAddress(); //this will always have the port.
-        int index = address.indexOf("[");
+        int index = address.indexOf('[');
         String hostname = binding.getNetworkAddress().substring(0, index);
         String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
         if (ipAddr != null) {
@@ -453,7 +453,7 @@ public final class JIComServer extends Stub {
         super.setTransportFactory(JIComTransportFactory.getSingleTon());
         //now read the session and prepare information for the stub.
         super.setProperties(new Properties(defaults));
-        super.getProperties().setProperty("rpc.socketTimeout", new Integer(session.getGlobalSocketTimeout()).toString());
+        super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
         super.setAddress(address);
 
         if (session.isNTLMv2Enabled()) {
@@ -474,7 +474,7 @@ public final class JIComServer extends Stub {
 
         this.clsid = clsid.getCLSID().toUpperCase();
         this.session = session;
-        this.session.setTargetServer(address.substring(address.indexOf(":") + 1, address.indexOf("[")));
+        this.session.setTargetServer(address.substring(address.indexOf(':') + 1, address.indexOf('[')));
         try {
             init();
         } catch (JIException e) {
@@ -590,11 +590,11 @@ public final class JIComServer extends Stub {
                 continue;
             }
             //get the one with IP address
-            int index = binding.getNetworkAddress().indexOf(".");
+            int index = binding.getNetworkAddress().indexOf('.');
             if (index != -1) {
                 try {
                     //Integer.parseInt(binding.getNetworkAddress().substring(0,index));
-                    index = binding.getNetworkAddress().indexOf("[");//this contains the port
+                    index = binding.getNetworkAddress().indexOf('[');//this contains the port
                     if (index != -1 && binding.getNetworkAddress().substring(0, index).equalsIgnoreCase(targetAddress)) {
                         break;
                     }
@@ -606,7 +606,7 @@ public final class JIComServer extends Stub {
                 //then we are not sure which is the right IP and which might be virtual, refer to
                 //issue faced by Igor.
                 nameBinding = binding;
-                index = binding.getNetworkAddress().indexOf("[");//this contains the port
+                index = binding.getNetworkAddress().indexOf('[');//this contains the port
                 if (binding.getNetworkAddress().substring(0, index).equalsIgnoreCase(targetAddress)) {
                     break;
                 }
@@ -629,7 +629,7 @@ public final class JIComServer extends Stub {
         }
 
         String address = binding.getNetworkAddress(); //this will always have the port.
-        int index = address.indexOf("[");
+        int index = address.indexOf('[');
         String hostname = binding.getNetworkAddress().substring(0, index);
         String ipAddr = JISystem.getIPForHostName(hostname); //to use the binding supplied by the user.
         if (ipAddr != null) {
@@ -888,13 +888,9 @@ public final class JIComServer extends Stub {
     }
 
     void setSocketTimeOut(int timeout) {
-        if (timeout == 0) {
-            timeoutModifiedfrom0 = false;
-        } else {
-            timeoutModifiedfrom0 = true;
-        }
+        timeoutModifiedfrom0 = timeout != 0;
 
-        getProperties().setProperty("rpc.socketTimeout", new Integer(timeout).toString());
+        getProperties().setProperty("rpc.socketTimeout", Integer.toString(timeout));
     }
 
 }

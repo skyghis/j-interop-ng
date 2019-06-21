@@ -33,7 +33,7 @@ public class MSWMI {
         session.setGlobalSocketTimeout(5000);
         comStub = new JIComServer(JIProgId.valueOf("WbemScripting.SWbemLocator"), address, session);
         IJIComObject unknown = comStub.createInstance();
-        comObject = (IJIComObject) unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
+        comObject = unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
         //This will obtain the dispatch interface
         dispatch = (IJIDispatch) JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));
     }
@@ -104,7 +104,7 @@ public class MSWMI {
             Object[] arrayObj = (Object[]) array.getArrayInstance();
             for (int j = 0; j < arrayObj.length; j++) {
                 IJIDispatch wbemObject_dispatch = (IJIDispatch) JIObjectFactory.narrowObject(((JIVariant) arrayObj[j]).getObjectAsComObject());
-                JIVariant variant2 = (JIVariant) (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{new Integer(1)}))[0];
+                JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{new Integer(1)}))[0];
                 System.out.println(variant2.getObjectAsString().getString());
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             }

@@ -195,4 +195,7 @@ public class JIObjectFactory {
     public static IJIComObject narrowObject(JISession session, IJIComObject comObject) throws JIException {
         return narrowObject(JIFrameworkHelper.instantiateComObject(session, comObject));
     }
+
+    private JIObjectFactory() {
+    }
 }

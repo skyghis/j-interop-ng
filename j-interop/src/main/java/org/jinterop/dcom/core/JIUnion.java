@@ -166,7 +166,7 @@ public final class JIUnion implements Serializable {
     }
 
     void encode(NetworkDataRepresentation ndr, List listOfDefferedPointers, int FLAGS) {
-        if (dsVsMember.size() == 0 || dsVsMember.size() > 1) {
+        if (dsVsMember.isEmpty() || dsVsMember.size() > 1) {
             throw new JIRuntimeException(JIErrorCodes.JI_UNION_DISCRMINANT_SERIALIZATION_ERROR);
         }
 
@@ -186,7 +186,7 @@ public final class JIUnion implements Serializable {
 
     JIUnion decode(NetworkDataRepresentation ndr, List listOfDefferedPointers, int FLAGS, Map additionalData) {
         //first read discriminant, and then call the appropriate deserializer of the member
-        if (dsVsMember.size() == 0) {
+        if (dsVsMember.isEmpty()) {
             throw new JIRuntimeException(JIErrorCodes.JI_UNION_DISCRMINANT_DESERIALIZATION_ERROR);
         }
 

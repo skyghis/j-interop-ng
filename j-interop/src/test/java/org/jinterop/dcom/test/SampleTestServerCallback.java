@@ -81,7 +81,7 @@ public class SampleTestServerCallback {
         JISession session = JISession.createSession(args[1], args[2], args[3]);
         JIComServer comStub = new JIComServer(JIProgId.valueOf("TstMarsh.Test"), args[0], session);
         IJIComObject unknown = comStub.createInstance();
-        IJIComObject ITest = (IJIComObject) unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
+        IJIComObject ITest = unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
 
         //Create the Java Server class. This contains the instance to be called by the COM Server
         //
@@ -100,7 +100,7 @@ public class SampleTestServerCallback {
         System.out.println("ITest.DoSomethingAndGetSomethingBack about to call this...");
         results = ITest.call(javaCallback);//<== same exception is thrown here as well
         System.out.println("ITest.DoSomethingAndGetSomethingBack succeeded, session out =" + results[0]);
-        int staticSession = ((Integer) results[0]).intValue();
+        int staticSession = ((Number) results[0]).intValue();
 
         // set the refresh rate
         int rate = 4000;
@@ -146,7 +146,7 @@ public class SampleTestServerCallback {
         JISession session = JISession.createSession(args[1], args[2], args[3]);
         JIComServer comStub = new JIComServer(JIProgId.valueOf("TstMarsh.Test"), args[0], session);
         IJIComObject unknown = comStub.createInstance();
-        IJIComObject ITest = (IJIComObject) unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
+        IJIComObject ITest = unknown.queryInterface("89D8C8BE-1E91-11D3-910F-00C04F9403C2"); //ITest
 
         //Create the Java Server class. This contains the instance to be called by the COM Server
         //
@@ -165,7 +165,7 @@ public class SampleTestServerCallback {
         javaCallback.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL); //Long
         results = ITest.call(javaCallback);//<== same exception is thrown here as well
         System.out.println("ITest.DoSomethingAndGetSomethingBack succeeded, session out =" + results[0]);
-        int staticSession = ((Integer) results[0]).intValue();
+        int staticSession = ((Number) results[0]).intValue();
 
         Thread.sleep(30000);
 

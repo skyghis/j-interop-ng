@@ -31,7 +31,7 @@ public class TestCOMServer {
     public void execute() throws JIException {
         unknown = comStub.createInstance();
         //CLSID of IITestCOMServer
-        IJIComObject comObject = (IJIComObject) unknown.queryInterface("4AE62432-FD04-4BF9-B8AC-56AA12A47FF9");
+        IJIComObject comObject = unknown.queryInterface("4AE62432-FD04-4BF9-B8AC-56AA12A47FF9");
         dispatch = (IJIDispatch) JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));
 
         //Now call via automation

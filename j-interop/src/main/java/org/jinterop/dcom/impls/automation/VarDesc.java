@@ -63,12 +63,12 @@ public final class VarDesc implements Serializable {
             return;
         }
 
-        memberId = ((Integer) filledStruct.getMember(0)).intValue();
+        memberId = ((Number) filledStruct.getMember(0)).intValue();
         lpstrSchema = (JIPointer) filledStruct.getMember(1);
         u = (JIUnion) filledStruct.getMember(2);
         elemdescVar = new ElemDesc((JIStruct) filledStruct.getMember(3));
-        wVarFlags = ((Short) filledStruct.getMember(4)).shortValue();
-        varkind = ((Integer) filledStruct.getMember(5)).intValue();
+        wVarFlags = ((Number) filledStruct.getMember(4)).shortValue();
+        varkind = ((Number) filledStruct.getMember(5)).intValue();
     }
 
 }

@@ -104,4 +104,6 @@ public final class JIUnsignedFactory {
 //		return retVal;
 //
 //	}
+    private JIUnsignedFactory() {
+    }
 }

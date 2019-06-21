@@ -57,7 +57,7 @@ final class JIComOxidStub extends Stub {
         return "99fcfec4-5260-101b-bbcb-00aa0021347a:0.0";
     }
 
-    public JIComOxidStub(String address, String domain, String username, String password) {
+    JIComOxidStub(String address, String domain, String username, String password) {
         super();
         super.setTransportFactory(JIComTransportFactory.getSingleTon());
         super.setProperties(new Properties(defaults));
@@ -212,7 +212,7 @@ class PingObject extends NdrObject {
                 JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null);
 
                 //hresult
-                int hresult = ((Integer) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();
+                int hresult = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();
 
                 if (hresult != 0) {
                     if (JISystem.getLogger().isLoggable(Level.SEVERE)) {
@@ -228,7 +228,7 @@ class PingObject extends NdrObject {
             case 1:// simple ping
 
                 //hresult
-                hresult = ((Integer) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();
+                hresult = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();
 
                 if (hresult != 0) {
                     if (JISystem.getLogger().isLoggable(Level.SEVERE)) {

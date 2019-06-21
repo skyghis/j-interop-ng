@@ -169,7 +169,7 @@ public final class JIStruct implements Serializable {
             listOfMaxCounts.removeAll(((JIStruct) member).getArrayMaxCounts());
         }
 
-        if (listOfMaxCounts.size() == 0) {
+        if (listOfMaxCounts.isEmpty()) {
             arrayAdded = false;
         }
     }
@@ -205,7 +205,7 @@ public final class JIStruct implements Serializable {
     void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
         //first write all Max counts and then the rest of the structs
         for (int i = 0; i < listOfMaxCounts.size(); i++) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, (Integer) listOfMaxCounts.get(i), null, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, listOfMaxCounts.get(i), null, FLAG);
         }
 
         int i = 0;
@@ -232,7 +232,7 @@ public final class JIStruct implements Serializable {
         ArrayList listOfMaxCounts2 = new ArrayList();
         //first read all Max counts and then the rest of the structs
         for (int i = 0; i < listOfDimensions.size(); i++) {
-            for (int j = 0; j < ((Integer) listOfDimensions.get(i)).intValue(); j++) {
+            for (int j = 0; j < ((Number) listOfDimensions.get(i)).intValue(); j++) {
                 listOfMaxCounts2.add(JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, FLAG, additionalData));
             }
         }
@@ -248,7 +248,7 @@ public final class JIStruct implements Serializable {
                     //read before.
                     ((JIArray) o).setConformant(false);
                     maxCountTemp = ((JIArray) o).getConformantMaxCounts();
-                    ((JIArray) o).setMaxCountAndUpperBounds(listOfMaxCounts2.subList(j, ((Integer) listOfDimensions.get(j)).intValue()));
+                    ((JIArray) o).setMaxCountAndUpperBounds(listOfMaxCounts2.subList(j, ((Number) listOfDimensions.get(j)).intValue()));
                     j++;
                 }
             }
