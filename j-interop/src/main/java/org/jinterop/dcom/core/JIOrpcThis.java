@@ -40,11 +40,11 @@ final class JIOrpcThis implements Serializable {
     private JIComVersion version = JISystem.getCOMVersion();
     private String cid = null;
 
-    public JIOrpcThis() {
+    JIOrpcThis() {
         cid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
     }
 
-    public JIOrpcThis(UUID casualityIdentifier) {
+    JIOrpcThis(UUID casualityIdentifier) {
         cid = casualityIdentifier.toString();
     }
 
@@ -109,11 +109,11 @@ final class JIOrpcThis implements Serializable {
     static JIOrpcThis decode(NetworkDataRepresentation ndr) {
         JIOrpcThis retval = new JIOrpcThis();
         Map map = new HashMap();
-        int majorVersion = ((Short) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, map))).intValue();
-        int minorVersion = ((Short) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, map))).intValue();
+        int majorVersion = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, map))).intValue();
+        int minorVersion = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, map))).intValue();
 
         retval.version = new JIComVersion(majorVersion, minorVersion);
-        retval.flags = ((Integer) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map))).intValue();
+        retval.flags = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map))).intValue();
 
         JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map);//reserved.
 
@@ -167,7 +167,7 @@ final class JIOrpcThis implements Serializable {
 
         while (x < listOfDefferedPointers.size()) {
             ArrayList newList = new ArrayList();
-            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, (JIPointer) listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
+            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
             ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);
@@ -185,7 +185,7 @@ final class JIOrpcThis implements Serializable {
                 JIStruct orpcextent2 = (JIStruct) pointers[i].getReferent();
                 Byte[] byteArray = (Byte[]) ((JIArray) orpcextent2.getMember(2)).getArrayInstance();
 
-                extentArrays.add(new JIOrpcExtentArray(((UUID) orpcextent2.getMember(0)).toString(), byteArray.length, byteArray));
+                extentArrays.add(new JIOrpcExtentArray(orpcextent2.getMember(0).toString(), byteArray.length, byteArray));
             }
 
         }

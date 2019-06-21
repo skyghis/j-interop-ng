@@ -24,8 +24,8 @@ public class MSOutLookExpressContacts {
     }
 
     void doStuff() throws JIException {
-        IJIComObject unknown = (IJIComObject) comServer.createInstance();
-        IJIComObject application = (IJIComObject) unknown.queryInterface("00063001-0000-0000-C000-000000000046");
+        IJIComObject unknown = comServer.createInstance();
+        IJIComObject application = unknown.queryInterface("00063001-0000-0000-C000-000000000046");
 
         JICallBuilder callObject = new JICallBuilder(!application.isDispatchSupported());
         callObject.setOpnum(12);
@@ -50,7 +50,7 @@ public class MSOutLookExpressContacts {
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
         res = folder.call(callObject);
 
-        if (((Integer) res[0]).intValue() != 2) {
+        if (((Number) res[0]).intValue() != 2) {
             System.out.println("Invalid folder selected, this is not a \"contact\" folder , please reselect..");
             return;
         }

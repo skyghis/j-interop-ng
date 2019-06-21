@@ -111,7 +111,7 @@ public class FirstContact_Stub implements FirstContact {
 //            JIVariant[] rt = dispatch.callMethodA("testSafeArrayOfVariants", new Object[]{JIVariant.EMPTY()_BYREF});
             //JIVariant t1234 = dispatch.callMethodA("GetStooges");
             // dispatch.callMethod("testArrayOfVariants",new Object[]{new JIArray(new JIVariant[]{new JIVariant(new JIArray(new JIString[]{new JIString("ab"),new JIString("cd")}))},true)});
-            IJIComObject handle2 = (IJIComObject) unknown.queryInterface("620012E2-69E3-4DC0-B553-AE252524D2F6");
+            IJIComObject handle2 = unknown.queryInterface("620012E2-69E3-4DC0-B553-AE252524D2F6");
             //IJIComObject handle3 = (IJIComObject)unknown.queryInterface(IJITypeLib.IID);
             //JIArray arry34 = new JIArray(new JIVariant[]{new JIVariant(new JIString("40807810804000300798")),new JIVariant(new JIString("1"))},true);
             //JIVariant[] c2 = dispatch.callMethodA("Request", new Object[]{new JIString("rtrtr"),new JIVariant(new JIVariant(arry34)),JIVariant.EMPTY()_BYREF,JIVariant.EMPTY()_BYREF} );
@@ -266,7 +266,7 @@ public class FirstContact_Stub implements FirstContact {
             //JIVariant[] c = dispatch.callMethodA("Request", new Object[]{new Integer(8194),arry34,JIVariant.EMPTY()_BYREF,JIVariant.EMPTY()_BYREF} );
             //JIArray arrtt = (c[2]).getObjectAsVariant().getObjectAsArray();
             //System.out.println(arrtt);
-            IJIComObject handle = (IJIComObject) unknown.queryInterface("620012E2-69E3-4DC0-B553-AE252524D2F6");
+            IJIComObject handle = unknown.queryInterface("620012E2-69E3-4DC0-B553-AE252524D2F6");
             JICallBuilder callObject2 = new JICallBuilder();
 
             //JIVariant variantwe = new JIVariant();
@@ -448,9 +448,9 @@ public class FirstContact_Stub implements FirstContact {
             JIArray array2 = variant3[1].getObjectAsArray();
 
             Object[][] newValue = {
-                {new JIString("defe"), new Boolean(false), new Double(98765.0 / 12345.0)},
+                {new JIString("defe"), false, new Double(98765.0 / 12345.0)},
                 {new Date(), new Integer(5454), new Float(22.0 / 7.0)},
-                {new Boolean(true), new JIString("dffe"), new Date()}
+                {true, new JIString("dffe"), new Date()}
             };
             //JIVariant variant2[] = dispatch.callMethodA(0x82,new Object[]{new JIVariant(new JIArray(new Integer[]{Integer.valueOf(100),Integer.valueOf(100),Integer.valueOf(200)}),true)});
             //variant2[1].getObjectAsArray();

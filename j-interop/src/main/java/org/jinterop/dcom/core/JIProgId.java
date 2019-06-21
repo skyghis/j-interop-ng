@@ -130,7 +130,7 @@ public class JIProgId {
         winreg.winreg_CloseKey(handle);
         winreg.closeConnection();
         //seperate the {}
-        clsid = JIClsid.valueOf(key.substring(key.indexOf("{") + 1, key.indexOf("}")));
+        clsid = JIClsid.valueOf(key.substring(key.indexOf('{') + 1, key.indexOf('}')));
         clsid.setAutoRegistration(autoRegister);
         JISystem.internal_setClsidtoProgId(progId, clsid.getCLSID());
 

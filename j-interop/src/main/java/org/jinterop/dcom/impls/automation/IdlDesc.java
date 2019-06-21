@@ -43,7 +43,7 @@ public final class IdlDesc implements Serializable {
             return;
         }
         dwReserved = (JIPointer) values.getMember(0);
-        wIDLFlags = ((Short) values.getMember(1)).shortValue();
+        wIDLFlags = ((Number) values.getMember(1)).shortValue();
     }
 
 }

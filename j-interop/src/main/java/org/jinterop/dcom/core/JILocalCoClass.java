@@ -290,7 +290,7 @@ public final class JILocalCoClass implements Serializable {
      * @exclude
      */
     boolean isAssociatedReferenceAlive() {
-        return interfacePointer == null ? false : (interfacePointer.get() == null ? false : true);
+        return interfacePointer == null ? false : (interfacePointer.get() != null);
     }
 
     boolean isAlreadyExported() {
@@ -447,7 +447,7 @@ public final class JILocalCoClass implements Serializable {
 
                     Object[] retresults = paramObject.read(ndr);
                     //named params not supported
-                    int dispId = ((Integer) retresults[0]).intValue();
+                    int dispId = ((Number) retresults[0]).intValue();
 
                     info = interfaceDefinitionOfClass.getMethodDescriptorForDispId(dispId);
                     if (info == null) {
@@ -472,7 +472,7 @@ public final class JILocalCoClass implements Serializable {
                         }
                     }
 
-                    if (((Integer) retresults[5]).intValue() != 0) {
+                    if (((Number) retresults[5]).intValue() != 0) {
                         //now replace the params at index from the index array.
                         array = (JIArray) retresults[6];
                         Integer[] indexs = (Integer[]) array.getArrayInstance();
@@ -497,7 +497,7 @@ public final class JILocalCoClass implements Serializable {
                     break;
                 default: //others are normal API calls ...Opnum - 6 is there real Opnum. 0,1,2 and 3,4,5,6
                     isStandardCall = true;
-                    Opnum = Opnum - 4; //adjust for only IDispatch(3,4,5,6) , IUnknown(0,1,2) will get adjusted below.
+                    Opnum -= 4; //adjust for only IDispatch(3,4,5,6) , IUnknown(0,1,2) will get adjusted below.
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
                         JISystem.getLogger().info("Standard call came: Opnum is " + Opnum);
                     }
@@ -608,7 +608,7 @@ public final class JILocalCoClass implements Serializable {
      * @return
      */
     JILocalInterfaceDefinition getInterfaceDefinitionFromIPID(String IPID) {
-        return (JILocalInterfaceDefinition) mapOfIIDsToInterfaceDefinitions.get((String) ipidVsIID.get(IPID.toUpperCase()));
+        return (JILocalInterfaceDefinition) mapOfIIDsToInterfaceDefinitions.get(ipidVsIID.get(IPID.toUpperCase()));
     }
 
     /**

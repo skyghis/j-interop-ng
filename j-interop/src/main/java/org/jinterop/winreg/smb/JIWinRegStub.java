@@ -274,7 +274,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
             throw new JIException(e);
         }
 
-        JIPolicyHandle newHandle = new JIPolicyHandle(createkey.actiontaken == 1 ? true : false);
+        JIPolicyHandle newHandle = new JIPolicyHandle((createkey.actiontaken == 1));
         System.arraycopy(createkey.policyhandle, 0, newHandle.handle, 0, 20);
 
         return newHandle;
@@ -290,10 +290,10 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         int length = 0;
         for (int i = 0; i < totalStrings; i++) {
             int j = data[i].length;
-            length = length + (j + 1) * 2; //including null termination
+            length += (j + 1) * 2; //including null termination
         }
 
-        length = length + 2; //final termination
+        length += 2; //final termination
 
         setValue setvalue = new setValue();
         setvalue.clazzType = REG_MULTI_SZ;

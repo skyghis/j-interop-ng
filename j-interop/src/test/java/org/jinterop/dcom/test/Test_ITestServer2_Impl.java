@@ -50,9 +50,9 @@ public class Test_ITestServer2_Impl {
             JIComServer testServer2 = new JIComServer(JIProgId.valueOf("TestJavaServer.TestServer2"), args[0], session2);
             IJIComObject unkTestServer2 = testServer2.createInstance();
             //Get the interface pointer to ITestServer2
-            IJIComObject iTestServer2 = (IJIComObject) JIObjectFactory.narrowObject(unkTestServer2.queryInterface("9CCC5120-457D-49F3-8113-90F7E97B54A7"));
+            IJIComObject iTestServer2 = JIObjectFactory.narrowObject(unkTestServer2.queryInterface("9CCC5120-457D-49F3-8113-90F7E97B54A7"));
 
-            IJIDispatch dispatch2 = (IJIDispatch) JIObjectFactory.narrowObject(unkTestServer2.queryInterface(IJIDispatch.IID));;
+            IJIDispatch dispatch2 = (IJIDispatch) JIObjectFactory.narrowObject(unkTestServer2.queryInterface(IJIDispatch.IID));
 
             //send it directly without IDispatch interface, please note that the "dispatchNotSupported" flag of JICallBuilder is "false".
             JICallBuilder callObject = new JICallBuilder(false);

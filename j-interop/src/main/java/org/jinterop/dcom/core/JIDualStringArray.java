@@ -50,7 +50,7 @@ final class JIDualStringArray implements Serializable {
 
         securityBinding = new JISecurityBinding[1]; //support only winnt NTLM
         securityBinding[0] = new JISecurityBinding(0x0a, 0xffff, "");
-        length = length + securityBinding[0].getLength();
+        length += securityBinding[0].getLength();
 
         length = length + 2 + 2 + 2; //null termination, 2 bytes for num entries and 2 bytes for sec offset.
     }
@@ -84,23 +84,23 @@ final class JIDualStringArray implements Serializable {
                 if (s == null) {
                     stringbinding = false;
                     //null termination
-                    dualStringArray.length = dualStringArray.length + 2;
+                    dualStringArray.length += 2;
                     dualStringArray.secOffset = dualStringArray.length;
                     continue;
                 }
 
                 listOfStringBindings.add(s);
-                dualStringArray.length = dualStringArray.length + s.getLength();
+                dualStringArray.length += s.getLength();
             } else {
                 JISecurityBinding s = JISecurityBinding.decode(ndr);
                 if (s == null) {
                     //null termination
-                    dualStringArray.length = dualStringArray.length + 2;
+                    dualStringArray.length += 2;
                     break;
                 }
 
                 listOfSecurityBindings.add(s);
-                dualStringArray.length = dualStringArray.length + s.getLength();
+                dualStringArray.length += s.getLength();
             }
 
         }

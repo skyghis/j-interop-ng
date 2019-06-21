@@ -50,7 +50,7 @@ public final class TypeDesc implements Serializable {
             return;
         }
 
-        vt = ((Short) values.getMember(1)).shortValue();
+        vt = ((Number) values.getMember(1)).shortValue();
         JIUnion union = (JIUnion) values.getMember(0);
 
         if (new Short(vt).equals(VT_PTR) || new Short(vt).equals(VT_SAFEARRAY)) {
@@ -65,7 +65,7 @@ public final class TypeDesc implements Serializable {
         } else if (new Short(vt).equals(VT_USERDEFINED)) {
             typeDesc = null;
             arrayDesc = null;
-            hrefType = ((Integer) union.getMembers().get(VT_USERDEFINED)).intValue();
+            hrefType = ((Number) union.getMembers().get(VT_USERDEFINED)).intValue();
         } else {
             typeDesc = null;
             arrayDesc = null;

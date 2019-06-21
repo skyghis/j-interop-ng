@@ -33,7 +33,7 @@ public class Test10KServer {
                 //JISession.destroySession(session);
                 Thread.sleep(150);
                 if (i % 100 == 0) {
-                    System.out.println(new String().valueOf(i));
+                    System.out.println(String.valueOf(i));
                 }
                 System.gc();
             }

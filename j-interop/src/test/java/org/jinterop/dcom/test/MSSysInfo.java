@@ -27,7 +27,7 @@ public class MSSysInfo {
         session.useSessionSecurity(true);
         JIComServer comServer = new JIComServer(JIProgId.valueOf("SYSINFO.SysInfo"), args[0], session);
         sysInfoServer = comServer.createInstance();
-        sysInfoObject = (IJIComObject) sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
+        sysInfoObject = sysInfoServer.queryInterface("6FBA474C-43AC-11CE-9A0E-00AA0062BB4C");
         dispatch = (IJIDispatch) JIObjectFactory.narrowObject(sysInfoObject.queryInterface(IJIDispatch.IID));
 
     }

@@ -45,8 +45,8 @@ public class MSWord {
          */
         JISystem.setJavaCoClassAutoCollection(true);
 
-        System.out.println(((JIVariant) dispatch.get("Version")).getObjectAsString().getString());
-        System.out.println(((JIVariant) dispatch.get("Path")).getObjectAsString().getString());
+        System.out.println(dispatch.get("Version").getObjectAsString().getString());
+        System.out.println(dispatch.get("Path").getObjectAsString().getString());
         JIVariant variant = dispatch.get("Documents");
 
         System.out.println("Open document...");
@@ -90,7 +90,7 @@ public class MSWord {
 
     private void sleep(int minutes) throws InterruptedException {
         System.out.println("Sleeping " + minutes + " minute(s)...");
-        Thread.sleep((int) (minutes * 60 * 1000));
+        Thread.sleep((minutes * 60 * 1000));
     }
 
     /**

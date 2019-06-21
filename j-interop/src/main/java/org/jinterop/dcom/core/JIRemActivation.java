@@ -48,7 +48,7 @@ final class JIRemActivation extends NdrObject {
     int dispRefs = 5;
     byte[] dispOid = null;
 
-    public JIRemActivation(String clsid) {
+    JIRemActivation(String clsid) {
         //10000002-0000-0000-0000-000000000001 Inside DCOM
         this.clsid = new UUID(clsid);
     }
@@ -62,7 +62,7 @@ final class JIRemActivation extends NdrObject {
     }
 
     public void setfileMonikerAtServer(String name) {
-        if (name != null && !name.equalsIgnoreCase("")) {
+        if (name != null && !name.isEmpty()) {
             monikerName = name;
         }
     }
@@ -184,7 +184,7 @@ final class JIRemActivation extends NdrObject {
         while (x < listOfDefferedPointers.size()) {
 
             ArrayList newList = new ArrayList();
-            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, (JIPointer) listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, null);
+            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, null);
             ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);

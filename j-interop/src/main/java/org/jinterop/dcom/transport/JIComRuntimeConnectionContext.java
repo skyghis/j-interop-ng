@@ -73,7 +73,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
                     ((BindAcknowledgePdu) reply).setAssociationGroupId(new Object().hashCode()); //TODO should I save this ?
                     ((BindAcknowledgePdu) reply).setResultList(result);
                 }
-                ((BindAcknowledgePdu) reply).setCallId(pdu.getCallId());
+                reply.setCallId(pdu.getCallId());
                 break;
             case AlterContextPdu.ALTER_CONTEXT_TYPE:
                 established = true;
@@ -98,7 +98,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
                     ((AlterContextResponsePdu) reply).setResultList(result);
                 }
 
-                ((AlterContextResponsePdu) reply).setCallId(pdu.getCallId());
+                reply.setCallId(pdu.getCallId());
 
                 break;
             default:

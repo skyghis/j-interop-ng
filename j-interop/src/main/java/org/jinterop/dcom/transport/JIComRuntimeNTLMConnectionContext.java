@@ -50,8 +50,8 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
             Properties properties) throws IOException {
         super.init2(context, properties);
         this.properties = properties;
-        listOfInterfacesSupported.add(((String) properties.getProperty(IID)).toUpperCase());
-        listOfInterfacesSupported.add(((String) properties.getProperty(IID2)).toUpperCase() + ":0.0");
+        listOfInterfacesSupported.add(properties.getProperty(IID).toUpperCase());
+        listOfInterfacesSupported.add(properties.getProperty(IID2).toUpperCase() + ":0.0");
         updateListOfInterfacesSupported2((List) properties.get("LISTOFSUPPORTEDINTERFACES"));
         return null;
     }
@@ -86,7 +86,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
                     ((BindAcknowledgePdu) reply).setAssociationGroupId(new Object().hashCode()); //TODO should I save this ?
                     ((BindAcknowledgePdu) reply).setResultList(result);
                 }
-                ((BindAcknowledgePdu) reply).setCallId(pdu.getCallId());
+                reply.setCallId(pdu.getCallId());
 
                 //issue a challenge against the request info
                 break;
@@ -117,7 +117,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
                     ((AlterContextResponsePdu) reply).setResultList(result);
                 }
 
-                ((AlterContextResponsePdu) reply).setCallId(pdu.getCallId());
+                reply.setCallId(pdu.getCallId());
 
                 //issue a challenge against the request info
                 break;

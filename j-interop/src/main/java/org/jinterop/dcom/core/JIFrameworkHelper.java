@@ -212,7 +212,7 @@ public final class JIFrameworkHelper {
         //first use the cookie to detach.
         JICallBuilder object = new JICallBuilder(true);
         object.setOpnum(3);
-        object.addInParamAsInt(((Integer) connectionInfo[1]).intValue(), JIFlags.FLAG_NULL);
+        object.addInParamAsInt(((Number) connectionInfo[1]).intValue(), JIFlags.FLAG_NULL);
         connectionPointer.call(object);
         //now release the connectionPointer.
         connectionPointer.release();
@@ -226,7 +226,7 @@ public final class JIFrameworkHelper {
      * @throws JIException
      */
     public static String attachEventHandler(IJIComObject comObject, String sourceUUID, IJIComObject eventListener) throws JIException {
-        if (eventListener == null || comObject == null || sourceUUID == null || sourceUUID.equalsIgnoreCase("")) {
+        if (eventListener == null || comObject == null || sourceUUID == null || sourceUUID.isEmpty()) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_CALLBACK_INVALID_PARAMS));
         }
 
@@ -234,12 +234,12 @@ public final class JIFrameworkHelper {
             JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.getIpid());
         }
         //IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
-        IJIComObject connectionPointContainer = (IJIComObject) comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
+        IJIComObject connectionPointContainer = comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
         JICallBuilder object = new JICallBuilder(true);
         object.setOpnum(1);
         object.addInParamAsUUID(sourceUUID, JIFlags.FLAG_NULL);
         object.addOutParamAsObject(IJIComObject.class, JIFlags.FLAG_NULL);
-        Object[] objects = (Object[]) connectionPointContainer.call(object); //find connection point
+        Object[] objects = connectionPointContainer.call(object); //find connection point
         IJIComObject connectionPointer = (IJIComObject) objects[0];
 
         object.reInit();
@@ -262,5 +262,8 @@ public final class JIFrameworkHelper {
 
     public static int reverseArrayForDispatch(JIArray arrayToReverse) {
         return arrayToReverse.reverseArrayForDispatch();
+    }
+
+    private JIFrameworkHelper() {
     }
 }

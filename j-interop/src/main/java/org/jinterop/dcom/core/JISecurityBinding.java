@@ -40,7 +40,7 @@ final class JISecurityBinding implements Serializable {
         this.authnSvc = authnSvc;
         this.authzSvc = authzSvc;
         this.princName = princName;
-        if (princName.equals("")) {
+        if (princName.isEmpty()) {
             length = 2 + 2 + 2;
         } else {
             length = 2 + 2 + princName.length() * 2 + 2;
@@ -62,7 +62,7 @@ final class JISecurityBinding implements Serializable {
         //now to read the String till a null termination character.
         // a '0' will be represented as 30
         int retVal = -1;
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while ((retVal = ndr.readUnsignedShort()) != 0) {
             //even though this is a unicode string , but will not have anything else
             //other than ascii charset, which is supported by all encodings.

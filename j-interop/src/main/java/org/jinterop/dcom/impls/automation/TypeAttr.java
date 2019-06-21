@@ -166,22 +166,22 @@ public final class TypeAttr implements Serializable {
             return;
         }
 
-        guid = (((rpc.core.UUID) filledStruct.getMember(0)).toString());
-        lcid = ((Integer) filledStruct.getMember(1)).intValue();
-        dwReserved = ((Integer) filledStruct.getMember(2)).intValue();
-        memidConstructor = ((Integer) filledStruct.getMember(3)).intValue();
-        memidDestructor = ((Integer) filledStruct.getMember(4)).intValue();
+        guid = (filledStruct.getMember(0).toString());
+        lcid = ((Number) filledStruct.getMember(1)).intValue();
+        dwReserved = ((Number) filledStruct.getMember(2)).intValue();
+        memidConstructor = ((Number) filledStruct.getMember(3)).intValue();
+        memidDestructor = ((Number) filledStruct.getMember(4)).intValue();
         lpstrSchema = ((JIPointer) filledStruct.getMember(5));
-        cbSizeInstance = ((Integer) filledStruct.getMember(6)).intValue();
-        typekind = ((Integer) filledStruct.getMember(7)).intValue();
-        cFuncs = ((Short) filledStruct.getMember(8)).shortValue();
-        cVars = ((Short) filledStruct.getMember(9)).shortValue();
-        cImplTypes = ((Short) filledStruct.getMember(10)).shortValue();
-        cbSizeVft = ((Short) filledStruct.getMember(11)).shortValue();
-        cbAlignment = ((Short) filledStruct.getMember(12)).shortValue();
-        wTypeFlags = ((Short) filledStruct.getMember(13)).shortValue();
-        wMajorVerNum = ((Short) filledStruct.getMember(14)).shortValue();
-        wMinorVerNum = ((Short) filledStruct.getMember(15)).shortValue();
+        cbSizeInstance = ((Number) filledStruct.getMember(6)).intValue();
+        typekind = ((Number) filledStruct.getMember(7)).intValue();
+        cFuncs = ((Number) filledStruct.getMember(8)).shortValue();
+        cVars = ((Number) filledStruct.getMember(9)).shortValue();
+        cImplTypes = ((Number) filledStruct.getMember(10)).shortValue();
+        cbSizeVft = ((Number) filledStruct.getMember(11)).shortValue();
+        cbAlignment = ((Number) filledStruct.getMember(12)).shortValue();
+        wTypeFlags = ((Number) filledStruct.getMember(13)).shortValue();
+        wMajorVerNum = ((Number) filledStruct.getMember(14)).shortValue();
+        wMinorVerNum = ((Number) filledStruct.getMember(15)).shortValue();
         tdescAlias = new TypeDesc((JIStruct) filledStruct.getMember(16));
         idldescType = new IdlDesc((JIStruct) filledStruct.getMember(17));
 

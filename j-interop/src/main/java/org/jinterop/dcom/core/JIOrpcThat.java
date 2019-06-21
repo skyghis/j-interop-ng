@@ -122,7 +122,7 @@ final class JIOrpcThat implements Serializable {
 
         while (x < listOfDefferedPointers.size()) {
             ArrayList newList = new ArrayList();
-            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, (JIPointer) listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
+            JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
             ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);
@@ -141,7 +141,7 @@ final class JIOrpcThat implements Serializable {
                 JIStruct orpcextent2 = (JIStruct) pointers[i].getReferent();
                 Byte[] byteArray = (Byte[]) ((JIArray) orpcextent2.getMember(2)).getArrayInstance();
 
-                extentArrays.add(new JIOrpcExtentArray(((UUID) orpcextent2.getMember(0)).toString(), byteArray.length, byteArray));
+                extentArrays.add(new JIOrpcExtentArray(orpcextent2.getMember(0).toString(), byteArray.length, byteArray));
             }
 
         }

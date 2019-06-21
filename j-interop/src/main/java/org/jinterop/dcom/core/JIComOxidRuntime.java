@@ -23,6 +23,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -99,7 +100,7 @@ final class JIComOxidRuntime {
         Map pingedOnce = new HashMap();
 
         public String toString() {
-            return "SetID[" + setId + "] , currentSetOIDs[" + currentSetOIDs + "]";
+            return "SetID[" + Arrays.toString(setId) + "] , currentSetOIDs[" + currentSetOIDs + "]";
         }
     }
 
@@ -156,7 +157,7 @@ final class JIComOxidRuntime {
                 JISystem.getLogger().info("destroySessionOIDs for session: " + sessionId);
             }
 
-            List oids = (ArrayList) mapOfSessionIdsVsOIDs.remove(new Integer(sessionId));
+            List oids = (List) mapOfSessionIdsVsOIDs.remove(new Integer(sessionId));
             if (oids == null || oids.isEmpty()) {
                 return;
             }
@@ -354,7 +355,7 @@ final class JIComOxidRuntime {
                 if (oid.getIPIDRefCount() <= 0) {
                     holder.currentSetOIDs.remove(oid);
                     //everything is gone, remove the session
-                    if (holder.currentSetOIDs.size() == 0) {
+                    if (holder.currentSetOIDs.isEmpty()) {
                         holder.closed = true;
                         mapOfSessionVsPingSetHolder.remove(session);
                     }
@@ -408,7 +409,7 @@ final class JIComOxidRuntime {
 
     static synchronized void startResolverTimer() {
         //schedule only 1 timer task , the task to ping the OIDs obtained.
-        pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(), 0, (int) (4 * 60 * 1000));
+        pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(), 0, (4 * 60 * 1000));
         if (JISystem.isJavaCoClassAutoCollectionSet()) {
             pingTimer_8minutes.scheduleAtFixedRate(new ServerPingTimerTask(), 0, 8 * 60 * 1000);
         }
@@ -570,7 +571,7 @@ final class JIComOxidRuntime {
 
             mapOfIPIDVsComponent.put(ipid, details); //this is the ipid of the component.
 
-            List oids = (ArrayList) mapOfSessionIdsVsOIDs.get(new Integer(session.getSessionIdentifier()));
+            List oids = (List) mapOfSessionIdsVsOIDs.get(new Integer(session.getSessionIdentifier()));
             if (oids == null) {
                 oids = new ArrayList();
                 mapOfSessionIdsVsOIDs.put(new Integer(session.getSessionIdentifier()), oids);
@@ -663,6 +664,9 @@ final class JIComOxidRuntime {
         }
 
         return component;
+    }
+
+    private JIComOxidRuntime() {
     }
 
 }

@@ -126,7 +126,7 @@ public class MSTypeLibraryBrowser2 {
                 try {
                     Object[] ret = typeInfo.getNames(pFuncDesc.memberId, 1);
                     System.out.println("MethodName = " + ((JIString) ((Object[]) ((JIArray) ret[0]).getArrayInstance())[0]).getString());
-                    nCount = ((Integer) ret[1]).intValue();
+                    nCount = ((Number) ret[1]).intValue();
                 } catch (JIException e) {
                     System.out.println("GetNames failed.");
                     return;
@@ -167,9 +167,9 @@ public class MSTypeLibraryBrowser2 {
 
                 for (int j = 0; j < pFuncDesc.cParams; j++) {
 
-                    if (((ElemDesc) types[j]).typeDesc.vt == TypeDesc.VT_SAFEARRAY.shortValue()) {
+                    if (types[j].typeDesc.vt == TypeDesc.VT_SAFEARRAY.shortValue()) {
                         System.out.println("Param(" + j + ") type = SafeArray");
-                    } else if (((ElemDesc) types[j]).typeDesc.vt == TypeDesc.VT_PTR.shortValue()) {
+                    } else if (types[j].typeDesc.vt == TypeDesc.VT_PTR.shortValue()) {
                         System.out.println("Param(" + j + ") type = Pointer");
                     } else {
                         System.out.println("Param(" + j + ") type = UserDefined");
@@ -193,7 +193,7 @@ public class MSTypeLibraryBrowser2 {
                 try {
                     Object[] ret = typeInfo.getNames(pVarDesc.memberId, 1);
                     System.out.println("VarName = " + ((JIString) ((Object[]) ((JIArray) ret[0]).getArrayInstance())[0]).getString());
-                    nCount = ((Integer) ret[1]).intValue();
+                    nCount = ((Number) ret[1]).intValue();
                 } catch (JIException e) {
                     System.out.println("GetNames failed.");
                     return;

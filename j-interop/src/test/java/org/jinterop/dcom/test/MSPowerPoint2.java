@@ -113,14 +113,14 @@ public class MSPowerPoint2 {
             boolean over = false;
             while (!over) {
                 String input = inputreader.readLine().trim();
-                if (input.equalsIgnoreCase("")) {
+                if (input.isEmpty()) {
                     continue;
                 }
                 int index = -1;
                 String command = null;
 
                 if (input.length() > 1) {
-                    index = input.indexOf(" ");
+                    index = input.indexOf(' ');
                     command = input.substring(0, index);
                 } else {
                     command = input;
@@ -159,7 +159,7 @@ public class MSPowerPoint2 {
                         if (activePresentation == null) {
                             System.out.println("Please open a presentation first !");
                         } else {
-                            test.goto_Numbered_Slide(view, Integer.valueOf(path).intValue());
+                            test.goto_Numbered_Slide(view, Integer.parseInt(path));
                         }
 
                         break;

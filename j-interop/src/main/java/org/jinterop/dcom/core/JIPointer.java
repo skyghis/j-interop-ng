@@ -126,7 +126,7 @@ public final class JIPointer implements Serializable {
 
     void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
 
-        FLAG = FLAG | flags;
+        FLAG |= flags;
         if (isNull) {
             JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), defferedPointers, FLAG);
             return;
@@ -171,14 +171,14 @@ public final class JIPointer implements Serializable {
     //should be the actual array type and not JIArray.
     JIPointer decode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG, Map additionalData) {
         //shallowClone();
-        FLAG = FLAG | flags;
+        FLAG |= flags;
 
         JIPointer retVal = new JIPointer();
         retVal.setFlags(flags);
         retVal.isNull = isNull;
         //retVal.isDeffered = isDeffered;
         if (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY /* || (FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER */) {
-            retVal.referentId = ((Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData)).intValue();
+            retVal.referentId = ((Number) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData)).intValue();
             retVal.referent = referent; //will only be the class or object
             if (retVal.referentId == 0) {
                 //null pointer
@@ -196,7 +196,7 @@ public final class JIPointer implements Serializable {
 
         if (!isReferenceTypePtr) {
             //referentId = ndr.readUnsignedLong();
-            retVal.referentId = ((Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData)).intValue();
+            retVal.referentId = ((Number) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData)).intValue();
             retVal.referent = referent; //will only be the class or object
             if (retVal.referentId == 0) {
                 //null pointer

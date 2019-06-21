@@ -75,7 +75,7 @@ final class JIComTransport implements Transport {
         LOCALHOST = localhost;
     }
 
-    public JIComTransport(String address, Properties properties)
+    JIComTransport(String address, Properties properties)
             throws ProviderException {
         this.properties = properties;
         parse(address);
@@ -177,7 +177,7 @@ final class JIComTransport implements Transport {
         }
     }
 
-    protected void parse(String address) throws ProviderException {
+    void parse(String address) throws ProviderException {
         if (address == null) {
             throw new ProviderException("Null address.");
         }

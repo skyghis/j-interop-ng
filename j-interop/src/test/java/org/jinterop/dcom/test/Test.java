@@ -6,7 +6,7 @@ public class Test {
 
     public static void main(String[] args) {
 //	 try {
-        boolean b = null instanceof JIComServer ? false : true;
+        boolean b = !(null instanceof JIComServer);
         // Socket socket = new Socket("10.24.10.65",139);
         //socket.close();
 //	 UniAddress mydomaincontoller = UniAddress.getByName( "192.168.170.6" );

@@ -20,12 +20,14 @@ import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import jcifs.util.Encdec;
 import ndr.NdrException;
+import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -309,12 +311,12 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedIntImpl implements SerializerDeserializer {
 
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(((JIUnsignedInteger) value).getValue().intValue()), null, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(((IJIUnsigned) value).getValue().intValue()), null, FLAG);
         }
 
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
             Integer b = (Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, FLAG, additionalData);
-            return JIUnsignedFactory.getUnsigned(new Long((long) (b.intValue() & 0xFFFFFFFFL)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
+            return JIUnsignedFactory.getUnsigned(new Long((b.intValue() & 0xFFFFFFFFL)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
         }
 
         public int getLengthInBytes(Object value, int FLAG) {
@@ -326,7 +328,7 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedByteImpl implements SerializerDeserializer {
 
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Byte.class, new Byte(((JIUnsignedByte) value).getValue().byteValue()), null, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Byte.class, new Byte(((IJIUnsigned) value).getValue().byteValue()), null, FLAG);
         }
 
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
@@ -343,12 +345,12 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedShortImpl implements SerializerDeserializer {
 
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short(((JIUnsignedShort) value).getValue().shortValue()), null, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short(((IJIUnsigned) value).getValue().shortValue()), null, FLAG);
         }
 
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
             Short b = (Short) JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, FLAG, additionalData);
-            return JIUnsignedFactory.getUnsigned(new Integer((int) (b.shortValue() & 0xFFFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);
+            return JIUnsignedFactory.getUnsigned(new Integer((b.shortValue() & 0xFFFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);
         }
 
         public int getLengthInBytes(Object value, int FLAG) {
@@ -511,13 +513,13 @@ final class JIMarshalUnMarshalHelper {
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
             JISession session = (JISession) additionalData.get(JICallBuilder.CURRENTSESSION);
             IJIComObject comObject = new JIComObjectImpl(session, (JIInterfacePointer) deSerialize(ndr, JIInterfacePointer.class, defferedPointers, FLAG, additionalData));
-            ((ArrayList) additionalData.get(JICallBuilder.COMOBJECTS)).add(comObject);
+            ((Collection) additionalData.get(JICallBuilder.COMOBJECTS)).add(comObject);
             return comObject;
         }
 
         public int getLengthInBytes(Object value, int FLAG) {
             JIInterfacePointer interfacePointer = ((IJIComObject) value).internal_getInterfacePointer();
-            return ((JIInterfacePointer) interfacePointer).getLength();
+            return interfacePointer.getLength();
         }
 
     }
@@ -602,7 +604,7 @@ final class JIMarshalUnMarshalHelper {
     private static class ByteImpl implements SerializerDeserializer {
 
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            ndr.writeUnsignedSmall(((Byte) value).byteValue());
+            ndr.writeUnsignedSmall(((Number) value).byteValue());
         }
 
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
@@ -622,7 +624,7 @@ final class JIMarshalUnMarshalHelper {
             if (value == null) {
                 value = new Short(Short.MIN_VALUE);
             }
-            ndr.writeUnsignedShort(((Short) value).shortValue());
+            ndr.writeUnsignedShort(((Number) value).shortValue());
 
         }
 
@@ -681,7 +683,7 @@ final class JIMarshalUnMarshalHelper {
             if (value == null) {
                 value = new Integer(Integer.MIN_VALUE);
             }
-            ndr.writeUnsignedLong(((Integer) value).intValue());
+            ndr.writeUnsignedLong(((Number) value).intValue());
         }
 
         public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
@@ -703,7 +705,7 @@ final class JIMarshalUnMarshalHelper {
                 value = new Long(Long.MIN_VALUE);
             }
             ndr.getBuffer().align(8);
-            Encdec.enc_uint64le(((Long) value).longValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
+            Encdec.enc_uint64le(((Number) value).longValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(8);
         }
 
@@ -728,7 +730,7 @@ final class JIMarshalUnMarshalHelper {
             }
 
             ndr.getBuffer().align(8);
-            Encdec.enc_doublele(((Double) value).doubleValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
+            Encdec.enc_doublele(((Number) value).doubleValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(8);
 
         }
@@ -807,7 +809,7 @@ final class JIMarshalUnMarshalHelper {
 
             //String newValue = Integer.toHexString(hibyte) + Integer.toHexString(lowbyte);
             //long value = Long.parseLong(newValue,16);
-            return new JICurrency((int) ((lowbyte - lowbyte % 10000) / 10000), (int) (lowbyte % 10000));
+            return new JICurrency(((lowbyte - lowbyte % 10000) / 10000), (lowbyte % 10000));
 
         }
 
@@ -864,7 +866,7 @@ final class JIMarshalUnMarshalHelper {
             long result = 0;
 
             // code from jacobgen:
-            comTime = comTime - 25569D;
+            comTime -= 25569D;
             Calendar cal = Calendar.getInstance();
             result = Math.round(86400000L * comTime)
                     - cal.get(Calendar.ZONE_OFFSET);
@@ -903,7 +905,7 @@ final class JIMarshalUnMarshalHelper {
                 value = new Float(Float.NaN);
             }
             ndr.getBuffer().align(4);
-            Encdec.enc_floatle(((Float) value).floatValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
+            Encdec.enc_floatle(((Number) value).floatValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(4);
 
         }
@@ -1103,12 +1105,12 @@ final class JIMarshalUnMarshalHelper {
             int length = 4 + 4 + 4; //max len, offset ,actual length
 
             if (!((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_BSTR) == JIFlags.FLAG_REPRESENTATION_STRING_BSTR)) {
-                length = length + 2; //adding null termination
+                length += 2; //adding null termination
             }
 
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) {
-                length = length + ((String) value).length(); //this is only a character array, no unicode, each char is writen in 1 byte "abcd" --> ab, cd ,00 ; "abcde" --> ab,cd,e0, 00
-                if (!(((String) value).length() % 2 == 0)) //odd
+                length += ((CharSequence) value).length(); //this is only a character array, no unicode, each char is writen in 1 byte "abcd" --> ab, cd ,00 ; "abcde" --> ab,cd,e0, 00
+                if (!(((CharSequence) value).length() % 2 == 0)) //odd
                 {
                     length++;
                 }
@@ -1117,7 +1119,7 @@ final class JIMarshalUnMarshalHelper {
 //				{
 //					int i = 0;
 //				}
-                length = length + ((String) value).length() * 2; //these are both unicode (utf-16le)
+                length += ((CharSequence) value).length() * 2; //these are both unicode (utf-16le)
             }
 
             return length;
@@ -1143,7 +1145,7 @@ final class JIMarshalUnMarshalHelper {
             }
 
             //for LPWSTR and BSTR adding 2 for the null character.
-            length = length + (((JIString) value).getType() == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR ? 0 : 2);
+            length += (((JIString) value).getType() == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR ? 0 : 2);
             //Pointer referentId --> USER
             return length + JIMarshalUnMarshalHelper.getLengthInBytes(String.class, ((JIString) value).getString(), ((JIString) value).getType() | FLAG);
         }
@@ -1154,7 +1156,7 @@ final class JIMarshalUnMarshalHelper {
 
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
             try {
-                ((UUID) value).encode(ndr, ndr.getBuffer());
+                ((NdrObject) value).encode(ndr, ndr.getBuffer());
             } catch (NdrException e) {
                 JISystem.getLogger().throwing("UUIDImpl", "serializeData", e);
             }
@@ -1205,5 +1207,8 @@ final class JIMarshalUnMarshalHelper {
         public int getLengthInBytes(Object value, int FLAG) {
             return ((JIInterfacePointerBody) value).getLength();
         }
+    }
+
+    private JIMarshalUnMarshalHelper() {
     }
 }

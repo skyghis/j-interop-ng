@@ -47,7 +47,7 @@ final class JIComRuntimeTransport implements Transport {
 
     private boolean attached;
 
-    public JIComRuntimeTransport(String address, Properties properties)
+    JIComRuntimeTransport(String address, Properties properties)
             throws ProviderException {
         this.properties = properties;
         //address is ignored

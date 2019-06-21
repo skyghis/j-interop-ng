@@ -34,7 +34,7 @@ class Driver implements iota {
             System.out.println(ccccccc.getName());
             if (ccccccc.isArray()) {
                 String name2 = ccccccc.getName();
-                int i = name2.lastIndexOf("L");
+                int i = name2.lastIndexOf('L');
                 System.out.println(name2.substring(i + 1, name2.length() - 1));
                 // System.out.println(ccccccc.getSimpleName());
             }
@@ -109,7 +109,7 @@ class Driver implements iota {
 
             int[] upperBounds = new int[upperBounds2.size()];
             for (int i = 0; i < upperBounds2.size(); i++) {
-                upperBounds[i] = ((Integer) upperBounds2.get(i)).intValue();
+                upperBounds[i] = ((Number) upperBounds2.get(i)).intValue();
             }
 
 //			 Object newArray = createArray(oi, Class.forName(clazzName), dimension);
@@ -148,7 +148,7 @@ class Driver implements iota {
             String[] str = "123.9".split("\\.");
             int a = ~(Integer.MIN_VALUE);
             System.out.println(a);
-            a = a + 1;
+            a += 1;
             System.out.println(a);
             if (a == Integer.MAX_VALUE) {
 
@@ -332,7 +332,7 @@ class Driver implements iota {
                 System.out.println(o1.getClass().getComponentType());
                 return length;
             }
-            length = length + computeLengthArray(Array.get(array, i));
+            length += computeLengthArray(Array.get(array, i));
         }
 
         return length;

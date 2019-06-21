@@ -100,8 +100,8 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                     // System.err.println("Vikram: " + Long.toString(Thread.currentThread().getId()));
                     // jcifs.util.Hexdump.hexdump(System.err, buffer.buf, 0, buffer.buf.length);
                 }
-                ndr.setFormat(((RequestCoPdu) request).getFormat());
-                workerObject.setOpnum(((RequestCoPdu) request).getOpnum());
+                ndr.setFormat(request.getFormat());
+                workerObject.setOpnum(request.getOpnum());
                 //sets the current object, this is used to identify the JILocalCoClass to work on.
                 //for most cases this will be null , till there is an actual COM interface request.
                 workerObject.setCurrentObjectID(((RequestCoPdu) request).getObject());
@@ -111,8 +111,8 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                     ((NdrObject) workerObject).decode(ndr, buffer);
                     ResponseCoPdu responseCoPdu = new ResponseCoPdu();
                     responseCoPdu.setContextId(((RequestCoPdu) request).getContextId());
-                    responseCoPdu.setFormat(((RequestCoPdu) request).getFormat());
-                    responseCoPdu.setCallId(((RequestCoPdu) request).getCallId());
+                    responseCoPdu.setFormat(request.getFormat());
+                    responseCoPdu.setCallId(request.getCallId());
                     ((NdrObject) workerObject).encode(ndr, null);
                     int length = ndr.getBuffer().length > ndr.getBuffer().index ? ndr.getBuffer().length : ndr.getBuffer().index;
 //					  length = length + 4;
@@ -127,7 +127,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                     JISystem.getLogger().throwing("JIComRuntimeEndpoint", "processRequests", e);
                     //create a fault PDU
                     response = new FaultCoPdu();
-                    response.setCallId(((RequestCoPdu) request).getCallId());
+                    response.setCallId(request.getCallId());
                     ((FaultCoPdu) response).setStatus(e.getHResult());
                 }
             } else if (request instanceof BindPdu || request instanceof AlterContextPdu) {

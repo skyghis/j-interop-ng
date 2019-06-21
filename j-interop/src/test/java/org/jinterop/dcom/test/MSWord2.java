@@ -34,8 +34,8 @@ public class MSWord2 {
     }
 
     public void performOp() throws JIException, InterruptedException {
-        System.out.println(((JIVariant) dispatch.get("Version")).getObjectAsString().getString());
-        System.out.println(((JIVariant) dispatch.get("Path")).getObjectAsString().getString());
+        System.out.println(dispatch.get("Version").getObjectAsString().getString());
+        System.out.println(dispatch.get("Path").getObjectAsString().getString());
         JIVariant variant = dispatch.get("Documents");
         //JIInterfacePointer ptr = variant.getObjectAsInterfacePointer();
         //IJIDispatch documents = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);

@@ -102,7 +102,7 @@ public class JIOPCEventSink {
      *
      * @return The OPC struct definition
      */
-    private static final JIStruct outStruct() {
+    private static JIStruct outStruct() {
         JIStruct struct = new JIStruct();
         try {
             struct.addMember(Short.class);

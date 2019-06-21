@@ -37,7 +37,7 @@ public final class SafeArrayBounds implements Serializable {
             lLbound = -1;
             return;
         }
-        cElements = ((Integer) values.getMember(0)).intValue();
-        lLbound = ((Integer) values.getMember(0)).intValue();
+        cElements = ((Number) values.getMember(0)).intValue();
+        lLbound = ((Number) values.getMember(0)).intValue();
     }
 }

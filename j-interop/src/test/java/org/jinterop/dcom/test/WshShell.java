@@ -49,9 +49,9 @@ public class WshShell {
 
         unknown = comServer.createInstance();
 
-        dispatch = (IJIDispatch) JIObjectFactory.narrowObject((IJIComObject) unknown.queryInterface(IJIDispatch.IID));
+        dispatch = (IJIDispatch) JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
 
-        JIVariant jv = (JIVariant) dispatch.get("CurrentDirectory");
+        JIVariant jv = dispatch.get("CurrentDirectory");
 
         System.out.println(jv.getObjectAsString().getString());
 
@@ -63,7 +63,7 @@ public class WshShell {
 
         dispatch.put(dispId, variant);
 
-        jv = (JIVariant) dispatch.get("CurrentDirectory");
+        jv = dispatch.get("CurrentDirectory");
 
         System.out.println(jv.getObjectAsString().getString());
 

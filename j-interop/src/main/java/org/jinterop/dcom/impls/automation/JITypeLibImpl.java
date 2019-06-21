@@ -54,7 +54,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         callObject.setOpnum(0);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
         Object[] result = comObject.call(callObject);
-        return ((Integer) result[0]).intValue();
+        return ((Number) result[0]).intValue();
     }
 
     public IJITypeInfo getTypeInfo(int index) throws JIException {
@@ -72,7 +72,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         callObject.addInParamAsInt(index, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
         Object[] result = comObject.call(callObject);
-        return ((Integer) result[0]).intValue();
+        return ((Number) result[0]).intValue();
     }
 
     public IJITypeInfo getTypeInfoOfGuid(String uuid) throws JIException {

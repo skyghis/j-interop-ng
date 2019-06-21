@@ -641,7 +641,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public int getResultAsIntAt(int index) {
         checkIfCalled();
-        return ((Integer) outparams[index]).intValue();
+        return ((Number) outparams[index]).intValue();
     }
 
     /**
@@ -653,7 +653,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public float getResultAsFloatAt(int index) {
         checkIfCalled();
-        return ((Float) outparams[index]).floatValue();
+        return ((Number) outparams[index]).floatValue();
     }
 
     /**
@@ -677,7 +677,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public short getResultAsShortAt(int index) {
         checkIfCalled();
-        return ((Short) outparams[index]).shortValue();
+        return ((Number) outparams[index]).shortValue();
     }
 
     /**
@@ -689,7 +689,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public double getResultAsDoubleAt(int index) {
         checkIfCalled();
-        return ((Double) outparams[index]).doubleValue();
+        return ((Number) outparams[index]).doubleValue();
     }
 
     /**
@@ -736,7 +736,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public String getResultAsUUIDStrAt(int index) {
         checkIfCalled();
-        return ((UUID) outparams[index]).toString();
+        return outparams[index].toString();
     }
 
     /**
@@ -825,7 +825,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @return
      */
     public Integer[] getInparamFlags() {
-        return (Integer[]) inparamFlags.toArray(new Integer[0]);
+        return (Integer[]) inparamFlags.toArray(new Integer[inparamFlags.size()]);
     }
 
     /**
@@ -834,7 +834,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @return
      */
     public Integer[] getOutparamFlags() {
-        return (Integer[]) outparamFlags.toArray(new Integer[0]);
+        return (Integer[]) outparamFlags.toArray(new Integer[outparamFlags.size()]);
     }
 
     /**
@@ -930,7 +930,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
                 if (inparams[index] == null) {
                     JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), listOfDefferedPointers, JIFlags.FLAG_NULL);
                 } else {
-                    JIMarshalUnMarshalHelper.serialize(ndr, inparams[index].getClass(), inparams[index], listOfDefferedPointers, ((Integer) inparamFlags.get(index)).intValue());
+                    JIMarshalUnMarshalHelper.serialize(ndr, inparams[index].getClass(), inparams[index], listOfDefferedPointers, ((Number) inparamFlags.get(index)).intValue());
                 }
 
                 int x = 0;
@@ -958,7 +958,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
 
                     //JIMarshalUnMarshalHelper.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),listOfDefferedPointers,inparamFlags);
                     ArrayList newList = new ArrayList();
-                    JIMarshalUnMarshalHelper.serialize(ndr, JIPointer.class, (JIPointer) listOfDefferedPointers.get(x), newList, ((Integer) inparamFlags.get(index)).intValue());
+                    JIMarshalUnMarshalHelper.serialize(ndr, JIPointer.class, listOfDefferedPointers.get(x), newList, ((Number) inparamFlags.get(index)).intValue());
                     x++; //incrementing index
                     listOfDefferedPointers.addAll(x, newList);
                 }
@@ -1038,13 +1038,13 @@ public class JICallBuilder extends NdrObject implements Serializable {
         if (outparams != null && outparams.length > 0) {
             while (index < outparams.length) {
                 List listOfDefferedPointers = new ArrayList();
-                results.add(JIMarshalUnMarshalHelper.deSerialize(ndr, outparams[index], listOfDefferedPointers, ((Integer) outparamFlags.get(index)).intValue(), additionalData));
+                results.add(JIMarshalUnMarshalHelper.deSerialize(ndr, outparams[index], listOfDefferedPointers, ((Number) outparamFlags.get(index)).intValue(), additionalData));
                 int x = 0;
 
                 while (x < listOfDefferedPointers.size()) {
 
                     ArrayList newList = new ArrayList();
-                    JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, (JIPointer) listOfDefferedPointers.get(x), newList, ((Integer) outparamFlags.get(index)).intValue(), additionalData);
+                    JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, ((Number) outparamFlags.get(index)).intValue(), additionalData);
                     ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
                     x++;
                     listOfDefferedPointers.addAll(x, newList);
@@ -1109,11 +1109,11 @@ public class JICallBuilder extends NdrObject implements Serializable {
         Object[] inparams = inParams.toArray();
         for (int i = 0; i < inparams.length; i++) {
             if (inparams[i] == null) {
-                length = length + 4;
+                length += 4;
                 continue;
             }
             int length2 = JIMarshalUnMarshalHelper.getLengthInBytes(inparams[i].getClass(), inparams[i], JIFlags.FLAG_NULL);
-            length = length + length2;
+            length += length2;
         }
 
         return length + 2048; //2K extra for alignments, if any.

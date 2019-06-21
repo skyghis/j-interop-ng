@@ -134,7 +134,7 @@ public final class FuncDesc implements Serializable {
             return;
         }
         values = filledStruct;
-        memberId = ((Integer) values.getMember(0)).intValue();
+        memberId = ((Number) values.getMember(0)).intValue();
         lprgscode = (JIPointer) values.getMember(1);
         JIPointer ptr = (JIPointer) values.getMember(2);
         JIArray arrayOfElemDesc = null;
@@ -152,15 +152,15 @@ public final class FuncDesc implements Serializable {
         }
 
         lprgelemdescParam = new JIPointer(arrayOfElemDesc);
-        funcKind = ((Integer) values.getMember(3)).intValue();
-        invokeKind = ((Integer) values.getMember(4)).intValue();
-        callConv = ((Integer) values.getMember(5)).intValue();
-        cParams = ((Short) values.getMember(6)).shortValue();
-        cParamsOpt = ((Short) values.getMember(7)).shortValue();
-        oVft = ((Short) values.getMember(8)).shortValue();
-        cScodes = ((Short) values.getMember(9)).shortValue();
+        funcKind = ((Number) values.getMember(3)).intValue();
+        invokeKind = ((Number) values.getMember(4)).intValue();
+        callConv = ((Number) values.getMember(5)).intValue();
+        cParams = ((Number) values.getMember(6)).shortValue();
+        cParamsOpt = ((Number) values.getMember(7)).shortValue();
+        oVft = ((Number) values.getMember(8)).shortValue();
+        cScodes = ((Number) values.getMember(9)).shortValue();
         elemdescFunc = new ElemDesc(((JIStruct) values.getMember(10)));
-        wFuncFlags = ((Short) values.getMember(11)).shortValue();
+        wFuncFlags = ((Number) values.getMember(11)).shortValue();
     }
 
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
+import org.jinterop.dcom.core.IJIUnsigned;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JICallBuilder;
 import org.jinterop.dcom.core.JIComServer;
@@ -37,7 +38,7 @@ public class SampleTestServer {
         session = JISession.createSession(args[1], args[2], args[3]);
         comStub = new JIComServer(JIProgId.valueOf("SampleTestServer.TestServer"), address, session);
         IJIComObject unknown = comStub.createInstance();
-        comObject = (IJIComObject) unknown.queryInterface("1F438B1C-02BA-462E-A971-8E0640C141E5"); //ITestServer
+        comObject = unknown.queryInterface("1F438B1C-02BA-462E-A971-8E0640C141E5"); //ITestServer
     }
 
     public void performSquare(String[] args) throws JIException, InterruptedException, UnknownHostException {
@@ -115,7 +116,7 @@ public class SampleTestServer {
 
         JIArray arrayOfResults = (JIArray) ((JIPointer) results[1]).getReferent();
         Integer[] arrayOfIntegers = (Integer[]) arrayOfResults.getArrayInstance();
-        int length = ((Integer) results[0]).intValue();
+        int length = ((Number) results[0]).intValue();
         for (int i = 0; i < length; i++) {
             System.out.println(arrayOfIntegers[i].intValue());
         }
@@ -186,7 +187,7 @@ public class SampleTestServer {
         JIArray DataArray = new JIArray(struct, null, 1, true);
         callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
         results = comObject.call(callObject);
-        System.out.println(((JIUnsignedShort) results[0]).getValue());
+        System.out.println(((IJIUnsigned) results[0]).getValue());
     }
 
     public void getConformantStruct(String[] args)
@@ -258,7 +259,7 @@ public class SampleTestServer {
         callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
         results = comObject.call(callObject);
-        System.out.println(((JIUnsignedShort) results[0]).getValue());
+        System.out.println(((IJIUnsigned) results[0]).getValue());
 
     }
 
@@ -314,7 +315,7 @@ public class SampleTestServer {
         callObject.addOutParamAsObject(new JIPointer(DataArray), JIFlags.FLAG_NULL);
 
         results = comObject.call(callObject);
-        System.out.println(((JIUnsignedShort) results[0]).getValue());
+        System.out.println(((IJIUnsigned) results[0]).getValue());
 
     }
 
@@ -377,7 +378,7 @@ public class SampleTestServer {
         callObject.addOutParamAsObject(new JIPointer(DataArray, false), JIFlags.FLAG_NULL);
 
         results = comObject.call(callObject);
-        System.out.println(((JIUnsignedShort) results[0]).getValue());
+        System.out.println(((IJIUnsigned) results[0]).getValue());
 
     }
 

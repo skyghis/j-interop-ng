@@ -24,7 +24,7 @@ public class MSPowerPoint {
 
     public void startPowerPoint() throws JIException {
         unknown = comStub.createInstance();
-        dispatch = (IJIDispatch) JIObjectFactory.narrowObject((IJIComObject) unknown.queryInterface(IJIDispatch.IID));
+        dispatch = (IJIDispatch) JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
     }
 
     public void showPowerPoint() throws JIException {

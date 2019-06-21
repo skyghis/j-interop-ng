@@ -28,7 +28,7 @@ public class MSExcel3 {
 
     public void startExcel() throws JIException {
         unknown = comServer.createInstance();
-        dispatch = (IJIDispatch) JIObjectFactory.narrowObject((IJIComObject) unknown.queryInterface(IJIDispatch.IID));
+        dispatch = (IJIDispatch) JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
     }
 
     public void showExcel() throws JIException {
@@ -99,9 +99,7 @@ public class MSExcel3 {
             Integer temp2 = newValue[0][1];
             int i = 0;
             for (i = 1; i < newValue.length; i++) {
-                for (int k = 0; k < newValue[i - 1].length; k++) {
-                    newValue[i - 1][k] = newValue[i][k];
-                }
+                System.arraycopy(newValue[i], 0, newValue[i - 1], 0, newValue[i - 1].length);
             }
 
             newValue[i - 1][0] = temp1;

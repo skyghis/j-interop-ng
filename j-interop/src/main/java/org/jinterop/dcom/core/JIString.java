@@ -156,7 +156,7 @@ public final class JIString implements Serializable {
          * this is incorrect logic in the bug sent by Kevin , the ONEVENTSTRUCT consists of LPWSTRs which are deffered
          */
         if (member != null && !member.isReference()) {
-            ((JIPointer) member).setDeffered(true);
+            member.setDeffered(true);
         }
     }
 
