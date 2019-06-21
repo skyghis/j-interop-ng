@@ -14,14 +14,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.security.ntlm;
 
 import java.io.IOException;
 import java.util.Properties;
-
 import rpc.BindException;
 import rpc.Connection;
 import rpc.ConnectionContext;
@@ -70,7 +66,7 @@ public class NtlmConnectionContext implements ConnectionContext {
             }
         }
         BindPdu pdu = new BindPdu();
-        pdu.setContextList(new PresentationContext[] { context });
+        pdu.setContextList(new PresentationContext[]{context});
         pdu.setMaxTransmitFragment(maxTransmitFragment);
         pdu.setMaxReceiveFragment(maxReceiveFragment);
         connection = new NtlmConnection(properties);
@@ -81,7 +77,7 @@ public class NtlmConnectionContext implements ConnectionContext {
     public ConnectionOrientedPdu init(PresentationContext context,
             Properties properties) throws IOException {
 
-    	BindPdu pdu = (BindPdu)init2(context, properties);
+        BindPdu pdu = (BindPdu) init2(context, properties);
         pdu.resetCallIdCounter();
         return pdu;
     }
@@ -90,7 +86,7 @@ public class NtlmConnectionContext implements ConnectionContext {
             throws IOException {
         established = false;
         AlterContextPdu pdu = new AlterContextPdu();
-        pdu.setContextList(new PresentationContext[] { context });
+        pdu.setContextList(new PresentationContext[]{context});
         pdu.setAssociationGroupId(assocGroupId);
         return pdu;
     }
@@ -99,66 +95,66 @@ public class NtlmConnectionContext implements ConnectionContext {
             throws IOException {
         PresentationResult[] results = null;
         switch (pdu.getType()) {
-        case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
-            BindAcknowledgePdu bindAck = (BindAcknowledgePdu) pdu;
-            results = bindAck.getResultList();
-            if (results == null) {
-                throw new BindException("No presentation context results.");
-            }
-            for (int i = results.length - 1; i >= 0; i--) {
-                if (results[i].result != PresentationResult.ACCEPTANCE) {
-                    throw new PresentationException("Context rejected.",
-                            results[i]);
+            case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
+                BindAcknowledgePdu bindAck = (BindAcknowledgePdu) pdu;
+                results = bindAck.getResultList();
+                if (results == null) {
+                    throw new BindException("No presentation context results.");
                 }
-            }
-            transmitLength = bindAck.getMaxReceiveFragment();
-            receiveLength = bindAck.getMaxTransmitFragment();
-            established = true;
-            connection.setTransmitLength(transmitLength);
-            connection.setReceiveLength(receiveLength);
-            assocGroupId = bindAck.getAssociationGroupId();
-            return new Auth3Pdu();
-        case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
-            AlterContextResponsePdu alterContextResponse =
-                    (AlterContextResponsePdu) pdu;
-            results = alterContextResponse.getResultList();
-            if (results == null) {
-                throw new BindException("No presentation context results.");
-            }
-            for (int i = results.length - 1; i >= 0; i--) {
-                if (results[i].result != PresentationResult.ACCEPTANCE) {
-                    throw new PresentationException("Context rejected.",
-                            results[i]);
+                for (int i = results.length - 1; i >= 0; i--) {
+                    if (results[i].result != PresentationResult.ACCEPTANCE) {
+                        throw new PresentationException("Context rejected.",
+                                results[i]);
+                    }
                 }
-            }
-            established = true;
-            //return new Auth3Pdu();
-            return null;
-        case BindNoAcknowledgePdu.BIND_NO_ACKNOWLEDGE_TYPE:
-            throw new BindException("Unable to bind.",
-                    ((BindNoAcknowledgePdu) pdu).getRejectReason());
-        case FaultCoPdu.FAULT_TYPE:
-            throw new FaultException("Fault occurred.",
-                    ((FaultCoPdu) pdu).getStatus());
-        case ShutdownPdu.SHUTDOWN_TYPE:
-            throw new RpcException("Server shutdown connection.");
-        case BindPdu.BIND_TYPE:
-            established = false;
-            //CHECK PRESENTATION CONTEXT
-            //CHALLENGE
-            throw new RuntimeException();
-        case AlterContextPdu.ALTER_CONTEXT_TYPE:
-            established = false;
-            //CHECK PRESENTATION CONTEXT
-            //CHALLENGE
-            throw new RuntimeException();
-        case Auth3Pdu.AUTH3_TYPE:
-            //AUTHENTICATE
-            //TWEAK CONNECTION
-            established = true;
-            return null;
-        default:
-            throw new RpcException("Unknown/unacceptable PDU type.");
+                transmitLength = bindAck.getMaxReceiveFragment();
+                receiveLength = bindAck.getMaxTransmitFragment();
+                established = true;
+                connection.setTransmitLength(transmitLength);
+                connection.setReceiveLength(receiveLength);
+                assocGroupId = bindAck.getAssociationGroupId();
+                return new Auth3Pdu();
+            case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
+                AlterContextResponsePdu alterContextResponse
+                        = (AlterContextResponsePdu) pdu;
+                results = alterContextResponse.getResultList();
+                if (results == null) {
+                    throw new BindException("No presentation context results.");
+                }
+                for (int i = results.length - 1; i >= 0; i--) {
+                    if (results[i].result != PresentationResult.ACCEPTANCE) {
+                        throw new PresentationException("Context rejected.",
+                                results[i]);
+                    }
+                }
+                established = true;
+                //return new Auth3Pdu();
+                return null;
+            case BindNoAcknowledgePdu.BIND_NO_ACKNOWLEDGE_TYPE:
+                throw new BindException("Unable to bind.",
+                        ((BindNoAcknowledgePdu) pdu).getRejectReason());
+            case FaultCoPdu.FAULT_TYPE:
+                throw new FaultException("Fault occurred.",
+                        ((FaultCoPdu) pdu).getStatus());
+            case ShutdownPdu.SHUTDOWN_TYPE:
+                throw new RpcException("Server shutdown connection.");
+            case BindPdu.BIND_TYPE:
+                established = false;
+                //CHECK PRESENTATION CONTEXT
+                //CHALLENGE
+                throw new RuntimeException();
+            case AlterContextPdu.ALTER_CONTEXT_TYPE:
+                established = false;
+                //CHECK PRESENTATION CONTEXT
+                //CHALLENGE
+                throw new RuntimeException();
+            case Auth3Pdu.AUTH3_TYPE:
+                //AUTHENTICATE
+                //TWEAK CONNECTION
+                established = true;
+                return null;
+            default:
+                throw new RpcException("Unknown/unacceptable PDU type.");
         }
     }
 

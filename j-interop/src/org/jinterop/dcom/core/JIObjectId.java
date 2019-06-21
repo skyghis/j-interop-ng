@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
@@ -25,95 +24,78 @@ import org.jinterop.dcom.common.JISystem;
 
 final class JIObjectId implements Serializable {
 
-	private static final long serialVersionUID = -4335536047242439700L;
-	private final byte[] oid ;
-	private int refcountofIPID = 0;
-	private long lastPingTime = System.currentTimeMillis();
-	final boolean dontping;
+    private static final long serialVersionUID = -4335536047242439700L;
+    private final byte[] oid;
+    private int refcountofIPID = 0;
+    private long lastPingTime = System.currentTimeMillis();
+    final boolean dontping;
 
-	int getIPIDRefCount()
-	{
-		return refcountofIPID;
-	}
+    int getIPIDRefCount() {
+        return refcountofIPID;
+    }
 
-	boolean hasExpired()
-	{
-		//8 minutes interval...giving COM Client some grace period.
-		if ((System.currentTimeMillis() - lastPingTime) > 8*60*1000)
-		{
-			return true;
-		}
-		else
-		{
+    boolean hasExpired() {
+        //8 minutes interval...giving COM Client some grace period.
+        if ((System.currentTimeMillis() - lastPingTime) > 8 * 60 * 1000) {
+            return true;
+        } else {
 //			lastPingTime = System.currentTimeMillis();
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 
-	void updateLastPingTime()
-	{
-		lastPingTime = System.currentTimeMillis();
-	}
+    void updateLastPingTime() {
+        lastPingTime = System.currentTimeMillis();
+    }
 
-	void setIPIDRefCountTo0()
-	{
-		refcountofIPID = 0;
-	}
+    void setIPIDRefCountTo0() {
+        refcountofIPID = 0;
+    }
 
-	void decrementIPIDRefCountBy1()
-	{
-		refcountofIPID--;
-	}
+    void decrementIPIDRefCountBy1() {
+        refcountofIPID--;
+    }
 
-	void incrementIPIDRefCountBy1()
-	{
-		refcountofIPID++;
-	}
+    void incrementIPIDRefCountBy1() {
+        refcountofIPID++;
+    }
 
-	JIObjectId(byte[] oid, boolean dontping)
-	{
-		this.oid = oid;
-		this.dontping = dontping;
-		if (dontping)
-		{
-			if (JISystem.getLogger().isLoggable(Level.INFO))
-            {
-				JISystem.getLogger().info("DONT PING is true for OID: " + toString());
+    JIObjectId(byte[] oid, boolean dontping) {
+        this.oid = oid;
+        this.dontping = dontping;
+        if (dontping) {
+            if (JISystem.getLogger().isLoggable(Level.INFO)) {
+                JISystem.getLogger().info("DONT PING is true for OID: " + toString());
             }
-		}
-	}
+        }
+    }
 
-	byte[] getOID()
-	{
-		return oid;
-	}
+    byte[] getOID() {
+        return oid;
+    }
 
-	public int hashCode()
-	{
+    public int hashCode() {
         int result = 1;
         //from SUN
-        for (int i = 0;i< oid.length;i++)
-        {
+        for (int i = 0; i < oid.length; i++) {
             result = 31 * result + oid[i];
         }
         return result;
 
-		//return Arrays.hashCode(oid);
-	}
+        //return Arrays.hashCode(oid);
+    }
 
-	public boolean equals(Object obj)
-	{
-		 if (!(obj instanceof JIObjectId)) {
-			 return false;
-		 }
+    public boolean equals(Object obj) {
+        if (!(obj instanceof JIObjectId)) {
+            return false;
+        }
 
-		 return Arrays.equals(oid,((JIObjectId)obj).getOID());
-	}
+        return Arrays.equals(oid, ((JIObjectId) obj).getOID());
+    }
 
-	public String toString()
-    {
+    public String toString() {
         return "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + Hexdump.toHexString(oid) + " , hasExpired " + hasExpired() + " } ";
-	}
+    }
 
 //	void addIpid(String IPID)
 //	{

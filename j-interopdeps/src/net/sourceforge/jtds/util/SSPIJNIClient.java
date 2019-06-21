@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 /**
  * COPIED FROM jtds PROJECT FOR SSO CAPABILITIES.
- * 
+ *
  * A JNI client to SSPI based CPP program (DLL) that returns the user
  * credentials for NTLM authentication.
  * <p/>
@@ -31,60 +31,66 @@ import java.util.logging.Logger;
  * @author Magendran Sathaiah (mahi@aztec.soft.net)
  */
 public class SSPIJNIClient {
-    /** Singleton instance. */
+
+    /**
+     * Singleton instance.
+     */
     private static SSPIJNIClient thisInstance;
 
-    /** SSPI native library loaded flag. */
+    /**
+     * SSPI native library loaded flag.
+     */
     private static boolean libraryLoaded;
 
-    /** SSPI client initialized flag. */
+    /**
+     * SSPI client initialized flag.
+     */
     private boolean initialized;
 
-    /** Initializes the SSPI client. */
+    /**
+     * Initializes the SSPI client.
+     */
     private native void initialize();
 
-    /** Uninitializes the SSPI client. */
+    /**
+     * Uninitializes the SSPI client.
+     */
     private native void unInitialize();
 
     /**
-     * Prepares the NTLM TYPE-1 message and returns it as a
-     * <code>byte[]</code>.
+     * Prepares the NTLM TYPE-1 message and returns it as a <code>byte[]</code>.
      */
     private native byte[] prepareSSORequest();
 
     /**
      * Prepares the NTLM TYPE-3 message using the current user's credentials.
      * <p>
-     * It needs the challenge BLOB and it's size as input. The challenge BLOB
-     * is nothig but the TYPE-2 message that is received from the SQL Server.
+     * It needs the challenge BLOB and it's size as input. The challenge BLOB is
+     * nothig but the TYPE-2 message that is received from the SQL Server.
      *
-     * @param buf  challenge BLOB
+     * @param buf challenge BLOB
      * @param size challenge BLOB size
      * @return NTLM TYPE-3 message
      */
     private native byte[] prepareSSOSubmit(byte[] buf, long size);
-
 
     /**
      * Private constructor for singleton.
      */
     private SSPIJNIClient() {
         try {
-        	if (System.getProperty("os.name").toLowerCase().startsWith("windows"))
-    		{
-        		System.loadLibrary("ntlmauth");
-        		SSPIJNIClient.libraryLoaded = true;
-    		}
-    		else
-    		{
-    			throw new IllegalArgumentException("This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
-    		}
+            if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                System.loadLibrary("ntlmauth");
+                SSPIJNIClient.libraryLoaded = true;
+            } else {
+                throw new IllegalArgumentException("This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
+            }
         } catch (UnsatisfiedLinkError err) {
-        	Logger.getLogger("org.jinterop").severe("Unable to load library: " + err);
-        	throw new IllegalStateException("Native SSPI library not loaded. "
-                  + "Check the java.library.path system property."
-                  + "This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
-            
+            Logger.getLogger("org.jinterop").severe("Unable to load library: " + err);
+            throw new IllegalStateException("Native SSPI library not loaded. "
+                    + "Check the java.library.path system property."
+                    + "This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
+
         }
     }
 
@@ -108,7 +114,8 @@ public class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#initialize()</code> if the SSPI client is not already inited.
+     * Calls <code>#initialize()</code> if the SSPI client is not already
+     * inited.
      */
     public void invokeInitialize() {
         if (!initialized) {
@@ -128,10 +135,11 @@ public class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#prepareSSORequest()</code> to prepare the NTLM TYPE-1 message.
+     * Calls <code>#prepareSSORequest()</code> to prepare the NTLM TYPE-1
+     * message.
      *
      * @throws Exception if an error occurs during the call or the SSPI client
-     *                   is uninitialized
+     * is uninitialized
      */
     public byte[] invokePrepareSSORequest() {
         if (!initialized) {
@@ -141,11 +149,11 @@ public class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#prepareSSOSubmit(byte[], long)</code> to prepare the NTLM TYPE-3
-     * message.
+     * Calls <code>#prepareSSOSubmit(byte[], long)</code> to prepare the NTLM
+     * TYPE-3 message.
      *
      * @throws Exception if an error occurs during the call or the SSPI client
-     *                   is uninitialized
+     * is uninitialized
      */
     public byte[] invokePrepareSSOSubmit(byte[] buf) {
         if (!initialized) {

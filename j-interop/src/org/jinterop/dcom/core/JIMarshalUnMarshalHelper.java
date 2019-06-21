@@ -846,19 +846,18 @@ final class JIMarshalUnMarshalHelper {
             }
         }
 
-        /** FROM JACAOB 1.10. www.danadler.com.
-         * Convert a COM time from functions Date(), Time(), Now() to a
-         * Java time (milliseconds). Visual Basic time values are based to
-         * 30.12.1899, Java time values are based to 1.1.1970 (= 0
-         * milliseconds). The difference is added to the Visual Basic value to
-         * get the corresponding Java value. The Visual Basic double value
-         * reads: <day count delta since 30.12.1899>.<1 day percentage
+        /**
+         * FROM JACAOB 1.10. www.danadler.com. Convert a COM time from functions
+         * Date(), Time(), Now() to a Java time (milliseconds). Visual Basic
+         * time values are based to 30.12.1899, Java time values are based to
+         * 1.1.1970 (= 0 milliseconds). The difference is added to the Visual
+         * Basic value to get the corresponding Java value. The Visual Basic
+         * double value reads: <day count delta since 30.12.1899>.<1 day percentage
          * fraction>, e.g. "38100.6453" means: 38100 days since 30.12.1899 plus
          * (24 hours * 0.6453). Example usage:
          * <code>Date javaDate = new Date(toMilliseconds (vbDate));</code>.
          *
-         * @param comTime
-         * COM time.
+         * @param comTime COM time.
          * @return Java time.
          */
         private long convertWindowsTimeToMilliseconds(double comTime) {
@@ -875,11 +874,11 @@ final class JIMarshalUnMarshalHelper {
             return result;
         }// convertWindowsTimeToMilliseconds()
 
-        /** FROM JACAOB 1.10. www.danadler.com.
-         * Convert a Java time to a COM time.
+        /**
+         * FROM JACAOB 1.10. www.danadler.com. Convert a Java time to a COM
+         * time.
          *
-         * @param milliseconds
-         * Java time.
+         * @param milliseconds Java time.
          * @return COM time.
          */
         private double convertMillisecondsToWindowsTime(long milliseconds) {

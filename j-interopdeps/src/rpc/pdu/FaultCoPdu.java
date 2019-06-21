@@ -14,16 +14,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
 import rpc.ConnectionOrientedPdu;
@@ -116,32 +112,34 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
     }
 
     protected void readStub(NetworkDataRepresentation ndr) {
-		NdrBuffer buf = ndr.getBuffer();
-		buf.align(8);
+        NdrBuffer buf = ndr.getBuffer();
+        buf.align(8);
         byte[] stub = null;
         int length = getFragmentLength() - buf.getIndex();
         if (length > 0) {
             stub = new byte[length];
-			ndr.readOctetArray(stub, 0, length);
+            ndr.readOctetArray(stub, 0, length);
         }
         setStub(stub);
     }
 
     protected void writeStub(NetworkDataRepresentation ndr) {
-		NdrBuffer buf = ndr.getBuffer();
-		buf.align(8, (byte) 0);
+        NdrBuffer buf = ndr.getBuffer();
+        buf.align(8, (byte) 0);
         byte[] stub = getStub();
-		if (stub != null) ndr.writeOctetArray(stub, 0, stub.length);
+        if (stub != null) {
+            ndr.writeOctetArray(stub, 0, stub.length);
+        }
     }
 
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
-            return Arrays.asList(new FaultCoPdu[] { this }).iterator();
+            return Arrays.asList(new FaultCoPdu[]{this}).iterator();
         }
         int stubSize = size - 24;
         if (stub.length <= stubSize) {
-            return Arrays.asList(new FaultCoPdu[] { this }).iterator();
+            return Arrays.asList(new FaultCoPdu[]{this}).iterator();
         }
         return new FragmentIterator(stubSize);
     }
@@ -153,7 +151,9 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         try {
             FaultCoPdu pdu = (FaultCoPdu) fragments.next();
             byte[] stub = pdu.getStub();
-            if (stub == null) stub = new byte[0];
+            if (stub == null) {
+                stub = new byte[0];
+            }
             while (fragments.hasNext()) {
                 FaultCoPdu fragment = (FaultCoPdu) fragments.next();
                 byte[] fragmentStub = fragment.getStub();
@@ -204,18 +204,26 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         }
 
         public Object next() {
-            if (index >= stub.length) throw new NoSuchElementException();
+            if (index >= stub.length) {
+                throw new NoSuchElementException();
+            }
             FaultCoPdu fragment = (FaultCoPdu) FaultCoPdu.this.clone();
             int allocation = stub.length - index;
             fragment.setAllocationHint(allocation);
-            if (stubSize < allocation) allocation = stubSize;
+            if (stubSize < allocation) {
+                allocation = stubSize;
+            }
             byte[] fragmentStub = new byte[allocation];
             System.arraycopy(stub, index, fragmentStub, 0, allocation);
             fragment.setStub(fragmentStub);
             int flags = getFlags() & ~(PFC_FIRST_FRAG | PFC_LAST_FRAG);
-            if (index == 0) flags |= PFC_FIRST_FRAG;
+            if (index == 0) {
+                flags |= PFC_FIRST_FRAG;
+            }
             index += allocation;
-            if (index >= stub.length) flags |= PFC_LAST_FRAG;
+            if (index >= stub.length) {
+                flags |= PFC_LAST_FRAG;
+            }
             fragment.setFlags(flags);
             return fragment;
         }

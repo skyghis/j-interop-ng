@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,18 +14,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.winreg;
 
 import java.net.UnknownHostException;
-
 import org.jinterop.dcom.common.IJIAuthInfo;
 import org.jinterop.winreg.smb.JIWinRegStub;
 
-
-
-/** Factory to get an implementation of <code>IJIWinReg</code>.
- * <p>This interface uses "Windows Remote Registry" and "Server" services and these must be running on target workstation.
+/**
+ * Factory to get an implementation of <code>IJIWinReg</code>.
+ * <p>
+ * This interface uses "Windows Remote Registry" and "Server" services and these
+ * must be running on target workstation.
  *
  * @since 1.0
  *
@@ -34,64 +33,62 @@ import org.jinterop.winreg.smb.JIWinRegStub;
 //factory provides either the smb impl of ijiwinreg or the tcp/ip one.
 public class JIWinRegFactory {
 
-	private JIWinRegFactory() {};
+    private JIWinRegFactory() {
+    }
+    ;
 
 	private static JIWinRegFactory factory = null;
 
-	/** Instantiates the Factory.
-	 *
-	 * @return
-	 */
-	public static JIWinRegFactory getSingleTon()
-	{
-		if (factory == null)
-		{
-			synchronized (JIWinRegFactory.class) {
-				if (factory == null)
-				{
-					factory = new JIWinRegFactory();
-				}
-			}
-		}
+    /**
+     * Instantiates the Factory.
+     *
+     * @return
+     */
+    public static JIWinRegFactory getSingleTon() {
+        if (factory == null) {
+            synchronized (JIWinRegFactory.class) {
+                if (factory == null) {
+                    factory = new JIWinRegFactory();
+                }
+            }
+        }
 
-		return factory;
-	}
+        return factory;
+    }
 
-	/** Gets an Implementation of WinReg interface, currently only SMB transport is supported.
-	 *
-	 * @param authInfo credentials for access to Windows Remote Registry service
-	 * @param serverName target server
-	 * @param smbTransport true if SMB transport is required , false will return null.
-	 * @return
-	 * @throws UnknownHostException
-	 */
-	public IJIWinReg getWinreg(IJIAuthInfo authInfo,String serverName, boolean smbTransport) throws UnknownHostException
-	{
-		if (smbTransport)
-		{
-			return new JIWinRegStub(authInfo,serverName);
-		}
-		else
-		{
-			return null;
-		}
-	}
+    /**
+     * Gets an Implementation of WinReg interface, currently only SMB transport
+     * is supported.
+     *
+     * @param authInfo credentials for access to Windows Remote Registry service
+     * @param serverName target server
+     * @param smbTransport true if SMB transport is required , false will return
+     * null.
+     * @return
+     * @throws UnknownHostException
+     */
+    public IJIWinReg getWinreg(IJIAuthInfo authInfo, String serverName, boolean smbTransport) throws UnknownHostException {
+        if (smbTransport) {
+            return new JIWinRegStub(authInfo, serverName);
+        } else {
+            return null;
+        }
+    }
 
-	/** Gets an Implementation of WinReg interface, currently only SMB transport is supported.
-	 *
-	 * @param smbTransport true if SMB transport is required , false will return null.
-	 * @return
-	 * @throws UnknownHostException
-	 */
-	public IJIWinReg getWinreg(String serverName, boolean smbTransport) throws UnknownHostException
-	{
-		if (smbTransport)
-		{
-			return new JIWinRegStub(serverName);
-		}
-		else
-		{
-			return null;
-		}
-	}
+    /**
+     * Gets an Implementation of WinReg interface, currently only SMB transport
+     * is supported.
+     *
+     * @param smbTransport true if SMB transport is required , false will return
+     * null.
+     * @return
+     * @throws UnknownHostException
+     */
+    public IJIWinReg getWinreg(String serverName, boolean smbTransport) throws UnknownHostException {
+        if (smbTransport) {
+            return new JIWinRegStub(serverName);
+        } else {
+            return null;
+        }
+    }
 }

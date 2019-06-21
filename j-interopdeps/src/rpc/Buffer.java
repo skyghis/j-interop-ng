@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 public class Buffer {
@@ -74,7 +73,9 @@ public class Buffer {
 
     public void setLength(int length) {
         this.length = length;
-        if (length > buffer.length) grow(length);
+        if (length > buffer.length) {
+            grow(length);
+        }
     }
 
     public byte[] copy() {
@@ -97,35 +98,51 @@ public class Buffer {
             return index;
         } finally {
             index += advance;
-            if (index > length) length = index;
-            if (length > buffer.length) grow(length);
+            if (index > length) {
+                length = index;
+            }
+            if (length > buffer.length) {
+                grow(length);
+            }
         }
     }
 
     public void setIndex(int index) {
         this.index = index;
-        if (index > length) length = index;
-        if (length > buffer.length) grow(length);
+        if (index > length) {
+            length = index;
+        }
+        if (length > buffer.length) {
+            grow(length);
+        }
     }
 
     public int align(int boundary) {
         int align = index % boundary;
-        if (align == 0) return 0;
+        if (align == 0) {
+            return 0;
+        }
         advance(align = boundary - align);
         return align;
     }
 
     public int align(int boundary, byte value) {
         int align = index % boundary;
-        if (align == 0) return 0;
+        if (align == 0) {
+            return 0;
+        }
         advance(align = boundary - align, value);
         return align;
     }
 
     public int advance(int step) {
         index += step;
-        if (index > length) length = index;
-        if (length > buffer.length) grow(length);
+        if (index > length) {
+            length = index;
+        }
+        if (length > buffer.length) {
+            grow(length);
+        }
         return index;
     }
 
@@ -133,15 +150,23 @@ public class Buffer {
         for (int finish = index + step; index < finish; index++) {
             buffer[index] = value;
         }
-        if (index > length) length = index;
-        if (length > buffer.length) grow(length);
+        if (index > length) {
+            length = index;
+        }
+        if (length > buffer.length) {
+            grow(length);
+        }
         return index;
     }
 
     private void grow(int length) {
-        if (capacityIncrement <= 0) throw new IndexOutOfBoundsException();
+        if (capacityIncrement <= 0) {
+            throw new IndexOutOfBoundsException();
+        }
         int newLength = buffer.length;
-        while (newLength < length) newLength += capacityIncrement;
+        while (newLength < length) {
+            newLength += capacityIncrement;
+        }
         byte[] newBuffer = new byte[newLength];
         System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
         buffer = newBuffer;

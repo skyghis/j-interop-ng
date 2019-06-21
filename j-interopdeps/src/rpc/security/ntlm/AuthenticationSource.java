@@ -14,16 +14,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.security.ntlm;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import jcifs.ntlmssp.Type1Message;
 import jcifs.ntlmssp.Type2Message;
 import jcifs.ntlmssp.Type3Message;
@@ -33,12 +29,16 @@ public abstract class AuthenticationSource {
     private static final AuthenticationSource INSTANCE;
 
     static {
-        String service = "META-INF/services/" +
-                AuthenticationSource.class.getName();
+        String service = "META-INF/services/"
+                + AuthenticationSource.class.getName();
         URL location = null;
         ClassLoader loader = AuthenticationSource.class.getClassLoader();
-        if (loader != null) location = loader.getResource(service);
-        if (location == null) location = ClassLoader.getSystemResource(service);
+        if (loader != null) {
+            location = loader.getResource(service);
+        }
+        if (location == null) {
+            location = ClassLoader.getSystemResource(service);
+        }
         AuthenticationSource instance = null;
         if (location != null) {
             try {
@@ -46,8 +46,7 @@ public abstract class AuthenticationSource {
                 properties.load(location.openStream());
                 Enumeration classNames = properties.propertyNames();
                 if (classNames.hasMoreElements()) {
-                    Class sourceClass = Class.forName((String)
-                            classNames.nextElement());
+                    Class sourceClass = Class.forName((String) classNames.nextElement());
                     instance = (AuthenticationSource) sourceClass.newInstance();
                 }
             } catch (Exception ex) {

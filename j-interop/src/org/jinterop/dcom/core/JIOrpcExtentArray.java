@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,11 +14,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
-
 
 /**
  *
@@ -27,35 +25,30 @@ import java.io.Serializable;
  */
 final class JIOrpcExtentArray implements Serializable {
 
-	private static final long serialVersionUID = -3594184670915738836L;
-	private String uuid = null;
-	private int size = -1;
-	private Byte[] data = null;
+    private static final long serialVersionUID = -3594184670915738836L;
+    private String uuid = null;
+    private int size = -1;
+    private Byte[] data = null;
 
-	JIOrpcExtentArray(String guid,int size,Byte[] data)
-	{
-		uuid = guid;
-		this.size = size;
-		this.data = data;
-	}
+    JIOrpcExtentArray(String guid, int size, Byte[] data) {
+        uuid = guid;
+        this.size = size;
+        this.data = data;
+    }
 
-	public String getGUID()
-	{
-		return uuid;
-	}
+    public String getGUID() {
+        return uuid;
+    }
 
-	public int getSizeOfData()
-	{
-		return size;
-	}
+    public int getSizeOfData() {
+        return size;
+    }
 
-	public byte[] getData()
-	{
-		byte[] newData = new byte[data.length];
-		for (int i = 0;i < data.length;i++)
-		{
-			newData[i] = data[i].byteValue();
-		}
-		return newData;
-	}
+    public byte[] getData() {
+        byte[] newData = new byte[data.length];
+        for (int i = 0; i < data.length; i++) {
+            newData[i] = data[i].byteValue();
+        }
+        return newData;
+    }
 }

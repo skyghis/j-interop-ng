@@ -14,14 +14,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc;
 
 import java.io.IOException;
 import java.util.Properties;
-
 import ndr.NdrObject;
 import rpc.core.PresentationSyntax;
 import rpc.core.UUID;
@@ -43,14 +39,15 @@ public abstract class Stub {
     }
 
     public void setAddress(String address) {
-        if ((address == null) ? this.address == null :
-                address.equals(this.address)) {
+        if ((address == null) ? this.address == null
+                : address.equals(this.address)) {
             return;
         }
         this.address = address;
         try {
             detach();
-        } catch (IOException ex) { }
+        } catch (IOException ex) {
+        }
     }
 
     public String getObject() {
@@ -64,7 +61,7 @@ public abstract class Stub {
     public TransportFactory getTransportFactory() {
 //        return (transportFactory != null) ? transportFactory :
 //                (transportFactory = TransportFactory.getInstance());
-    	return transportFactory; //Will never be null
+        return transportFactory; //Will never be null
     }
 
     public void setTransportFactory(TransportFactory transportFactory) {
@@ -89,7 +86,9 @@ public abstract class Stub {
 
     protected void detach() throws IOException {
         Endpoint endpoint = getEndpoint();
-        if (endpoint == null) return;
+        if (endpoint == null) {
+            return;
+        }
         try {
             endpoint.detach();
         } finally {
@@ -99,9 +98,13 @@ public abstract class Stub {
 
     protected void attach() throws IOException {
         Endpoint endpoint = getEndpoint();
-        if (endpoint != null) return;
+        if (endpoint != null) {
+            return;
+        }
         String address = getAddress();
-        if (address == null) throw new RpcException("No address specified.");
+        if (address == null) {
+            throw new RpcException("No address specified.");
+        }
         setEndpoint(getTransportFactory().createTransport(address,
                 getProperties()).attach(new PresentationSyntax(getSyntax())));
     }

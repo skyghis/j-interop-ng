@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc;
 
 import java.io.File;
@@ -27,9 +24,7 @@ import java.util.Properties;
 public abstract class TransportFactory {
 
 //    private static final TransportFactory META_FACTORY;
-
 //    private static final List FACTORIES;
-
     private static Properties defaultProperties;
 
 //    static {
@@ -73,7 +68,6 @@ public abstract class TransportFactory {
 //    public static TransportFactory getInstance() {
 //        return META_FACTORY;
 //    }
-
     public static Properties getDefaultProperties() {
         synchronized (TransportFactory.class) {
             if (defaultProperties == null) {
@@ -81,19 +75,20 @@ public abstract class TransportFactory {
                 String defaults = null;
                 try {
                     defaults = System.getProperty("rpc.properties");
-                } catch (Exception ex) { }
+                } catch (Exception ex) {
+                }
                 if (defaults != null) {
                     URL url = null;
                     try {
                         url = new URL(new File(".").toURI().toURL(), defaults);
                         properties.load(url.openStream());
                     } catch (MalformedURLException ex) {
-                        throw new IllegalArgumentException("Bad location " +
-                                defaults + ": " + ex.getMessage());
+                        throw new IllegalArgumentException("Bad location "
+                                + defaults + ": " + ex.getMessage());
                     } catch (Exception ex) {
-                        throw new IllegalArgumentException("Unable to load " +
-                                " RPC properties from " + url + ": " +
-                                        ex.getMessage());
+                        throw new IllegalArgumentException("Unable to load "
+                                + " RPC properties from " + url + ": "
+                                + ex.getMessage());
                     }
                 } else {
                     try {
@@ -105,7 +100,8 @@ public abstract class TransportFactory {
                             properties.load(
                                     ClassLoader.getSystemResourceAsStream(
                                             "/rpc.properties"));
-                        } catch (Exception ignore) { }
+                        } catch (Exception ignore) {
+                        }
                     }
                 }
                 defaultProperties = properties;
@@ -114,11 +110,10 @@ public abstract class TransportFactory {
         Properties properties = new Properties(defaultProperties);
         try {
             properties.putAll(System.getProperties());
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+        }
         return properties;
     }
-
-
 
     public abstract Transport createTransport(String address,
             Properties properties) throws ProviderException;
@@ -147,5 +142,4 @@ public abstract class TransportFactory {
 //        }
 //
 //    }
-
 }

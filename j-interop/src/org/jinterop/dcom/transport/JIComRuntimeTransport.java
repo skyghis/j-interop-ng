@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -21,28 +21,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
-
 import ndr.NdrBuffer;
-
 import org.jinterop.dcom.common.JISystem;
-
 import rpc.Endpoint;
 import rpc.ProviderException;
 import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
+
 /**
- * @exclude
- * @since 1.0
+ * @exclude @since 1.0
  *
  */
 final class JIComRuntimeTransport implements Transport {
 
-
-	public static final String PROTOCOL = "ncacn_ip_tcp";
+    public static final String PROTOCOL = "ncacn_ip_tcp";
 
     private Properties properties;
-
 
     private Socket socket;
 
@@ -51,7 +46,6 @@ final class JIComRuntimeTransport implements Transport {
     private InputStream input;
 
     private boolean attached;
-
 
     public JIComRuntimeTransport(String address, Properties properties)
             throws ProviderException {
@@ -68,11 +62,13 @@ final class JIComRuntimeTransport implements Transport {
     }
 
     public Endpoint attach(PresentationSyntax syntax) throws IOException {
-        if (attached) throw new RpcException("Transport already attached.");
+        if (attached) {
+            throw new RpcException("Transport already attached.");
+        }
 
         Endpoint endPoint = null;
         try {
-            socket = (Socket)JISystem.internal_getSocket();
+            socket = (Socket) JISystem.internal_getSocket();
             output = null;
             input = null;
             attached = true;
@@ -80,14 +76,17 @@ final class JIComRuntimeTransport implements Transport {
         } catch (Exception ex) {
             try {
                 close();
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) {
+            }
         }
         return endPoint;
     }
 
     public void close() throws IOException {
         try {
-            if (socket != null) socket.close();
+            if (socket != null) {
+                socket.close();
+            }
         } finally {
             attached = false;
             socket = null;
@@ -97,18 +96,25 @@ final class JIComRuntimeTransport implements Transport {
     }
 
     public void send(NdrBuffer buffer) throws IOException {
-        if (!attached) throw new RpcException("Transport not attached.");
-        if (output == null) output = socket.getOutputStream();
+        if (!attached) {
+            throw new RpcException("Transport not attached.");
+        }
+        if (output == null) {
+            output = socket.getOutputStream();
+        }
         output.write(buffer.getBuffer(), 0, buffer.getLength());
         output.flush();
     }
 
     public void receive(NdrBuffer buffer) throws IOException {
-        if (!attached) throw new RpcException("Transport not attached.");
-        if (input == null) input = socket.getInputStream();
+        if (!attached) {
+            throw new RpcException("Transport not attached.");
+        }
+        if (input == null) {
+            input = socket.getInputStream();
+        }
         buffer.length = (input.read(buffer.getBuffer(), 0,
                 buffer.getCapacity()));
     }
-
 
 }

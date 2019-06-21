@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 import ndr.Format;
@@ -44,14 +43,14 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
     public static final int PFC_PENDING_CANCEL = 0x04;
 
     /**
-     * Flag indicating support for concurrent multiplexing of a
-     * single connection.
+     * Flag indicating support for concurrent multiplexing of a single
+     * connection.
      */
     public static final int PFC_CONC_MPX = 0x10;
 
     /**
-     * Flag for fault PDUs; if set, indicates that the call definitely
-     * did not execute.
+     * Flag for fault PDUs; if set, indicates that the call definitely did not
+     * execute.
      */
     public static final int PFC_DID_NOT_EXECUTE = 0x20;
 
@@ -62,9 +61,8 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
     public static final int PFC_MAYBE = 0x40;
 
     /**
-     * Flag indicating a valid object UUID was specified and is present
-     * in the optional object field.  If not set, the object field is
-     * omitted.
+     * Flag indicating a valid object UUID was specified and is present in the
+     * optional object field. If not set, the object field is omitted.
      */
     public static final int PFC_OBJECT_UUID = 0x80;
 
@@ -135,8 +133,8 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
     }
 
     public void setFlag(int flag, boolean value) {
-        setFlags(value ? (getFlags() | flag) :
-                (getFlags() & ~flag));
+        setFlags(value ? (getFlags() | flag)
+                : (getFlags() & ~flag));
     }
 
     public int getCallId() {
@@ -144,7 +142,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
     }
 
     public void setCallId(int callId) {
-    	useCallIdCounter = false;
+        useCallIdCounter = false;
         this.callId = callId;
     }
 
@@ -223,9 +221,11 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
         ndr.writeUnsignedLong(useCallIdCounter ? callIdCounter++ : callId);
     }
 
-    protected void readBody(NetworkDataRepresentation ndr) { }
+    protected void readBody(NetworkDataRepresentation ndr) {
+    }
 
-    protected void writeBody(NetworkDataRepresentation ndr) { }
+    protected void writeBody(NetworkDataRepresentation ndr) {
+    }
 
     public abstract int getType();
 

@@ -14,21 +14,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 import java.io.IOException;
 import java.util.Properties;
-
 import rpc.core.PresentationContext;
 
 public interface ConnectionContext {
 
-    public static final String MAX_TRANSMIT_FRAGMENT =
-            "rpc.connectionContext.maxTransmitFragment";
+    public static final String MAX_TRANSMIT_FRAGMENT
+            = "rpc.connectionContext.maxTransmitFragment";
 
-    public static final String MAX_RECEIVE_FRAGMENT =
-            "rpc.connectionContext.maxReceiveFragment";
+    public static final String MAX_RECEIVE_FRAGMENT
+            = "rpc.connectionContext.maxReceiveFragment";
 
     public static final int DEFAULT_MAX_TRANSMIT_FRAGMENT = 4280;
 

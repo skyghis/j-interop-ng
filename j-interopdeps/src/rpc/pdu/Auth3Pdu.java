@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import ndr.NetworkDataRepresentation;
@@ -26,16 +23,16 @@ public class Auth3Pdu extends ConnectionOrientedPdu {
 
     public static final int AUTH3_TYPE = 0x10;
 
-    public Auth3Pdu()
-    {
-    	//Really useless value
-    	setCallId(0);
+    public Auth3Pdu() {
+        //Really useless value
+        setCallId(0);
     }
+
     public int getType() {
         return AUTH3_TYPE;
     }
 
     protected void writeBody(NetworkDataRepresentation ndr) {
-    	ndr.writeUnsignedLong(0);
+        ndr.writeUnsignedLong(0);
     }
 }

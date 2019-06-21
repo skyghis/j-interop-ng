@@ -1,207 +1,207 @@
 <HTML>
-<HEAD>
-<TITLE>j-Interop: Pure Java implementation of DCOM protocol </TITLE>
-</HEAD>
-<BODY>
-<CENTER><H1>j-Interop </H1><H3>(Release 2.01 (RC 6), 13th Jul 2008)</H3></CENTER>
-<HR ALIGN=LEFT >
-<br>
-Implementation of DCOM wire protocol (MSRPC) to enable development of <U><b>Bi-Directional, Pure and Non-Native</b></u> Java applications which
-can interoperate with any COM component . The implementation is not dependent on JNI for COM interoperability. It also allows for complete Windows Registry
-manipulation operations (create,read,update,delete) using the WinReg interface.More information about j-Interop is available <A href=http://www.j-interop.org>here</A>.
+    <HEAD>
+        <TITLE>j-Interop: Pure Java implementation of DCOM protocol </TITLE>
+    </HEAD>
+    <BODY>
+    <CENTER><H1>j-Interop </H1><H3>(Release 2.01 (RC 6), 13th Jul 2008)</H3></CENTER>
+    <HR ALIGN=LEFT >
+    <br>
+    Implementation of DCOM wire protocol (MSRPC) to enable development of <U><b>Bi-Directional, Pure and Non-Native</b></u> Java applications which
+    can interoperate with any COM component . The implementation is not dependent on JNI for COM interoperability. It also allows for complete Windows Registry
+    manipulation operations (create,read,update,delete) using the WinReg interface.More information about j-Interop is available <A href=http://www.j-interop.org>here</A>.
 
 
-<p>
-<h3><U>Contents</U></h3><br>
-<OL type="1">
-<LI><A href=#GS>Getting Started</A>
-<LI><A href=#faq>Frequently Asked Questions</a>
-<LI><A href=#tpd>Third Party Dependencies</A>
-<LI><A href=#inst>Installation</A>
-<LI><A href=#examples>Examples</A>
-<LI><A href=#license>License</A>
-<LI><A href=#tpl>Third Party Licenses</A>
-<LI><A href=#support>Support</A>
-<LI><A href=#ack>Acknowledgements</A>
-</OL>
-<HR><br>
+    <p>
+    <h3><U>Contents</U></h3><br>
+    <OL type="1">
+        <LI><A href=#GS>Getting Started</A>
+        <LI><A href=#faq>Frequently Asked Questions</a>
+        <LI><A href=#tpd>Third Party Dependencies</A>
+        <LI><A href=#inst>Installation</A>
+        <LI><A href=#examples>Examples</A>
+        <LI><A href=#license>License</A>
+        <LI><A href=#tpl>Third Party Licenses</A>
+        <LI><A href=#support>Support</A>
+        <LI><A href=#ack>Acknowledgements</A>
+    </OL>
+    <HR><br>
 
-<A Name="GS"><h4><U>Getting Started</U></h4></A>
+    <A Name="GS"><h4><U>Getting Started</U></h4></A>
 
-First, please follow the <A href=#inst>installation</A> instructions. Once done, the best way to get started is by looking at the <A href=#examples>examples</A>. You may want to skip the <A href=#faq>FAQs</A> with [<b>Advance</b>] tag for the time
-being. You can get back to them once you are a bit comfortable with j-Interop.<p>
-Please also have a look at the <A href=#su>sample usage</A> section.<p>If the COM server you are trying to access has a Windows COM client
-(executed from a Remote machine), then it is probably already configured for DCOM access. If it is not so, please read
-<A href=#a5>FAQ (A5)</A>. If the COM server you are using is a DLL\OCX (In-Proc), you may want to have a look at <A href=#a6>FAQ (A6)</a>.
-<p>
-Some important things, <b>before you start</b>:
-<UL><LI>Please make sure that the <U>Server Service</U> and <U>Remote Registry Service</U> are running on the Workstation where the COM server resides. Read <A href=#a12>FAQ (A12)</A> for more details.
-<p><LI>To avoid getting <B>ACCESS DENIED</B> exceptions by COM server, it is best to create a session
-(see <A href=#su>sample usage</A> on how to create one) under the identity of currently logged in user. <br>For e.g. if you are logged into
- your local machine under username "administrator", the session should be created as:- <br><br>
-<code>
-	JISession session = JISession.createSession("localhost","administrator","PASSWORD"); <br><br>
-</code>
+    First, please follow the <A href=#inst>installation</A> instructions. Once done, the best way to get started is by looking at the <A href=#examples>examples</A>. You may want to skip the <A href=#faq>FAQs</A> with [<b>Advance</b>] tag for the time
+    being. You can get back to them once you are a bit comfortable with j-Interop.<p>
+        Please also have a look at the <A href=#su>sample usage</A> section.<p>If the COM server you are trying to access has a Windows COM client
+        (executed from a Remote machine), then it is probably already configured for DCOM access. If it is not so, please read
+        <A href=#a5>FAQ (A5)</A>. If the COM server you are using is a DLL\OCX (In-Proc), you may want to have a look at <A href=#a6>FAQ (A6)</a>.
+    <p>
+        Some important things, <b>before you start</b>:
+    <UL><LI>Please make sure that the <U>Server Service</U> and <U>Remote Registry Service</U> are running on the Workstation where the COM server resides. Read <A href=#a12>FAQ (A12)</A> for more details.
+            <p><LI>To avoid getting <B>ACCESS DENIED</B> exceptions by COM server, it is best to create a session
+            (see <A href=#su>sample usage</A> on how to create one) under the identity of currently logged in user. <br>For e.g. if you are logged into
+            your local machine under username "administrator", the session should be created as:- <br><br>
+            <code>
+                JISession session = JISession.createSession("localhost","administrator","PASSWORD"); <br><br>
+            </code>
 
-For a Domain like "MYDOMAIN", it can be likewise:- <br><br>
+            For a Domain like "MYDOMAIN", it can be likewise:- <br><br>
 
-<code>
-	JISession session = JISession.createSession("MYDOMAIN","DOMAINUSER","USERPASSWORD");
-</code>
-<p>
-Incase granting "administrators" permission is a concern, then :-
-<ul><li>You can create a local user under "Users" group.</li>
-<li>Then go to Control Panel > Administrative Tools > Local Security Policy > Security Settings > Local Policies > Security Options :-</li>
-<ul><li>Double-click "DCOM: Machine Access Restrictions" policy, click Edit Security, add the user created above, allow "Remote Access"</li>
-<li>Double-click "DCOM: Machine Launch Restrictions" policy, click Edit Security, add the user created above, allow "Local Launch", "Remote Launch", "Local Activation", "Remote Activation"</li>
-</ul>
-<li>Go to Control Panel > Administrative Tools > Component Services > Computers > right-click My Computer > click Properties > click COM Security tab :- </li>
-<ul><li>In Access Permissions section, click Edit Default > add the user created above, allow "Remote Access"</li>
-<li>In Launch and Activation Permissions section > click Edit Default > add the user created above, allow "Local Launch", "Remote Launch", "Local Activation", "Remote Activation"</li>
-</ul>
-(The Component Services section, to be more accurate, you can go to a specific component, and grant permission from there, instead of from "My Computer", which is a blanket grant)
-</ul>
-<p>
-<LI> Sometimes the Windows Firewall will act up if not configured properly, so please make sure that you have either configured it for DCOM protocol or turned it off. Please note that the firewall issue will prevent <u>all</u> DCOM Windows applications to fail as well.
-<p>
-<LI> Please make sure that your Windows machine (where COM server is hosted) is up to date with all the <u>Service packs</u> and <u>updates</u> from Microsoft. Many a times issues are due to improper machine configuration.
-<p>
-<LI> <a href="http://j-integra.intrinsyc.com/support/com/doc/remoteaccess.html">This</a> is a good article on how to configure DCOM using DCOMCnfg.  
+            <code>
+                JISession session = JISession.createSession("MYDOMAIN","DOMAINUSER","USERPASSWORD");
+            </code>
+            <p>
+                Incase granting "administrators" permission is a concern, then :-
+            <ul><li>You can create a local user under "Users" group.</li>
+                <li>Then go to Control Panel > Administrative Tools > Local Security Policy > Security Settings > Local Policies > Security Options :-</li>
+                <ul><li>Double-click "DCOM: Machine Access Restrictions" policy, click Edit Security, add the user created above, allow "Remote Access"</li>
+                    <li>Double-click "DCOM: Machine Launch Restrictions" policy, click Edit Security, add the user created above, allow "Local Launch", "Remote Launch", "Local Activation", "Remote Activation"</li>
+                </ul>
+                <li>Go to Control Panel > Administrative Tools > Component Services > Computers > right-click My Computer > click Properties > click COM Security tab :- </li>
+                <ul><li>In Access Permissions section, click Edit Default > add the user created above, allow "Remote Access"</li>
+                    <li>In Launch and Activation Permissions section > click Edit Default > add the user created above, allow "Local Launch", "Remote Launch", "Local Activation", "Remote Activation"</li>
+                </ul>
+                (The Component Services section, to be more accurate, you can go to a specific component, and grant permission from there, instead of from "My Computer", which is a blanket grant)
+            </ul>
+            <p>
+        <LI> Sometimes the Windows Firewall will act up if not configured properly, so please make sure that you have either configured it for DCOM protocol or turned it off. Please note that the firewall issue will prevent <u>all</u> DCOM Windows applications to fail as well.
+            <p>
+        <LI> Please make sure that your Windows machine (where COM server is hosted) is up to date with all the <u>Service packs</u> and <u>updates</u> from Microsoft. Many a times issues are due to improper machine configuration.
+            <p>
+        <LI> <a href="http://j-integra.intrinsyc.com/support/com/doc/remoteaccess.html">This</a> is a good article on how to configure DCOM using DCOMCnfg.
 
-</UL>
-<p>
-If you are not really familiar with DCOM, then <A href=http://www.winehq.com/site/docs/winedev-guide/dcom-1>this</a> article provides a good overview. The architecture document can be found <A href=http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dndcom/html/msdn_dcomarch.asp>here</A>.
-<hr>
-<A Name="faq"><h4><U>Frequently Asked Questions</U></h4></A>
-<OL type="1">
-<li><A href=#a1>What is the JRE version compatibility of j-Interop ?</A>
-<li><A href=#a2>How do I install it ?</A>
-<li><A href=#a3>What threading model do the COM servers adhere to while in use from j-Interop ?</A> <b>[Advance]</b>
-<li><A href=#a4>What threading model does j-Interop follow ? </a><b>[Advance]</b>
-<li><A href=#a5>How do I configure my COM server for DCOM access ? </a>
-<li><A href=#a6>My COM Server is a DLL\OCX (Inproc server), how do I make it work with j-Interop ?</a>
-<li><A href=#a7>Why could the library not do step 7 for me automatically?</a>
-<li><A href=#a8>What all COM Interfaces are directly supported ?</a>
-<li><A href=#a9>What data types are supported by j-Interop ?</a>
-<li><A href=#a10>COM to Java Data Type Mappings </a><b>[Advance]</b>
-<li><A href=#a11>Do I have to do any reference counting,memory management etc. ?</a>
-<li><A href=#a12>Any configuration to be done before using j-Interop ?</a>
-<li><A href=#a13>Is there any logging done ?</a>
-<li><A href=#a14>What type of License does it follow ?</a>
-</OL>
-<hr align=left>
-<A Name="faq"><h4><U>Answers</U></h4></A>
+    </UL>
+    <p>
+        If you are not really familiar with DCOM, then <A href=http://www.winehq.com/site/docs/winedev-guide/dcom-1>this</a> article provides a good overview. The architecture document can be found <A href=http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dndcom/html/msdn_dcomarch.asp>here</A>.
+    <hr>
+    <A Name="faq"><h4><U>Frequently Asked Questions</U></h4></A>
+    <OL type="1">
+        <li><A href=#a1>What is the JRE version compatibility of j-Interop ?</A>
+        <li><A href=#a2>How do I install it ?</A>
+        <li><A href=#a3>What threading model do the COM servers adhere to while in use from j-Interop ?</A> <b>[Advance]</b>
+        <li><A href=#a4>What threading model does j-Interop follow ? </a><b>[Advance]</b>
+        <li><A href=#a5>How do I configure my COM server for DCOM access ? </a>
+        <li><A href=#a6>My COM Server is a DLL\OCX (Inproc server), how do I make it work with j-Interop ?</a>
+        <li><A href=#a7>Why could the library not do step 7 for me automatically?</a>
+        <li><A href=#a8>What all COM Interfaces are directly supported ?</a>
+        <li><A href=#a9>What data types are supported by j-Interop ?</a>
+        <li><A href=#a10>COM to Java Data Type Mappings </a><b>[Advance]</b>
+        <li><A href=#a11>Do I have to do any reference counting,memory management etc. ?</a>
+        <li><A href=#a12>Any configuration to be done before using j-Interop ?</a>
+        <li><A href=#a13>Is there any logging done ?</a>
+        <li><A href=#a14>What type of License does it follow ?</a>
+    </OL>
+    <hr align=left>
+    <A Name="faq"><h4><U>Answers</U></h4></A>
 
-<A Name="A1">(A1)</A> Tested with JRE 1.4 and 1.6 on Windows XP(SP2),Windows Vista(SP1),Windows 2K3(SP2) and Ubuntu 8.4(desktop). Compatible with JRE version 1.4 and above. <p>
+    <A Name="A1">(A1)</A> Tested with JRE 1.4 and 1.6 on Windows XP(SP2),Windows Vista(SP1),Windows 2K3(SP2) and Ubuntu 8.4(desktop). Compatible with JRE version 1.4 and above. <p>
 
 
-<A Name="A2">(A2)</A> Please see the third party dependencies and installation section.<p>
+        <A Name="A2">(A2)</A> Please see the third party dependencies and installation section.<p>
 
-<A Name="A3">(A3)</A> From MSDN:- <p>
-<FONT FACE="ms sans serif" size=2>On Windows side, Local servers (EXEs) are in full control of the kind of apartment(threading model) that COM is
-using for their objects. The local server calls CoInitializeEx on one or more threads and registers the class factory
-(or multiple class factories) from the appropriate thread with the appropriate threading model.<p>
+        <A Name="A3">(A3)</A> From MSDN:- <p>
+        <FONT FACE="ms sans serif" size=2>On Windows side, Local servers (EXEs) are in full control of the kind of apartment(threading model) that COM is
+        using for their objects. The local server calls CoInitializeEx on one or more threads and registers the class factory
+        (or multiple class factories) from the appropriate thread with the appropriate threading model.<p>
 
-The In-process servers (DLLs), however run in the context of their client i.e they run in the apartment the client
-gives them. By client, I don't mean j-Interop here, but a Windows COM Client. In-process components indicate the
-threading model they are ready to satisfy by placing a named value (ThreadingModel) under their InprocServer32 key
-in the registry: <p>
+        The In-process servers (DLLs), however run in the context of their client i.e they run in the apartment the client
+        gives them. By client, I don't mean j-Interop here, but a Windows COM Client. In-process components indicate the
+        threading model they are ready to satisfy by placing a named value (ThreadingModel) under their InprocServer32 key
+        in the registry: <p>
 
-[HKEY_CLASSES_ROOT\CLSID\{clsid}\InprocServer32] <br>
-"ThreadingModel"="Both" <p>
+        [HKEY_CLASSES_ROOT\CLSID\{clsid}\InprocServer32] <br>
+        "ThreadingModel"="Both" <p>
 
-or<p>
+        or<p>
 
-"ThreadingModel"="Apartment"<p>
+        "ThreadingModel"="Apartment"<p>
 
-or<p>
+        or<p>
 
-"ThreadingModel"="Free"<p>
+        "ThreadingModel"="Free"<p>
 
-If ThreadingModel is not specified, the component is assumed to follow the assumptions for "STA-Main" and can only be
-loaded into the main STA in a process. A value of "Both" indicates that the component can be loaded in both MTAs and
-STAs. A value of "Apartment" indicates that the component can be loaded into any STA. A value of "Free" indicates
-that the component can be loaded into an MTA, but not into an STA.
-</FONT><p>
+        If ThreadingModel is not specified, the component is assumed to follow the assumptions for "STA-Main" and can only be
+        loaded into the main STA in a process. A value of "Both" indicates that the component can be loaded in both MTAs and
+        STAs. A value of "Apartment" indicates that the component can be loaded into any STA. A value of "Free" indicates
+        that the component can be loaded into an MTA, but not into an STA.
+    </FONT><p>
 
-<A Name="A4">(A4)</A>  j-Interop follows the "Apartment" model i.e regardless of threading model or the component type(Local or Inproc)
-used by the COM Server, j-Interop synchronizes all calls to the COM Server per <code>org.jinterop.dcom.core.JIComServer
-</code>instance (which is the starting point for each COM Server). <p>
+        <A Name="A4">(A4)</A>  j-Interop follows the "Apartment" model i.e regardless of threading model or the component type(Local or Inproc)
+        used by the COM Server, j-Interop synchronizes all calls to the COM Server per <code>org.jinterop.dcom.core.JIComServer
+        </code>instance (which is the starting point for each COM Server). <p>
 
-For e.g. in the following piece of code :-<p>
-<code>
-JISession session = JISession.createSession("DOMAIN","USERNAME","PASSWORD");<br>
-JIComServer comServer = new JIComServer(JIProgId.valueOf("Excel.Application"),"127.0.0.1",session);<br>
-IJIComObject comObject = comServer.createInstance();<br>
-IJIDispatch	dispatch = (IJIDispatch)JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));<br>
-IJITypeInfo typeInfo = dispatch.getTypeInfo(0);<br>
-FuncDesc funcDesc = typeInfo.getFuncDesc(0);<br>
-int dispId = dispatch.getIDsOfNames("Visible");<br>
-JIVariant variant = new JIVariant(Boolean.TRUE);<br>
-dispatch.put(dispId,variant);<p>
-</code>
+        For e.g. in the following piece of code :-<p>
+        <code>
+            JISession session = JISession.createSession("DOMAIN","USERNAME","PASSWORD");<br>
+            JIComServer comServer = new JIComServer(JIProgId.valueOf("Excel.Application"),"127.0.0.1",session);<br>
+            IJIComObject comObject = comServer.createInstance();<br>
+            IJIDispatch	dispatch = (IJIDispatch)JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));<br>
+            IJITypeInfo typeInfo = dispatch.getTypeInfo(0);<br>
+            FuncDesc funcDesc = typeInfo.getFuncDesc(0);<br>
+            int dispId = dispatch.getIDsOfNames("Visible");<br>
+            JIVariant variant = new JIVariant(Boolean.TRUE);<br>
+            dispatch.put(dispId,variant);<p>
+        </code>
 
-Calls from all interfaces ("<code>dispatch</code>" and "<code>typeInfo</code>"), even if they are running on different threads, are
-synchronized at the <code>JIComServer</code>("<code>comServer</code>") level. That said, within an application, there can be more 
-than one <code>JIComServer</code>s running at the same time and they run independent of each other.<p>
+        Calls from all interfaces ("<code>dispatch</code>" and "<code>typeInfo</code>"), even if they are running on different threads, are
+        synchronized at the <code>JIComServer</code>("<code>comServer</code>") level. That said, within an application, there can be more
+        than one <code>JIComServer</code>s running at the same time and they run independent of each other.<p>
 
-<A Name="A5">(A5)</A> Ideally if your COM server is actively being used for remote access , then it is perhaps already configured for
-DCOM. If not you can configure it by following steps mentioned <A href=http://support.microsoft.com/kb/268550/EN-US/>here</A> or
-<A href=http://j-integra.intrinsyc.com/support/com/doc/remoteaccess.html>here</A>.<p>
+        <A Name="A5">(A5)</A> Ideally if your COM server is actively being used for remote access , then it is perhaps already configured for
+        DCOM. If not you can configure it by following steps mentioned <A href=http://support.microsoft.com/kb/268550/EN-US/>here</A> or
+    <A href=http://j-integra.intrinsyc.com/support/com/doc/remoteaccess.html>here</A>.<p>
 
-For Windows XP (SP2) , <A href="http://j-integra.intrinsyc.com/support/com/doc/#remoteaccess.html#winxpsp2">this</A> is a good link.<p>
+    For Windows XP (SP2) , <A href="http://j-integra.intrinsyc.com/support/com/doc/#remoteaccess.html#winxpsp2">this</A> is a good link.<p>
 
-Alternatively, <a href=http://www.techvanguards.com/com/tutorials/tips.htm#Know%20the%203%20most%20important%20things%20in%20COM%20security>this</A> 
-is also a good article. <p>
+    Alternatively, <a href=http://www.techvanguards.com/com/tutorials/tips.htm#Know%20the%203%20most%20important%20things%20in%20COM%20security>this</A>
+    is also a good article. <p>
 
-<A Name="A6">(A6)</A> Ideally if your COM server is actively being used for remote access , then it is perhaps already configured for DCOM. If not, you have 2 ways to do this.
-Both ways are recommended by Microsoft. I personally prefer the <i>Easiest way</i>.
+    <A Name="A6">(A6)</A> Ideally if your COM server is actively being used for remote access , then it is perhaps already configured for DCOM. If not, you have 2 ways to do this.
+    Both ways are recommended by Microsoft. I personally prefer the <i>Easiest way</i>.
 <UL>
-<LI><b>Easiest Way</b>:- Let the j-Interop library do this for you. You can set the "autoRegistration" flag in the <code>JISystem</code> or the <code>JIClsid,JIProgId</code> classes.
-When the library encounters a "Class not registered" exception, it will perform all the registry changes if the autoRegistration flag is set. And then re-attempt loading the COM Server.
-Please have a look at MSSysInfo,MSWMI examples.<p>
-<LI><b>Easy Way</b>:-  From MSDN , <A href=http://support.microsoft.com/kb/198891/en-us>here</A> (skip to the section titled below):- <p>
+    <LI><b>Easiest Way</b>:- Let the j-Interop library do this for you. You can set the "autoRegistration" flag in the <code>JISystem</code> or the <code>JIClsid,JIProgId</code> classes.
+        When the library encounters a "Class not registered" exception, it will perform all the registry changes if the autoRegistration flag is set. And then re-attempt loading the COM Server.
+        Please have a look at MSSysInfo,MSWMI examples.<p>
+    <LI><b>Easy Way</b>:-  From MSDN , <A href=http://support.microsoft.com/kb/198891/en-us>here</A> (skip to the section titled below):- <p>
 
-<u><i>Modify registry to force remoting of the object</i></u> <p>
-<UL><LI>Use the OLE/COM Object viewer (Oleview.exe) that is shipped with Microsoft Visual C++ and locate the ProgID in the form of OLEComponent.Object under <b>All Objects</b>.
-<LI>Select the COM object, and then from the <b>Object</b> menu, select <b>CoCreateInstance Flags</b>. Make sure that only CLSCTX_LOCAL_SERVER is selected.
-<LI>Next, under the <b>Implementation</b> and <b>Inproc Server</b> tabs select <b>Use Surrogate Process</b> and leave the "Path to Custom Surrogate" blank, which allows the Dllhost.exe file to be loaded and the COM DLL brought within it's process space.
-</UL>
-<p>
-If you do not have Microsoft Visual C++, the OLE/COM Object Viewer utility is also available for download from the following Microsoft Web site:
-<a href=http://www.microsoft.com/downloads/details.aspx?familyid=5233b70d-d9b2-4cb5-aeb6-45664be858b6&displaylang=en>http://www.microsoft.com/downloads/details.aspx?familyid=5233b70d-d9b2-4cb5-aeb6-45664be858b6&displaylang=en</a><p>
+            <u><i>Modify registry to force remoting of the object</i></u> <p>
+        <UL><LI>Use the OLE/COM Object viewer (Oleview.exe) that is shipped with Microsoft Visual C++ and locate the ProgID in the form of OLEComponent.Object under <b>All Objects</b>.
+            <LI>Select the COM object, and then from the <b>Object</b> menu, select <b>CoCreateInstance Flags</b>. Make sure that only CLSCTX_LOCAL_SERVER is selected.
+            <LI>Next, under the <b>Implementation</b> and <b>Inproc Server</b> tabs select <b>Use Surrogate Process</b> and leave the "Path to Custom Surrogate" blank, which allows the Dllhost.exe file to be loaded and the COM DLL brought within it's process space.
+        </UL>
+        <p>
+            If you do not have Microsoft Visual C++, the OLE/COM Object Viewer utility is also available for download from the following Microsoft Web site:
+            <a href=http://www.microsoft.com/downloads/details.aspx?familyid=5233b70d-d9b2-4cb5-aeb6-45664be858b6&displaylang=en>http://www.microsoft.com/downloads/details.aspx?familyid=5233b70d-d9b2-4cb5-aeb6-45664be858b6&displaylang=en</a><p>
 
 
-<LI><b>Hard Way</b>:- <OL type="i">
-<li>For each CLSID encountered in the DLL component, create an AppID value under HKCR\CLSID\{clsid} which contains the
-same value as the CLSID.<p>
+    <LI><b>Hard Way</b>:- <OL type="i">
+            <li>For each CLSID encountered in the DLL component, create an AppID value under HKCR\CLSID\{clsid} which contains the
+                same value as the CLSID.<p>
 
-HKCR\CLSID\{clsid}<br>
-AppID = {appid value} <p>
+                    HKCR\CLSID\{clsid}<br>
+                    AppID = {appid value} <p>
 
-<li>Using the same AppID value, then create an AppID key under HKCR\AppID.<p>
+            <li>Using the same AppID value, then create an AppID key under HKCR\AppID.<p>
 
-HKCR\AppID\{appid}<p>
+                    HKCR\AppID\{appid}<p>
 
-<li>Under HKCR\AppID\{appid}, then create the following values:<p>
+            <li>Under HKCR\AppID\{appid}, then create the following values:<p>
 
-(Default) =<BR>
-DllSurrogate =<p>
+                    (Default) =<BR>
+                    DllSurrogate =<p>
 
-</OL>
+        </OL>
 
-For example, let's say YourDll.dll contains one class called MyClass with CLSID {6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}.
-To host YourDll.dll using dllhost, you will need to create the following entries in the registry:<p>
-<code>
-HKCR\CLSID\{6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<BR>
-  AppID = {6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<p>
+        For example, let's say YourDll.dll contains one class called MyClass with CLSID {6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}.
+        To host YourDll.dll using dllhost, you will need to create the following entries in the registry:<p>
+            <code>
+                HKCR\CLSID\{6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<BR>
+                AppID = {6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<p>
 
-HKCR\AppID\{6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<BR>
-  (Default) = "Your DLL Surrogate"<BR>
-  DllSurrogate =<p>
-</code>
-You would then be able to configure this surrogate by running DCOMCNFG and looking for the Application entry called
-"Your DLL Surrogate".<p>
+                    HKCR\AppID\{6A048AAA-7DDD-4CCC-BE59-9BBB746E5C6E}<BR>
+                    (Default) = "Your DLL Surrogate"<BR>
+                    DllSurrogate =<p>
+            </code>
+            You would then be able to configure this surrogate by running DCOMCNFG and looking for the Application entry called
+            "Your DLL Surrogate".<p>
 
 </UL>
 
@@ -210,151 +210,151 @@ In <i>any</i> DCOM case for accessing a DLL\OCX you would need the DLLHOST. It i
 COM server being accessed is an Exe, like MSWord or MSExcel or IE then this is not required. But for DLLs , it is required.
 This is how the DCOM clients talk to In-Process Servers. You can obtain more info from <A href=http://windowssdk.msdn.microsoft.com/en-us/library/ms695225.aspx>here</A> (please open in IE for proper viewing).
 <p>
-Also, it would be <u><i>best to view j-Interop as a DCOM client </i></u> when accessing COM from Java. It would be much easier to work with it then. Whatever configurations are required for a DCOM client, will be required for j-Interop also.
+    Also, it would be <u><i>best to view j-Interop as a DCOM client </i></u> when accessing COM from Java. It would be much easier to work with it then. Whatever configurations are required for a DCOM client, will be required for j-Interop also.
 
 <p>
 
-<A Name="A7">(A7)</A> j-Interop behaves as a COM client to the COM Server, changes in <A href=#a6>step 6</a> have to be done at the server machine's registry.
-It is best that the user initiate those actions instead of the library doing these silently.<p>
+    <A Name="A7">(A7)</A> j-Interop behaves as a COM client to the COM Server, changes in <A href=#a6>step 6</a> have to be done at the server machine's registry.
+    It is best that the user initiate those actions instead of the library doing these silently.<p>
 
-<A Name="A8">(A8)</A> All automation interfaces like <code>IDispatch, ITypeInfo, ITypeLib, IEnumVariant</code> are directly supported. You can start
-using them right away. <p>
+    <A Name="A8">(A8)</A> All automation interfaces like <code>IDispatch, ITypeInfo, ITypeLib, IEnumVariant</code> are directly supported. You can start
+    using them right away. <p>
 
-<A Name="A9">(A9)</A> All DCOM datatypes including VARIANTs are supported by j-Interop. The only limitation in the present version is that Arrays upto Maximum 2 dimensions are accepted currently.<p>
-<A Name="A10">(A10)</A> After going through some of the examples, it should be fairly simple(or so I hope) to guage what COM data type
-maps to which Java type, but here are some hints anyways:-<OL type="i">
-<li>All primitive data types of COM map to their corresponding Java counterparts, with the exception of <code>long</code>, which maps
-to <code>int</code> at the Java side.
-<li><code>IIDs</code> are j-Interop uuids (represented as <code>java.lang.String</code>).
-<li><code>OLECHAR</code> is <code>JIString(LPWSTR)</code>.
-<li><A name="iv"></a>Top level pointers are pointers that are NOT elements of arrays, NOT members of structures or unions.
-	All Top level "Interface" pointers (<code>IUnknown*, IDispatch*, IDispatch**, ITypeLib** </code>etc.) are mapped to there
-	referents themselves. <br>
+    <A Name="A9">(A9)</A> All DCOM datatypes including VARIANTs are supported by j-Interop. The only limitation in the present version is that Arrays upto Maximum 2 dimensions are accepted currently.<p>
+    <A Name="A10">(A10)</A> After going through some of the examples, it should be fairly simple(or so I hope) to guage what COM data type
+    maps to which Java type, but here are some hints anyways:-<OL type="i">
+    <li>All primitive data types of COM map to their corresponding Java counterparts, with the exception of <code>long</code>, which maps
+        to <code>int</code> at the Java side.
+    <li><code>IIDs</code> are j-Interop uuids (represented as <code>java.lang.String</code>).
+    <li><code>OLECHAR</code> is <code>JIString(LPWSTR)</code>.
+    <li><A name="iv"></a>Top level pointers are pointers that are NOT elements of arrays, NOT members of structures or unions.
+        All Top level "Interface" pointers (<code>IUnknown*, IDispatch*, IDispatch**, ITypeLib** </code>etc.) are mapped to there
+        referents themselves. <br>
 
-	For e.g :-<br>
-	<code>ITypeLib** ppTLib </code>or <code>ITypeInfo* ppTInfo </code>maps directly to <code>JIInterfacePointer</code> and NOT to <code>JIPointer(JIInterfacePointer)</code>.<br>
-<li><A name="v"></a> All Other Top level pointers are mapped as following:-<OL type="a">
-	<li>First level indirection is mapped directly to there referents. for e.g. <code>int* is int, double* is double, BSTR* is
-	 JIString(BSTR_FLAG) ,OLECHAR FAR * ptr is JIString(LPWSTR).</code>
+        For e.g :-<br>
+        <code>ITypeLib** ppTLib </code>or <code>ITypeInfo* ppTInfo </code>maps directly to <code>JIInterfacePointer</code> and NOT to <code>JIPointer(JIInterfacePointer)</code>.<br>
+    <li><A name="v"></a> All Other Top level pointers are mapped as following:-<OL type="a">
+            <li>First level indirection is mapped directly to there referents. for e.g. <code>int* is int, double* is double, BSTR* is
+                    JIString(BSTR_FLAG) ,OLECHAR FAR * ptr is JIString(LPWSTR).</code>
 
-	<li><A name="vb"></a>Second and subsequent level indirections are mapped to there (level - 1) indirections. for e.g. <code>int** maps to
-	JIPointer(int), int*** maps to JIPointer(JIPointer(int)), double** maps to JIPointer(double), double*** maps to
-	JIPointer(JIPointer(double))</code>.
+            <li><A name="vb"></a>Second and subsequent level indirections are mapped to there (level - 1) indirections. for e.g. <code>int** maps to
+                    JIPointer(int), int*** maps to JIPointer(JIPointer(int)), double** maps to JIPointer(double), double*** maps to
+                    JIPointer(JIPointer(double))</code>.
 
-	<li>All data types can be mapped like <A href=#iv>rule iv</a> and <a href=#v>v(a,b)</a>.The exception to above rules are <code>BSTR**</code> and <code>VARIANT**</code>. Since
-	<code>BSTR</code> and <code>VARIANTs</code> in COM are inherently pointers themselves, they follow <A href="#vb">rule v(b)</a> only after 3rd level of indirection.<br>
-	i.e. <code>BSTR* and BSTR**</code> are both mapped to <code>JIString(BSTR). VARIANT* and VARIANT** </code>are both mapped to <code>JIVariant(,byRef=true); </code>
-	3rd and subsequent level indirections of <code>BSTR or VARIANTs </code>are mapped according to rule (level - 2). for e.g. the
-	<code>BSTR***</code> mapped to <code>JIPointer(JIString(BSTR)) , VARIANT*** </code>is mapped to <code>JIPointer(JIVariant(,byRef = true));</code>
-	</ol>
-<li><A name="p6"> </A>When using <code>IJIDispatch</code>, you will be required to use <code>JIVariants</code>. Automation in COM does not allow indirection beyond
-level 2. So simple mappings would suffice for non pointer types, and for pointer types as parameters, please use the
-<code>byRef</code> flag of JIVariant.<p>
+            <li>All data types can be mapped like <A href=#iv>rule iv</a> and <a href=#v>v(a,b)</a>.The exception to above rules are <code>BSTR**</code> and <code>VARIANT**</code>. Since
+                <code>BSTR</code> and <code>VARIANTs</code> in COM are inherently pointers themselves, they follow <A href="#vb">rule v(b)</a> only after 3rd level of indirection.<br>
+                i.e. <code>BSTR* and BSTR**</code> are both mapped to <code>JIString(BSTR). VARIANT* and VARIANT** </code>are both mapped to <code>JIVariant(,byRef=true); </code>
+                3rd and subsequent level indirections of <code>BSTR or VARIANTs </code>are mapped according to rule (level - 2). for e.g. the
+                <code>BSTR***</code> mapped to <code>JIPointer(JIString(BSTR)) , VARIANT*** </code>is mapped to <code>JIPointer(JIVariant(,byRef = true));</code>
+        </ol>
+    <li><A name="p6"> </A>When using <code>IJIDispatch</code>, you will be required to use <code>JIVariants</code>. Automation in COM does not allow indirection beyond
+        level 2. So simple mappings would suffice for non pointer types, and for pointer types as parameters, please use the
+        <code>byRef</code> flag of JIVariant.<p>
 
-Most of the times the MSDN documentation itself will tell you what the data type stands for, just use the corresponding
-type in j-Interop. For e.g.<p>
+            Most of the times the MSDN documentation itself will tell you what the data type stands for, just use the corresponding
+            type in j-Interop. For e.g.<p>
 
-From MSDN:- <p>
-<FONT face="ms sans serif" size=2>
-IDispatch::GetIDsOfNames
-HRESULT GetIDsOfNames(
-  REFIID  riid,
-  OLECHAR FAR* FAR*  rgszNames,
-  unsigned int  cNames,
-  LCID   lcid,
-  DISPID FAR*  rgDispId
-);<p>
+            From MSDN:- <p>
+            <FONT face="ms sans serif" size=2>
+            IDispatch::GetIDsOfNames
+            HRESULT GetIDsOfNames(
+            REFIID  riid,
+            OLECHAR FAR* FAR*  rgszNames,
+            unsigned int  cNames,
+            LCID   lcid,
+            DISPID FAR*  rgDispId
+            );<p>
 
-riid is
-Reserved for future use. Must be IID_NULL.
-<p>
-rgszNames is
-Passed-in array of names to be mapped.
-<p>
-cNames is
-Count of the names to be mapped.
-<p>
-lcid is
-The locale context in which to interpret the names
-<p>
-rgDispId is
-Caller-allocated array, each element of which contains an identifier (ID) corresponding to one of the names passed
-in the rgszNames array. The first element represents the member name. The subsequent elements represent each of
-the member's parameters.
-</font><p>
-j-Interop definition for these would be:-<br>
-<ul>
-<li>riid is uuid.<br>
-<li>rgszNames is <code>JIArray(JIPointer(JIString(LPWSTR)))</code>.<br>
-<li>cNames is <code>int</code><br>
-<li>lcid is <code>int</code> (for this you will have to look up MSDN, it translates to a long , which maps to int in j-Interop)
-<li>rgDispId is <code>JIArray(Integer);</code><br>
-</ul><br>
-<li> Embedded Pointers (members of structures,unions, elements of arrays) are represented by <code>JIPointer(type)</code>, like
-the <code>OLECHAR FAR* FAR*</code>  rgszNames in <A href="#p6">Point (vi)</A>. It first got mapped to <code>JIArray</code> since it is a top level pointer.
-Within the array , it was supposed to return pointers to <code>OLECHAR</code>, therefore it got mapped to <code>JIPointer(JIString(LPWSTR))
-</code>forming the whole definition as <code>JIArray(JIPointer(JIString(LPWSTR)))</code>. <p>
+            riid is
+            Reserved for future use. Must be IID_NULL.
+        <p>
+            rgszNames is
+            Passed-in array of names to be mapped.
+        <p>
+            cNames is
+            Count of the names to be mapped.
+        <p>
+            lcid is
+            The locale context in which to interpret the names
+        <p>
+            rgDispId is
+            Caller-allocated array, each element of which contains an identifier (ID) corresponding to one of the names passed
+            in the rgszNames array. The first element represents the member name. The subsequent elements represent each of
+            the member's parameters.
+        </font><p>
+            j-Interop definition for these would be:-<br>
+        <ul>
+            <li>riid is uuid.<br>
+            <li>rgszNames is <code>JIArray(JIPointer(JIString(LPWSTR)))</code>.<br>
+            <li>cNames is <code>int</code><br>
+            <li>lcid is <code>int</code> (for this you will have to look up MSDN, it translates to a long , which maps to int in j-Interop)
+            <li>rgDispId is <code>JIArray(Integer);</code><br>
+        </ul><br>
+    <li> Embedded Pointers (members of structures,unions, elements of arrays) are represented by <code>JIPointer(type)</code>, like
+        the <code>OLECHAR FAR* FAR*</code>  rgszNames in <A href="#p6">Point (vi)</A>. It first got mapped to <code>JIArray</code> since it is a top level pointer.
+        Within the array , it was supposed to return pointers to <code>OLECHAR</code>, therefore it got mapped to <code>JIPointer(JIString(LPWSTR))
+        </code>forming the whole definition as <code>JIArray(JIPointer(JIString(LPWSTR)))</code>. <p>
 
-For more examples, please have a look at <code>JITypeInfoImpl.java (getFuncDesc API)</code>. It will show you how the mapping is
-done between embedded pointers and j-Interop types. Please keep MSDN handy for having a look at the actual C++ struct.
-Search on <code>ITypeInfo -->GetFuncDesc(...)</code> there. Also see the <code>FUNCDESC</code> structure.<p>
-<li>Unless specified otherwise(like the dimensions are provided) in the documentation, all arrays are <code>conformant</code>
-arrays.
-<li>You can also look up the IDL for the component if only <code> size_is() </code> is present then Array <code> "isConformant" (true) </code> .
-if both <code> size_is() </code> and <code> length_is() </code> are present then Array <code> "isConformant" and "isVarying" (true,true)</code> .
-<li>When you are implementing callbacks, if the COM source interface has a single level interface pointer like <code> IDispatch*
-</code> then mapping to local java class will be <code> JIInterfacePointer </code> itself. But second level pointers to interfaces like <code> IDispatch** </code>
-must be declared as <code> JIVariants </code> only.<p>
+            For more examples, please have a look at <code>JITypeInfoImpl.java (getFuncDesc API)</code>. It will show you how the mapping is
+            done between embedded pointers and j-Interop types. Please keep MSDN handy for having a look at the actual C++ struct.
+            Search on <code>ITypeInfo -->GetFuncDesc(...)</code> there. Also see the <code>FUNCDESC</code> structure.<p>
+    <li>Unless specified otherwise(like the dimensions are provided) in the documentation, all arrays are <code>conformant</code>
+        arrays.
+    <li>You can also look up the IDL for the component if only <code> size_is() </code> is present then Array <code> "isConformant" (true) </code> .
+        if both <code> size_is() </code> and <code> length_is() </code> are present then Array <code> "isConformant" and "isVarying" (true,true)</code> .
+    <li>When you are implementing callbacks, if the COM source interface has a single level interface pointer like <code> IDispatch*
+        </code> then mapping to local java class will be <code> JIInterfacePointer </code> itself. But second level pointers to interfaces like <code> IDispatch** </code>
+        must be declared as <code> JIVariants </code> only.<p>
 
-for e.g.:-<BR>
-<code> IDispatch* </code> can be mapped to <code> IJIDispatch </code> , but <code> IDispatch** </code> should be mapped to <code> JIVariant </code> only.<p>
+            for e.g.:-<BR>
+            <code> IDispatch* </code> can be mapped to <code> IJIDispatch </code> , but <code> IDispatch** </code> should be mapped to <code> JIVariant </code> only.<p>
 
-see <code> MSInternetExplorer --> DWebBrowserEvents (BeforeNavigate2 and NewWindow3) </code> for more details.
+            see <code> MSInternetExplorer --> DWebBrowserEvents (BeforeNavigate2 and NewWindow3) </code> for more details.
 </OL>
 <p>
-<A Name="A11">(A11)</A>  No, the library does all this on it's own (including pinging the COM server for keeping it alive).
+    <A Name="A11">(A11)</A>  No, the library does all this on it's own (including pinging the COM server for keeping it alive).
 <p>
-<A Name="A12">(A12)</A> Yes, please make sure that the Server service and Remote Registry service is running on the
-target workstation (where the COM Server is hosted). This is required for reading the registry to map the ProgIds to their
-clsids. If you can't have this , then please use clsid instead of progId. The <code>progIdVsClsidDB.properties</code> maintains a
-mapping of progId Vs there clsids, if this file is present in the classpath. This file is consulted before the registry
-for the progId.<p>
+    <A Name="A12">(A12)</A> Yes, please make sure that the Server service and Remote Registry service is running on the
+    target workstation (where the COM Server is hosted). This is required for reading the registry to map the ProgIds to their
+    clsids. If you can't have this , then please use clsid instead of progId. The <code>progIdVsClsidDB.properties</code> maintains a
+    mapping of progId Vs there clsids, if this file is present in the classpath. This file is consulted before the registry
+    for the progId.<p>
 
-Also, if you are working with GUI components and would like to make them visible\interactive, then make sure that you
-read up <A href=#a5>(A5)</a> and setup the COM Server for "Interactive User". By default, it is the "Launching User". If this option
-is set, then the COM Server will not present it's GUI. It is best to use this for all silient operations like working
-with DBs , or using Excel formulas etc.<p>
+    Also, if you are working with GUI components and would like to make them visible\interactive, then make sure that you
+    read up <A href=#a5>(A5)</a> and setup the COM Server for "Interactive User". By default, it is the "Launching User". If this option
+    is set, then the COM Server will not present it's GUI. It is best to use this for all silient operations like working
+    with DBs , or using Excel formulas etc.<p>
 
-<A Name="A13">(A13)</A> Yes, j-Interop uses java logging by default (and to the console), but you can configure a handler for this logger to redirect output to logger mechanisms of your own choice.
-There is also a method in <code>JISystem.setInBuiltLogHandler</code> which creates a handler to store the logs to a file in the user's temp directory as j-Interop.log . (e.g. for Windows systems it should be "C:\Documents and Settings\your_username\Local Settings\Temp")
+    <A Name="A13">(A13)</A> Yes, j-Interop uses java logging by default (and to the console), but you can configure a handler for this logger to redirect output to logger mechanisms of your own choice.
+    There is also a method in <code>JISystem.setInBuiltLogHandler</code> which creates a handler to store the logs to a file in the user's temp directory as j-Interop.log . (e.g. for Windows systems it should be "C:\Documents and Settings\your_username\Local Settings\Temp")
 <p>
-<A Name="A14">(A14)</A> Please see the license section.
+    <A Name="A14">(A14)</A> Please see the license section.
 <hr align=left>
 <A Name="license"><h4><U>License</U></h4></A>
 
 This library is distributed under the LGPL v3.0 (http://www.gnu.org/licenses/lgpl-3.0.html). Please refer
 to the accompanying lgpl.txt for more details. <br>Those not speaking 'legal'ise can have a look <a href="http://www.gnu.org/licenses/lgpl-java.html">here</a> as to what it means. Incase you would
 like to get a LGPL v2.1 exception for your library , please write to us.
-<p> 
+<p>
 <hr align=left>
 <A Name="tpd"><h4><U>Third Party Dependencies
-</U></h4></A>
+        </U></h4></A>
 j-Interop depends on :-<br>
 <UL>
-<li><a href="http://sourceforge.net/projects/jarapac">jarapac</a> - DCE/RPC protocol <br>
-<li><a href="http://jcifs.samba.org/">jcifs</a> - SMB authentication<br>
-<li><a href="http://www.iwombat.com">iwombat</a> - Open source library for UUID generation<br>
-<li><a href="http://www.gnu.org/software/gnu-crypto/index.html">Gnu Crypto</a> - Cryptographic library from GNU<br>
+    <li><a href="http://sourceforge.net/projects/jarapac">jarapac</a> - DCE/RPC protocol <br>
+    <li><a href="http://jcifs.samba.org/">jcifs</a> - SMB authentication<br>
+    <li><a href="http://www.iwombat.com">iwombat</a> - Open source library for UUID generation<br>
+    <li><a href="http://www.gnu.org/software/gnu-crypto/index.html">Gnu Crypto</a> - Cryptographic library from GNU<br>
 </UL>
 <hr align=left>
 <A Name="inst"><h4><U>Installation</U></h4></A>
 
 Please extract all files from the j-Interop.zip. The "lib" folder has all the jars required to use j-Interop library. <p>
-Installation of j-interop.jar is similar to any standard jar file, just add it to the classpath.<p>
+    Installation of j-interop.jar is similar to any standard jar file, just add it to the classpath.<p>
 
-As a performance improvement, the j-Interop comes with a <code>progIdVsClsidDB.properties</code> file, which gets updated with the
-clsid of each ProgId. This prevents the library from accessing the Windows Registry for the clsid, when the same COM
-server is required again. Please make sure that <code>progIdVsClsidDB.properties</code> is also included in the <u>classpath</u>.
+    As a performance improvement, the j-Interop comes with a <code>progIdVsClsidDB.properties</code> file, which gets updated with the
+    clsid of each ProgId. This prevents the library from accessing the Windows Registry for the clsid, when the same COM
+    server is required again. Please make sure that <code>progIdVsClsidDB.properties</code> is also included in the <u>classpath</u>.
 <hr align=left>
 <A Name="examples"><h4><U>Examples</U></h4></A>
 
@@ -362,9 +362,9 @@ Commented examples are located in the "examples" folder.
 <hr align=left>
 <A Name="tpl"><h4><U>Third Party Licenses</U></h4></A>
 <UL>
-<li>jcifs is licensed under <A href=http://www.opensource.org/licenses/lgpl-license.php >LGPL</A> .
-<li>jarapac has forked out to jcifs implementation and follows the same licensing scheme.
-<li>iwombat donated the pieces of code required by the library, Many Thanks to Bob Combs and <a href=http://www.iwombat.com>iwombat.com</a>.
+    <li>jcifs is licensed under <A href=http://www.opensource.org/licenses/lgpl-license.php >LGPL</A> .
+    <li>jarapac has forked out to jcifs implementation and follows the same licensing scheme.
+    <li>iwombat donated the pieces of code required by the library, Many Thanks to Bob Combs and <a href=http://www.iwombat.com>iwombat.com</a>.
 </UL>
 <hr>
 <A Name="support"><h4><U>Support</U></h4></A>

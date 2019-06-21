@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc;
 
 public interface FaultCodes {
@@ -40,20 +37,19 @@ public interface FaultCodes {
     public static final int BAD_ACTIVITY_ID = 0x1c00000a;
 
     /**
-     * Connectionless fault status indicating the conversation manager
-     * callback failed.
+     * Connectionless fault status indicating the conversation manager callback
+     * failed.
      */
     public static final int WHO_ARE_YOU_FAILED = 0x1c00000b;
 
     /**
-     * Fault status indicating the server manager routine has not been
-     * entered and executed.
+     * Fault status indicating the server manager routine has not been entered
+     * and executed.
      */
     public static final int MANAGER_NOT_ENTERED = 0x1c00000c;
 
     /**
-     * Fault status indicating the requested operation number is out of
-     * range.
+     * Fault status indicating the requested operation number is out of range.
      */
     public static final int OPERATION_RANGE_ERROR = 0x1c010002;
 
@@ -64,14 +60,14 @@ public interface FaultCodes {
     public static final int UNKNOWN_INTERFACE = 0x1c010003;
 
     /**
-     * Connectionless fault status indicating the specified boot time does
-     * not match the actual server boot time.
+     * Connectionless fault status indicating the specified boot time does not
+     * match the actual server boot time.
      */
     public static final int WRONG_BOOT_TIME = 0x1c010006;
 
     /**
-     * Connectionless fault status indicating a restarted server called
-     * back a client.
+     * Connectionless fault status indicating a restarted server called back a
+     * client.
      */
     public static final int YOU_CRASHED = 0x1c010009;
 
@@ -81,14 +77,14 @@ public interface FaultCodes {
     public static final int PROTOCOL_ERROR = 0x1c01000b;
 
     /**
-     * Fault status indicating the operation's output parameters are larger
-     * than their declared maximum size.
+     * Fault status indicating the operation's output parameters are larger than
+     * their declared maximum size.
      */
     public static final int OUTPUT_ARGUMENTS_TOO_BIG = 0x1c010013;
 
     /**
-     * Fault status indicating the server is currently too busy to service
-     * the request.
+     * Fault status indicating the server is currently too busy to service the
+     * request.
      */
     public static final int SERVER_TOO_BUSY = 0x1c010014;
 

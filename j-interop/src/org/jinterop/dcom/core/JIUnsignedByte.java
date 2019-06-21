@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -28,23 +27,21 @@ import org.jinterop.dcom.common.JISystem;
  */
 public final class JIUnsignedByte implements IJIUnsigned {
 
-	private final Short byteValue;
+    private final Short byteValue;
 
-	JIUnsignedByte(Short byteValue)
-	{
-		if (byteValue == null || byteValue.shortValue() < 0)
-		{
-			throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_NEGATIVE));
-		}
-		this.byteValue = byteValue;
-	}
+    JIUnsignedByte(Short byteValue) {
+        if (byteValue == null || byteValue.shortValue() < 0) {
+            throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_NEGATIVE));
+        }
+        this.byteValue = byteValue;
+    }
 
-	public int getType() {
-		return JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
-	}
+    public int getType() {
+        return JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
+    }
 
-	public Number getValue() {
-		return byteValue;
-	}
+    public Number getValue() {
+        return byteValue;
+    }
 
 }

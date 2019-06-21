@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import ndr.NetworkDataRepresentation;
@@ -85,7 +82,9 @@ public class BindNoAcknowledgePdu extends ConnectionOrientedPdu {
     protected void writeBody(NetworkDataRepresentation ndr) {
         int reason = getRejectReason();
         ndr.writeUnsignedSmall((short) reason);
-        if (reason != PROTOCOL_VERSION_NOT_SUPPORTED) return;
+        if (reason != PROTOCOL_VERSION_NOT_SUPPORTED) {
+            return;
+        }
         ProtocolVersion[] versionList = getVersionList();
         int count = (versionList != null) ? versionList.length : 0;
         for (int i = 0; i < count; i++) {

@@ -14,11 +14,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 import java.io.IOException;
-
 import ndr.NetworkDataRepresentation;
 
 public interface Security {

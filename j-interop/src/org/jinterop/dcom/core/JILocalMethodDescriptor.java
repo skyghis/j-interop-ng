@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,155 +14,145 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
-
-/** Describe a method of the COM <code>IDL</code> to be used in Callback implementations.
- * Framework uses java reflection to invoke methods requested by COM clients so it is
- * absolutely essential that java methods in the implementation class conform exactly to
- * what is described in this object.
+/**
+ * Describe a method of the COM <code>IDL</code> to be used in Callback
+ * implementations. Framework uses java reflection to invoke methods requested
+ * by COM clients so it is absolutely essential that java methods in the
+ * implementation class conform exactly to what is described in this object.
  * <p>
- * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl, SampleTestServer
- * and MSShell examples for more details on how to use this class.</i><br>
+ * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl,
+ * SampleTestServer and MSShell examples for more details on how to use this
+ * class.</i><br>
  *
  * @since 2.0 (formerly JIMethodDescriptor)
  */
-public final class JILocalMethodDescriptor
-{
-	private String methodName = null;
-	private int methodNum = -1;
-	private int dispId = -1;
-	private Class[] inparametersAsClass = new Class[0];
-	private JILocalParamsDescriptor parameters = null;
+public final class JILocalMethodDescriptor {
 
-	/**Creates the method descriptor. The method number is set by the order in which this instance is
-	 * added to the <code>JILocalInterfaceDefinition</code>. This number is incremented by 1 for each subsequent
-	 * and new addition into interface definition.
-	 *
-	 * @param methodName name of the method.
-	 * @param parameters pass <code>null</code> if the method has no parameters.
-	 */
-	public JILocalMethodDescriptor(String methodName,JILocalParamsDescriptor parameters)
-	{
-		this.methodName = methodName;
-		setParameterObject(parameters);
-	}
+    private String methodName = null;
+    private int methodNum = -1;
+    private int dispId = -1;
+    private Class[] inparametersAsClass = new Class[0];
+    private JILocalParamsDescriptor parameters = null;
 
-	/** Creates the method descriptor.
-	 *
-	 * @param methodName name of the method.
-	 * @param dispId <code>DISPID</code> of this method as in the <code>IDL</code> or the TypeLibrary.
-	 * @param parameters pass <code>null</code> if the method has no parameters.
-	 */
-	public JILocalMethodDescriptor(String methodName,int dispId, JILocalParamsDescriptor parameters)
-	{
-		this.methodName = methodName;
-		this.dispId = dispId;
-		setParameterObject(parameters);
-	}
+    /**
+     * Creates the method descriptor. The method number is set by the order in
+     * which this instance is added to the
+     * <code>JILocalInterfaceDefinition</code>. This number is incremented by 1
+     * for each subsequent and new addition into interface definition.
+     *
+     * @param methodName name of the method.
+     * @param parameters pass <code>null</code> if the method has no parameters.
+     */
+    public JILocalMethodDescriptor(String methodName, JILocalParamsDescriptor parameters) {
+        this.methodName = methodName;
+        setParameterObject(parameters);
+    }
 
-	void setMethodNum(int methodNum)
-	{
-		this.methodNum = methodNum;
-	}
+    /**
+     * Creates the method descriptor.
+     *
+     * @param methodName name of the method.
+     * @param dispId <code>DISPID</code> of this method as in the
+     * <code>IDL</code> or the TypeLibrary.
+     * @param parameters pass <code>null</code> if the method has no parameters.
+     */
+    public JILocalMethodDescriptor(String methodName, int dispId, JILocalParamsDescriptor parameters) {
+        this.methodName = methodName;
+        this.dispId = dispId;
+        setParameterObject(parameters);
+    }
 
-	private void setParameterObject(JILocalParamsDescriptor parameters) {
+    void setMethodNum(int methodNum) {
+        this.methodNum = methodNum;
+    }
 
-		if (parameters == null)
-		{
-			return;
-		}
+    private void setParameterObject(JILocalParamsDescriptor parameters) {
 
-		this.parameters = parameters;
-		Object[] params = parameters.getInParams();
-		inparametersAsClass = new Class[params.length];
+        if (parameters == null) {
+            return;
+        }
 
-		for(int i = 0; i < params.length; i++)
-		{
-			Object obj = params[i];
-			if (obj instanceof Class)
-			{
-				Class c = (Class)obj;
+        this.parameters = parameters;
+        Object[] params = parameters.getInParams();
+        inparametersAsClass = new Class[params.length];
 
-				{
-					//get the primitive members here
-					if (c.equals(Boolean.class))
-					{
-						c = boolean.class;
-					}else if (c.equals(Character.class))
-					{
-						c = char.class;
-					}else if (c.equals(Byte.class))
-					{
-						c = byte.class;
-					}else if (c.equals(Short.class))
-					{
-						c = short.class;
-					}else if (c.equals(Integer.class))
-					{
-						c = int.class;
-					}else if (c.equals(Long.class))
-					{
-						c = long.class;
-					}else if (c.equals(Float.class))
-					{
-						c = float.class;
-					}else if (c.equals(Double.class))
-					{
-						c = double.class;
-					}else if (c.equals(Void.class))
-					{
-						c = void.class;
-					}
-				}
-				inparametersAsClass[i] = c;
-			}
-			else
-			{
-				inparametersAsClass[i] = obj.getClass();
-			}
-		}
+        for (int i = 0; i < params.length; i++) {
+            Object obj = params[i];
+            if (obj instanceof Class) {
+                Class c = (Class) obj;
 
-	}
+                {
+                    //get the primitive members here
+                    if (c.equals(Boolean.class)) {
+                        c = boolean.class;
+                    } else if (c.equals(Character.class)) {
+                        c = char.class;
+                    } else if (c.equals(Byte.class)) {
+                        c = byte.class;
+                    } else if (c.equals(Short.class)) {
+                        c = short.class;
+                    } else if (c.equals(Integer.class)) {
+                        c = int.class;
+                    } else if (c.equals(Long.class)) {
+                        c = long.class;
+                    } else if (c.equals(Float.class)) {
+                        c = float.class;
+                    } else if (c.equals(Double.class)) {
+                        c = double.class;
+                    } else if (c.equals(Void.class)) {
+                        c = void.class;
+                    }
+                }
+                inparametersAsClass[i] = c;
+            } else {
+                inparametersAsClass[i] = obj.getClass();
+            }
+        }
 
-	/**Returns the method name.
-	 *
-	 * @return
-	 */
-	public String getMethodName() {
-		return methodName;
-	}
+    }
 
-	/**Gets the opnum of this method in the order as defined in the IDL.
-	 *
-	 * @return
-	 */
-	public int getMethodNum() {
-		return methodNum;
-	}
+    /**
+     * Returns the method name.
+     *
+     * @return
+     */
+    public String getMethodName() {
+        return methodName;
+    }
 
-	/**Gets the <code>DISPID</code> of this method.
-	 *
-	 * @return
-	 */
-	public int getMethodDispID() {
-		return dispId;
-	}
+    /**
+     * Gets the opnum of this method in the order as defined in the IDL.
+     *
+     * @return
+     */
+    public int getMethodNum() {
+        return methodNum;
+    }
 
-	/**Returns the parameter object.
-	 *
-	 * @return <code>null</code> if the method has no parameters.
-	 */
-	public JILocalParamsDescriptor getParameterObject() {
-		return parameters;
-	}
+    /**
+     * Gets the <code>DISPID</code> of this method.
+     *
+     * @return
+     */
+    public int getMethodDispID() {
+        return dispId;
+    }
 
-	/**
-	 * @exclude
-	 * @return
-	 */
-	Class[] getInparametersAsClass() {
-		return inparametersAsClass;
-	}
+    /**
+     * Returns the parameter object.
+     *
+     * @return <code>null</code> if the method has no parameters.
+     */
+    public JILocalParamsDescriptor getParameterObject() {
+        return parameters;
+    }
+
+    /**
+     * @exclude @return
+     */
+    Class[] getInparametersAsClass() {
+        return inparametersAsClass;
+    }
 }

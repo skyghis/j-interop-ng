@@ -14,8 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
 package rpc;
 
 import java.io.IOException;
@@ -23,11 +21,11 @@ import java.io.IOException;
 public class RpcException extends IOException {
 
     /**
-	 *
-	 */
-	private static final long serialVersionUID = -6529915206074406077L;
+     *
+     */
+    private static final long serialVersionUID = -6529915206074406077L;
 
-	public RpcException() {
+    public RpcException() {
         super();
     }
 

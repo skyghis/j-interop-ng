@@ -42,114 +42,116 @@ package gnu.crypto.prng;
 // library, but you are not obligated to do so.  If you do not wish to
 // do so, delete this exception statement from your version.
 // ----------------------------------------------------------------------------
-
 import java.util.Map;
 
 /**
- * <p>An abstract class to facilitate implementing PRNG algorithms.</p>
+ * <p>
+ * An abstract class to facilitate implementing PRNG algorithms.</p>
  *
  * @version $Revision: 1.7 $
  */
 public abstract class BasePRNG implements IRandom {
 
-   // Constants and variables
-   // -------------------------------------------------------------------------
+    // Constants and variables
+    // -------------------------------------------------------------------------
+    /**
+     * The canonical name prefix of the PRNG algorithm.
+     */
+    protected String name;
 
-   /** The canonical name prefix of the PRNG algorithm. */
-   protected String name;
+    /**
+     * Indicate if this instance has already been initialised or not.
+     */
+    protected boolean initialised;
 
-   /** Indicate if this instance has already been initialised or not. */
-   protected boolean initialised;
+    /**
+     * A temporary buffer to serve random bytes.
+     */
+    protected byte[] buffer;
 
-   /** A temporary buffer to serve random bytes. */
-   protected byte[] buffer;
+    /**
+     * The index into buffer of where the next byte will come from.
+     */
+    protected int ndx;
 
-   /** The index into buffer of where the next byte will come from. */
-   protected int ndx;
+    // Constructor(s)
+    // -------------------------------------------------------------------------
+    /**
+     * <p>
+     * Trivial constructor for use by concrete subclasses.</p>
+     *
+     * @param name the canonical name of this instance.
+     */
+    protected BasePRNG(String name) {
+        super();
 
-   // Constructor(s)
-   // -------------------------------------------------------------------------
+        this.name = name;
+        initialised = false;
+        buffer = new byte[0];
+    }
 
-   /**
-    * <p>Trivial constructor for use by concrete subclasses.</p>
-    *
-    * @param name the canonical name of this instance.
-    */
-   protected BasePRNG(String name) {
-      super();
+    // Class methods
+    // -------------------------------------------------------------------------
+    // Instance methods
+    // -------------------------------------------------------------------------
+    // IRandom interface implementation ----------------------------------------
+    public String name() {
+        return name;
+    }
 
-      this.name = name;
-      initialised = false;
-      buffer = new byte[0];
-   }
+    public void init(Map attributes) {
+        this.setup(attributes);
 
-   // Class methods
-   // -------------------------------------------------------------------------
+        ndx = 0;
+        initialised = true;
+    }
 
-   // Instance methods
-   // -------------------------------------------------------------------------
+    public byte nextByte() throws IllegalStateException, LimitReachedException {
+        if (!initialised) {
+            throw new IllegalStateException();
+        }
+        return nextByteInternal();
+    }
 
-   // IRandom interface implementation ----------------------------------------
+    public void nextBytes(byte[] out, int offset, int length)
+            throws IllegalStateException, LimitReachedException {
+        if (out == null) {
+            return;
+        }
 
-   public String name() {
-      return name;
-   }
+        if (!initialised) {
+            throw new IllegalStateException();
+        }
 
-   public void init(Map attributes) {
-      this.setup(attributes);
+        if (offset < 0 || offset >= out.length || length < 1) {
+            return;
+        }
 
-      ndx = 0;
-      initialised = true;
-   }
+        int limit = ((offset + length) > out.length ? out.length - offset : length);
+        for (int i = 0; i < limit; i++) {
+            out[offset++] = nextByteInternal();
+        }
+    }
 
-   public byte nextByte() throws IllegalStateException, LimitReachedException {
-      if (!initialised) {
-         throw new IllegalStateException();
-      }
-      return nextByteInternal();
-   }
+    // Instance methods
+    // -------------------------------------------------------------------------
+    public boolean isInitialised() {
+        return initialised;
+    }
 
-   public void nextBytes(byte[] out, int offset, int length)
-   throws IllegalStateException, LimitReachedException {
-      if (out == null) {
-         return;
-      }
+    private byte nextByteInternal() throws LimitReachedException {
+        if (ndx >= buffer.length) {
+            this.fillBlock();
+            ndx = 0;
+        }
 
-      if (!initialised) {
-         throw new IllegalStateException();
-      }
+        return buffer[ndx++];
+    }
 
-      if (offset < 0 || offset >= out.length || length < 1) {
-         return;
-      }
+    // abstract methods to implement by subclasses -----------------------------
+    public abstract Object clone();
 
-      int limit = ((offset+length) > out.length ? out.length-offset : length);
-      for (int i = 0; i < limit; i++) {
-         out[offset++] = nextByteInternal();
-      }
-   }
+    public abstract void setup(Map attributes);
 
-   // Instance methods
-   // -------------------------------------------------------------------------
-
-   public boolean isInitialised() {
-      return initialised;
-   }
-
-   private byte nextByteInternal() throws LimitReachedException {
-      if (ndx >= buffer.length) {
-         this.fillBlock();
-         ndx = 0;
-      }
-
-      return buffer[ndx++];
-   }
-
-   // abstract methods to implement by subclasses -----------------------------
-
-   public abstract Object clone();
-
-   public abstract void setup(Map attributes);
-
-   public abstract void fillBlock() throws LimitReachedException;
+    public abstract void fillBlock() throws LimitReachedException;
 }

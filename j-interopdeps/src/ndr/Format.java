@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package ndr;
 
 public class Format {
@@ -35,11 +34,11 @@ public class Format {
 
     public static final int IBM_FLOATING_POINT = 0x00110000;
 
-    public static final int DEFAULT_DATA_REPRESENTATION = LITTLE_ENDIAN |
-            ASCII_CHARACTER | IEEE_FLOATING_POINT;
+    public static final int DEFAULT_DATA_REPRESENTATION = LITTLE_ENDIAN
+            | ASCII_CHARACTER | IEEE_FLOATING_POINT;
 
-    public static final Format DEFAULT_FORMAT =
-            new Format(DEFAULT_DATA_REPRESENTATION);
+    public static final Format DEFAULT_FORMAT
+            = new Format(DEFAULT_DATA_REPRESENTATION);
 
     static final int BYTE_ORDER_MASK = 0xf0000000;
 
@@ -74,7 +73,9 @@ public class Format {
         int value = src[index++] << 24;
         value |= (src[index++] & 0xff) << 16;
         value |= (src[index++] & 0xff) << 8;
-        if (!connectionless) value |= src[index] & 0xff;
+        if (!connectionless) {
+            value |= src[index] & 0xff;
+        }
         return new Format(value);
     }
 
@@ -83,7 +84,9 @@ public class Format {
         dest[index++] = (byte) ((val >> 24) & 0xff);
         dest[index++] = (byte) ((val >> 16) & 0xff);
         dest[index] = (byte) 0x00;
-        if (!connectionless) dest[++index] = (byte) 0x00;
+        if (!connectionless) {
+            dest[++index] = (byte) 0x00;
+        }
     }
 
 }

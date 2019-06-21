@@ -32,8 +32,7 @@ import rpc.Endpoint;
 import rpc.Stub;
 
 /**
- * @exclude
- * @since 1.0
+ * @exclude @since 1.0
  *
  */
 public class JIWinRegStub extends Stub implements IJIWinReg {

@@ -1,26 +1,24 @@
 /**
- * iwombat donated the pieces of code required by the library for UUID generation, Many Thanks to Bob Combs and www.iwombat.com for this. 
+ * iwombat donated the pieces of code required by the library for UUID generation, Many Thanks to Bob Combs and www.iwombat.com for this.
  */
-
-
 package com.iwombat.foundation.uuid;
 
+import com.iwombat.util.HexStringUtil;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
 
-import com.iwombat.util.HexStringUtil;
-
 /**
- * Class responsible for creating unique identifiers specific 
- * to the DCE UUID implementation.
- * 
- * This factory contains all the algorythms necessary to generate
- * a UUID and place the value into the UUID value object.
- * 
+ * Class responsible for creating unique identifiers specific to the DCE UUID
+ * implementation.
+ *
+ * This factory contains all the algorythms necessary to generate a UUID and
+ * place the value into the UUID value object.
+ *
  * Universal object identifier. <br>
- * 16-byte Object identifier for use by all persistant objects based on DCE standard <br>
+ * 16-byte Object identifier for use by all persistant objects based on DCE
+ * standard <br>
  * <ul>
  * <li>byte 00-03: low time comonent
  * <li>byte 04-05: mid time component
@@ -30,22 +28,24 @@ import com.iwombat.util.HexStringUtil;
  * <li>byte 10-15: MAC address - passed in from System property
  * </ul>
  * <br>
- * 
- * Implementation notes: The DCE spec calls for MacAddress as part of the UUID algorythm. Since java supplies no
- * mechanism for this ObjectId looks for a MACADDR system property consisting of a hex string of six bytes ( a 12
- * character hex string - no delimiters and no 0x token ). Failing to find said system property ObjectId generates a
- * random MACADDR and uses the last octet of the ip address as the last octet in the MACADDR to guarantee unequeness on
+ *
+ * Implementation notes: The DCE spec calls for MacAddress as part of the UUID
+ * algorythm. Since java supplies no mechanism for this ObjectId looks for a
+ * MACADDR system property consisting of a hex string of six bytes ( a 12
+ * character hex string - no delimiters and no 0x token ). Failing to find said
+ * system property ObjectId generates a random MACADDR and uses the last octet
+ * of the ip address as the last octet in the MACADDR to guarantee unequeness on
  * the same subnet. (If localhost is NOT 127.0.0.1)
- * 
+ *
  * @author bobc
  */
 public final class UUIDFactory {
 
     private UUIDFactory() {
-        
+
     }
     private static final long serialVersionUID = 1;
-    
+
     // length of the ObjectId byte array
     private static final short OID_LENGTH = 16;
 
@@ -56,7 +56,6 @@ public final class UUIDFactory {
     private static final short LOW_BYTE_MASK = (short) ((short) (1 << BYTE_SHIFT) - 1);
 
     // private static final short HIGH_NIBBLE_MASK = (short) 0xf0;
-
     private static final short LOW_NIBBLE_MASK = (short) 0x0f;
 
     // maximum sequence number (four bytes)
@@ -79,15 +78,10 @@ public final class UUIDFactory {
 
     // Time masks and offsets
 //    private static final long LOW_TIME_MASK = 0x00000000ffffffffL;
-
 //    private static final long MID_TIME_MASK = 0x0000ffff00000000L;
-
 //    private static final long HIGH_TIME_MASK = 0x0fff000000000000L;
-
 //    private static final short MID_TIME_OFFSET = BYTE_SHIFT * 4;
-
 //    private static final short HIGH_TIME_OFFSET = BYTE_SHIFT * 6;
-
     // Version and variant
     private static final byte VERSION = (byte) 0x10;
 
@@ -100,14 +94,14 @@ public final class UUIDFactory {
     private static final long MILLIS_NANOS_MULT = 1000;
     private static final long NANOSECONDS_PER_DAY = 86400 * 10000000;
     private static final long DAYS_SINCE_EPOCH = ((365 * (1970 - 1583)) // days per year
-    + (24 * 3) // leap days per century
-    + (5) // leap days 1563-1600 inclusive
-    + (17) // leap days 20th century
-    + (17 + 30 + 31) // remaining days in 1582
-    - (12) // calendar reset in 9/1752
-    );
+            + (24 * 3) // leap days per century
+            + (5) // leap days 1563-1600 inclusive
+            + (17) // leap days 20th century
+            + (17 + 30 + 31) // remaining days in 1582
+            - (12) // calendar reset in 9/1752
+            );
     private static final BigInteger TIME_OFFSET = BigInteger.valueOf(DAYS_SINCE_EPOCH).
-			multiply(BigInteger.valueOf(NANOSECONDS_PER_DAY));  
+            multiply(BigInteger.valueOf(NANOSECONDS_PER_DAY));
 
     // set the value of the MAC address at class initialization time
     static {
@@ -145,13 +139,14 @@ public final class UUIDFactory {
     }
 
     /**
-     * get a new time if not incremented since the last OID was generated we 
+     * get a new time if not incremented since the last OID was generated we
      * negate the result to flag rolling of the sequence number
      */
     private static final int GREATER_THAN = 1;
+
     private static BigInteger getTime() {
         BigInteger time = TIME_OFFSET.add(BigInteger.valueOf(MILLIS_NANOS_MULT * System.currentTimeMillis()));
-        
+
         if (GREATER_THAN == time.compareTo(lastTimestamp)) {
             incrementSequence();
         } else {
@@ -162,10 +157,10 @@ public final class UUIDFactory {
     }
 
     /**
-     * convienience method puts a long into the id buffer little endian style - decending
-     * 
-     * @param arrayPosition
-     *            beginning position
+     * convienience method puts a long into the id buffer little endian style -
+     * decending
+     *
+     * @param arrayPosition beginning position
      * @param numBytes
      */
     private static void stuffOidWithLong(byte[] tempOid, long l, int arrayPosition, int numBytes) {
@@ -205,6 +200,7 @@ public final class UUIDFactory {
     }
 
     private static final int TIME_ARRAY_LEN = 8;
+
     /**
      * @param array time bytes
      * @return time as bytes
@@ -218,14 +214,14 @@ public final class UUIDFactory {
         }
         return timeArray;
     }
-    
+
     /**
      * Generate an oid from scratch.
      */
     private static synchronized byte[] createOid() {
         long naughtyBits = 0;
-        byte[] localOid = new byte[OID_LENGTH];       
-        
+        byte[] localOid = new byte[OID_LENGTH];
+
         // get since epoch and convert it to a byte array
         byte[] timeArray = createTimeArray(getTime().toByteArray());
 
@@ -257,21 +253,24 @@ public final class UUIDFactory {
     }
 
     /**
-     * Creates a new identifier from an existing (persisted) byte-array representation
+     * Creates a new identifier from an existing (persisted) byte-array
+     * representation
+     *
      * @param byteArray persisted byte-array representation of an Identifier.
      * @return new Identifier from the existing byte-array representation
      */
     public static UUID createUUID(byte[] byteArray) {
-        return  new UUID(byteArray);
+        return new UUID(byteArray);
     }
 
     /**
-     * Creates Identifier from hex String representation of an existing Identifier
+     * Creates Identifier from hex String representation of an existing
+     * Identifier
+     *
      * @param hexString The String version of an existing Identifier.
      * @return New Identifier from the existing hex String representation
      */
     public static UUID createUUID(String hexString) {
-        return  (new UUID(hexString));
+        return (new UUID(hexString));
     }
 }
-    

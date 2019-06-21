@@ -14,15 +14,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc.core;
 
 import ndr.NdrObject;
 
 public class ContextHandle extends NdrObject {
 
-	int attributes;
-	UUID uuid;
+    int attributes;
+    UUID uuid;
 
     public ContextHandle(int attributes, UUID uuid) {
         setAttributes(attributes);
@@ -30,19 +29,19 @@ public class ContextHandle extends NdrObject {
     }
 
     public int getAttributes() {
-		return attributes;
+        return attributes;
     }
 
     public void setAttributes(int attributes) {
-		this.attributes = attributes;
+        this.attributes = attributes;
     }
 
     public UUID getUuid() {
-		return uuid;
+        return uuid;
     }
 
     public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+        this.uuid = uuid;
     }
 
 }

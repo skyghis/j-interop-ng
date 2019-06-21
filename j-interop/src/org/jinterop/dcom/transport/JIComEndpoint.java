@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,29 +14,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.transport;
 
 import java.io.IOException;
-
 import rpc.ConnectionOrientedEndpoint;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
 /**
- * @exclude
- * @since 1.0
+ * @exclude @since 1.0
  *
  */
 public final class JIComEndpoint extends ConnectionOrientedEndpoint {
 
-  JIComEndpoint(Transport transport,
+    JIComEndpoint(Transport transport,
             PresentationSyntax syntax) {
-        super(transport,syntax);
+        super(transport, syntax);
     }
 
-  public void rebindEndPoint() throws IOException
-  {
-	  rebind();
-  }
+    public void rebindEndPoint() throws IOException {
+        rebind();
+    }
 }

@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import java.io.IOException;
@@ -25,7 +22,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import ndr.NdrBuffer;
 import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
@@ -109,31 +105,35 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 
     protected void readBody(NetworkDataRepresentation ndr) {
         UUID object = null;
-		NdrBuffer src = ndr.getBuffer();
+        NdrBuffer src = ndr.getBuffer();
         setAllocationHint(src.dec_ndr_long());
         setContextId(src.dec_ndr_short());
         setOpnum(src.dec_ndr_short());
         if (getFlag(PFC_OBJECT_UUID)) {
             object = new UUID();
-            try { object.decode(ndr, src); } catch (NdrException ne) { }
+            try {
+                object.decode(ndr, src);
+            } catch (NdrException ne) {
+            }
         }
         setObject(object);
     }
 
     protected void writeBody(NetworkDataRepresentation ndr) {
-		NdrBuffer dst = ndr.getBuffer();
+        NdrBuffer dst = ndr.getBuffer();
         dst.enc_ndr_long(getAllocationHint());
         dst.enc_ndr_short(getContextId());
         dst.enc_ndr_short(getOpnum());
         if (getFlag(PFC_OBJECT_UUID)) {
-			try {
-            	getObject().encode(ndr, ndr.getBuffer());
-			} catch (NdrException ne) { };
+            try {
+                getObject().encode(ndr, ndr.getBuffer());
+            } catch (NdrException ne) {
+            };
         }
     }
 
     protected void readStub(NetworkDataRepresentation ndr) {
-		NdrBuffer src = ndr.getBuffer();
+        NdrBuffer src = ndr.getBuffer();
         src.align(8);
         byte[] stub = null;
         int length = getFragmentLength() - src.getIndex();
@@ -145,27 +145,28 @@ public class RequestCoPdu extends ConnectionOrientedPdu
     }
 
     protected void writeStub(NetworkDataRepresentation ndr) {
-		NdrBuffer dst = ndr.getBuffer();
+        NdrBuffer dst = ndr.getBuffer();
         dst.align(8, (byte) 0);
         byte[] stub = getStub();
-        if (stub != null) ndr.writeOctetArray(stub, 0, stub.length);
+        if (stub != null) {
+            ndr.writeOctetArray(stub, 0, stub.length);
+        }
     }
 
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
-            return Arrays.asList(new RequestCoPdu[] { this }).iterator();
+            return Arrays.asList(new RequestCoPdu[]{this}).iterator();
         }
 
         //subtracting 8 bytes for authentication header and 16 for the authentication verifier size, someone forgot the
         //poor guys..
-        int stubSize = size - (getFlag(PFC_OBJECT_UUID) ? 40 : 24) - 8 - 16 ;
+        int stubSize = size - (getFlag(PFC_OBJECT_UUID) ? 40 : 24) - 8 - 16;
         if (stub.length <= stubSize) {
-            return Arrays.asList(new RequestCoPdu[] { this }).iterator();
+            return Arrays.asList(new RequestCoPdu[]{this}).iterator();
         }
-        if (logger.isLoggable(Level.FINEST))
-        {
-        	logger.finest("In fragment of RequestCoPdu, this packet will be fragmented while sending...\n");
+        if (logger.isLoggable(Level.FINEST)) {
+            logger.finest("In fragment of RequestCoPdu, this packet will be fragmented while sending...\n");
         }
         return new FragmentIterator(stubSize);
     }
@@ -177,7 +178,9 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         try {
             RequestCoPdu pdu = (RequestCoPdu) fragments.next();
             byte[] stub = pdu.getStub();
-            if (stub == null) stub = new byte[0];
+            if (stub == null) {
+                stub = new byte[0];
+            }
             while (fragments.hasNext()) {
                 RequestCoPdu fragment = (RequestCoPdu) fragments.next();
                 byte[] fragmentStub = fragment.getStub();
@@ -220,7 +223,6 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         private int index = 0;
 
 //        private boolean firstfragsent = false;
-
         private int callId = callIdCounter++;
 
         public FragmentIterator(int stubSize) {
@@ -232,18 +234,26 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         }
 
         public Object next() {
-            if (index >= stub.length) throw new NoSuchElementException();
+            if (index >= stub.length) {
+                throw new NoSuchElementException();
+            }
             RequestCoPdu fragment = (RequestCoPdu) RequestCoPdu.this.clone();
             int allocation = stub.length - index;
             fragment.setAllocationHint(allocation);
-            if (stubSize < allocation) allocation = stubSize;
+            if (stubSize < allocation) {
+                allocation = stubSize;
+            }
             byte[] fragmentStub = new byte[allocation];
             System.arraycopy(stub, index, fragmentStub, 0, allocation);
             fragment.setStub(fragmentStub);
             int flags = getFlags() & ~(PFC_FIRST_FRAG | PFC_LAST_FRAG);
-            if (index == 0) flags |= PFC_FIRST_FRAG;
+            if (index == 0) {
+                flags |= PFC_FIRST_FRAG;
+            }
             index += allocation;
-            if (index >= stub.length) flags |= PFC_LAST_FRAG;
+            if (index >= stub.length) {
+                flags |= PFC_LAST_FRAG;
+            }
             fragment.setFlags(flags);
 
             //always use the same callId now
@@ -258,9 +268,8 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 //            {
 //            	firstfragsent = true;
 //            }
-            if (logger.isLoggable(Level.FINEST))
-            {
-            	logger.finest("In FragementIterator:next(): callIdCounter is " + callId + " ,  for thread: " + Thread.currentThread());
+            if (logger.isLoggable(Level.FINEST)) {
+                logger.finest("In FragementIterator:next(): callIdCounter is " + callId + " ,  for thread: " + Thread.currentThread());
             }
             return fragment;
         }

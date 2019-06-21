@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,29 +14,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.winreg;
 
-/** Policy handle for each key.
+/**
+ * Policy handle for each key.
  *
  * @since 1.0
  *
  */
 public class JIPolicyHandle {
-	/**
-	 * Handle to the Key
-	 */
-	public final byte handle[] = new byte[20];
-	/**
-	 * True, if the key was newly created.
-	 */
-	public final boolean newlyCreated;
-	/**
-	 * @exclude
-	 * @param newlyCreated
-	 */
-	public JIPolicyHandle(boolean newlyCreated)
-	{
-		this.newlyCreated = newlyCreated;
-	}
+
+    /**
+     * Handle to the Key
+     */
+    public final byte handle[] = new byte[20];
+    /**
+     * True, if the key was newly created.
+     */
+    public final boolean newlyCreated;
+
+    /**
+     * @exclude @param newlyCreated
+     */
+    public JIPolicyHandle(boolean newlyCreated) {
+        this.newlyCreated = newlyCreated;
+    }
 }

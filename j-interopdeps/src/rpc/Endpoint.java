@@ -14,12 +14,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
 package rpc;
 
 import java.io.IOException;
-
 import ndr.NdrObject;
 import rpc.core.PresentationSyntax;
 import rpc.core.UUID;
@@ -37,7 +34,7 @@ public interface Endpoint {
     public PresentationSyntax getSyntax();
 
     public void call(int semantics, UUID object, int opnum,
-			NdrObject ndrobj) throws IOException;
+            NdrObject ndrobj) throws IOException;
 
     public void detach() throws IOException;
 

@@ -42,7 +42,6 @@ package gnu.crypto.prng;
 // library, but you are not obligated to do so.  If you do not wish to
 // do so, delete this exception statement from your version.
 // ----------------------------------------------------------------------------
-
 /**
  * A checked exception that indicates that a pseudo random number generated has
  * reached its theoretical limit in generating random bytes.
@@ -51,17 +50,13 @@ package gnu.crypto.prng;
  */
 public class LimitReachedException extends Exception {
 
-   // Constants and variables
-   // -------------------------------------------------------------------------
-
-   // Constructor(s)
-   // -------------------------------------------------------------------------
-
-   // implicit 0-arguments constructor
-
-   // Class methods
-   // -------------------------------------------------------------------------
-
-   // Instant methods
-   // -------------------------------------------------------------------------
+    // Constants and variables
+    // -------------------------------------------------------------------------
+    // Constructor(s)
+    // -------------------------------------------------------------------------
+    // implicit 0-arguments constructor
+    // Class methods
+    // -------------------------------------------------------------------------
+    // Instant methods
+    // -------------------------------------------------------------------------
 }

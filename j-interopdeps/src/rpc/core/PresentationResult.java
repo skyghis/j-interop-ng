@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.core;
 
 import ndr.NdrException;
@@ -72,10 +69,10 @@ public class PresentationResult extends NdrObject {
         //if (result == ACCEPTANCE) //commenting this since the entire packet should be decoded VRC
         {
             transferSyntax = new PresentationSyntax();
-			try {
-				transferSyntax.decode(ndr, ndr.getBuffer());
-			} catch (NdrException ne) {
-			}
+            try {
+                transferSyntax.decode(ndr, ndr.getBuffer());
+            } catch (NdrException ne) {
+            }
         }
     }
 
@@ -86,10 +83,10 @@ public class PresentationResult extends NdrObject {
         //if (result == ACCEPTANCE && transferSyntax != null)
         if (transferSyntax != null) //commenting this since the entire packet should be written VRC
         {
-			try {
-				transferSyntax.encode(ndr, ndr.getBuffer());
-			} catch (NdrException ne) {
-			}
+            try {
+                transferSyntax.encode(ndr, ndr.getBuffer());
+            } catch (NdrException ne) {
+            }
         }
     }
 

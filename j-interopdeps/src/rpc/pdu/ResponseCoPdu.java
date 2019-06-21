@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import java.io.IOException;
@@ -111,7 +108,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         int length = getFragmentLength() - ndr.getBuffer().getIndex();
         if (length > 0) {
             stub = new byte[length];
-			ndr.readOctetArray(stub, 0, length);
+            ndr.readOctetArray(stub, 0, length);
         }
         setStub(stub);
     }
@@ -119,28 +116,29 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
     protected void writeStub(NetworkDataRepresentation ndr) {
         ndr.getBuffer().align(8, (byte) 0);
         byte[] stub = getStub();
-		if (stub != null) ndr.writeOctetArray(stub, 0, stub.length);
+        if (stub != null) {
+            ndr.writeOctetArray(stub, 0, stub.length);
+        }
     }
 
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
-            return Arrays.asList(new ResponseCoPdu[] { this }).iterator();
+            return Arrays.asList(new ResponseCoPdu[]{this}).iterator();
         }
 
         //subtracting 8 bytes for authentication header and 16 for the authentication verifier size, someone forgot the
         //poor guys..
         int stubSize = size - 24 - 8 - 16;
         if (stub.length <= stubSize) {
-            return Arrays.asList(new ResponseCoPdu[] { this }).iterator();
+            return Arrays.asList(new ResponseCoPdu[]{this}).iterator();
         }
         return new FragmentIterator(stubSize);
     }
 
     public Fragmentable assemble(Iterator fragments) throws IOException {
-    	if (logger.isLoggable(Level.FINEST))
-        {
-        	logger.finest("[DURING RECIEVE IN ASSEMBLE]\n");
+        if (logger.isLoggable(Level.FINEST)) {
+            logger.finest("[DURING RECIEVE IN ASSEMBLE]\n");
         }
         if (!fragments.hasNext()) {
             throw new IOException("No fragments available.");
@@ -148,28 +146,27 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         try {
             ResponseCoPdu pdu = (ResponseCoPdu) fragments.next();
             byte[] stub = pdu.getStub();
-            if (stub == null) stub = new byte[0];
+            if (stub == null) {
+                stub = new byte[0];
+            }
             int i = 0;
             while (fragments.hasNext()) {
-            	if (logger.isLoggable(Level.FINEST))
-                {
-                	logger.finest("[IN ASSEMBLE] Fragment { " + i + " }\n");
+                if (logger.isLoggable(Level.FINEST)) {
+                    logger.finest("[IN ASSEMBLE] Fragment { " + i + " }\n");
                 }
                 ResponseCoPdu fragment = (ResponseCoPdu) fragments.next();
                 byte[] fragmentStub = fragment.getStub();
                 if (fragmentStub != null && fragmentStub.length > 0) {
-                	if (logger.isLoggable(Level.FINEST))
-                    {
-                    	logger.finest("[FRAGMENT'S STUB (new one)] Length is = " + fragmentStub.length);
+                    if (logger.isLoggable(Level.FINEST)) {
+                        logger.finest("[FRAGMENT'S STUB (new one)] Length is = " + fragmentStub.length);
                     }
                     byte[] tmp = new byte[stub.length + fragmentStub.length];
                     System.arraycopy(stub, 0, tmp, 0, stub.length);
                     System.arraycopy(fragmentStub, 0, tmp, stub.length,
                             fragmentStub.length);
                     stub = tmp;
-                    if (logger.isLoggable(Level.FINEST))
-                    {
-                    	logger.finest("[ADDED THIS STUB (previous stub + new one) into OLD STUB] Current Length of pieces assembled so far = " + stub.length);
+                    if (logger.isLoggable(Level.FINEST)) {
+                        logger.finest("[ADDED THIS STUB (previous stub + new one) into OLD STUB] Current Length of pieces assembled so far = " + stub.length);
                         logger.finest("\n" + Hexdump.toHexString(stub));
                     }
                 }
@@ -178,8 +175,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
             if (length > 0) {
                 pdu.setStub(stub);
                 pdu.setAllocationHint(length);
-                if (logger.isLoggable(Level.FINEST))
-                {
+                if (logger.isLoggable(Level.FINEST)) {
                     logger.finest("[FULL AND FINAL STUB AFTER ASSEMBLY]\n");
                     logger.finest("\n" + Hexdump.toHexString(stub));
                 }
@@ -218,18 +214,26 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         }
 
         public Object next() {
-            if (index >= stub.length) throw new NoSuchElementException();
+            if (index >= stub.length) {
+                throw new NoSuchElementException();
+            }
             ResponseCoPdu fragment = (ResponseCoPdu) ResponseCoPdu.this.clone();
             int allocation = stub.length - index;
             fragment.setAllocationHint(allocation);
-            if (stubSize < allocation) allocation = stubSize;
+            if (stubSize < allocation) {
+                allocation = stubSize;
+            }
             byte[] fragmentStub = new byte[allocation];
             System.arraycopy(stub, index, fragmentStub, 0, allocation);
             fragment.setStub(fragmentStub);
             int flags = getFlags() & ~(PFC_FIRST_FRAG | PFC_LAST_FRAG);
-            if (index == 0) flags |= PFC_FIRST_FRAG;
+            if (index == 0) {
+                flags |= PFC_FIRST_FRAG;
+            }
             index += allocation;
-            if (index >= stub.length) flags |= PFC_LAST_FRAG;
+            if (index >= stub.length) {
+                flags |= PFC_LAST_FRAG;
+            }
             fragment.setFlags(flags);
             return fragment;
         }

@@ -14,13 +14,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.core;
 
 import java.util.Arrays;
-
 import ndr.NdrBuffer;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
@@ -67,7 +63,7 @@ public class AuthenticationVerifier extends NdrObject {
         src.dec_ndr_small(); // padding count
         contextId = src.dec_ndr_long();
         System.arraycopy(src.getBuffer(), src.getIndex(), body, 0, body.length);
-		src.index += body.length;
+        src.index += body.length;
     }
 
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
@@ -78,17 +74,19 @@ public class AuthenticationVerifier extends NdrObject {
         dst.enc_ndr_small(0);  //Reserved
         dst.enc_ndr_long(contextId);
         System.arraycopy(body, 0, dst.getBuffer(), dst.getIndex(), body.length);
-		//dst.index += body.length;
+        //dst.index += body.length;
         dst.advance(body.length);
     }
 
     public boolean equals(Object obj) {
-        if (!(obj instanceof AuthenticationVerifier)) return false;
+        if (!(obj instanceof AuthenticationVerifier)) {
+            return false;
+        }
         AuthenticationVerifier other = (AuthenticationVerifier) obj;
-        return (authenticationService == other.authenticationService &&
-                protectionLevel == other.protectionLevel &&
-                        contextId == other.contextId &&
-                                Arrays.equals(body, other.body));
+        return (authenticationService == other.authenticationService
+                && protectionLevel == other.protectionLevel
+                && contextId == other.contextId
+                && Arrays.equals(body, other.body));
     }
 
     public int hashCode() {

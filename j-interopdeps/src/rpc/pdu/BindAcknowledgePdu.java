@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.pdu;
 
 import ndr.NetworkDataRepresentation;
@@ -104,7 +101,9 @@ public class BindAcknowledgePdu extends ConnectionOrientedPdu {
         ndr.writeUnsignedShort(getMaxReceiveFragment());
         ndr.writeUnsignedLong(getAssociationGroupId());
         Port secondaryAddress = getSecondaryAddress();
-        if (secondaryAddress == null) secondaryAddress = new Port();
+        if (secondaryAddress == null) {
+            secondaryAddress = new Port();
+        }
         secondaryAddress.write(ndr);
         ndr.getBuffer().align(4);
         PresentationResult[] resultList = getResultList();

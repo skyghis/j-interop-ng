@@ -14,12 +14,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 import java.io.IOException;
 import java.util.Properties;
-
 import rpc.core.PresentationContext;
 import rpc.core.PresentationResult;
 import rpc.pdu.AlterContextPdu;
@@ -59,7 +57,7 @@ public class BasicConnectionContext implements ConnectionContext {
             }
         }
         BindPdu pdu = new BindPdu();
-        pdu.setContextList(new PresentationContext[] { context });
+        pdu.setContextList(new PresentationContext[]{context});
         pdu.setMaxTransmitFragment(maxTransmitFragment);
         pdu.setMaxReceiveFragment(maxReceiveFragment);
         return pdu;
@@ -69,7 +67,7 @@ public class BasicConnectionContext implements ConnectionContext {
             throws IOException {
         established = false;
         AlterContextPdu pdu = new AlterContextPdu();
-        pdu.setContextList(new PresentationContext[] { context });
+        pdu.setContextList(new PresentationContext[]{context});
         return pdu;
     }
 
@@ -77,51 +75,51 @@ public class BasicConnectionContext implements ConnectionContext {
             throws IOException {
         PresentationResult[] results = null;
         switch (pdu.getType()) {
-        case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
-            BindAcknowledgePdu bindAck = (BindAcknowledgePdu) pdu;
-            results = bindAck.getResultList();
-            if (results == null) {
-                throw new BindException("No presentation context results.");
-            }
-            for (int i = results.length - 1; i >= 0; i--) {
-                if (results[i].result != PresentationResult.ACCEPTANCE) {
-                    throw new PresentationException("Context rejected.",
-                            results[i]);
+            case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
+                BindAcknowledgePdu bindAck = (BindAcknowledgePdu) pdu;
+                results = bindAck.getResultList();
+                if (results == null) {
+                    throw new BindException("No presentation context results.");
                 }
-            }
-            transmitLength = bindAck.getMaxReceiveFragment();
-            receiveLength = bindAck.getMaxTransmitFragment();
-            established = true;
-            connection = new DefaultConnection(transmitLength, receiveLength);
-            return null;
-        case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
-            AlterContextResponsePdu alterContextResponse =
-                    (AlterContextResponsePdu) pdu;
-            results = alterContextResponse.getResultList();
-            if (results == null) {
-                throw new BindException("No presentation context results.");
-            }
-            for (int i = results.length - 1; i >= 0; i--) {
-                if (results[i].result != PresentationResult.ACCEPTANCE) {
-                    throw new PresentationException("Context rejected.",
-                            results[i]);
+                for (int i = results.length - 1; i >= 0; i--) {
+                    if (results[i].result != PresentationResult.ACCEPTANCE) {
+                        throw new PresentationException("Context rejected.",
+                                results[i]);
+                    }
                 }
-            }
-            established = true;
-            return null;
-        case BindNoAcknowledgePdu.BIND_NO_ACKNOWLEDGE_TYPE:
-            throw new BindException("Unable to bind.",
-                    ((BindNoAcknowledgePdu) pdu).getRejectReason());
-        case FaultCoPdu.FAULT_TYPE:
-            throw new FaultException("Fault occurred.",
-                    ((FaultCoPdu) pdu).getStatus());
-        case ShutdownPdu.SHUTDOWN_TYPE:
-            throw new RpcException("Server shutdown connection.");
-        case BindPdu.BIND_TYPE:
-        case AlterContextPdu.ALTER_CONTEXT_TYPE:
-            throw new RpcException("Server-side currently unsupported.");
-        default:
-            throw new RpcException("Unknown/unacceptable PDU type.");
+                transmitLength = bindAck.getMaxReceiveFragment();
+                receiveLength = bindAck.getMaxTransmitFragment();
+                established = true;
+                connection = new DefaultConnection(transmitLength, receiveLength);
+                return null;
+            case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
+                AlterContextResponsePdu alterContextResponse
+                        = (AlterContextResponsePdu) pdu;
+                results = alterContextResponse.getResultList();
+                if (results == null) {
+                    throw new BindException("No presentation context results.");
+                }
+                for (int i = results.length - 1; i >= 0; i--) {
+                    if (results[i].result != PresentationResult.ACCEPTANCE) {
+                        throw new PresentationException("Context rejected.",
+                                results[i]);
+                    }
+                }
+                established = true;
+                return null;
+            case BindNoAcknowledgePdu.BIND_NO_ACKNOWLEDGE_TYPE:
+                throw new BindException("Unable to bind.",
+                        ((BindNoAcknowledgePdu) pdu).getRejectReason());
+            case FaultCoPdu.FAULT_TYPE:
+                throw new FaultException("Fault occurred.",
+                        ((FaultCoPdu) pdu).getStatus());
+            case ShutdownPdu.SHUTDOWN_TYPE:
+                throw new RpcException("Server shutdown connection.");
+            case BindPdu.BIND_TYPE:
+            case AlterContextPdu.ALTER_CONTEXT_TYPE:
+                throw new RpcException("Server-side currently unsupported.");
+            default:
+                throw new RpcException("Unknown/unacceptable PDU type.");
         }
     }
 

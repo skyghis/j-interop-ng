@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,47 +14,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-final class JISetId implements Serializable{
+final class JISetId implements Serializable {
 
+    private static final long serialVersionUID = -3819165506317998524L;
+    byte[] setid = null;
 
-	private static final long serialVersionUID = -3819165506317998524L;
-	byte[] setid = null;
+    JISetId(byte[] setid) {
+        this.setid = setid;
+    }
 
-	JISetId(byte[] setid)
-	{
-		this.setid = setid;
-	}
+    byte[] getSetID() {
+        return setid;
+    }
 
-	byte[] getSetID()
-	{
-		return setid;
-	}
-
-	public int hashCode()
-	{
-		int result = 1;
+    public int hashCode() {
+        int result = 1;
         //from SUN
-        for (int i = 0;i< setid.length;i++)
-        {
+        for (int i = 0; i < setid.length; i++) {
             result = 31 * result + setid[i];
         }
         return result;
-		//return Arrays.hashCode(setid);
-	}
+        //return Arrays.hashCode(setid);
+    }
 
-	 public boolean equals(Object obj)
-	 {
-		 if (!(obj instanceof JISetId)) {
-			return false;
-		 }
+    public boolean equals(Object obj) {
+        if (!(obj instanceof JISetId)) {
+            return false;
+        }
 
-		 return Arrays.equals(setid,((JISetId)obj).getSetID());
-	 }
+        return Arrays.equals(setid, ((JISetId) obj).getSetID());
+    }
 
 }

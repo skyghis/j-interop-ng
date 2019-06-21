@@ -14,7 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc;
 
 import rpc.pdu.BindNoAcknowledgePdu;
@@ -34,30 +33,30 @@ public class BindException extends RpcException {
     }
 
     private static String message(String message, int reason) {
-        return (message != null) ? message + " (" + message(reason) + ")" :
-                message(reason);
+        return (message != null) ? message + " (" + message(reason) + ")"
+                : message(reason);
     }
 
     private static String message(int reason) {
         switch (reason) {
-        case BindNoAcknowledgePdu.REASON_NOT_SPECIFIED:
-            return "REASON_NOT_SPECIFIED";
-        case BindNoAcknowledgePdu.TEMPORARY_CONGESTION:
-            return "TEMPORARY_CONGESTION";
-        case BindNoAcknowledgePdu.LOCAL_LIMIT_EXCEEDED:
-            return "LOCAL_LIMIT_EXCEEDED";
-        case BindNoAcknowledgePdu.CALLED_PADDR_UNKNOWN:
-            return "CALLED_PADDR_UNKNOWN";
-        case BindNoAcknowledgePdu.PROTOCOL_VERSION_NOT_SUPPORTED:
-            return "PROTOCOL_VERSION_NOT_SUPPORTED";
-        case BindNoAcknowledgePdu.DEFAULT_CONTEXT_NOT_SUPPORTED:
-            return "DEFAULT_CONTEXT_NOT_SUPPORTED";
-        case BindNoAcknowledgePdu.USER_DATA_NOT_READABLE:
-            return "USER_DATA_NOT_READABLE";
-        case BindNoAcknowledgePdu.NO_PSAP_AVAILABLE:
-            return "NO_PSAP_AVAILABLE";
-        default:
-            return "unknown";
+            case BindNoAcknowledgePdu.REASON_NOT_SPECIFIED:
+                return "REASON_NOT_SPECIFIED";
+            case BindNoAcknowledgePdu.TEMPORARY_CONGESTION:
+                return "TEMPORARY_CONGESTION";
+            case BindNoAcknowledgePdu.LOCAL_LIMIT_EXCEEDED:
+                return "LOCAL_LIMIT_EXCEEDED";
+            case BindNoAcknowledgePdu.CALLED_PADDR_UNKNOWN:
+                return "CALLED_PADDR_UNKNOWN";
+            case BindNoAcknowledgePdu.PROTOCOL_VERSION_NOT_SUPPORTED:
+                return "PROTOCOL_VERSION_NOT_SUPPORTED";
+            case BindNoAcknowledgePdu.DEFAULT_CONTEXT_NOT_SUPPORTED:
+                return "DEFAULT_CONTEXT_NOT_SUPPORTED";
+            case BindNoAcknowledgePdu.USER_DATA_NOT_READABLE:
+                return "USER_DATA_NOT_READABLE";
+            case BindNoAcknowledgePdu.NO_PSAP_AVAILABLE:
+                return "NO_PSAP_AVAILABLE";
+            default:
+                return "unknown";
         }
     }
 

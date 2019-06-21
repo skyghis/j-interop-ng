@@ -1,28 +1,28 @@
 /**
- * iwombat donated the pieces of code required by the library for UUID generation, Many Thanks to Bob Combs and www.iwombat.com for this. 
+ * iwombat donated the pieces of code required by the library for UUID generation, Many Thanks to Bob Combs and www.iwombat.com for this.
  */
-
-
 package com.iwombat.foundation;
 
 import java.io.Serializable;
 
 /**
  * Generic Identifier interface.
+ *
  * @author jeremyp
  */
 public interface Identifier extends Serializable {
+
     /**
      * @return the byte-array value for this identifier
      */
     byte[] getValue();
 
     /**
-     * @return a hex-string representation of the byte value 
+     * @return a hex-string representation of the byte value
      */
     String toHexString();
 
-    /** 
+    /**
      * @return human-readable String representation
      */
     String toString();

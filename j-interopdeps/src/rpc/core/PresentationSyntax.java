@@ -14,12 +14,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
 package rpc.core;
 
 import java.util.StringTokenizer;
-
 import ndr.NdrBuffer;
 import ndr.NdrException;
 import ndr.NdrObject;
@@ -80,15 +77,16 @@ public class PresentationSyntax extends NdrObject {
         uuid.encode(ndr, dst);
         dst.enc_ndr_long(version);
     }
+
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
-		uuid = new UUID();
+        uuid = new UUID();
         uuid.decode(ndr, src);
         version = src.dec_ndr_long();
     }
 
     public String toString() {
-        return getUuid().toString() + ":" + getMajorVersion() + "." +
-                getMinorVersion();
+        return getUuid().toString() + ":" + getMajorVersion() + "."
+                + getMinorVersion();
     }
 
     public void parse(String syntax) {

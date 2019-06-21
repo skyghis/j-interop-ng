@@ -14,8 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
 package rpc.pdu;
 
 import ndr.NetworkDataRepresentation;
@@ -101,13 +99,15 @@ public class AlterContextResponsePdu extends ConnectionOrientedPdu {
     protected void writeBody(NetworkDataRepresentation ndr) {
         int maxTransmitFragment = getMaxTransmitFragment();
         int maxReceiveFragment = getMaxReceiveFragment();
-        ndr.writeUnsignedShort((maxTransmitFragment == -1) ?
-                ndr.getBuffer().getCapacity() : maxTransmitFragment);
-        ndr.writeUnsignedShort((maxReceiveFragment == -1) ?
-                ndr.getBuffer().getCapacity() : maxReceiveFragment);
+        ndr.writeUnsignedShort((maxTransmitFragment == -1)
+                ? ndr.getBuffer().getCapacity() : maxTransmitFragment);
+        ndr.writeUnsignedShort((maxReceiveFragment == -1)
+                ? ndr.getBuffer().getCapacity() : maxReceiveFragment);
         ndr.writeUnsignedLong(getAssociationGroupId());
         Port secondaryAddress = getSecondaryAddress();
-        if (secondaryAddress == null) secondaryAddress = new Port();
+        if (secondaryAddress == null) {
+            secondaryAddress = new Port();
+        }
         secondaryAddress.write(ndr);
         ndr.getBuffer().align(4);
         PresentationResult[] resultList = getResultList();

@@ -14,17 +14,15 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package rpc.core;
 
 import java.util.StringTokenizer;
-
 import ndr.NdrObject;
 
 public class InterfaceIdentifier extends NdrObject {
 
-	UUID uuid;
-	int majorVersion, minorVersion;
+    UUID uuid;
+    int majorVersion, minorVersion;
 
     public InterfaceIdentifier(String syntax) {
         parse(syntax);
@@ -41,28 +39,28 @@ public class InterfaceIdentifier extends NdrObject {
     }
 
     public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+        this.uuid = uuid;
     }
 
     public int getMajorVersion() {
-		return majorVersion;
+        return majorVersion;
     }
 
     public void setMajorVersion(int majorVersion) {
-		this.majorVersion = majorVersion;
+        this.majorVersion = majorVersion;
     }
 
     public int getMinorVersion() {
-		return minorVersion;
+        return minorVersion;
     }
 
     public void setMinorVersion(int minorVersion) {
-		this.minorVersion = minorVersion;
+        this.minorVersion = minorVersion;
     }
 
     public String toString() {
-        return getUuid().toString() + ":" + getMajorVersion() + "." +
-                getMinorVersion();
+        return getUuid().toString() + ":" + getMajorVersion() + "."
+                + getMinorVersion();
     }
 
     public void parse(String syntax) {

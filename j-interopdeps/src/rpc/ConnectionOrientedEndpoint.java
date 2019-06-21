@@ -14,8 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
 package rpc;
 
 import java.io.IOException;
@@ -87,15 +85,13 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         NdrBuffer buffer = new NdrBuffer(b, 0);
         NetworkDataRepresentation ndr = new NetworkDataRepresentation();
         ndrobj.encode(ndr, buffer);
-		byte[] stub = new byte[buffer.getLength()]; /* yuk */
-		System.arraycopy(buffer.buf, 0, stub, 0, stub.length);
+        byte[] stub = new byte[buffer.getLength()];
+        /* yuk */
+        System.arraycopy(buffer.buf, 0, stub, 0, stub.length);
 
-		if (logger.isLoggable(Level.FINEST))
-                {
-                    logger.finest("\n" + Hexdump.toHexString(stub));
-		}
-
-
+        if (logger.isLoggable(Level.FINEST)) {
+            logger.finest("\n" + Hexdump.toHexString(stub));
+        }
 
         request.setStub(stub);
         request.setAllocationHint(buffer.getLength());
@@ -113,16 +109,16 @@ public class ConnectionOrientedEndpoint implements Endpoint {
 //        {
 //
 //        }
-
-        if (request.getFlag(ConnectionOrientedPdu.PFC_MAYBE)) return;
+        if (request.getFlag(ConnectionOrientedPdu.PFC_MAYBE)) {
+            return;
+        }
         ConnectionOrientedPdu reply = receive();
         if (reply instanceof ResponseCoPdu) {
             ndr.setFormat(reply.getFormat());
 
             buffer = new NdrBuffer(((ResponseCoPdu) reply).getStub(), 0);
 
-            if (logger.isLoggable(Level.FINEST))
-            {
+            if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("\n" + Hexdump.toHexString(buffer.buf));
             }
 
@@ -144,55 +140,50 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         bind();
     }
 
-
     protected void bind() throws IOException {
-        if (bound) return;
+        if (bound) {
+            return;
+        }
         if (context != null) {
             bound = true;
             try {
-            	Integer cid = (Integer)uuidsVsContextIds.get(getSyntax().toString().toUpperCase());
-            	ConnectionOrientedPdu pdu = context.alter(
+                Integer cid = (Integer) uuidsVsContextIds.get(getSyntax().toString().toUpperCase());
+                ConnectionOrientedPdu pdu = context.alter(
                         new PresentationContext(cid == null ? ++contextIdCounter : cid.intValue(), getSyntax()));
-            	boolean sendAlter = false;
-                if (cid == null)
-                {
-                	uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
-                	contextIdToUse = contextIdCounter;
-                	sendAlter = true;
-                }
-                else
-                {
-                	contextIdToUse = cid.intValue();
+                boolean sendAlter = false;
+                if (cid == null) {
+                    uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
+                    contextIdToUse = contextIdCounter;
+                    sendAlter = true;
+                } else {
+                    contextIdToUse = cid.intValue();
                 }
 
-                if (sendAlter)
-                {
-                	if (pdu != null) send(pdu);
-	                while (!context.isEstablished()) {
-	                	ConnectionOrientedPdu recieved = receive();
-	                    if ((pdu = context.accept(recieved)) != null)
-	                    {
-	                    	switch(pdu.getType())
-	                    	{
-	                    		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
-	                    			if (((BindAcknowledgePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-	                    			{
-	                    				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-	                    			}
-	                    			break;
-	                    		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
-	                    			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
-	                    			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-	                    			{
-	                    				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-	                    			}
-	                    			break;
-	                    		default:
-	                    			//nothing
-	                    	}
-	                    	send(pdu);
-	                    }
-	                }
+                if (sendAlter) {
+                    if (pdu != null) {
+                        send(pdu);
+                    }
+                    while (!context.isEstablished()) {
+                        ConnectionOrientedPdu recieved = receive();
+                        if ((pdu = context.accept(recieved)) != null) {
+                            switch (pdu.getType()) {
+                                case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
+                                    if (((BindAcknowledgePdu) pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION) {
+                                        currentIID = ((BindPdu) recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+                                    }
+                                    break;
+                                case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
+                                    //we need to record the iid now if this is successful and subsequent calls will now be for this iid.
+                                    if (((AlterContextResponsePdu) pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION) {
+                                        currentIID = ((AlterContextPdu) recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+                                    }
+                                    break;
+                                default:
+                                //nothing
+                            }
+                            send(pdu);
+                        }
+                    }
                 }
             } catch (IOException ex) {
                 bound = false;
@@ -231,61 +222,66 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         contextIdCounter = 0;
         currentIID = null;
         try {
-        	uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
+            uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
             context = createContext();
             ConnectionOrientedPdu pdu = context.init(
                     new PresentationContext(contextIdCounter, getSyntax()),
-                            getTransport().getProperties());
+                    getTransport().getProperties());
             contextIdToUse = contextIdCounter;
-            if (pdu != null) send(pdu);
+            if (pdu != null) {
+                send(pdu);
+            }
             while (!context.isEstablished()) {
-            	ConnectionOrientedPdu recieved = receive();
-                if ((pdu = context.accept(recieved)) != null)
-                {
-                	switch(pdu.getType())
-                	{
-                		case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
-                			if (((BindAcknowledgePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-                			{
-                				currentIID = ((BindPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-                			}
-                			break;
-                		case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
-                			//we need to record the iid now if this is successful and subsequent calls will now be for this iid.
-                			if (((AlterContextResponsePdu)pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION)
-                			{
-                				currentIID = ((AlterContextPdu)recieved).getContextList()[0].abstractSyntax.getUuid().toString();
-                			}
-                			break;
-                		default:
-                			//nothing
-                	}
-                	send(pdu);
+                ConnectionOrientedPdu recieved = receive();
+                if ((pdu = context.accept(recieved)) != null) {
+                    switch (pdu.getType()) {
+                        case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
+                            if (((BindAcknowledgePdu) pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION) {
+                                currentIID = ((BindPdu) recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+                            }
+                            break;
+                        case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
+                            //we need to record the iid now if this is successful and subsequent calls will now be for this iid.
+                            if (((AlterContextResponsePdu) pdu).getResultList()[0].reason != PresentationResult.PROVIDER_REJECTION) {
+                                currentIID = ((AlterContextPdu) recieved).getContextList()[0].abstractSyntax.getUuid().toString();
+                            }
+                            break;
+                        default:
+                        //nothing
+                    }
+                    send(pdu);
                 }
             }
         } catch (IOException ex) {
             try {
                 detach();
-            } catch (IOException ignore) { }
+            } catch (IOException ignore) {
+            }
             throw ex;
         } catch (RuntimeException ex) {
             try {
                 detach();
-            } catch (IOException ignore) { }
+            } catch (IOException ignore) {
+            }
             throw ex;
         } catch (Exception ex) {
             try {
                 detach();
-            } catch (IOException ignore) { }
+            } catch (IOException ignore) {
+            }
             throw new IOException(ex.getMessage());
         }
     }
 
     protected ConnectionContext createContext() throws ProviderException {
         Properties properties = getTransport().getProperties();
-        if (properties == null) return new BasicConnectionContext();
+        if (properties == null) {
+            return new BasicConnectionContext();
+        }
         String context = properties.getProperty(CONNECTION_CONTEXT);
-        if (context == null) return new BasicConnectionContext();
+        if (context == null) {
+            return new BasicConnectionContext();
+        }
         try {
             return (ConnectionContext) Class.forName(context).newInstance();
         } catch (Exception ex) {

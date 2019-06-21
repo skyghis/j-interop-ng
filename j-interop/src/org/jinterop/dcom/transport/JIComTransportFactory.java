@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -17,37 +17,34 @@
 package org.jinterop.dcom.transport;
 
 import java.util.Properties;
-
 import rpc.ProviderException;
 import rpc.Transport;
 
 /**
- * @exclude
- * @since 1.0
+ * @exclude @since 1.0
  *
  */
 public final class JIComTransportFactory extends rpc.TransportFactory {
 
-	private static JIComTransportFactory factory = null;
-	private JIComTransportFactory() {}
+    private static JIComTransportFactory factory = null;
 
-	public Transport createTransport(String address, Properties properties)
-    	throws ProviderException {
-			return new JIComTransport(address, properties);
-	}
+    private JIComTransportFactory() {
+    }
 
-	public static JIComTransportFactory getSingleTon()
-	{
-		if (factory == null)
-		{
-			synchronized (JIComTransportFactory.class) {
-				if (factory == null)
-				{
-					factory = new JIComTransportFactory();
-				}
-			}
-		}
+    public Transport createTransport(String address, Properties properties)
+            throws ProviderException {
+        return new JIComTransport(address, properties);
+    }
 
-		return factory;
-	}
+    public static JIComTransportFactory getSingleTon() {
+        if (factory == null) {
+            synchronized (JIComTransportFactory.class) {
+                if (factory == null) {
+                    factory = new JIComTransportFactory();
+                }
+            }
+        }
+
+        return factory;
+    }
 }

@@ -14,9 +14,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
-
-
 package rpc.core;
 
 import ndr.NdrBuffer;
@@ -38,10 +35,10 @@ public class Port extends NdrObject {
     public void read(NetworkDataRepresentation ndr) {
         int length = ndr.readUnsignedShort();
         if (length > 0) {
-			NdrBuffer buf = ndr.getBuffer();
+            NdrBuffer buf = ndr.getBuffer();
             char[] portSpec = new char[length - 1];
             ndr.readCharacterArray(portSpec, 0, portSpec.length);
-			ndr.readUnsignedSmall(); // null terminator
+            ndr.readUnsignedSmall(); // null terminator
             this.portSpec = new String(portSpec);
         } else {
             this.portSpec = null;
@@ -57,13 +54,17 @@ public class Port extends NdrObject {
             spec = new char[0];
         }
         ndr.writeUnsignedShort(spec.length);
-        if (spec.length > 0) ndr.writeCharacterArray(spec, 0, spec.length);
+        if (spec.length > 0) {
+            ndr.writeCharacterArray(spec, 0, spec.length);
+        }
     }
 
     public boolean equals(Object obj) {
-        if (!(obj instanceof Port)) return false;
-        return (portSpec != null) ? portSpec.equals(((Port) obj).portSpec) :
-                ((Port) obj).portSpec == null;
+        if (!(obj instanceof Port)) {
+            return false;
+        }
+        return (portSpec != null) ? portSpec.equals(((Port) obj).portSpec)
+                : ((Port) obj).portSpec == null;
     }
 
 }

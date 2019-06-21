@@ -1,4 +1,4 @@
-/**j-Interop (Pure Java implementation of DCOM protocol)
+/** j-Interop (Pure Java implementation of DCOM protocol)
  * Copyright (C) 2006  Vikram Roopchand
  *
  * This library is free software; you can redistribute it and/or
@@ -14,46 +14,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110, USA
  */
-
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-final class JIOxid implements Serializable{
+final class JIOxid implements Serializable {
 
-	private static final long serialVersionUID = 3456725801334190150L;
-	byte[] oxid = null;
+    private static final long serialVersionUID = 3456725801334190150L;
+    byte[] oxid = null;
 
-	JIOxid(byte[] oxid)
-	{
-		this.oxid = oxid;
-	}
+    JIOxid(byte[] oxid) {
+        this.oxid = oxid;
+    }
 
-	byte[] getOXID()
-	{
-		return oxid;
-	}
+    byte[] getOXID() {
+        return oxid;
+    }
 
-	public int hashCode()
-	{
-		int result = 1;
+    public int hashCode() {
+        int result = 1;
         //from SUN
-        for (int i = 0;i< oxid.length;i++)
-        {
+        for (int i = 0; i < oxid.length; i++) {
             result = 31 * result + oxid[i];
         }
         return result;
-		//return Arrays.hashCode(oxid);
-	}
+        //return Arrays.hashCode(oxid);
+    }
 
-	 public boolean equals(Object obj)
-	 {
-		 if (!(obj instanceof JIOxid)) {
-			return false;
-		 }
+    public boolean equals(Object obj) {
+        if (!(obj instanceof JIOxid)) {
+            return false;
+        }
 
-		 return Arrays.equals(oxid,((JIOxid)obj).getOXID());
-	 }
+        return Arrays.equals(oxid, ((JIOxid) obj).getOXID());
+    }
 
 }
