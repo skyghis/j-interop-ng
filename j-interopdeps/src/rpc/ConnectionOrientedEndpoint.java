@@ -18,15 +18,13 @@
 
 package rpc;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
@@ -93,11 +91,8 @@ public class ConnectionOrientedEndpoint implements Endpoint {
 		System.arraycopy(buffer.buf, 0, stub, 0, stub.length);
 
 		if (logger.isLoggable(Level.FINEST))
-		{
-			//jcifs.util.Hexdump.hexdump(System.err, stub, 0, stub.length);
-		   	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), stub, 0, stub.length);
-		   	logger.finest("\n" + byteArrayOutputStream.toString());
+                {
+                    logger.finest("\n" + Hexdump.toHexString(stub));
 		}
 
 
@@ -127,12 +122,9 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             buffer = new NdrBuffer(((ResponseCoPdu) reply).getStub(), 0);
 
             if (logger.isLoggable(Level.FINEST))
-    		{
-            	//jcifs.util.Hexdump.hexdump(System.err, buffer.buf, 0, buffer.buf.length);
-    		   	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    		   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), buffer.buf, 0, buffer.buf.length);
-    		   	logger.finest("\n" + byteArrayOutputStream.toString());
-    		}
+            {
+                logger.finest("\n" + Hexdump.toHexString(buffer.buf));
+            }
 
             ndrobj.decode(ndr, buffer);
 

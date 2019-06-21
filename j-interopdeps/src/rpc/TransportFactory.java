@@ -85,7 +85,7 @@ public abstract class TransportFactory {
                 if (defaults != null) {
                     URL url = null;
                     try {
-                        url = new URL(new File(".").toURL(), defaults);
+                        url = new URL(new File(".").toURI().toURL(), defaults);
                         properties.load(url.openStream());
                     } catch (MalformedURLException ex) {
                         throw new IllegalArgumentException("Bad location " +

@@ -17,14 +17,12 @@
 
 package rpc;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
 import rpc.core.AuthenticationVerifier;
@@ -137,9 +135,7 @@ public class DefaultConnection implements Connection {
         //jcifs.util.Hexdump.hexdump(System.err, transmitBuffer.getBuffer(), 0, transmitBuffer.length);
         if (logger.isLoggable(Level.FINEST))
         {
-        	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), transmitBuffer.getBuffer(), 0, transmitBuffer.length);
-        	logger.finest("[TRANSMIT BUFFER]:-\n" + byteArrayOutputStream.toString());
+        	logger.finest("[TRANSMIT BUFFER]:-\n" + Hexdump.toHexString(transmitBuffer.getBuffer()));
         }
         transport.send(transmitBuffer);
     }
@@ -201,9 +197,7 @@ public class DefaultConnection implements Connection {
     		if (logger.isLoggable(Level.FINEST))
     	    {
 	    		logger.finest("[RECIEVER BUFFER] Full packet is dumped below...");
-    	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), receiveBuffer.getBuffer(), 0, receiveBuffer.length);
-    	        logger.finest("\n" + byteArrayOutputStream.toString());
+    	        logger.finest("\n" + Hexdump.toHexString(receiveBuffer.getBuffer()));
     	    	logger.finest("\n" + " Bytes read from RecieveBuffer Socket:- " + receiveBuffer.length);
             }
 
@@ -270,9 +264,7 @@ public class DefaultConnection implements Connection {
 		    	    {
 						logger.finest("\n" + "lengthOfArrayTobeRead = " + lengthOfArrayTobeRead + "\n" + "trimSize = " + trimSize + "\n" + "RecieveBuffer current read size: " + receiveBuffer.length);
 						logger.finest("\n\n[RECIEVER BUFFER] and the read packet is dumped below...");
-		    	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), receiveBuffer.getBuffer(), 0, receiveBuffer.length);
-		    	        logger.finest("\n" + byteArrayOutputStream.toString());
+		    	        logger.finest("\n" + Hexdump.toHexString(receiveBuffer.getBuffer()));
 
 		            }
 
@@ -315,10 +307,8 @@ public class DefaultConnection implements Connection {
 			if (logger.isLoggable(Level.FINEST))
     	    {
 				logger.finest("\n" + "bufferToBeUsed Size = " + bufferToBeUsed.length);
-				logger.finest("\n\n[bufferToBeUsed] packet is dumped below...");
-    	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), bufferToBeUsed.getBuffer(), 0, bufferToBeUsed.length);
-    	        logger.finest("\n" + byteArrayOutputStream.toString());
+                logger.finest("\n\n[bufferToBeUsed] packet is dumped below...");
+                logger.finest("\n" + Hexdump.toHexString(bufferToBeUsed.getBuffer()));
     	        logger.finest("\n*********************************************************************************");
     	    }
 

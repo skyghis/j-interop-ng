@@ -19,14 +19,12 @@ package rpc.security.ntlm;
 
 import gnu.crypto.prng.IRandom;
 import gnu.crypto.util.Util;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import jcifs.ntlmssp.NtlmFlags;
+import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
 import rpc.IntegrityException;
@@ -121,10 +119,8 @@ public class Ntlm1 implements NtlmFlags, Security {
 
             if (logger.isLoggable(Level.FINEST))
     	    {
-				logger.finest("\n AFTER Decryption");
-    	        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), data, 0, data.length);
-    	        logger.finest("\n" + byteArrayOutputStream.toString());
+                logger.finest("\n AFTER Decryption");
+                logger.finest("\n" + Hexdump.toHexString(data));
     	        logger.finest("\nLength is: " + data.length);
     	    }
 
@@ -187,8 +183,7 @@ public class Ntlm1 implements NtlmFlags, Security {
     	    {
 				logger.finest("\n BEFORE Encryption");
 			    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    	        jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), data, 0, data.length);
-    	        logger.finest("\n" + byteArrayOutputStream.toString());
+                logger.finest("\n" + Hexdump.toHexString(data));
     	        logger.finest("\n Length is: " + data.length);
     	    }
 

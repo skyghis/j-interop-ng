@@ -17,21 +17,17 @@
 
 package org.jinterop.dcom.transport;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Level;
-
+import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
-
 import org.jinterop.dcom.common.IJICOMRuntimeWorker;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
-
 import rpc.ConnectionOrientedEndpoint;
 import rpc.ConnectionOrientedPdu;
 import rpc.FaultException;
@@ -110,10 +106,8 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 				  if(buffer.buf != null)
 				  {
 					if (JISystem.getLogger().isLoggable(Level.FINEST))
-			        {
-			        	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			        	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), buffer.buf, 0, buffer.buf.length);
-			        	JISystem.getLogger().finest("\n" + byteArrayOutputStream.toString());
+                                        {
+                                            JISystem.getLogger().finest("\n" + Hexdump.toHexString(buffer.buf));
 			        }
 					 // System.err.println("Vikram: " + Long.toString(Thread.currentThread().getId()));
 					 // jcifs.util.Hexdump.hexdump(System.err, buffer.buf, 0, buffer.buf.length);

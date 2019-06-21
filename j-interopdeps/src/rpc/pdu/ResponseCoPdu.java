@@ -19,15 +19,13 @@
 
 package rpc.pdu;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import jcifs.util.Hexdump;
 import ndr.NetworkDataRepresentation;
 import rpc.ConnectionOrientedPdu;
 import rpc.Fragmentable;
@@ -172,9 +170,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
                     if (logger.isLoggable(Level.FINEST))
                     {
                     	logger.finest("[ADDED THIS STUB (previous stub + new one) into OLD STUB] Current Length of pieces assembled so far = " + stub.length);
-                    	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), stub, 0, stub.length);
-                    	logger.finest("\n" + byteArrayOutputStream.toString());
+                        logger.finest("\n" + Hexdump.toHexString(stub));
                     }
                 }
             }
@@ -184,10 +180,8 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
                 pdu.setAllocationHint(length);
                 if (logger.isLoggable(Level.FINEST))
                 {
-                	logger.finest("[FULL AND FINAL STUB AFTER ASSEMBLY]\n");
-                	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), stub, 0, stub.length);
-                	logger.finest("\n" + byteArrayOutputStream.toString());
+                    logger.finest("[FULL AND FINAL STUB AFTER ASSEMBLY]\n");
+                    logger.finest("\n" + Hexdump.toHexString(stub));
                 }
             } else {
                 pdu.setStub(null);

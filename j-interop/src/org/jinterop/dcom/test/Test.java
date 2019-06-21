@@ -1,22 +1,12 @@
 package org.jinterop.dcom.test;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import jcifs.UniAddress;
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbAuthException;
-import jcifs.smb.SmbException;
-import jcifs.smb.SmbSession;
-
 import org.jinterop.dcom.core.JIComServer;
 
 public class Test {
 
  public static void main(String[] args) {
-	 try {
-
-		 boolean b = null instanceof JIComServer ? false : true;
+//	 try {
+     boolean b = null instanceof JIComServer ? false : true;
 		// Socket socket = new Socket("10.24.10.65",139);
 		 //socket.close();
 //	 UniAddress mydomaincontoller = UniAddress.getByName( "192.168.170.6" );
@@ -31,9 +21,9 @@ public class Test {
 
 		 //NtlmChallenge challenge = SmbSession.getChallengeForDomain();
 
-		 UniAddress mydomaincontoller = UniAddress.getByName("itl-hw-lt15522");
-		 NtlmPasswordAuthentication mycreds = new NtlmPasswordAuthentication( "itl-hw-lt15522", "TestUser", "Enabler2000" );
-		 SmbSession.logon(mydomaincontoller,mycreds);
+//		 UniAddress mydomaincontoller = UniAddress.getByName("itl-hw-lt15522");
+//		 NtlmPasswordAuthentication mycreds = new NtlmPasswordAuthentication( "itl-hw-lt15522", "TestUser", "Enabler2000" );
+//		 SmbSession.logon(mydomaincontoller,mycreds);
 		 //PLEASE NOTE THAT THE WINDOWS "SERVER" SERVICE SOULD BE RUNNING !!! OTHERWISE THE
 		 //GETCHALLENGE WILL FAIL.
 //		 UniAddress mydomaincontoller = UniAddress.getByName("itl-hw-lt15522.ad.infosys.com");
@@ -43,19 +33,19 @@ public class Test {
 
 	     // SUCCESS
 
-	 } catch( SmbAuthException sae ) {
-	     // AUTHENTICATION FAILURE
-	     sae.printStackTrace();
-	 } catch( SmbException se ) {
-	     // NETWORK PROBLEMS?
-	     se.printStackTrace();
-	 } catch (UnknownHostException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+//	 } catch( SmbAuthException sae ) {
+//	     // AUTHENTICATION FAILURE
+//	     sae.printStackTrace();
+//	 } catch( SmbException se ) {
+//	     // NETWORK PROBLEMS?
+//	     se.printStackTrace();
+//	 } catch (UnknownHostException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	} catch (IOException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 }
 
  public void test()

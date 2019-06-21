@@ -1,6 +1,6 @@
 /**
  * Extracted from http://davenport.sourceforge.net/ntlm.html
- * Copyright © 2003, 2006 Eric Glass (eric.glass@gmail.com) 
+ * Copyright Â© 2003, 2006 Eric Glass (eric.glass@gmail.com) 
  * 
  */
 package rpc.security.ntlm;

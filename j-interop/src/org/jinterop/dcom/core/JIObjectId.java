@@ -17,12 +17,10 @@
 
 package org.jinterop.dcom.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.logging.Level;
-
+import jcifs.util.Hexdump;
 import org.jinterop.dcom.common.JISystem;
 
 final class JIObjectId implements Serializable {
@@ -113,10 +111,8 @@ final class JIObjectId implements Serializable {
 	}
 
 	public String toString()
-	{
-	   	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	   	jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), oid, 0, oid.length);
-	   	return  "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + byteArrayOutputStream.toString() + " , hasExpired " + hasExpired() + " } ";
+    {
+        return "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + Hexdump.toHexString(oid) + " , hasExpired " + hasExpired() + " } ";
 	}
 
 //	void addIpid(String IPID)
