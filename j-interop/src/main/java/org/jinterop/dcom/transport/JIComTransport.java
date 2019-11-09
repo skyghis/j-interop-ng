@@ -62,8 +62,6 @@ final class JIComTransport implements Transport {
 
     private boolean attached;
 
-    private boolean timeoutModifiedfrom0 = false;
-
     private SocketChannel channel = null;
 
     static {
@@ -97,9 +95,17 @@ final class JIComTransport implements Transport {
             if (JISystem.getLogger().isLoggable(Level.FINEST)) {
                 JISystem.getLogger().finest("Opening socket on " + new InetSocketAddress(InetAddress.getByName(host), port));
             }
+            channel = SocketChannel.open();
+            socket = channel.socket();
 
-            channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName(host), port));
-            socket = channel.socket();//new Socket(host, port);
+            int timeout = 0;
+            try {
+                timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
+            } catch (NumberFormatException ex) {
+                JISystem.getLogger().log(Level.WARNING, "Invalid timeout value " + this.properties.getProperty("rpc.socketTimeout"), ex);
+            }
+            socket.setSoTimeout(timeout);
+            socket.connect(new InetSocketAddress(InetAddress.getByName(host), port), timeout);
             output = null;
             input = null;
             attached = true;
@@ -152,29 +158,11 @@ final class JIComTransport implements Transport {
         if (!attached) {
             throw new RpcException("Transport not attached.");
         }
-        applySocketTimeout();
         if (input == null) {
             input = socket.getInputStream();
         }
         buffer.length = (input.read(buffer.getBuffer(), 0,
                 buffer.getCapacity()));
-    }
-
-    private void applySocketTimeout() {
-        int timeout = 0;
-        try {
-            timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
-            if (timeout != 0) {
-                socket.setSoTimeout(timeout);
-                timeoutModifiedfrom0 = true;
-            } else {
-                if (timeoutModifiedfrom0) {
-                    socket.setSoTimeout(timeout);
-                    timeoutModifiedfrom0 = false;
-                }
-            }
-        } catch (Exception e) {
-        }
     }
 
     void parse(String address) throws ProviderException {
