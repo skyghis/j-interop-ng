@@ -1,4 +1,19 @@
-target
+# Maven
+target/
+
+# Java virtual machine crash logs
+hs_err_pid*
+
+# Eclipse project files
+.classpath
+.project
+
+
+# Intellij project files
+*.iml
 *.ipr
 *.iws
-*.iml
+.idea/
+
+# Netbeans project files
+nb-configuration.xml
