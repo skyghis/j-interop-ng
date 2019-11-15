@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2019-11-15
 ### Added
-- Add dependency to `jcifs-ng` version `2.1.2`.
+- Add dependency to `jcifs-ng` version `2.1.3`.
 - Add LICENSE, README and CHANGELOG.
 
 ### Changed
@@ -22,3 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Socket connection timeout not used on connect.
+
+[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/skyghis/j-interop-ng/releases/tag/3.0.0
