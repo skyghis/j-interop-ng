@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.skyghis</groupId>
         <artifactId>j-interop-ng-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>j-interop-ng</artifactId>
@@ -16,6 +16,7 @@
     <scm>
         <connection>scm:git:https://github.com/skyghis/j-interop-ng.git</connection>
         <developerConnection>scm:git:git@github.com:skyghis/j-interop-ng.git</developerConnection>
+        <tag>3.0.0</tag>
     </scm>
 
     <dependencies>
