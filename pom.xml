@@ -4,7 +4,7 @@
 
     <groupId>com.github.skyghis</groupId>
     <artifactId>j-interop-ng-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
 
     <name>Pure Java - COM bridge - Parent</name>
@@ -24,6 +24,15 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>skyghis</id>
+            <name>SkyghiS</name>
+            <email>skyghis@gmail.com</email>
+            <url>https://github.com/skyghis</url>
+        </developer>
+    </developers>
+
     <modules>
         <module>j-interop</module>
         <module>j-interopdeps</module>
@@ -32,7 +41,7 @@
     <scm>
         <connection>scm:git:https://github.com/skyghis/j-interop-ng.git</connection>
         <developerConnection>scm:git:git@github.com:skyghis/j-interop-ng.git</developerConnection>
-        <tag></tag>
+        <tag>3.0.0</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>
