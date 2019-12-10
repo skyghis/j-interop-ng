@@ -16,9 +16,11 @@
  */
 package org.jinterop.dcom.common;
 
-//TODO look at winerror.h
+//TODO look at winerror.h : https://windows-hexerror.linestarve.com/browse/headers/winerror.h
 /**
- * All errorcodes. ErrorCodes begining with "JI" are j-Interop error codes.  <br>
+ * All errorcodes.
+ *
+ * ErrorCodes begining with "JI" are j-Interop error codes.
  *
  * @since 1.0
  */
@@ -265,6 +267,16 @@ public final class JIErrorCodes {
      * Access Violation.
      */
     public static final int RPC_S_ACCESS_VIOLATION = 0xC0000005;
+
+    /**
+     * An invalid HANDLE was specified
+     */
+    public static final int WIN_INVALID_HANDLE = 0xC0000008;
+
+    /**
+     * The object name is not found.
+     */
+    public static final int STATUS_OBJECT_NAME_NOT_FOUND = 0xC0000034;
 
     /**
      * The server threw an exception.
