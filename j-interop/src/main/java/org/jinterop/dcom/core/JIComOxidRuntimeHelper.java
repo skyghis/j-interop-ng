@@ -74,14 +74,14 @@ final class JIComOxidRuntimeHelper extends Stub {
             public void run() {
                 try {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("started startOxid thread: " + Thread.currentThread().getName());
+                        JISystem.getLogger().log(Level.INFO, "started startOxid thread: {0}", Thread.currentThread().getName());
                     }
                     attach();
                     ((JIComRuntimeEndpoint) getEndpoint()).processRequests(new OxidResolverImpl(getProperties()), null, new ArrayList());
                 } catch (Exception e) {
                     if (JISystem.getLogger().isLoggable(Level.WARNING)) {
                         JISystem.getLogger().throwing("Oxid Resolver Thread", "run", e);
-                        JISystem.getLogger().warning("Oxid Resolver Thread: " + e.getMessage() + " , on thread Id: " + Thread.currentThread().getName());
+                        JISystem.getLogger().log(Level.WARNING, "Oxid Resolver Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
                     }
                 } finally {
                     try {
@@ -90,7 +90,7 @@ final class JIComOxidRuntimeHelper extends Stub {
                     }
                 }
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("terminating startOxid thread: " + Thread.currentThread().getName());
+                    JISystem.getLogger().log(Level.INFO, "terminating startOxid thread: {0}", Thread.currentThread().getName());
                 }
             }
         }, "jI_OxidResolver_Client[" + portNumLocal + " , " + portNumRemote + "]");
@@ -112,14 +112,14 @@ final class JIComOxidRuntimeHelper extends Stub {
             @Override
             public void run() {
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("started RemUnknown listener thread for : " + Thread.currentThread().getName());
+                    JISystem.getLogger().log(Level.INFO, "started RemUnknown listener thread for : {0}", Thread.currentThread().getName());
                 }
                 try {
 
                     while (true) {
                         final Socket socket = serverSocket.accept();
                         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                            JISystem.getLogger().info("RemUnknown listener: Got Connection from " + socket.getPort());
+                            JISystem.getLogger().log(Level.INFO, "RemUnknown listener: Got Connection from {0}", socket.getPort());
                         }
 
                         //now create the JIComOxidRuntimeHelper Object and start it. We need a new one since the old one is already attached to the listener.
@@ -143,8 +143,7 @@ final class JIComOxidRuntimeHelper extends Stub {
                                     JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
                                     throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_SMB_FAILURE);
                                 } catch (ClosedByInterruptException e) {
-                                    JISystem.getLogger().info("JIComOxidRuntimeHelper RemUnknownThread (not listener)" + Thread.currentThread().getName()
-                                            + " is purposefully closed by interruption.");
+                                    JISystem.getLogger().log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownThread (not listener){0} is purposefully closed by interruption.", Thread.currentThread().getName());
                                 } catch (IOException e) {
                                     JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
                                 } finally {
@@ -160,12 +159,11 @@ final class JIComOxidRuntimeHelper extends Stub {
                         remUnknown.start();
                     }
                 } catch (ClosedByInterruptException e) {
-                    JISystem.getLogger().info("JIComOxidRuntimeHelper RemUnknownListener" + Thread.currentThread().getName()
-                            + " is purposefully closed by interruption.");
+                    JISystem.getLogger().log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownListener{0} is purposefully closed by interruption.", Thread.currentThread().getName());
                 } catch (IOException e) {
                     if (JISystem.getLogger().isLoggable(Level.WARNING)) {
                         JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownListener", e);
-                        JISystem.getLogger().warning("RemUnknownListener Thread: " + e.getMessage() + " , on thread Id: " + (Thread.currentThread().getName()));
+                        JISystem.getLogger().log(Level.WARNING, "RemUnknownListener Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
                     }
                     //e.printStackTrace();
                 } catch (Throwable e) {
@@ -175,7 +173,7 @@ final class JIComOxidRuntimeHelper extends Stub {
                 }
 
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("terminating RemUnknownListener thread: " + Thread.currentThread().getName());
+                    JISystem.getLogger().log(Level.INFO, "terminating RemUnknownListener thread: {0}", Thread.currentThread().getName());
                 }
             }
         }, "jI_RemUnknownListener[" + baseIID + " , " + remUnknownPort + "]");
@@ -651,7 +649,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             //call is being made , and was previously exported during Q.I. The component value was filled during an
             //alter context or bind, again made some calls before.
             if (component == null) {
-                JISystem.getLogger().severe("JIComOxidRuntimeHelper RemUnknownObject read(): component is null , opnum is " + opnum + " , IPID is " + ipid + " , selfIpid is " + selfIPID);
+                JISystem.getLogger().log(Level.SEVERE, "JIComOxidRuntimeHelper RemUnknownObject read(): component is null , opnum is {0} , IPID is {1} , selfIpid is {2}", new Object[]{opnum, ipid, selfIPID});
             }
             byte b[] = null;
             Object result = null;
@@ -662,7 +660,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                 result = component.invokeMethod(ipid, opnum, ndr);
             } catch (JIException e) {
                 hresult = e.getErrorCode();
-                JISystem.getLogger().severe("Exception occured: " + e.getErrorCode());
+                JISystem.getLogger().log(Level.SEVERE, "Exception occured: {0}", e.getErrorCode());
                 JISystem.getLogger().throwing("RemUnknownObject", "read", e);
             }
 
@@ -756,7 +754,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
             JISystem.getLogger().finest("Within RemUnknownObject: QueryInterface");
-            JISystem.getLogger().finest("RemUnknownObject: [QI] Before call terminated listOfIIDsQIed are: " + listOfIIDsQIed);
+            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] Before call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
         }
         JIOrpcThis.decode(ndr);
 
@@ -769,7 +767,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         }
 
         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().finest("RemUnknownObject: [QI] IPID is " + ipid);
+            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] IPID is {0}", ipid);
         }
         //set the JILocalCoClass., the ipid should not be null in this call.
         JIComOxidDetails details = JIComOxidRuntime.getComponentFromIPID(ipid.toString());
@@ -782,7 +780,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         JILocalCoClass component = details.getReferent();
 
         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().finest("RemUnknownObject: [QI] JIJavcCoClass is " + component.getCoClassIID());
+            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] JIJavcCoClass is {0}", component.getCoClassIID());
         }
 
         ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();//refs , don't really care about this.
@@ -811,7 +809,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         for (int i = 0; i < arrayOfUUIDs.length; i++) {
             UUID iid = (UUID) arrayOfUUIDs[i];
             if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().finest("RemUnknownObject: [QI] Array iid[" + i + "] is " + iid);
+                JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] Array iid[{0}] is {1}", new Object[]{i, iid});
             }
             //now for each QueryResult
             try {
@@ -829,12 +827,12 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
                     if (tmpIpid == null) {
                         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                            JISystem.getLogger().finest("RemUnknownObject: [QI] tmpIpid is null for iid " + iid);
+                            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is null for iid {0}", iid);
                         }
                         component.exportInstance(iid.toString(), ipid2);
                     } else {
                         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                            JISystem.getLogger().finest("RemUnknownObject: [QI] tmpIpid is NOT null for iid " + iid + " and ipid sent back is " + ipid2);
+                            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is NOT null for iid {0} and ipid sent back is {1}", new Object[]{iid, ipid2});
                         }
                         ipid2 = tmpIpid;
                     }
@@ -851,7 +849,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                 mapOfIpidsVsRef.put(ipid2.toUpperCase(), new Integer(objRef.getPublicRefs()));
 
                 if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().finest("RemUnknownObject: [QI] for which the stdObjRef is " + objRef);
+                    JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] for which the stdObjRef is {0}", objRef);
                 }
             } catch (IllegalAccessException e) {
                 JISystem.getLogger().throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
@@ -866,7 +864,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         }
 
         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().finest("RemUnknownObject: [QI] After call terminated listOfIIDsQIed are: " + listOfIIDsQIed);
+            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] After call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
         }
 
         return buffer;

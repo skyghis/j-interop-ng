@@ -66,10 +66,10 @@ public class Ntlm1 implements NtlmFlags, Security {
         serverCipher = keyFactory.getARCFOUR(serverSealingKey);
 
         if (logger.isLoggable(Level.FINEST)) {
-            logger.finest("Client Signing Key derieved from the session key: [" + Util.dumpString(clientSigningKey) + "]");
-            logger.finest("Client Sealing Key derieved from the session key: [" + Util.dumpString(clientSealingKey) + "]");
-            logger.finest("Server Signing Key derieved from the session key: [" + Util.dumpString(serverSigningKey) + "]");
-            logger.finest("Server Sealing Key derieved from the session key: [" + Util.dumpString(serverSealingKey) + "]");
+            logger.log(Level.FINEST, "Client Signing Key derieved from the session key: [{0}]", Util.dumpString(clientSigningKey));
+            logger.log(Level.FINEST, "Client Sealing Key derieved from the session key: [{0}]", Util.dumpString(clientSealingKey));
+            logger.log(Level.FINEST, "Server Signing Key derieved from the session key: [{0}]", Util.dumpString(serverSigningKey));
+            logger.log(Level.FINEST, "Server Sealing Key derieved from the session key: [{0}]", Util.dumpString(serverSealingKey));
         }
     }
 
@@ -115,9 +115,9 @@ public class Ntlm1 implements NtlmFlags, Security {
             }
 
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n AFTER Decryption");
-                logger.finest("\n" + Hexdump.toHexString(data));
-                logger.finest("\nLength is: " + data.length);
+                logger.info("AFTER Decryption");
+                logger.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
+                logger.log(Level.FINEST, "\nLength is: {0}", data.length);
             }
 
             byte[] verifier = keyFactory.signingPt1(responseCounter, signingKey, buffer.getBuffer(), verifierIndex);
@@ -169,10 +169,10 @@ public class Ntlm1 implements NtlmFlags, Security {
             byte[] data = new byte[length];
             System.arraycopy(ndr.getBuffer().getBuffer(), index, data, 0, data.length);
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n BEFORE Encryption");
+                logger.info("BEFORE Encryption");
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                logger.finest("\n" + Hexdump.toHexString(data));
-                logger.finest("\n Length is: " + data.length);
+                logger.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
+                logger.log(Level.INFO, "Length is: {0}", data.length);
             }
 
             if (getProtectionLevel() == PROTECTION_LEVEL_PRIVACY) {

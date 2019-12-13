@@ -96,7 +96,7 @@ final class JIComTransport implements Transport {
         }
         try {
             if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().finest("Opening socket on " + new InetSocketAddress(InetAddress.getByName(host), port));
+                JISystem.getLogger().log(Level.FINEST, "Opening socket on {0}", new InetSocketAddress(InetAddress.getByName(host), port));
             }
             channel = SocketChannel.open();
             socket = channel.socket();
@@ -134,7 +134,7 @@ final class JIComTransport implements Transport {
                 socket.close();
                 channel.close();
                 if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().finest("Socket closed... " + socket + " host " + host + " , port " + port);
+                    JISystem.getLogger().log(Level.FINEST, "Socket closed... {0} host {1} , port {2}", new Object[]{socket, host, port});
                 }
             }
         } finally {

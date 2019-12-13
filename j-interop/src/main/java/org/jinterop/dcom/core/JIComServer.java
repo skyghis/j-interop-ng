@@ -566,7 +566,7 @@ public final class JIComServer extends Stub {
                     detach();
                 } catch (IOException e) {
                     if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().warning("Unable to detach during init: " + e);
+                        JISystem.getLogger().log(Level.WARNING, "Unable to detach during init: {0}", e);
                     }
                 }
             }

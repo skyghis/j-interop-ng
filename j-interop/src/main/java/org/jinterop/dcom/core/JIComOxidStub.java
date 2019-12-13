@@ -134,13 +134,13 @@ class PingObject extends NdrObject {
                     setId = new byte[]{0, 0, 0, 0, 0, 0, 0, 0};
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("Complex Ping going for setId: " + Hexdump.toHexString(setId));
+                        JISystem.getLogger().log(Level.INFO, "Complex Ping going for setId: {0}", Hexdump.toHexString(setId));
                     }
                 }
 
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("Complex ping going : listOfAdds -> Size : " + listOfAdds.size() + " , " + listOfAdds);
-                    JISystem.getLogger().info("listOfDels -> Size : " + listOfDels.size() + " , " + listOfDels);
+                    JISystem.getLogger().log(Level.INFO, "Complex ping going : listOfAdds -> Size : {0} , {1}", new Object[]{listOfAdds.size(), listOfAdds});
+                    JISystem.getLogger().log(Level.INFO, "listOfDels -> Size : {0} , {1}", new Object[]{listOfDels.size(), listOfDels});
                 }
 
                 JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, setId);
@@ -191,7 +191,7 @@ class PingObject extends NdrObject {
                 if (setId != null) {
                     JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, setId);//setid
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("Simple Ping going for setId: " + Hexdump.toHexString(setId));
+                        JISystem.getLogger().log(Level.INFO, "Simple Ping going for setId: {0}", Hexdump.toHexString(setId));
                     }
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
@@ -220,11 +220,11 @@ class PingObject extends NdrObject {
 
                 if (hresult != 0) {
                     if (JISystem.getLogger().isLoggable(Level.SEVERE)) {
-                        JISystem.getLogger().severe("Some error ! Complex ping failed , hresult: " + hresult);
+                        JISystem.getLogger().log(Level.SEVERE, "Some error ! Complex ping failed , hresult: {0}", hresult);
                     }
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("Complex Ping Succeeded,  setId is : " + Hexdump.toHexString(setId));
+                        JISystem.getLogger().log(Level.INFO, "Complex Ping Succeeded,  setId is : {0}", Hexdump.toHexString(setId));
                     }
                 }
 
@@ -236,7 +236,7 @@ class PingObject extends NdrObject {
 
                 if (hresult != 0) {
                     if (JISystem.getLogger().isLoggable(Level.SEVERE)) {
-                        JISystem.getLogger().severe("Some error ! Simple ping failed , hresult: " + hresult);
+                        JISystem.getLogger().log(Level.SEVERE, "Some error ! Simple ping failed , hresult: {0}", hresult);
                     }
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {

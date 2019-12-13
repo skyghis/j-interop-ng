@@ -111,7 +111,7 @@ public class DefaultConnection implements Connection {
                             //fragLengthOfReceiveBuffer = -1;//clear the buffer here.
                             //System.out.println("VIKRAM VIKRAM ");
                             if (logger.isLoggable(Level.FINEST)) {
-                                logger.finest("[Fragmented Packet] [" + i++ + "] recieved , fragment decomposition is below:- ");
+                                logger.log(Level.FINEST, "[Fragmented Packet] [{0}] recieved , fragment decomposition is below:- ", i++);
                             }
                             currentFragment = receiveFragment(transport);
                         } catch (Exception ex) {
@@ -138,7 +138,7 @@ public class DefaultConnection implements Connection {
 
         //jcifs.util.Hexdump.hexdump(System.err, transmitBuffer.getBuffer(), 0, transmitBuffer.length);
         if (logger.isLoggable(Level.FINEST)) {
-            logger.finest("[TRANSMIT BUFFER]:-\n" + Hexdump.toHexString(transmitBuffer.getBuffer()));
+            logger.log(Level.FINEST, "[TRANSMIT BUFFER]:-\n{0}", Hexdump.toHexString(transmitBuffer.getBuffer()));
         }
         transport.send(transmitBuffer);
     }
@@ -169,7 +169,7 @@ public class DefaultConnection implements Connection {
                     read = false;
                 } else {
                     if (logger.isLoggable(Level.FINEST)) {
-                        logger.finest("\n" + " bytesRemainingInRecieveBuffer is TRUE, RecieveBuffer size =  " + receiveBuffer.buf.length);
+                        logger.log(Level.FINEST, "bytesRemainingInRecieveBuffer is TRUE, RecieveBuffer size =  {0}", receiveBuffer.buf.length);
                     }
                 }
 
@@ -183,15 +183,15 @@ public class DefaultConnection implements Connection {
             //read the transport now...
             receiveBuffer.reset();
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n" + " Reading bytes from RecieveBuffer Socket...Current Capacity:- " + receiveBuffer.getCapacity());
+                logger.log(Level.FINEST, "Reading bytes from RecieveBuffer Socket...Current Capacity:- {0}", receiveBuffer.getCapacity());
             }
 
             transport.receive(receiveBuffer);
 
             if (logger.isLoggable(Level.FINEST)) {
                 logger.finest("[RECIEVER BUFFER] Full packet is dumped below...");
-                logger.finest("\n" + Hexdump.toHexString(receiveBuffer.getBuffer()));
-                logger.finest("\n" + " Bytes read from RecieveBuffer Socket:- " + receiveBuffer.length);
+                logger.log(Level.FINEST, "{0}", Hexdump.toHexString(receiveBuffer.getBuffer()));
+                logger.log(Level.FINEST, "Bytes read from RecieveBuffer Socket:- {0}", receiveBuffer.length);
             }
 
         }
@@ -205,7 +205,7 @@ public class DefaultConnection implements Connection {
             receiveBuffer.setIndex(ConnectionOrientedPdu.FRAG_LENGTH_OFFSET);
             fragmentLength = receiveBuffer.dec_ndr_short();
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n" + " length of the fragment " + fragmentLength + "\n" + " size in bytes of the buffer [] " + receiveBuffer.buf.length);
+                logger.log(Level.FINEST, "length of the fragment {0}\n size in bytes of the buffer [] {1}", new Object[]{fragmentLength, receiveBuffer.buf.length});
             }
 
             //the new buffer should be equal to fragment size
@@ -215,7 +215,7 @@ public class DefaultConnection implements Connection {
             {
                 int remainingBytes = fragmentLength - receiveBuffer.length;
                 if (logger.isLoggable(Level.FINEST)) {
-                    logger.finest("\n" + " Some bytes from RecieveBuffer Socket have not been read: Remaining  " + remainingBytes);
+                    logger.log(Level.FINEST, "Some bytes from RecieveBuffer Socket have not been read: Remaining  {0}", remainingBytes);
                 }
 
                 //now reset and read again.
@@ -226,7 +226,7 @@ public class DefaultConnection implements Connection {
                         break;
                     }
                     if (logger.isLoggable(Level.FINEST)) {
-                        logger.finest("\n" + " About to read more bytes from socket , current counter is: " + counter);
+                        logger.log(Level.FINEST, "About to read more bytes from socket , current counter is: {0}", counter);
                     }
 
                     receiveBuffer.reset();
@@ -242,9 +242,9 @@ public class DefaultConnection implements Connection {
                     }
 
                     if (logger.isLoggable(Level.FINEST)) {
-                        logger.finest("\n" + "lengthOfArrayTobeRead = " + lengthOfArrayTobeRead + "\n" + "trimSize = " + trimSize + "\n" + "RecieveBuffer current read size: " + receiveBuffer.length);
-                        logger.finest("\n\n[RECIEVER BUFFER] and the read packet is dumped below...");
-                        logger.finest("\n" + Hexdump.toHexString(receiveBuffer.getBuffer()));
+                        logger.log(Level.FINEST, "lengthOfArrayTobeRead = {0}\ntrimSize = {1}\nRecieveBuffer current read size: {2}", new Object[]{lengthOfArrayTobeRead, trimSize, receiveBuffer.length});
+                        logger.finest("[RECIEVER BUFFER] and the read packet is dumped below...");
+                        logger.log(Level.FINEST, Hexdump.toHexString(receiveBuffer.getBuffer()));
 
                     }
 
@@ -252,7 +252,7 @@ public class DefaultConnection implements Connection {
 
             } else {
                 if (logger.isLoggable(Level.FINEST)) {
-                    logger.finest("\n" + "fragmentLength is less than  receiveBuffer.length");
+                    logger.finest("fragmentLength is less than  receiveBuffer.length");
                 }
 
                 //Since fragment length is smaller, There might be 2 or more packets in here
@@ -264,7 +264,7 @@ public class DefaultConnection implements Connection {
 
             if (trimSize > 0) {
                 if (logger.isLoggable(Level.FINEST)) {
-                    logger.finest("\n" + "trimSize = " + trimSize);
+                    logger.log(Level.FINEST, "trimSize = {0}", trimSize);
                 }
                 System.arraycopy(receiveBuffer.buf, receiveBuffer.length - trimSize, receiveBuffer.buf, 0, trimSize);
                 receiveBuffer.length = trimSize;
@@ -278,10 +278,10 @@ public class DefaultConnection implements Connection {
             bufferToBeUsed.length = newbuffer.length;//this will be fully utilized  and not left empty.
 
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n" + "bufferToBeUsed Size = " + bufferToBeUsed.length);
-                logger.finest("\n\n[bufferToBeUsed] packet is dumped below...");
-                logger.finest("\n" + Hexdump.toHexString(bufferToBeUsed.getBuffer()));
-                logger.finest("\n*********************************************************************************");
+                logger.log(Level.FINEST, "bufferToBeUsed Size = {0}", bufferToBeUsed.length);
+                logger.finest("[bufferToBeUsed] packet is dumped below...");
+                logger.log(Level.FINEST, "{0}", Hexdump.toHexString(bufferToBeUsed.getBuffer()));
+                logger.finest("*********************************************************************************");
             }
 
             //caution , frag length is changed here...it is void of security info.
@@ -370,25 +370,25 @@ public class DefaultConnection implements Connection {
         switch (buffer.dec_ndr_small()) {
             case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved BIND_ACK");
+                    logger.info("Recieved BIND_ACK");
                     logMsg = false;
                 }
 
             case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved ALTER_CTX_RESP");
+                    logger.info("Recieved ALTER_CTX_RESP");
                     logMsg = false;
                 }
 
             case BindPdu.BIND_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved BIND");
+                    logger.info("Recieved BIND");
                     logMsg = false;
                 }
 
             case AlterContextPdu.ALTER_CONTEXT_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved ALTER_CTX");
+                    logger.info("Recieved ALTER_CTX");
                     logMsg = false;
                 }
 
@@ -400,31 +400,31 @@ public class DefaultConnection implements Connection {
 
             case FaultCoPdu.FAULT_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved FAULT");
+                    logger.info("Recieved FAULT");
                     logMsg = false;
                 }
 
             case CancelCoPdu.CANCEL_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved CANCEL");
+                    logger.info("Recieved CANCEL");
                     logMsg = false;
                 }
 
             case OrphanedPdu.ORPHANED_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved ORPHANED");
+                    logger.info("Recieved ORPHANED");
                     logMsg = false;
                 }
 
             case ResponseCoPdu.RESPONSE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved RESPONSE");
+                    logger.info("Recieved RESPONSE");
                     logMsg = false;
                 }
 
             case RequestCoPdu.REQUEST_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved REQUEST");
+                    logger.info("Recieved REQUEST");
                     logMsg = false;
                 }
 
@@ -438,7 +438,7 @@ public class DefaultConnection implements Connection {
                 break;
             case Auth3Pdu.AUTH3_TYPE:
                 if (logMsg) {
-                    logger.info("\n Recieved AUTH3");
+                    logger.info("Recieved AUTH3");
                     logMsg = false;
                 }
 
@@ -460,24 +460,24 @@ public class DefaultConnection implements Connection {
 
             case BindPdu.BIND_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending BIND");
+                    logger.info("Sending BIND");
                     logMsg = false;
                 }
             case Auth3Pdu.AUTH3_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending AUTH3");
+                    logger.info("Sending AUTH3");
                     logMsg = false;
                 }
 
             case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending BIND_ACK");
+                    logger.info("Sending BIND_ACK");
                     logMsg = false;
                 }
 
             case AlterContextResponsePdu.ALTER_CONTEXT_RESPONSE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending ALTER_CTX_RESP");
+                    logger.info("Sending ALTER_CTX_RESP");
                     logMsg = false;
                 }
 
@@ -489,38 +489,38 @@ public class DefaultConnection implements Connection {
                 break;
             case AlterContextPdu.ALTER_CONTEXT_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending ALTER_CTX");
+                    logger.info("Sending ALTER_CTX");
                     logMsg = false;
                 }
                 break;
             case RequestCoPdu.REQUEST_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending REQUEST");
+                    logger.info("Sending REQUEST");
                     logMsg = false;
                 }
 //        	verifier = outgoingRebind();
 //            if (verifier != null) attachAuthentication(verifier);
             case CancelCoPdu.CANCEL_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending CANCEL");
+                    logger.info("Sending CANCEL");
                     logMsg = false;
                 }
 
             case OrphanedPdu.ORPHANED_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending ORPHANED");
+                    logger.info("Sending ORPHANED");
                     logMsg = false;
                 }
 
             case FaultCoPdu.FAULT_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending FAULT");
+                    logger.info("Sending FAULT");
                     logMsg = false;
                 }
 
             case ResponseCoPdu.RESPONSE_TYPE:
                 if (logMsg) {
-                    logger.info("\n Sending RESPONSE");
+                    logger.info("Sending RESPONSE");
                     logMsg = false;
                 }
 
@@ -592,7 +592,7 @@ public class DefaultConnection implements Connection {
 
             if (length == 0) {
                 if (logger.isLoggable(Level.FINEST)) {
-                    logger.finest("\n" + "In [detachAuthentication] No authn info present...");
+                    logger.finest("In [detachAuthentication] No authn info present...");
                 }
                 return null;
             }
@@ -609,7 +609,7 @@ public class DefaultConnection implements Connection {
             buffer.enc_ndr_short(0);
             buffer.setIndex(length);
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n" + "In [detachAuthentication] (after stripping authn info) setting new FRAG_LENGTH_OFFSET for the packet as = " + length);
+                logger.log(Level.FINEST, "In [detachAuthentication] (after stripping authn info) setting new FRAG_LENGTH_OFFSET for the packet as = {0}", length);
             }
 
             return verifier;
@@ -734,5 +734,4 @@ public class DefaultConnection implements Connection {
     protected AuthenticationVerifier outgoingRebind() throws IOException {
         return null;
     }
-
 }

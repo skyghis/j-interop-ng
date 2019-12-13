@@ -18,6 +18,7 @@
 package net.sourceforge.jtds.util;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -86,7 +87,7 @@ public class SSPIJNIClient {
                 throw new IllegalArgumentException("This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
             }
         } catch (UnsatisfiedLinkError err) {
-            Logger.getLogger("org.jinterop").severe("Unable to load library: " + err);
+            Logger.getLogger("org.jinterop").log(Level.SEVERE, "Unable to load library: {0}", err);
             throw new IllegalStateException("Native SSPI library not loaded. "
                     + "Check the java.library.path system property."
                     + "This functionality is available only under \"Microsoft Windows\" line of Operating systems.");

@@ -159,13 +159,13 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
             int i = 0;
             while (fragments.hasNext()) {
                 if (logger.isLoggable(Level.FINEST)) {
-                    logger.finest("[IN ASSEMBLE] Fragment { " + i + " }\n");
+                    logger.log(Level.FINEST, "[IN ASSEMBLE] Fragment '{' {0} '}'\n", i);
                 }
                 ResponseCoPdu fragment = (ResponseCoPdu) fragments.next();
                 byte[] fragmentStub = fragment.getStub();
                 if (fragmentStub != null && fragmentStub.length > 0) {
                     if (logger.isLoggable(Level.FINEST)) {
-                        logger.finest("[FRAGMENT'S STUB (new one)] Length is = " + fragmentStub.length);
+                        logger.log(Level.FINEST, "[FRAGMENT''S STUB (new one)] Length is = {0}", fragmentStub.length);
                     }
                     byte[] tmp = new byte[stub.length + fragmentStub.length];
                     System.arraycopy(stub, 0, tmp, 0, stub.length);
@@ -173,8 +173,8 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
                             fragmentStub.length);
                     stub = tmp;
                     if (logger.isLoggable(Level.FINEST)) {
-                        logger.finest("[ADDED THIS STUB (previous stub + new one) into OLD STUB] Current Length of pieces assembled so far = " + stub.length);
-                        logger.finest("\n" + Hexdump.toHexString(stub));
+                        logger.log(Level.FINEST, "[ADDED THIS STUB (previous stub + new one) into OLD STUB] Current Length of pieces assembled so far = {0}", stub.length);
+                        logger.log(Level.FINEST, Hexdump.toHexString(stub));
                     }
                 }
             }
@@ -184,7 +184,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
                 pdu.setAllocationHint(length);
                 if (logger.isLoggable(Level.FINEST)) {
                     logger.finest("[FULL AND FINAL STUB AFTER ASSEMBLY]\n");
-                    logger.finest("\n" + Hexdump.toHexString(stub));
+                    logger.log(Level.FINEST, Hexdump.toHexString(stub));
                 }
             } else {
                 pdu.setStub(null);
