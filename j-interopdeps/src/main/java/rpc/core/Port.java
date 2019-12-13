@@ -32,6 +32,7 @@ public class Port extends NdrObject {
         this.portSpec = portSpec;
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         int length = ndr.readUnsignedShort();
         if (length > 0) {
@@ -45,6 +46,7 @@ public class Port extends NdrObject {
         }
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
         char[] spec;
         if (portSpec != null) {
@@ -59,6 +61,7 @@ public class Port extends NdrObject {
         }
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Port)) {
             return false;

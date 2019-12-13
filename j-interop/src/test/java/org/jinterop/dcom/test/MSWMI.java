@@ -61,6 +61,7 @@ public class MSWMI {
         IJIComObject wbemServices = JIObjectFactory.narrowObject((IJIComObject) ((Object[]) comObject.call(callObject))[0]);
         wbemServices.setInstanceLevelSocketTimeout(1000);
         wbemServices.registerUnreferencedHandler(new IJIUnreferenced() {
+            @Override
             public void unReferenced() {
                 System.out.println("wbemServices unreferenced... ");
             }
@@ -77,6 +78,7 @@ public class MSWMI {
         System.out.println(object2.isDispatchSupported());
 
         object2.registerUnreferencedHandler(new IJIUnreferenced() {
+            @Override
             public void unReferenced() {
                 System.out.println("object2 unreferenced...");
             }

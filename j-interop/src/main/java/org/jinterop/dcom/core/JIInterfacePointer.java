@@ -184,6 +184,7 @@ final class JIInterfacePointer implements Serializable {
         JIMarshalUnMarshalHelper.serialize(ndr, member.getClass(), member, defferedPointers, FLAG);
     }
 
+    @Override
     public String toString() {
         String retVal = "JIInterfacePointer[IID:" + getIID() + " , ObjRef: " + getObjectReference(JIInterfacePointer.OBJREF_STANDARD) + "]";
         return retVal;

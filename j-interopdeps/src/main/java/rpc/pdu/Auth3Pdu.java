@@ -28,10 +28,12 @@ public class Auth3Pdu extends ConnectionOrientedPdu {
         setCallId(0);
     }
 
+    @Override
     public int getType() {
         return AUTH3_TYPE;
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         ndr.writeUnsignedLong(0);
     }

@@ -49,6 +49,7 @@ public class UUID extends NdrObject {
         parse(uuid);
     }
 
+    @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
         dst.enc_ndr_long(timeLow);
         dst.enc_ndr_short(timeMid);
@@ -59,6 +60,7 @@ public class UUID extends NdrObject {
         dst.index += 6;
     }
 
+    @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
         timeLow = src.dec_ndr_long();
         timeMid = src.dec_ndr_short();
@@ -130,6 +132,7 @@ public class UUID extends NdrObject {
      * ((FixedArray) structure.get(NODE_INDEX)).setArray(node);
      * }
      */
+    @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
 //        int timeLow = (int) (getTimeLow() & 0xffffffffl);

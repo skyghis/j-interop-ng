@@ -842,6 +842,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * <code>COM</code> server.
      *
      */
+    @Override
     public int getOpnum() {
         //opnum is 3 as this is a COM interface and 0,1,2 are occupied by IUnknown
         //TODO remember this for extending com components also.
@@ -887,6 +888,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     /**
      * @exclude
      */
+    @Override
     public void write(NetworkDataRepresentation ndr) {
 
         //reset buffer size here...
@@ -971,6 +973,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     /**
      * @exclude
      */
+    @Override
     public void read(NetworkDataRepresentation ndr) {
 //		if (opnum == 10) FOR TESTING ONLY
 //		{

@@ -41,6 +41,7 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
         super(comObject);
     }
 
+    @Override
     public Object[] next(int celt) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(0);
@@ -51,6 +52,7 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
         return result;
     }
 
+    @Override
     public void skip(int celt) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(1);
@@ -58,12 +60,14 @@ final class JIEnumVARIANTImpl extends JIComObjectImplWrapper implements IJIEnumV
         Object[] result = comObject.call(callObject);
     }
 
+    @Override
     public void reset() throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(2);
         Object[] result = comObject.call(callObject);
     }
 
+    @Override
     public IJIEnumVariant Clone() throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(3);

@@ -79,14 +79,17 @@ final class JIComTransport implements Transport {
         parse(address);
     }
 
+    @Override
     public String getProtocol() {
         return PROTOCOL;
     }
 
+    @Override
     public Properties getProperties() {
         return properties;
     }
 
+    @Override
     public Endpoint attach(PresentationSyntax syntax) throws IOException {
         if (attached) {
             throw new RpcException("Transport already attached.");
@@ -120,6 +123,7 @@ final class JIComTransport implements Transport {
         }
     }
 
+    @Override
     public void close() throws IOException {
         try {
             if (socket != null) {
@@ -142,6 +146,7 @@ final class JIComTransport implements Transport {
         }
     }
 
+    @Override
     public void send(NdrBuffer buffer) throws IOException {
         if (!attached) {
             throw new RpcException("Transport not attached.");
@@ -154,6 +159,7 @@ final class JIComTransport implements Transport {
         output.flush();
     }
 
+    @Override
     public void receive(NdrBuffer buffer) throws IOException {
         if (!attached) {
             throw new RpcException("Transport not attached.");

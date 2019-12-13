@@ -108,6 +108,7 @@ public class ARCFour extends BasePRNG {
 
     // Methods implementing BasePRNG.
     // -----------------------------------------------------------------------
+    @Override
     public Object clone() {
         ARCFour copy = new ARCFour();
         copy.s = (s != null) ? (byte[]) s.clone() : null;
@@ -119,6 +120,7 @@ public class ARCFour extends BasePRNG {
         return copy;
     }
 
+    @Override
     public void setup(Map attributes) {
         byte[] kb = (byte[]) attributes.get(ARCFOUR_KEY_MATERIAL);
 
@@ -157,6 +159,7 @@ public class ARCFour extends BasePRNG {
         }
     }
 
+    @Override
     public void fillBlock() throws LimitReachedException {
         for (int i = 0; i < buffer.length; i++) {
             m++;

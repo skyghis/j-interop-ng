@@ -40,14 +40,17 @@ public final class JIDefaultAuthInfoImpl implements IJIAuthInfo {
         this.domain = domain;
     }
 
+    @Override
     public String getUserName() {
         return username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public String getDomain() {
         return domain;
     }

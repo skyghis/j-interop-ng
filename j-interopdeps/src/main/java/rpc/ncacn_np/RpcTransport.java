@@ -60,14 +60,17 @@ public class RpcTransport implements Transport {
         parse(address);
     }
 
+    @Override
     public String getProtocol() {
         return PROTOCOL;
     }
 
+    @Override
     public Properties getProperties() {
         return properties;
     }
 
+    @Override
     public Endpoint attach(PresentationSyntax syntax) throws IOException {
         if (attached) {
             throw new RpcException("Transport already attached.");
@@ -91,6 +94,7 @@ public class RpcTransport implements Transport {
         return new ConnectionOrientedEndpoint(this, syntax);
     }
 
+    @Override
     public void close() throws IOException {
         try {
             if (pipe != null) {
@@ -104,6 +108,7 @@ public class RpcTransport implements Transport {
         }
     }
 
+    @Override
     public void send(NdrBuffer buffer) throws IOException {
         if (!attached) {
             throw new RpcException("Transport not attached.");
@@ -112,6 +117,7 @@ public class RpcTransport implements Transport {
         first = true;
     }
 
+    @Override
     public void receive(NdrBuffer buffer) throws IOException {
         byte[] buf = buffer.getBuffer();
         int off = 0, bytes_to_read, n;

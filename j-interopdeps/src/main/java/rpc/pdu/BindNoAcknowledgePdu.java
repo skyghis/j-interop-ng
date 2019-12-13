@@ -44,6 +44,7 @@ public class BindNoAcknowledgePdu extends ConnectionOrientedPdu {
 
     private int rejectReason = REASON_NOT_SPECIFIED;
 
+    @Override
     public int getType() {
         return BIND_NO_ACKNOWLEDGE_TYPE;
     }
@@ -64,6 +65,7 @@ public class BindNoAcknowledgePdu extends ConnectionOrientedPdu {
         this.versionList = versionList;
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         int reason = ndr.readUnsignedSmall();
         setRejectReason(reason);
@@ -79,6 +81,7 @@ public class BindNoAcknowledgePdu extends ConnectionOrientedPdu {
         setVersionList(versionList);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         int reason = getRejectReason();
         ndr.writeUnsignedSmall((short) reason);

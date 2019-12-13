@@ -36,10 +36,12 @@ public final class JIUnsignedShort implements IJIUnsigned {
         this.shortValue = shortValue;
     }
 
+    @Override
     public int getType() {
         return JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
     }
 
+    @Override
     public Number getValue() {
         return shortValue;
     }

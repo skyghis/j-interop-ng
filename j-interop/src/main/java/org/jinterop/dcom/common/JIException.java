@@ -72,6 +72,7 @@ public class JIException extends Exception {
      *
      * @return
      */
+    @Override
     public String getMessage() {
         return message == null ? message = initMessageFromBundle() : message;
     }

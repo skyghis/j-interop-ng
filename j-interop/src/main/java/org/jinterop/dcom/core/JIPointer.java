@@ -274,6 +274,7 @@ public final class JIPointer implements Serializable {
         referent = value;
     }
 
+    @Override
     public String toString() {
         return referent == null ? "[null]" : "[" + referent.toString() + "]";
     }

@@ -69,6 +69,7 @@ final class JIObjectId implements Serializable {
         return oid;
     }
 
+    @Override
     public int hashCode() {
         int result = 1;
         //from SUN
@@ -80,6 +81,7 @@ final class JIObjectId implements Serializable {
         //return Arrays.hashCode(oid);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof JIObjectId)) {
             return false;
@@ -88,6 +90,7 @@ final class JIObjectId implements Serializable {
         return Arrays.equals(oid, ((JIObjectId) obj).getOID());
     }
 
+    @Override
     public String toString() {
         return "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + Hexdump.toHexString(oid) + " , hasExpired " + hasExpired() + " } ";
     }

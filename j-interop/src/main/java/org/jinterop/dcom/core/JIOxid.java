@@ -32,6 +32,7 @@ final class JIOxid implements Serializable {
         return oxid;
     }
 
+    @Override
     public int hashCode() {
         int result = 1;
         //from SUN
@@ -42,6 +43,7 @@ final class JIOxid implements Serializable {
         //return Arrays.hashCode(oxid);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof JIOxid)) {
             return false;

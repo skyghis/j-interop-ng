@@ -68,14 +68,17 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         this.syntax = syntax;
     }
 
+    @Override
     public Transport getTransport() {
         return transport;
     }
 
+    @Override
     public PresentationSyntax getSyntax() {
         return syntax;
     }
 
+    @Override
     public void call(int semantics, UUID object, int opnum, NdrObject ndrobj) throws IOException {
         bind();
         RequestCoPdu request = new RequestCoPdu();
@@ -209,6 +212,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         return context.getConnection().receive(getTransport());
     }
 
+    @Override
     public void detach() throws IOException {
         bound = false;
         context = null;

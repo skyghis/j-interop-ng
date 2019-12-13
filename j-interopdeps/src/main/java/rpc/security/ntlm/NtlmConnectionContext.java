@@ -74,6 +74,7 @@ public class NtlmConnectionContext implements ConnectionContext {
         return pdu;
     }
 
+    @Override
     public ConnectionOrientedPdu init(PresentationContext context,
             Properties properties) throws IOException {
 
@@ -82,6 +83,7 @@ public class NtlmConnectionContext implements ConnectionContext {
         return pdu;
     }
 
+    @Override
     public ConnectionOrientedPdu alter(PresentationContext context)
             throws IOException {
         established = false;
@@ -91,6 +93,7 @@ public class NtlmConnectionContext implements ConnectionContext {
         return pdu;
     }
 
+    @Override
     public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
             throws IOException {
         PresentationResult[] results = null;
@@ -158,10 +161,12 @@ public class NtlmConnectionContext implements ConnectionContext {
         }
     }
 
+    @Override
     public Connection getConnection() {
         return connection;
     }
 
+    @Override
     public boolean isEstablished() {
         return established;
     }

@@ -57,6 +57,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
         super(transport, syntax);
     }
 
+    @Override
     public void call(int semantics, UUID object, int opnum, NdrObject ndrobj) throws IOException {
         throw new JIRuntimeException(JIErrorCodes.JI_ILLEGAL_CALL);
     }

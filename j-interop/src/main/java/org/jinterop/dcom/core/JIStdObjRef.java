@@ -114,6 +114,7 @@ final class JIStdObjRef implements Serializable {
         }
     }
 
+    @Override
     public String toString() {
         String retVal = "IPID: " + ipidOfthisObjectRef;//+ " , OID: " + oidString;
         return retVal;

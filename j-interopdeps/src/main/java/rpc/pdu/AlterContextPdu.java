@@ -32,6 +32,7 @@ public class AlterContextPdu extends ConnectionOrientedPdu {
 
     private int associationGroupId = 0;
 
+    @Override
     public int getType() {
         return ALTER_CONTEXT_TYPE;
     }
@@ -68,6 +69,7 @@ public class AlterContextPdu extends ConnectionOrientedPdu {
         this.contextList = contextList;
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
@@ -81,6 +83,7 @@ public class AlterContextPdu extends ConnectionOrientedPdu {
         setContextList(contextList);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         int maxTransmitFragment = getMaxTransmitFragment();
         int maxReceiveFragment = getMaxReceiveFragment();

@@ -51,6 +51,7 @@ public final class JIRuntimeException extends RuntimeException {
         return parameters;
     }
 
+    @Override
     public String getMessage() {
         return JISystem.getLocalizedMessage(hresult);
     }

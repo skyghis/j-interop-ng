@@ -49,6 +49,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return comObject;
     }
 
+    @Override
     public int getTypeInfoCount() throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(0);
@@ -57,6 +58,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return ((Number) result[0]).intValue();
     }
 
+    @Override
     public IJITypeInfo getTypeInfo(int index) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(1);
@@ -66,6 +68,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return (IJITypeInfo) JIObjectFactory.narrowObject((IJIComObject) result[0]);
     }
 
+    @Override
     public int getTypeInfoType(int index) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(2);
@@ -75,6 +78,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return ((Number) result[0]).intValue();
     }
 
+    @Override
     public IJITypeInfo getTypeInfoOfGuid(String uuid) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(3);
@@ -84,6 +88,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return (IJITypeInfo) JIObjectFactory.narrowObject((IJIComObject) result[0]);
     }
 
+    @Override
     public void getLibAttr() throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(4);
@@ -102,6 +107,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         int i = 0;
     }
 
+    @Override
     public Object[] getDocumentation(int memberId) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.addInParamAsInt(memberId, JIFlags.FLAG_NULL);
@@ -114,6 +120,7 @@ final class JITypeLibImpl extends JIComObjectImplWrapper implements IJITypeLib {
         return comObject.call(callObject);
     }
 
+    @Override
     public Object[] findName(JIString nameBuf, int hashValue, short found) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(8);

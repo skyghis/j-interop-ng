@@ -50,6 +50,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         //this.comObject = comObject;
     }
 
+    @Override
     public FuncDesc getFuncDesc(int index) throws JIException {
 
         //prepare the GO here
@@ -151,6 +152,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return funcDesc;
     }
 
+    @Override
     public TypeAttr getTypeAttr() throws JIException {
         JICallBuilder obj = new JICallBuilder(true);
         obj.setOpnum(0);
@@ -220,6 +222,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return attr;
     }
 
+    @Override
     public Object[] getContainingTypeLib() throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.addOutParamAsObject(IJIComObject.class, JIFlags.FLAG_NULL);
@@ -239,6 +242,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 //			  BSTR FAR*  pBstrName,
 //			  unsigned short FAR*  pwOrdinal
 //			);
+    @Override
     public Object[] getDllEntry(int memberId, int invKind) throws JIException {
         if (invKind != InvokeKind.INVOKE_FUNC.intValue() && invKind != InvokeKind.INVOKE_PROPERTYGET.intValue()
                 && invKind != InvokeKind.INVOKE_PROPERTYPUTREF.intValue() && invKind != InvokeKind.INVOKE_PROPERTYPUT.intValue()) {
@@ -263,6 +267,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 //			  unsigned long FAR*  pdwHelpContext,
 //			  BSTR FAR*  pBstrHelpFile
 //			);
+    @Override
     public Object[] getDocumentation(int memberId) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.addInParamAsInt(memberId, JIFlags.FLAG_NULL);
@@ -275,6 +280,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return comObject.call(callObject);
     }
 
+    @Override
     public VarDesc getVarDesc(int index) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(3);
@@ -353,6 +359,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 
     }
 
+    @Override
     public Object[] getNames(int memberId, int maxNames) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(4);
@@ -372,6 +379,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return comObject.call(callObject);
     }
 
+    @Override
     public int getRefTypeOfImplType(int index) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(5);
@@ -380,6 +388,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
     }
 
+    @Override
     public int getImplTypeFlags(int index) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(6);
@@ -388,6 +397,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
     }
 
+    @Override
     public IJITypeInfo getRefTypeInfo(int hrefType) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(11);
@@ -435,6 +445,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 //		return retVal;
 //
 //	}
+    @Override
     public IJIComObject createInstance(String riid) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(13);
@@ -445,6 +456,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return JIObjectFactory.narrowObject((IJIComObject) result[0]);
     }
 
+    @Override
     public JIString getMops(int memberId) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
         callObject.setOpnum(14);

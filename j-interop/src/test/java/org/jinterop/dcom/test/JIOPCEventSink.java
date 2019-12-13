@@ -66,6 +66,7 @@ public class JIOPCEventSink {
             events = (JIStruct[]) eventsArray.getArrayInstance();
         }
         new Thread(new Runnable() {
+            @Override
             public void run() {
                 EventNotificationListener[] l;
                 synchronized (listeners) {

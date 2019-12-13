@@ -42,6 +42,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
 
     private static final Logger logger = Logger.getLogger("org.jinterop");
 
+    @Override
     public int getType() {
         return RESPONSE_TYPE;
     }
@@ -78,24 +79,28 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         this.cancelCount = cancelCount;
     }
 
+    @Override
     protected void readPdu(NetworkDataRepresentation ndr) {
         readHeader(ndr);
         readBody(ndr);
         readStub(ndr);
     }
 
+    @Override
     protected void writePdu(NetworkDataRepresentation ndr) {
         writeHeader(ndr);
         writeBody(ndr);
         writeStub(ndr);
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setAllocationHint(ndr.readUnsignedLong());
         setContextId(ndr.readUnsignedShort());
         setCancelCount(ndr.readUnsignedSmall());
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         ndr.writeUnsignedLong(getAllocationHint());
         ndr.writeUnsignedShort(getContextId());
@@ -121,6 +126,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         }
     }
 
+    @Override
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
@@ -136,6 +142,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         return new FragmentIterator(stubSize);
     }
 
+    @Override
     public Fragmentable assemble(Iterator fragments) throws IOException {
         if (logger.isLoggable(Level.FINEST)) {
             logger.finest("[DURING RECIEVE IN ASSEMBLE]\n");
@@ -191,6 +198,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
         }
     }
 
+    @Override
     public Object clone() {
         try {
             return super.clone();
@@ -209,10 +217,12 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
             this.stubSize = stubSize;
         }
 
+        @Override
         public boolean hasNext() {
             return index < stub.length;
         }
 
+        @Override
         public Object next() {
             if (index >= stub.length) {
                 throw new NoSuchElementException();
@@ -238,6 +248,7 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
             return fragment;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

@@ -67,10 +67,12 @@ final class JIRemActivation extends NdrObject {
         }
     }
 
+    @Override
     public int getOpnum() {
         return 0;
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
 
         JIOrpcThis orpcThis = new JIOrpcThis();
@@ -132,6 +134,7 @@ final class JIRemActivation extends NdrObject {
         ndr.writeUnsignedShort(0);
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
 
         //first take out JIOrpcThat

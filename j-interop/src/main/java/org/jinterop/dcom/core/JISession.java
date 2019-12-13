@@ -104,6 +104,7 @@ public final class JISession {
     //to each session for clean up.
     static ReferenceQueue referenceQueueOfCOMObjects = new ReferenceQueue();
     static Thread cleanUpThread = new Thread(new Runnable() {
+        @Override
         public void run() {
             try {
                 while (true) {
@@ -208,6 +209,7 @@ public final class JISession {
         releaseRefsTimer.scheduleAtFixedRate(new Release_References_TimerTask(), 0, 3 * 60 * 1000);
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
             public void run() {
                 int i = 0;
                 while (i < listOfSessions.size()) {
@@ -232,6 +234,7 @@ public final class JISession {
 
     private static class Release_References_TimerTask extends TimerTask {
 
+        @Override
         public void run() {
 
             try {
@@ -806,6 +809,7 @@ public final class JISession {
     /**
      * @exclude
      */
+    @Override
     public boolean equals(Object obj) {
 
         if (obj == null || !(obj instanceof JISession)) {
@@ -819,10 +823,12 @@ public final class JISession {
     /**
      * @exclude
      */
+    @Override
     public int hashCode() {
         return sessionIdentifier;
     }
 
+    @Override
     protected void finalize() throws Throwable {
         try {
             destroySession(this);

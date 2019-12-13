@@ -99,6 +99,7 @@ final class JIComOxidRuntime {
         //it is added as a delete in set and a complex ping is sent.
         Map pingedOnce = new HashMap();
 
+        @Override
         public String toString() {
             return "SetID[" + Arrays.toString(setId) + "] , currentSetOIDs[" + currentSetOIDs + "]";
         }
@@ -110,6 +111,7 @@ final class JIComOxidRuntime {
     //object can be GCed.
     private static class ServerPingTimerTask extends TimerTask {
 
+        @Override
         public void run() {
 
             synchronized (mutex2) {
@@ -188,6 +190,7 @@ final class JIComOxidRuntime {
 
     private static class ClientPingTimerTask extends TimerTask {
 
+        @Override
         public void run() {
 
             Iterator itr = null;
@@ -422,6 +425,7 @@ final class JIComOxidRuntime {
         }
 
         Runnable thread = new Runnable() {
+            @Override
             public void run() {
 
                 try {

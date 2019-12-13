@@ -35,6 +35,7 @@ public class AlterContextResponsePdu extends ConnectionOrientedPdu {
 
     private Port secondaryAddress;
 
+    @Override
     public int getType() {
         return ALTER_CONTEXT_RESPONSE_TYPE;
     }
@@ -79,6 +80,7 @@ public class AlterContextResponsePdu extends ConnectionOrientedPdu {
         this.resultList = resultList;
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
@@ -96,6 +98,7 @@ public class AlterContextResponsePdu extends ConnectionOrientedPdu {
         setResultList(resultList);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         int maxTransmitFragment = getMaxTransmitFragment();
         int maxReceiveFragment = getMaxReceiveFragment();

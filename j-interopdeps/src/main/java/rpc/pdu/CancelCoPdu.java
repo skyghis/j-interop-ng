@@ -22,6 +22,7 @@ public class CancelCoPdu extends ConnectionOrientedPdu {
 
     public static final int CANCEL_TYPE = 0x12;
 
+    @Override
     public int getType() {
         return CANCEL_TYPE;
     }

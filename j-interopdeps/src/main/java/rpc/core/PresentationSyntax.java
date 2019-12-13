@@ -73,17 +73,20 @@ public class PresentationSyntax extends NdrObject {
         setVersion((majorVersion & 0xffff) | (minorVersion << 16));
     }
 
+    @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
         uuid.encode(ndr, dst);
         dst.enc_ndr_long(version);
     }
 
+    @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
         uuid = new UUID();
         uuid.decode(ndr, src);
         version = src.dec_ndr_long();
     }
 
+    @Override
     public String toString() {
         return getUuid().toString() + ":" + getMajorVersion() + "."
                 + getMinorVersion();

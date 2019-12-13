@@ -72,11 +72,13 @@ final class JIComObjectImpl implements IJIComObject {
         }
     }
 
+    @Override
     public IJIComObject queryInterface(String iid) throws JIException {
         checkLocal();
         return session.getStub().getInterface(iid, ptr.getIPID());
     }
 
+    @Override
     public void addRef() throws JIException {
         checkLocal();
         JICallBuilder obj = new JICallBuilder(true);
@@ -108,6 +110,7 @@ final class JIComObjectImpl implements IJIComObject {
         }
     }
 
+    @Override
     public void release() throws JIException {
         checkLocal();
         JICallBuilder obj = new JICallBuilder(true);
@@ -129,19 +132,23 @@ final class JIComObjectImpl implements IJIComObject {
         session.getStub2().addRef_ReleaseRef(obj);
     }
 
+    @Override
     public Object[] call(JICallBuilder obj) throws JIException {
         checkLocal();
         return call(obj, timeout);
     }
 
+    @Override
     public JIInterfacePointer internal_getInterfacePointer() {
         return ptr == null ? session.getStub().getServerInterfacePointer() : ptr;
     }
 
+    @Override
     public String getIpid() {
         return ptr.getIPID();
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (!(obj instanceof JIComObjectImpl)) {
@@ -151,14 +158,17 @@ final class JIComObjectImpl implements IJIComObject {
         return (this.ptr.getIPID().equalsIgnoreCase(((IJIComObject) obj).getIpid()));
     }
 
+    @Override
     public int hashCode() {
         return ptr.getIPID().hashCode();
     }
 
+    @Override
     public JISession getAssociatedSession() {
         return session;
     }
 
+    @Override
     public String getInterfaceIdentifier() {
         return ptr.getIID();
     }
@@ -168,6 +178,7 @@ final class JIComObjectImpl implements IJIComObject {
 //		checkLocal();
 //		return session.getStub();
 //	}
+    @Override
     public synchronized boolean isDispatchSupported() {
         checkLocal();
         if (!dualInfo) {
@@ -183,6 +194,7 @@ final class JIComObjectImpl implements IJIComObject {
         return isDual;
     }
 
+    @Override
     public synchronized String internal_setConnectionInfo(IJIComObject connectionPoint, Integer cookie) {
         checkLocal();
         if (connectionPointInfo == null) //lazy creation, since this is used by event callbacks only.
@@ -194,31 +206,37 @@ final class JIComObjectImpl implements IJIComObject {
         return uniqueId;
     }
 
+    @Override
     public synchronized Object[] internal_getConnectionInfo(String identifier) {
         checkLocal();
         return (Object[]) connectionPointInfo.get(identifier);
     }
 
+    @Override
     public synchronized Object[] internal_removeConnectionInfo(String identifier) {
         checkLocal();
         return (Object[]) connectionPointInfo.remove(identifier);
     }
 
+    @Override
     public IJIUnreferenced getUnreferencedHandler() {
         checkLocal();
         return session.getUnreferencedHandler(getIpid());
     }
 
+    @Override
     public void registerUnreferencedHandler(IJIUnreferenced unreferenced) {
         checkLocal();
         session.registerUnreferencedHandler(getIpid(), unreferenced);
     }
 
+    @Override
     public void unregisterUnreferencedHandler() {
         checkLocal();
         session.unregisterUnreferencedHandler(getIpid());
     }
 
+    @Override
     public Object[] call(JICallBuilder obj, int socketTimeout) throws JIException {
         checkLocal();
         obj.attachSession(session);
@@ -233,20 +251,24 @@ final class JIComObjectImpl implements IJIComObject {
         }
     }
 
+    @Override
     public int getInstanceLevelSocketTimeout() {
         checkLocal();
         return timeout;
     }
 
+    @Override
     public void setInstanceLevelSocketTimeout(int timeout) {
         checkLocal();
         this.timeout = timeout;
     }
 
+    @Override
     public void internal_setDeffered(boolean deffered) {
         ptr.setDeffered(deffered);
     }
 
+    @Override
     public boolean isLocalReference() {
         return isLocal;
     }
@@ -256,6 +278,7 @@ final class JIComObjectImpl implements IJIComObject {
         this.isDual = isDual;
     }
 
+    @Override
     public String toString() {
         return "IJIComObject[" + internal_getInterfacePointer() + " , session: " + getAssociatedSession().getSessionIdentifier() + ", isLocal: " + isLocalReference() + "]";
     }

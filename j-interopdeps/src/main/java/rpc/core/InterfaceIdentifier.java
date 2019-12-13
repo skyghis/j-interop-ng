@@ -58,6 +58,7 @@ public class InterfaceIdentifier extends NdrObject {
         this.minorVersion = minorVersion;
     }
 
+    @Override
     public String toString() {
         return getUuid().toString() + ":" + getMajorVersion() + "."
                 + getMinorVersion();
