@@ -51,6 +51,7 @@ public class NtlmConnection extends DefaultConnection {
         receiveBuffer = new NdrBuffer(new byte[receiveLength], 0);
     }
 
+    @Override
     protected void incomingRebind(AuthenticationVerifier verifier)
             throws IOException {
         switch (verifier.body[8]) {
@@ -79,6 +80,7 @@ public class NtlmConnection extends DefaultConnection {
         }
     }
 
+    @Override
     protected AuthenticationVerifier outgoingRebind() throws IOException {
         if (ntlm == null) {
             // client sends negotiate to server

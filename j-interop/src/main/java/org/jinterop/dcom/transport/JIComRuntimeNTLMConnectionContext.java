@@ -46,6 +46,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
     private List listOfInterfacesSupported = Collections.synchronizedList(new ArrayList());
 
     // this returns null, so that a recieve is performed first.
+    @Override
     public ConnectionOrientedPdu init(PresentationContext context,
             Properties properties) throws IOException {
         super.init2(context, properties);
@@ -56,6 +57,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
         return null;
     }
 
+    @Override
     public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
             throws IOException {
         ConnectionOrientedPdu reply = null;
@@ -128,6 +130,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
         return reply;
     }
 
+    @Override
     public boolean isEstablished() {
         return super.isEstablished() | established;
     }

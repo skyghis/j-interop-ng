@@ -73,18 +73,22 @@ public class Ntlm1 implements NtlmFlags, Security {
         }
     }
 
+    @Override
     public int getVerifierLength() {
         return NTLM1_VERIFIER_LENGTH;
     }
 
+    @Override
     public int getAuthenticationService() {
         return NtlmAuthentication.AUTHENTICATION_SERVICE_NTLM;
     }
 
+    @Override
     public int getProtectionLevel() {
         return protectionLevel;
     }
 
+    @Override
     public void processIncoming(NetworkDataRepresentation ndr, int index,
             int length, int verifierIndex, boolean isFragmented) throws IOException {
         try {
@@ -145,6 +149,7 @@ public class Ntlm1 implements NtlmFlags, Security {
         }
     }
 
+    @Override
     public void processOutgoing(NetworkDataRepresentation ndr, int index,
             int length, int verifierIndex, boolean isFragmented) throws IOException {
         try {

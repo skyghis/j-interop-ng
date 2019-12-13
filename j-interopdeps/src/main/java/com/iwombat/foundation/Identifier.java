@@ -25,16 +25,19 @@ public interface Identifier extends Serializable {
     /**
      * @return human-readable String representation
      */
+    @Override
     String toString();
 
     /**
      * @param obj The object to which this id should be compared
      * @return true if this Identifier is equal to another, false otherwise
      */
+    @Override
     boolean equals(Object obj);
 
     /**
      * @return a valid hash-code for this id
      */
+    @Override
     int hashCode();
 }

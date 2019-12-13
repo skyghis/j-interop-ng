@@ -39,10 +39,12 @@ public abstract class JIUserCallBuilder extends JICallBuilder {
         super();
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
         writeObject(ndr);
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         readObject(ndr);
     }

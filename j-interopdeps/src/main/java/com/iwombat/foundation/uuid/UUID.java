@@ -57,6 +57,7 @@ public class UUID implements Identifier, Serializable {
     /**
      * @see com.raf.foundation.Identifier#getValue()
      */
+    @Override
     public byte[] getValue() {
         return value;
     }
@@ -75,6 +76,7 @@ public class UUID implements Identifier, Serializable {
     /**
      * @see com.raf.foundation.Identifier#toHexString()
      */
+    @Override
     public String toHexString() {
         return HexStringUtil.stringFromBytes(getValue());
     }
@@ -82,6 +84,7 @@ public class UUID implements Identifier, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return toHexString();
     }
@@ -92,6 +95,7 @@ public class UUID implements Identifier, Serializable {
      * @return true if o is an ObjectId, and it's value equal.
      * @param obj The object to which this id should be compared.
      */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof UUID)) {
             return false;
@@ -113,6 +117,7 @@ public class UUID implements Identifier, Serializable {
      *
      * @return hashcode.
      */
+    @Override
     public int hashCode() {
         return this.toHexString().hashCode();
     }

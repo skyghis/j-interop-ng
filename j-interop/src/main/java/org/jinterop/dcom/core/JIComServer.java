@@ -769,6 +769,7 @@ public final class JIComServer extends Stub {
         return comObject;
     }
 
+    @Override
     protected String getSyntax() {
         return syntax;
     }

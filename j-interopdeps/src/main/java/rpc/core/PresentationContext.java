@@ -46,6 +46,7 @@ public class PresentationContext extends NdrObject {
         this.transferSyntaxes = transferSyntaxes;
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         ndr.getBuffer().align(4);
         contextId = ndr.readUnsignedShort();
@@ -62,6 +63,7 @@ public class PresentationContext extends NdrObject {
         }
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
         ndr.getBuffer().align(4, (byte) 0xcc);
         ndr.writeUnsignedShort(contextId);

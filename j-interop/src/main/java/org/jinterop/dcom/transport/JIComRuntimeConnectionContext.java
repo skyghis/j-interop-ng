@@ -41,6 +41,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
     private Properties properties = null;
     // this returns null, so that a recieve is performed first.
 
+    @Override
     public ConnectionOrientedPdu init(PresentationContext context,
             Properties properties) throws IOException {
         super.init(context, properties);
@@ -48,6 +49,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
         return null;
     }
 
+    @Override
     public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
             throws IOException {
         ConnectionOrientedPdu reply = null;
@@ -108,6 +110,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
         return reply;
     }
 
+    @Override
     public boolean isEstablished() {
         return super.isEstablished() | established;
     }

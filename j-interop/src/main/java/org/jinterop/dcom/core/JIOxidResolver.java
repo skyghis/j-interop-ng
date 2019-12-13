@@ -44,16 +44,19 @@ final class JIOxidResolver extends NdrObject {
         this.oxid = oxid;
     }
 
+    @Override
     public int getOpnum() {
         return 4;
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oxid);
         JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short((short) 1), new ArrayList(), JIFlags.FLAG_NULL);
         JIMarshalUnMarshalHelper.serialize(ndr, JIArray.class, new JIArray(new Short[]{new Short((short) 7)}, true), new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY);
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         ndr.readUnsignedLong(); //pointer
         ndr.readUnsignedLong(); //some length component, irrelevant for us right now

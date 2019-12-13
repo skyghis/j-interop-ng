@@ -22,40 +22,33 @@ import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import rpc.Security;
 
-public class AuthenticationVerifier extends NdrObject {
+public final class AuthenticationVerifier extends NdrObject {
 
     public int authenticationService;
-
     public int protectionLevel;
-
     public int contextId;
-
     public byte[] body;
 
     public AuthenticationVerifier() {
-        this(Security.AUTHENTICATION_SERVICE_NONE,
-                Security.PROTECTION_LEVEL_NONE, 0, null);
+        this(Security.AUTHENTICATION_SERVICE_NONE, Security.PROTECTION_LEVEL_NONE, 0, null);
     }
 
     public AuthenticationVerifier(int authenticatorLength) {
-        this(Security.AUTHENTICATION_SERVICE_NONE,
-                Security.PROTECTION_LEVEL_NONE, 0, authenticatorLength);
+        this(Security.AUTHENTICATION_SERVICE_NONE, Security.PROTECTION_LEVEL_NONE, 0, authenticatorLength);
     }
 
-    public AuthenticationVerifier(int authenticationService,
-            int protectionLevel, int contextId, int authenticatorLength) {
-        this(authenticationService, protectionLevel, contextId,
-                new byte[authenticatorLength]);
+    public AuthenticationVerifier(int authenticationService, int protectionLevel, int contextId, int authenticatorLength) {
+        this(authenticationService, protectionLevel, contextId, new byte[authenticatorLength]);
     }
 
-    public AuthenticationVerifier(int authenticationService,
-            int protectionLevel, int contextId, byte[] body) {
+    public AuthenticationVerifier(int authenticationService, int protectionLevel, int contextId, byte[] body) {
         this.authenticationService = authenticationService;
         this.protectionLevel = protectionLevel;
         this.contextId = contextId;
         this.body = body;
     }
 
+    @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
         src.align(4);
         authenticationService = src.dec_ndr_small();
@@ -66,18 +59,20 @@ public class AuthenticationVerifier extends NdrObject {
         src.index += body.length;
     }
 
+    @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
         int padding = dst.align(4, (byte) 0);
         dst.enc_ndr_small(authenticationService);
         dst.enc_ndr_small(protectionLevel);
         dst.enc_ndr_small(padding);
-        dst.enc_ndr_small(0);  //Reserved
+        dst.enc_ndr_small(0); //Reserved
         dst.enc_ndr_long(contextId);
         System.arraycopy(body, 0, dst.getBuffer(), dst.getIndex(), body.length);
         //dst.index += body.length;
         dst.advance(body.length);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof AuthenticationVerifier)) {
             return false;
@@ -89,8 +84,8 @@ public class AuthenticationVerifier extends NdrObject {
                 && Arrays.equals(body, other.body));
     }
 
+    @Override
     public int hashCode() {
         return authenticationService ^ protectionLevel ^ contextId;
     }
-
 }

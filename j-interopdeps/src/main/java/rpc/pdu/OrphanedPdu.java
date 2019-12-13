@@ -22,6 +22,7 @@ public class OrphanedPdu extends ConnectionOrientedPdu {
 
     public static final int ORPHANED_TYPE = 0x13;
 
+    @Override
     public int getType() {
         return ORPHANED_TYPE;
     }

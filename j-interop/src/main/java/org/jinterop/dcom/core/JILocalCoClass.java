@@ -578,6 +578,7 @@ public final class JILocalCoClass implements Serializable {
     /**
      * @exclude
      */
+    @Override
     public boolean equals(Object target) {
         if (target == null || !(target instanceof JILocalCoClass)) {
             return false;
@@ -589,6 +590,7 @@ public final class JILocalCoClass implements Serializable {
     /**
      * @exclude
      */
+    @Override
     public int hashCode() {
         return identifier;
     }

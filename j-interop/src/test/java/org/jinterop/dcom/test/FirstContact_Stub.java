@@ -67,6 +67,7 @@ public class FirstContact_Stub implements FirstContact {
 //		return "4d9f4ab8-7d1c-11cf-861e-0020af6e7c57:0.0";
 //	}
 
+    @Override
     public void obtainReference() {
         try {
 //			System.setOut(new PrintStream(new FileOutputStream("c:/temp/vikram.txt")));

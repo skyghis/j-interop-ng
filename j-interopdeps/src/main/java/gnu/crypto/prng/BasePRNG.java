@@ -95,10 +95,12 @@ public abstract class BasePRNG implements IRandom {
     // Instance methods
     // -------------------------------------------------------------------------
     // IRandom interface implementation ----------------------------------------
+    @Override
     public String name() {
         return name;
     }
 
+    @Override
     public void init(Map attributes) {
         this.setup(attributes);
 
@@ -106,6 +108,7 @@ public abstract class BasePRNG implements IRandom {
         initialised = true;
     }
 
+    @Override
     public byte nextByte() throws IllegalStateException, LimitReachedException {
         if (!initialised) {
             throw new IllegalStateException();
@@ -113,6 +116,7 @@ public abstract class BasePRNG implements IRandom {
         return nextByteInternal();
     }
 
+    @Override
     public void nextBytes(byte[] out, int offset, int length)
             throws IllegalStateException, LimitReachedException {
         if (out == null) {
@@ -149,6 +153,7 @@ public abstract class BasePRNG implements IRandom {
     }
 
     // abstract methods to implement by subclasses -----------------------------
+    @Override
     public abstract Object clone();
 
     public abstract void setup(Map attributes);

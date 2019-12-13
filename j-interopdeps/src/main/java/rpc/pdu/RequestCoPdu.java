@@ -46,6 +46,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 
     private static final Logger logger = Logger.getLogger("org.jinterop");
 
+    @Override
     public int getType() {
         return REQUEST_TYPE;
     }
@@ -74,6 +75,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         this.contextId = contextId;
     }
 
+    @Override
     public int getOpnum() {
         return opnum;
     }
@@ -91,18 +93,21 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         setFlag(PFC_OBJECT_UUID, object != null);
     }
 
+    @Override
     protected void readPdu(NetworkDataRepresentation ndr) {
         readHeader(ndr);
         readBody(ndr);
         readStub(ndr);
     }
 
+    @Override
     protected void writePdu(NetworkDataRepresentation ndr) {
         writeHeader(ndr);
         writeBody(ndr);
         writeStub(ndr);
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         UUID object = null;
         NdrBuffer src = ndr.getBuffer();
@@ -119,6 +124,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         setObject(object);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         NdrBuffer dst = ndr.getBuffer();
         dst.enc_ndr_long(getAllocationHint());
@@ -153,6 +159,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         }
     }
 
+    @Override
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
@@ -171,6 +178,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         return new FragmentIterator(stubSize);
     }
 
+    @Override
     public Fragmentable assemble(Iterator fragments) throws IOException {
         if (!fragments.hasNext()) {
             throw new IOException("No fragments available.");
@@ -208,6 +216,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         }
     }
 
+    @Override
     public Object clone() {
         try {
             return super.clone();
@@ -229,10 +238,12 @@ public class RequestCoPdu extends ConnectionOrientedPdu
             this.stubSize = stubSize;
         }
 
+        @Override
         public boolean hasNext() {
             return index < stub.length;
         }
 
+        @Override
         public Object next() {
             if (index >= stub.length) {
                 throw new NoSuchElementException();
@@ -274,6 +285,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
             return fragment;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

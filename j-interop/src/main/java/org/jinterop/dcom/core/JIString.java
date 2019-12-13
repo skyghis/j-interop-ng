@@ -160,6 +160,7 @@ public final class JIString implements Serializable {
         }
     }
 
+    @Override
     public String toString() {
         return member == null ? "[null]" : "[Type: " + type + " , " + member.toString() + "]";
     }

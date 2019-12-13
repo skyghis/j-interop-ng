@@ -35,6 +35,7 @@ public class BindAcknowledgePdu extends ConnectionOrientedPdu {
 
     private Port secondaryAddress;
 
+    @Override
     public int getType() {
         return BIND_ACKNOWLEDGE_TYPE;
     }
@@ -79,6 +80,7 @@ public class BindAcknowledgePdu extends ConnectionOrientedPdu {
         this.resultList = resultList;
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
@@ -96,6 +98,7 @@ public class BindAcknowledgePdu extends ConnectionOrientedPdu {
         setResultList(resultList);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         ndr.writeUnsignedShort(getMaxTransmitFragment());
         ndr.writeUnsignedShort(getMaxReceiveFragment());

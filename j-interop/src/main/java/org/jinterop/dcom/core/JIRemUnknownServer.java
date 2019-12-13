@@ -94,6 +94,7 @@ final class JIRemUnknownServer extends Stub {
         this.session.setStub2(this);
     }
 
+    @Override
     protected String getSyntax() {
         return syntax;
     }

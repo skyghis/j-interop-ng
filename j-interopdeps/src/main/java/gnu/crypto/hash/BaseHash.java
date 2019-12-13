@@ -103,18 +103,22 @@ public abstract class BaseHash implements IMessageDigest {
     // Instance methods
     // -------------------------------------------------------------------------
     // IMessageDigest interface implementation ---------------------------------
+    @Override
     public String name() {
         return name;
     }
 
+    @Override
     public int hashSize() {
         return hashSize;
     }
 
+    @Override
     public int blockSize() {
         return blockSize;
     }
 
+    @Override
     public void update(byte b) {
         // compute number of bytes still unhashed; ie. present in buffer
         int i = (int) (count % blockSize);
@@ -125,6 +129,7 @@ public abstract class BaseHash implements IMessageDigest {
         }
     }
 
+    @Override
     public void update(byte[] b, int offset, int len) {
         int n = (int) (count % blockSize);
         count += len;
@@ -145,6 +150,7 @@ public abstract class BaseHash implements IMessageDigest {
         }
     }
 
+    @Override
     public byte[] digest() {
         byte[] tail = padBuffer(); // pad remaining bytes in buffer
         update(tail, 0, tail.length); // last transform of a message
@@ -155,6 +161,7 @@ public abstract class BaseHash implements IMessageDigest {
         return result;
     }
 
+    @Override
     public void reset() { // reset this instance for future re-use
         count = 0L;
         for (int i = 0; i < blockSize;) {
@@ -165,8 +172,10 @@ public abstract class BaseHash implements IMessageDigest {
     }
 
     // methods to be implemented by concrete subclasses ------------------------
+    @Override
     public abstract Object clone();
 
+    @Override
     public abstract boolean selfTest();
 
     /**

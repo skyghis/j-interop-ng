@@ -36,6 +36,7 @@ public class BindPdu extends ConnectionOrientedPdu {
         super.callIdCounter = 0;
     }
 
+    @Override
     public int getType() {
         return BIND_TYPE;
     }
@@ -72,6 +73,7 @@ public class BindPdu extends ConnectionOrientedPdu {
         this.contextList = contextList;
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
@@ -85,6 +87,7 @@ public class BindPdu extends ConnectionOrientedPdu {
         setContextList(contextList);
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         ndr.writeUnsignedShort(getMaxTransmitFragment());
         ndr.writeUnsignedShort(getMaxReceiveFragment());

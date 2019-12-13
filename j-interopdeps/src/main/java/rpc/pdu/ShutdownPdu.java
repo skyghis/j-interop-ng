@@ -22,6 +22,7 @@ public class ShutdownPdu extends ConnectionOrientedPdu {
 
     public static final int SHUTDOWN_TYPE = 0x11;
 
+    @Override
     public int getType() {
         return SHUTDOWN_TYPE;
     }

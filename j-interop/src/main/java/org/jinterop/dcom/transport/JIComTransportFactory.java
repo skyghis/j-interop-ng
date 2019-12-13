@@ -31,6 +31,7 @@ public final class JIComTransportFactory extends rpc.TransportFactory {
     private JIComTransportFactory() {
     }
 
+    @Override
     public Transport createTransport(String address, Properties properties)
             throws ProviderException {
         return new JIComTransport(address, properties);

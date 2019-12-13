@@ -36,10 +36,12 @@ public final class JIUnsignedInteger implements IJIUnsigned {
         this.intValue = intValue;
     }
 
+    @Override
     public int getType() {
         return JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
     }
 
+    @Override
     public Number getValue() {
         return intValue;
     }

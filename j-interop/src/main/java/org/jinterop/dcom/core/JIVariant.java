@@ -1423,6 +1423,7 @@ public final class JIVariant implements Serializable {
         }
     }
 
+    @Override
     public String toString() {
         return member == null ? "[null]" : "[" + member.toString() + "]";
     }
@@ -2528,6 +2529,7 @@ class VariantBody implements Serializable {
         }
     }
 
+    @Override
     public String toString() {
         String retVal = "";
         if (obj == null) {

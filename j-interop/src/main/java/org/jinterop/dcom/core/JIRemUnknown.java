@@ -38,12 +38,14 @@ final class JIRemUnknown extends NdrObject {
         this.requestedIID = requestedIID;
     }
 
+    @Override
     public int getOpnum() {
         //opnum is 3 as this is a COM interface and 0,1,2 are occupied by IUnknown
         //3,4,5 by IRemUnknown and we are going to call IRemUnknown2.QI so that we get MIPs.
         return 6;
     }
 
+    @Override
     public void write(NetworkDataRepresentation ndr) {
 
         JIOrpcThis orpcthis = new JIOrpcThis();
@@ -74,6 +76,7 @@ final class JIRemUnknown extends NdrObject {
         // call after that or incomplete request will go. in case no param is present just put an unsigned long = 0.
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         JIOrpcThat.decode(ndr);
         ndr.readUnsignedLong(); //size will be one

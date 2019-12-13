@@ -63,6 +63,7 @@ public class DefaultConnection implements Connection {
         receiveBuffer = new NdrBuffer(new byte[receiveLength], 0);
     }
 
+    @Override
     public void transmit(ConnectionOrientedPdu pdu, Transport transport)
             throws IOException {
         if (!(pdu instanceof Fragmentable)) {
@@ -77,6 +78,7 @@ public class DefaultConnection implements Connection {
         }
     }
 
+    @Override
     public ConnectionOrientedPdu receive(final Transport transport)
             throws IOException {
         final ConnectionOrientedPdu fragment = receiveFragment(transport);
@@ -84,15 +86,16 @@ public class DefaultConnection implements Connection {
                 || fragment.getFlag(ConnectionOrientedPdu.PFC_LAST_FRAG)) {
             return fragment;
         }
-        return (ConnectionOrientedPdu) ((Fragmentable) fragment).assemble(
-                new Iterator() {
+        return (ConnectionOrientedPdu) ((Fragmentable) fragment).assemble(new Iterator() {
             ConnectionOrientedPdu currentFragment = fragment;
 
+            @Override
             public boolean hasNext() {
                 return (currentFragment != null);
             }
             private int i = 0;
 
+            @Override
             public Object next() {
                 if (currentFragment == null) {
                     throw new NoSuchElementException();
@@ -118,6 +121,7 @@ public class DefaultConnection implements Connection {
                 }
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }

@@ -80,6 +80,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 
     }
 
+    @Override
     public JIPolicyHandle winreg_OpenHKLM() throws JIException {
         openHKLM openhklm = new openHKLM();
         JIPolicyHandle handle = new JIPolicyHandle(false);
@@ -98,6 +99,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return handle;
     }
 
+    @Override
     public JIPolicyHandle winreg_OpenHKCR() throws JIException {
         openHKCR openhkcr = new openHKCR();
         JIPolicyHandle handle = new JIPolicyHandle(false);
@@ -116,6 +118,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return handle;
     }
 
+    @Override
     public JIPolicyHandle winreg_OpenHKCU() throws JIException {
         openHKCU openhkcu = new openHKCU();
         JIPolicyHandle handle = new JIPolicyHandle(false);
@@ -134,6 +137,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return handle;
     }
 
+    @Override
     public JIPolicyHandle winreg_OpenHKU() throws JIException {
         openHKU openhku = new openHKU();
         JIPolicyHandle handle = new JIPolicyHandle(false);
@@ -152,6 +156,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return handle;
     }
 
+    @Override
     public JIPolicyHandle winreg_OpenKey(JIPolicyHandle handle, String key, int accessMask) throws JIException {
         openKey openkey = new openKey();
         openkey.accessMask = accessMask;
@@ -173,6 +178,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return newHandle;
     }
 
+    @Override
     public void winreg_CloseKey(JIPolicyHandle handle) throws JIException {
         closeKey closekey = new closeKey();
         closekey.key = handle;
@@ -187,6 +193,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         }
     }
 
+    @Override
     public void winreg_DeleteKeyOrValue(JIPolicyHandle handle, String valueName, boolean isKey) throws JIException {
         deleteValueOrKey delete = new deleteValueOrKey();
         delete.parentKey = handle;
@@ -203,6 +210,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         }
     }
 
+    @Override
     public byte[] winreg_QueryValue(JIPolicyHandle handle, int bufferSize) throws JIException {
         queryValue queryvalue = new queryValue();
         queryvalue.parentKey = handle;
@@ -221,6 +229,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return queryvalue.buffer;
     }
 
+    @Override
     public Object[] winreg_QueryValue(JIPolicyHandle handle, String valueName, int bufferSize) throws JIException {
         queryValue queryvalue = new queryValue();
         queryvalue.parentKey = handle;
@@ -240,6 +249,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return new Object[]{new Integer(queryvalue.type), (queryvalue.buffer != null ? (Object) queryvalue.buffer : (Object) queryvalue.buffer2)};
     }
 
+    @Override
     public void winreg_SaveFile(JIPolicyHandle handle, String fileName) throws JIException {
         saveFile savefile = new saveFile();
         savefile.parentKey = handle;
@@ -257,6 +267,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
 
     }
 
+    @Override
     public JIPolicyHandle winreg_CreateKey(JIPolicyHandle handle, String subKey, int options, int accessMask) throws JIException {
         createKey createkey = new createKey();
         createkey.accessMask = accessMask;
@@ -280,6 +291,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return newHandle;
     }
 
+    @Override
     public void winreg_SetValue(JIPolicyHandle handle, String valueName, byte[][] data) throws JIException {
         if (data == null) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_WINREG_EXCEPTION5));
@@ -304,6 +316,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         setValue(setvalue);
     }
 
+    @Override
     public void winreg_SetValue(JIPolicyHandle handle, String valueName) throws JIException {
         setValue setvalue = new setValue();
         setvalue.clazzType = REG_NONE;
@@ -312,6 +325,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         setValue(setvalue);
     }
 
+    @Override
     public void winreg_SetValue(JIPolicyHandle handle, String valueName, byte[] data, boolean isBinary, boolean expand_sz) throws JIException {
         setValue setvalue = new setValue();
         if (isBinary) {
@@ -331,6 +345,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         setValue(setvalue);
     }
 
+    @Override
     public void winreg_SetValue(JIPolicyHandle handle, String valueName, int data) throws JIException {
         setValue setvalue = new setValue();
         setvalue.clazzType = REG_DWORD;
@@ -341,6 +356,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         setValue(setvalue);
     }
 
+    @Override
     public String[] winreg_EnumKey(JIPolicyHandle handle, int index) throws JIException {
         enumKey enumkey = new enumKey();
         enumkey.parentKey = handle;
@@ -357,6 +373,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return enumkey.retval;
     }
 
+    @Override
     public Object[] winreg_EnumValue(JIPolicyHandle handle, int index) throws JIException {
         enumValue enumvalue = new enumValue();
         enumvalue.parentKey = handle;
@@ -383,11 +400,13 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         }
     }
 
+    @Override
     protected String getSyntax() {
         // WinReg Service
         return "338cd001-2244-31f1-aaaa-900038001003:1.0";
     }
 
+    @Override
     public void closeConnection() throws JIException {
         try {
             super.detach();

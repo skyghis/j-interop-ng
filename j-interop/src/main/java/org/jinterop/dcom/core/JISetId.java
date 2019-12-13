@@ -32,6 +32,7 @@ final class JISetId implements Serializable {
         return setid;
     }
 
+    @Override
     public int hashCode() {
         int result = 1;
         //from SUN
@@ -42,6 +43,7 @@ final class JISetId implements Serializable {
         //return Arrays.hashCode(setid);
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof JISetId)) {
             return false;

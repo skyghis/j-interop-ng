@@ -100,6 +100,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
 
     private Format format;
 
+    @Override
     public int getMajorVersion() {
         return CONNECTION_ORIENTED_MAJOR_VERSION;
     }
@@ -112,10 +113,12 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
         this.minorVersion = minorVersion;
     }
 
+    @Override
     public Format getFormat() {
         return (format != null) ? format : (format = Format.DEFAULT_FORMAT);
     }
 
+    @Override
     public void setFormat(Format format) {
         this.format = format;
     }
@@ -162,11 +165,13 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
         this.authLength = authLength;
     }
 
+    @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
         ndr.setBuffer(src);
         readPdu(ndr);
     }
 
+    @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
         ndr.setBuffer(dst);
         ndr.setFormat(getFormat());
@@ -227,6 +232,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
     protected void writeBody(NetworkDataRepresentation ndr) {
     }
 
+    @Override
     public abstract int getType();
 
 }

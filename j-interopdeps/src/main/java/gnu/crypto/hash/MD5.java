@@ -113,11 +113,13 @@ public class MD5 extends BaseHash {
     // Instance methods
     // -------------------------------------------------------------------------
     // java.lang.Cloneable interface implementation ----------------------------
+    @Override
     public Object clone() {
         return new MD5(this);
     }
 
     // Implementation of concrete methods in BaseHash --------------------------
+    @Override
     protected synchronized void transform(byte[] in, int i) {
         int X0 = (in[i++] & 0xFF) | (in[i++] & 0xFF) << 8 | (in[i++] & 0xFF) << 16 | in[i++] << 24;
         int X1 = (in[i++] & 0xFF) | (in[i++] & 0xFF) << 8 | (in[i++] & 0xFF) << 16 | in[i++] << 24;
@@ -296,6 +298,7 @@ public class MD5 extends BaseHash {
         h3 += D;
     }
 
+    @Override
     protected byte[] padBuffer() {
         int n = (int) (count % BLOCK_SIZE);
         int padding = (n < 56) ? (56 - n) : (120 - n);
@@ -318,6 +321,7 @@ public class MD5 extends BaseHash {
         return result;
     }
 
+    @Override
     protected byte[] getResult() {
         byte[] result = new byte[]{
             (byte) h0, (byte) (h0 >>> 8), (byte) (h0 >>> 16), (byte) (h0 >>> 24),
@@ -329,6 +333,7 @@ public class MD5 extends BaseHash {
         return result;
     }
 
+    @Override
     protected void resetContext() {
         // magic MD5/RIPEMD128 initialisation constants
         h0 = 0x67452301;
@@ -337,6 +342,7 @@ public class MD5 extends BaseHash {
         h3 = 0x10325476;
     }
 
+    @Override
     public boolean selfTest() {
         if (valid == null) {
             valid = new Boolean(DIGEST0.equals(Util.toString(new MD5().digest())));

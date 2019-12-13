@@ -78,14 +78,17 @@ public interface IJIWinReg {
 
         public JIPolicyHandle key = null;
 
+        @Override
         public int getOpnum() {
             return 5;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             ndr.writeOctetArray(key.handle, 0, 20);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -99,10 +102,12 @@ public interface IJIWinReg {
 
     class openHKLM extends NdrObject {
 
+        @Override
         public int getOpnum() {
             return 2;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //it's a pointer
 
@@ -118,6 +123,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0x2000000);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -131,10 +137,12 @@ public interface IJIWinReg {
 
     class openHKCU extends NdrObject {
 
+        @Override
         public int getOpnum() {
             return 1;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //it's a pointer
 
@@ -150,6 +158,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0x2000000);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -163,10 +172,12 @@ public interface IJIWinReg {
 
     class openHKU extends NdrObject {
 
+        @Override
         public int getOpnum() {
             return 4;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //it's a pointer
 
@@ -182,6 +193,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0x2000000);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -195,10 +207,12 @@ public interface IJIWinReg {
 
     class openHKCR extends NdrObject {
 
+        @Override
         public int getOpnum() {
             return 0;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //it's a pointer
 
@@ -214,6 +228,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0x2000000);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -231,6 +246,7 @@ public interface IJIWinReg {
         public String valueName = null;
         public boolean isKey = false;
 
+        @Override
         public int getOpnum() {
             if (isKey) {
                 return 7;
@@ -239,6 +255,7 @@ public interface IJIWinReg {
             }
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //write parent handle
             ndr.writeOctetArray(parentKey.handle, 0, 20);
@@ -268,6 +285,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedShort(0);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             int hresult = ndr.readUnsignedLong();
             if (hresult != 0) {
@@ -282,10 +300,12 @@ public interface IJIWinReg {
         public JIPolicyHandle parentKey = null;
         public String fileName = null;
 
+        @Override
         public int getOpnum() {
             return 20;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
             //write parent handle
             ndr.writeOctetArray(parentKey.handle, 0, 20);
@@ -321,6 +341,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             int hresult = ndr.readUnsignedLong();
             if (hresult != 0) {
@@ -338,10 +359,12 @@ public interface IJIWinReg {
         public int options = -1;
         public int actiontaken = -1;
 
+        @Override
         public int getOpnum() {
             return 6;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -419,6 +442,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             //pointer to action taken
@@ -443,10 +467,12 @@ public interface IJIWinReg {
         public byte[][] data2 = null; //reg_
         public int dword;
 
+        @Override
         public int getOpnum() {
             return 22;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -564,6 +590,7 @@ public interface IJIWinReg {
 
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             int hresult = ndr.readUnsignedLong();
             if (hresult != 0) {
@@ -579,10 +606,12 @@ public interface IJIWinReg {
         public int index = -1;
         public String[] retval = new String[2];
 
+        @Override
         public int getOpnum() {
             return 9;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -628,6 +657,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             //buffer len , since it is uint16
             ndr.readUnsignedShort();
@@ -720,10 +750,12 @@ public interface IJIWinReg {
         public int index = -1;
         public Object[] retval = new Object[2];
 
+        @Override
         public int getOpnum() {
             return 10;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -760,6 +792,7 @@ public interface IJIWinReg {
 
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             //buffer len , since it is uint16
             ndr.readUnsignedShort();
@@ -824,10 +857,12 @@ public interface IJIWinReg {
         public String key = null;
         public int accessMask = KEY_READ;
 
+        @Override
         public int getOpnum() {
             return 15;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -868,6 +903,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(accessMask);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             ndr.readOctetArray(policyhandle, 0, 20);
             int hresult = ndr.readUnsignedLong();
@@ -888,10 +924,12 @@ public interface IJIWinReg {
         public byte[] buffer = null;
         public byte[][] buffer2 = new byte[2048][];
 
+        @Override
         public int getOpnum() {
             return 17;
         }
 
+        @Override
         public void write(NetworkDataRepresentation ndr) {
 
             //write parent handle
@@ -946,6 +984,7 @@ public interface IJIWinReg {
             ndr.writeUnsignedLong(0);
         }
 
+        @Override
         public void read(NetworkDataRepresentation ndr) {
             int i = 0;
             //pointer

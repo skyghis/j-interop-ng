@@ -53,6 +53,7 @@ final class JIComOxidStub extends Stub {
 
     }
 
+    @Override
     protected String getSyntax() {
         return "99fcfec4-5260-101b-bbcb-00aa0021347a:0.0";
     }
@@ -110,11 +111,13 @@ class PingObject extends NdrObject {
     byte[] setId = null;
     int seqNum = 0;
 
+    @Override
     public int getOpnum() {
         return opnum;
     }
 
     //read follows write...please remember
+    @Override
     public void write(NetworkDataRepresentation ndr) {
         switch (opnum) {
             case 2: //complex ping
@@ -202,6 +205,7 @@ class PingObject extends NdrObject {
         }
     }
 
+    @Override
     public void read(NetworkDataRepresentation ndr) {
         //read response and fill DSs accordingly
         switch (opnum) {

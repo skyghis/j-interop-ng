@@ -664,6 +664,7 @@ public final class JIArray implements Serializable {
         clazz = c;
     }
 
+    @Override
     public String toString() {
         String retVal = "[Type: " + clazz + " , ";
         if (memberArray == null) {

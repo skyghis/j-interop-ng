@@ -36,10 +36,12 @@ public final class JIUnsignedByte implements IJIUnsigned {
         this.byteValue = byteValue;
     }
 
+    @Override
     public int getType() {
         return JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
     }
 
+    @Override
     public Number getValue() {
         return byteValue;
     }

@@ -41,6 +41,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
 
     private int status = UNSPECIFIED_REJECTION;
 
+    @Override
     public int getType() {
         return FAULT_TYPE;
     }
@@ -85,18 +86,21 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         this.status = status;
     }
 
+    @Override
     protected void readPdu(NetworkDataRepresentation ndr) {
         readHeader(ndr);
         readBody(ndr);
         readStub(ndr);
     }
 
+    @Override
     protected void writePdu(NetworkDataRepresentation ndr) {
         writeHeader(ndr);
         writeBody(ndr);
         writeStub(ndr);
     }
 
+    @Override
     protected void readBody(NetworkDataRepresentation ndr) {
         setAllocationHint(ndr.readUnsignedLong());
         setContextId(ndr.readUnsignedShort());
@@ -104,6 +108,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         setStatus((int) ndr.readUnsignedLong());
     }
 
+    @Override
     protected void writeBody(NetworkDataRepresentation ndr) {
         ndr.writeUnsignedLong(getAllocationHint());
         ndr.writeUnsignedShort(getContextId());
@@ -132,6 +137,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         }
     }
 
+    @Override
     public Iterator fragment(int size) {
         byte[] stub = getStub();
         if (stub == null) {
@@ -144,6 +150,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         return new FragmentIterator(stubSize);
     }
 
+    @Override
     public Fragmentable assemble(Iterator fragments) throws IOException {
         if (!fragments.hasNext()) {
             throw new IOException("No fragments available.");
@@ -181,6 +188,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         }
     }
 
+    @Override
     public Object clone() {
         try {
             return super.clone();
@@ -199,10 +207,12 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
             this.stubSize = stubSize;
         }
 
+        @Override
         public boolean hasNext() {
             return index < stub.length;
         }
 
+        @Override
         public Object next() {
             if (index >= stub.length) {
                 throw new NoSuchElementException();
@@ -228,6 +238,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
             return fragment;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

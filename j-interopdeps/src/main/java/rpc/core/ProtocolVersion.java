@@ -41,11 +41,13 @@ public class ProtocolVersion extends NdrObject {
         this.minorVersion = minorVersion;
     }
 
+    @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
         dst.enc_ndr_small(majorVersion);
         dst.enc_ndr_small(minorVersion);
     }
 
+    @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
         majorVersion = src.dec_ndr_small();
         minorVersion = src.dec_ndr_small();

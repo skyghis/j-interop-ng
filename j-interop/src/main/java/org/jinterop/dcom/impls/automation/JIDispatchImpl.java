@@ -65,6 +65,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return comObject;
     }
 
+    @Override
     public int getTypeInfoCount() throws JIException {
         JICallBuilder obj = new JICallBuilder(true);
         obj.setOpnum(0);
@@ -74,6 +75,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return ((Number) result[0]).intValue();
     }
 
+    @Override
     public int getIDsOfNames(String apiName) throws JIException {
         if (apiName == null || apiName.trim().isEmpty()) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
@@ -110,6 +112,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return ((Number) ((Object[]) ((JIArray) result[0]).getArrayInstance())[0]).intValue();//will get the dispatch ID.
     }
 
+    @Override
     public int[] getIDsOfNames(String[] apiName) throws JIException {
         if (apiName == null || apiName.length == 0) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
@@ -180,6 +183,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return retVal;
     }
 
+    @Override
     public IJITypeInfo getTypeInfo(int typeInfo) throws JIException {
         JICallBuilder obj = new JICallBuilder(true);
         obj.setOpnum(1);
@@ -335,72 +339,87 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         //invoke(dispId,propertyFlag,new JIArray(new JIVariant[]{inparam},true),new JIArray(new Integer[]{new Integer(propertyFlag)},true),null);
     }
 
+    @Override
     public void put(int dispId, JIVariant inparam) throws JIException {
         put(dispId, new Object[]{inparam}, false);
     }
 
+    @Override
     public void put(String name, JIVariant inparam) throws JIException {
         put(getIDsOfNames(name), inparam);
     }
 
+    @Override
     public void putRef(int dispId, JIVariant inparam) throws JIException {
         put(dispId, new Object[]{inparam}, true);
     }
 
+    @Override
     public void putRef(String name, JIVariant inparam) throws JIException {
         putRef(getIDsOfNames(name), inparam);
     }
 
+    @Override
     public JIVariant get(int dispId) throws JIException {
         //return invoke(dispId,IJIDispatch.DISPATCH_PROPERTYGET,new Object[]{null,null,null,null,null},null);
         return ((JIVariant[]) invoke(dispId, IJIDispatch.DISPATCH_PROPERTYGET, null, null, null))[0];
     }
 
+    @Override
     public JIVariant[] get(int dispId, Object[] inparams) throws JIException {
         return callMethodA(dispId, inparams, IJIDispatch.DISPATCH_PROPERTYGET);
     }
 
+    @Override
     public JIVariant[] get(String name, Object[] inparams) throws JIException {
         //return invoke(dispId,IJIDispatch.DISPATCH_PROPERTYGET,new Object[]{null,null,null,null,null},null);
         return get(getIDsOfNames(name), inparams);
     }
 
+    @Override
     public JIVariant get(String name) throws JIException {
         //return invoke(getIDsOfNames(name),IJIDispatch.DISPATCH_PROPERTYGET,new Object[]{null,null,null,null,null},null);
         return get(getIDsOfNames(name));
     }
 
+    @Override
     public void callMethod(String name) throws JIException {
         //invoke(getIDsOfNames(name),IJIDispatch.DISPATCH_METHOD,null,null,null);
         callMethod(getIDsOfNames(name));
     }
 
+    @Override
     public void callMethod(int dispId) throws JIException {
         //invoke(dispId,IJIDispatch.DISPATCH_METHOD,new Object[]{null,null,null,null,null},null);
         callMethodA(dispId);
     }
 
+    @Override
     public JIVariant callMethodA(String name) throws JIException {
         //return invoke(getIDsOfNames(name),IJIDispatch.DISPATCH_METHOD,new Object[]{null,null,null,null,null},null);
         return callMethodA(getIDsOfNames(name));
     }
 
+    @Override
     public JIVariant callMethodA(int dispId) throws JIException {
         //return invoke(dispId,IJIDispatch.DISPATCH_METHOD,new Object[]{null,null,null,null,null},null);
         return ((JIVariant[]) invoke(dispId, IJIDispatch.DISPATCH_METHOD, null, null, null))[0];
     }
 
     //Ordinary params, will internally form Variant and the JIArray associated
+    @Override
     public void callMethod(String name, Object[] inparams) throws JIException {
         callMethodA(getIDsOfNames(name), inparams);
     }
 
     //	Ordinary params, will internally form Variant and the JIArray associated
+    @Override
     public void callMethod(int dispId, Object[] inparams) throws JIException {
         callMethodA(dispId, inparams);
     }
 
 //	Ordinary params, will internally form Variant and the JIArray associated
+    @Override
     public JIVariant[] callMethodA(String name, Object[] inparams) throws JIException {
         return callMethodA(getIDsOfNames(name), inparams);
     }
@@ -438,25 +457,30 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
     }
 
     //	Ordinary params, will internally form Variant and the JIArray associated
+    @Override
     public JIVariant[] callMethodA(int dispId, Object[] inparams) throws JIException {
         return callMethodA(dispId, inparams, IJIDispatch.DISPATCH_METHOD);
     }
 
+    @Override
     public void callMethod(String name, Object[] inparams, int[] dispIds) throws JIException {
         callMethodA(getIDsOfNames(name), inparams, dispIds);
     }
 
     //inparams.length == dispIds.length.
+    @Override
     public void callMethod(int dispId, Object[] inparams, int[] dispIds) throws JIException {
         callMethodA(dispId, inparams, dispIds);
     }
 
     //inparams.length == dispIds.length.
+    @Override
     public JIVariant[] callMethodA(String name, Object[] inparams, int[] dispIds) throws JIException {
         return callMethodA(getIDsOfNames(name), inparams, dispIds);
     }
 
     //if inparams == null, dispIds is not considered
+    @Override
     public JIVariant[] callMethodA(int dispId, Object[] inparams, int[] dispIds) throws JIException {
         if (inparams == null || inparams.length == 0) {
             return callMethodA(dispId, inparams);
@@ -496,10 +520,12 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 
     }
 
+    @Override
     public void callMethod(String name, Object[] inparams, String[] paramNames) throws JIException {
         callMethodA(name, inparams, paramNames);
     }
 
+    @Override
     public JIVariant[] callMethodA(String name, Object[] inparams, String[] paramNames) throws JIException {
         if (inparams == null || inparams.length == 0) {
             return callMethodA(getIDsOfNames(name), inparams);
@@ -546,26 +572,32 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 
     }
 
+    @Override
     public void put(int dispId, Object[] params) throws JIException {
         put(dispId, params, false);
     }
 
+    @Override
     public void put(String name, Object[] params) throws JIException {
         put(getIDsOfNames(name), params, false);
     }
 
+    @Override
     public void putRef(int dispId, Object[] params) throws JIException {
         put(dispId, params, true);
     }
 
+    @Override
     public void putRef(String name, Object[] params) throws JIException {
         put(getIDsOfNames(name), params, true);
     }
 
+    @Override
     public JIExcepInfo getLastExcepInfo() {
         return lastExcepInfo;
     }
 
+    @Override
     public String toString() {
         return "IJIDispatch[" + super.toString() + "]";
     }

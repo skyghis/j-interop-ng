@@ -132,11 +132,13 @@ public class MD4 extends BaseHash {
     // Instance methods
     // -------------------------------------------------------------------------
     // java.lang.Cloneable interface implementation ----------------------------
+    @Override
     public Object clone() {
         return new MD4(this);
     }
 
     // Implementation of abstract methods in BashHash --------------------------
+    @Override
     protected byte[] getResult() {
         byte[] digest = {
             (byte) a, (byte) (a >>> 8), (byte) (a >>> 16), (byte) (a >>> 24),
@@ -147,6 +149,7 @@ public class MD4 extends BaseHash {
         return digest;
     }
 
+    @Override
     protected void resetContext() {
         a = A;
         b = B;
@@ -154,6 +157,7 @@ public class MD4 extends BaseHash {
         d = D;
     }
 
+    @Override
     public boolean selfTest() {
         if (valid == null) {
             valid = new Boolean(
@@ -162,6 +166,7 @@ public class MD4 extends BaseHash {
         return valid.booleanValue();
     }
 
+    @Override
     protected byte[] padBuffer() {
         int n = (int) (count % BLOCK_LENGTH);
         int padding = (n < 56) ? (56 - n) : (120 - n);
@@ -181,6 +186,7 @@ public class MD4 extends BaseHash {
         return pad;
     }
 
+    @Override
     protected void transform(byte[] in, int i) {
         int X0 = (in[i++] & 0xFF) | (in[i++] & 0xFF) << 8 | (in[i++] & 0xFF) << 16 | in[i++] << 24;
         int X1 = (in[i++] & 0xFF) | (in[i++] & 0xFF) << 8 | (in[i++] & 0xFF) << 16 | in[i++] << 24;
