@@ -98,7 +98,7 @@ final class JIComObjectImpl implements IJIComObject {
         obj.addOutParamAsType(Short.class, JIFlags.FLAG_NULL);//size
         obj.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);//Hresult for size
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().warning("addRef: Adding 5 references for " + ptr.getIPID() + " session: " + session.getSessionIdentifier());
+            JISystem.getLogger().log(Level.INFO, "addRef: Adding 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
         }
 
         JISession.debug_addIpids(ptr.getIPID(), 5);
@@ -126,7 +126,7 @@ final class JIComObjectImpl implements IJIComObject {
         obj.addInParamAsInt(5, JIFlags.FLAG_NULL);
         obj.addInParamAsInt(0, JIFlags.FLAG_NULL);//private refs = 0
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().warning("RELEASE called directly ! removing 5 references for " + ptr.getIPID() + " session: " + session.getSessionIdentifier());
+            JISystem.getLogger().log(Level.WARNING, "RELEASE called directly ! removing 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
             JISession.debug_delIpids(ptr.getIPID(), 5);
         }
         session.getStub2().addRef_ReleaseRef(obj);

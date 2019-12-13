@@ -97,7 +97,7 @@ public final class JIFrameworkHelper {
         JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
         if (!JIInterfacePointer.isOxidEqual(stubPtr, ptr)) {
             if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                JISystem.getLogger().warning("NEW SESSION IDENTIFIED ! for ptr " + ptr);
+                JISystem.getLogger().log(Level.WARNING, "NEW SESSION IDENTIFIED ! for ptr {0}", ptr);
             }
             //first check if a session for this OXID does not already exist and thus its stub
             JISession newsession = JIFrameworkHelper.resolveSessionForOXID(ptr.getOXID());
@@ -204,7 +204,7 @@ public final class JIFrameworkHelper {
         }
 
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Detaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , identifier: " + identifier);
+            JISystem.getLogger().log(Level.INFO, "Detaching event handler for  comObject: {0} , identifier: {1}", new Object[]{comObject.getInterfaceIdentifier(), identifier});
         }
 
         IJIComObject connectionPointer = (IJIComObject) connectionInfo[0];
@@ -231,7 +231,7 @@ public final class JIFrameworkHelper {
         }
 
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Attaching event handler for  comObject: " + comObject.getInterfaceIdentifier() + " , sourceUUID: " + sourceUUID + " , eventListener: " + eventListener.getInterfaceIdentifier() + " and eventListner IPID: " + eventListener.getIpid());
+            JISystem.getLogger().log(Level.INFO, "Attaching event handler for  comObject: {0} , sourceUUID: {1} , eventListener: {2} and eventListner IPID: {3}", new Object[]{comObject.getInterfaceIdentifier(), sourceUUID, eventListener.getInterfaceIdentifier(), eventListener.getIpid()});
         }
         //IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
         IJIComObject connectionPointContainer = comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
@@ -252,7 +252,7 @@ public final class JIFrameworkHelper {
         Integer dwcookie = ((Integer) obj[0]);
 
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Event handler returned cookie " + dwcookie);
+            JISystem.getLogger().log(Level.INFO, "Event handler returned cookie {0}", dwcookie);
         }
         connectionPointContainer.release();
 

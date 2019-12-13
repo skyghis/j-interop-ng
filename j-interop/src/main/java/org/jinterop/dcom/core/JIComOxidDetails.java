@@ -16,6 +16,7 @@
  */
 package org.jinterop.dcom.core;
 
+import java.util.logging.Level;
 import org.jinterop.dcom.common.JISystem;
 
 /**
@@ -102,7 +103,7 @@ final class JIComOxidDetails {
                 remUnknownThread.interrupt();
 //				remUnknownThread.destroy();
             } catch (Exception e) {
-                JISystem.getLogger().info("JIComOxidDetails interruptRemUnknownThreadGroup " + e.toString());
+                JISystem.getLogger().log(Level.INFO, "JIComOxidDetails interruptRemUnknownThreadGroup {0}", e.toString());
             }
         }
     }

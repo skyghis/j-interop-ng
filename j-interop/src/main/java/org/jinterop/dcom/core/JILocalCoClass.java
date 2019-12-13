@@ -452,7 +452,7 @@ public final class JILocalCoClass implements Serializable {
                     info = interfaceDefinitionOfClass.getMethodDescriptorForDispId(dispId);
                     if (info == null) {
                         if (JISystem.getLogger().isLoggable(Level.SEVERE)) {
-                            JISystem.getLogger().severe("MethodDescriptor not found for DispId :- " + dispId);
+                            JISystem.getLogger().log(Level.SEVERE, "MethodDescriptor not found for DispId :- {0}", dispId);
                         }
 
                         throw new JIException(JIErrorCodes.DISP_E_MEMBERNOTFOUND);
@@ -499,7 +499,7 @@ public final class JILocalCoClass implements Serializable {
                     isStandardCall = true;
                     Opnum -= 4; //adjust for only IDispatch(3,4,5,6) , IUnknown(0,1,2) will get adjusted below.
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("Standard call came: Opnum is " + Opnum);
+                        JISystem.getLogger().log(Level.INFO, "Standard call came: Opnum is {0}", Opnum);
                     }
 
             }
@@ -521,12 +521,12 @@ public final class JILocalCoClass implements Serializable {
             Method method = null;
             try {
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("methodDescriptor: " + methodDescriptor.getMethodName());
+                    JISystem.getLogger().log(Level.INFO, "methodDescriptor: {0}", methodDescriptor.getMethodName());
                 }
                 method = calleeClazz.getDeclaredMethod(methodDescriptor.getMethodName(), methodDescriptor.getInparametersAsClass());
                 Object calleeInstance = interfaceDefinitionOfClass.instance == null ? calleeClazz.newInstance() : interfaceDefinitionOfClass.instance;
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("Call Back Method to be executed: " + method + " , to be executed on " + calleeInstance);
+                    JISystem.getLogger().log(Level.INFO, "Call Back Method to be executed: {0} , to be executed on {1}", new Object[]{method, calleeInstance});
                 }
                 Object result = method.invoke(calleeInstance, params);
 

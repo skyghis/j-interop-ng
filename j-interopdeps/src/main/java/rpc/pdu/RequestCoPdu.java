@@ -280,7 +280,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 //            	firstfragsent = true;
 //            }
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("In FragementIterator:next(): callIdCounter is " + callId + " ,  for thread: " + Thread.currentThread());
+                logger.log(Level.FINEST, "In FragementIterator:next(): callIdCounter is {0} ,  for thread: {1}", new Object[]{callId, Thread.currentThread()});
             }
             return fragment;
         }

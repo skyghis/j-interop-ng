@@ -60,7 +60,7 @@ final class JIObjectId implements Serializable {
         this.dontping = dontping;
         if (dontping) {
             if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().info("DONT PING is true for OID: " + toString());
+                JISystem.getLogger().log(Level.INFO, "DONT PING is true for OID: {0}", toString());
             }
         }
     }

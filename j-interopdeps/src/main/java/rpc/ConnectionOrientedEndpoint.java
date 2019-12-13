@@ -93,7 +93,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         System.arraycopy(buffer.buf, 0, stub, 0, stub.length);
 
         if (logger.isLoggable(Level.FINEST)) {
-            logger.finest("\n" + Hexdump.toHexString(stub));
+            logger.log(Level.FINEST, "{0}", Hexdump.toHexString(stub));
         }
 
         request.setStub(stub);
@@ -122,7 +122,7 @@ public class ConnectionOrientedEndpoint implements Endpoint {
             buffer = new NdrBuffer(((ResponseCoPdu) reply).getStub(), 0);
 
             if (logger.isLoggable(Level.FINEST)) {
-                logger.finest("\n" + Hexdump.toHexString(buffer.buf));
+                logger.log(Level.FINEST, "{0}", Hexdump.toHexString(buffer.buf));
             }
 
             ndrobj.decode(ndr, buffer);

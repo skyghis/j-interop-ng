@@ -237,7 +237,7 @@ public final class JISystem {
                     }
 
                     if (logger.isLoggable(Level.INFO)) {
-                        logger.info("progIdVsClsidDB file located at: " + url);
+                        logger.log(Level.INFO, "progIdVsClsidDB file located at: {0}", url);
                     }
 
                     URLConnection con = url.openConnection();
@@ -255,7 +255,7 @@ public final class JISystem {
         }
 
         if (logger.isLoggable(Level.INFO)) {
-            logger.info("progIdVsClsidDB: " + mapOfProgIdsVsClsids);
+            logger.log(Level.INFO, "progIdVsClsidDB: {0}", mapOfProgIdsVsClsids);
         }
     }
 
@@ -331,7 +331,7 @@ public final class JISystem {
         String jinteropVersion = JISystem.class.getPackage().getImplementationVersion();
         Logger logger = Logger.getLogger("org.jinterop");
         if (logger.isLoggable(Level.INFO)) {
-            logger.info("j-Interop Version = " + jinteropVersion + "\n");
+            logger.log(Level.INFO, "j-Interop Version = {0}\n", jinteropVersion);
             while (itr.hasNext()) {
                 String key = (String) itr.next();
                 str = str + key + " = " + pr.getProperty(key) + "\n";
@@ -453,7 +453,7 @@ public final class JISystem {
 
     public static synchronized void internal_dumpMap() {
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            getLogger().info("mapOfHostnamesVsIPs: " + mapOfHostnamesVsIPs);
+            getLogger().log(Level.INFO, "mapOfHostnamesVsIPs: {0}", mapOfHostnamesVsIPs);
         }
     }
 }

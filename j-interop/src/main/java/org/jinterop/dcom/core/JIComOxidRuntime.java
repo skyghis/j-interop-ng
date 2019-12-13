@@ -156,7 +156,7 @@ final class JIComOxidRuntime {
         synchronized (mutex2) {
 
             if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().info("destroySessionOIDs for session: " + sessionId);
+                JISystem.getLogger().log(Level.INFO, "destroySessionOIDs for session: {0}", sessionId);
             }
 
             List oids = (List) mapOfSessionIdsVsOIDs.remove(new Integer(sessionId));
@@ -244,7 +244,7 @@ final class JIComOxidRuntime {
                     }
                 }
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is " + holder.currentSetOIDs.size());
+                    JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is {0}", holder.currentSetOIDs.size());
                 }
 
                 //this is the first time this is going and objects with no references will not be added to ping set.
@@ -265,7 +265,7 @@ final class JIComOxidRuntime {
                 holder.setId = stub.call(isSimplePing, holder.setId, listOfAddedOIDs, listOfRemovedOIDs, isSimplePing ? 0 : holder.seqNum++);
 
                 if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().info("Within ClientPingTimerTask: holder.seqNum " + holder.seqNum);
+                    JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: holder.seqNum {0}", holder.seqNum);
                 }
 
                 holder.modified = false;
@@ -274,7 +274,7 @@ final class JIComOxidRuntime {
                     //this means that this set is empty and there is no need for it. The set has emptied  itself and
                     //will get removed from COM servers side as well.
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("Within ClientPingTimerTask: Holder " + holder + " is empty, will remove this from mapOfSessionVsPingSetHolder");
+                        JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: Holder {0} is empty, will remove this from mapOfSessionVsPingSetHolder", holder);
                     }
                     itr.remove();
                     synchronized (mutex3) {
@@ -317,7 +317,7 @@ final class JIComOxidRuntime {
                     oid = oid2;
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("addUpdateOXIDs: Adding OID to holder " + holder + ", current size of currentSetOIDs is " + holder.currentSetOIDs.size());
+                        JISystem.getLogger().log(Level.INFO, "addUpdateOXIDs: Adding OID to holder {0}, current size of currentSetOIDs is {1}", new Object[]{holder, holder.currentSetOIDs.size()});
                     }
                     holder.currentSetOIDs.put(oid, oid);
                     holder.modified = true;
@@ -326,7 +326,7 @@ final class JIComOxidRuntime {
 
             oid.incrementIPIDRefCountBy1();
             if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().info("addUpdateOXIDs: finally this oid is " + oid);
+                JISystem.getLogger().log(Level.INFO, "addUpdateOXIDs: finally this oid is {0}", oid);
             }
         }
 
@@ -343,7 +343,7 @@ final class JIComOxidRuntime {
                     oid = oid2;
                 } else {
                     if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().warning("In delIPIDReference: Could not find Original OID for this temp OID for session: " + session.getSessionIdentifier() + " , temp oid is " + oid + " , and IPID is " + IPID);
+                        JISystem.getLogger().log(Level.WARNING, "In delIPIDReference: Could not find Original OID for this temp OID for session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
                     }
                     return;
                 }
@@ -351,7 +351,7 @@ final class JIComOxidRuntime {
                 //this is the same OID as in the PingSetHolder.
                 oid.decrementIPIDRefCountBy1();
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("delIPIDReference: Decrementing reference count for IPID " + IPID + " on OID " + oid);
+                    JISystem.getLogger().log(Level.INFO, "delIPIDReference: Decrementing reference count for IPID {0} on OID {1}", new Object[]{IPID, oid});
                 }
 
                 //should we retain this now ??? , we need not send a ping for this as well. It is being retained for the last ping only.
@@ -363,13 +363,12 @@ final class JIComOxidRuntime {
                         mapOfSessionVsPingSetHolder.remove(session);
                     }
                     if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().info("delIPIDReference: sessionid " + session.getSessionIdentifier()
-                                + "Ref count is <= 0, for OID " + oid + ", holder status: " + holder.closed);
+                        JISystem.getLogger().log(Level.INFO, "delIPIDReference: sessionid {0}Ref count is <= 0, for OID {1}, holder status: {2}", new Object[]{session.getSessionIdentifier(), oid, holder.closed});
                     }
                 }
             } else {
                 if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().warning("In delIPIDReference: Could not find PingSetHolder for this session: " + session.getSessionIdentifier() + " , temp oid is " + oid + " , and IPID is " + IPID);
+                    JISystem.getLogger().log(Level.WARNING, "In delIPIDReference: Could not find PingSetHolder for this session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
                 }
             }
         }
@@ -381,7 +380,7 @@ final class JIComOxidRuntime {
             PingSetHolder holder = (PingSetHolder) mapOfSessionVsPingSetHolder.get(session);
             if (holder != null) {
                 if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("clearIPIDsforSession: holder.currentSetOIDs's size is " + holder.currentSetOIDs.size());
+                    JISystem.getLogger().log(Level.INFO, "clearIPIDsforSession: holder.currentSetOIDs''s size is {0}", holder.currentSetOIDs.size());
                 }
 
                 //No need to do this we are clearing the map anyways.

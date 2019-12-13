@@ -343,7 +343,7 @@ public final class JIVariant implements Serializable {
             return (JIVariant) ctor.newInstance(new Object[]{o, Boolean.valueOf(isByRef)});
         } catch (Exception e) {
             if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                JISystem.getLogger().warning("Could not create Variant for " + o + " , isByRef " + isByRef);
+                JISystem.getLogger().log(Level.WARNING, "Could not create Variant for {0} , isByRef {1}", new Object[]{o, isByRef});
             }
         }
 
@@ -1953,7 +1953,7 @@ class VariantBody implements Serializable {
             ndr.getBuffer().setIndex(currentIndex);
 
             if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().finest("Variant length is " + length + " , value " + value + " , variant type" + type);
+                JISystem.getLogger().log(Level.FINEST, "Variant length is {0} , value {1} , variant type{2}", new Object[]{length, value, type});
             }
 //			if (safeArrayStruct != null && isArray)
 //			{
@@ -2320,7 +2320,7 @@ class VariantBody implements Serializable {
             if (type2 != null) {
                 type = type2.intValue();
             } else {
-                JISystem.getLogger().warning("In getVarType: Unsupported Type found ! " + c + " , please add this to the supportedType map ! ");
+                JISystem.getLogger().log(Level.WARNING, "In getVarType: Unsupported Type found ! {0} , please add this to the supportedType map ! ", c);
                 //make that an array of variants
                 type2 = JIVariant.getSupportedType(JIVariant.class, FLAG);
             }
@@ -2408,7 +2408,7 @@ class VariantBody implements Serializable {
             Class c = (Class) JIVariant.supportedTypes_classes.get(new Integer(type));
             if (c == null) {
                 if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().warning("From JIVariant: while decoding an Array, type " + type + " , was not found in supportedTypes_classes map , hence using JIVariant instead...");
+                    JISystem.getLogger().log(Level.WARNING, "From JIVariant: while decoding an Array, type {0} , was not found in supportedTypes_classes map , hence using JIVariant instead...", type);
                 }
                 //not available , lets try with JIVariant.
                 //This is a bug, I should have the type.
