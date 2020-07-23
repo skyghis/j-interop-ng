@@ -414,6 +414,21 @@ public final class JIComServer extends Stub {
         initialise(clsid, address, session);
     }
 
+    @Deprecated
+    public JIComServer(JIClsid clsid, String address, JISession session, Properties defaults) throws JIException, UnknownHostException {
+        super();
+        if (clsid == null || address == null || session == null) {
+            throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_COMSTUB_ILLEGAL_ARGUMENTS));
+        }
+        if (session.getStub() != null) {
+            throw new JIException(JIErrorCodes.JI_SESSION_ALREADY_ESTABLISHED);
+        }
+        address = address.trim();
+        //address = address.replace(' ','');
+        address = "ncacn_ip_tcp:" + InetAddress.getByName(address).getHostAddress() + "[135]";
+        initialise(clsid, address, session);
+    }
+
     /**
      * < p>
      * Refer {@link #JIComServer(JIClsid, JISession)} for details.

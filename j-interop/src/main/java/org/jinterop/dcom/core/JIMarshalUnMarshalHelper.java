@@ -18,7 +18,6 @@ package org.jinterop.dcom.core;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -34,6 +33,7 @@ import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
+import org.jinterop.dcom.impls.wmi.JIWbemObjectArray;
 import rpc.core.UUID;
 
 final class JIMarshalUnMarshalHelper {
@@ -46,7 +46,6 @@ final class JIMarshalUnMarshalHelper {
     // Basically the index on COMs side should match with the array length here...otherwise exception
     // will come. This has to be managed by IDL generator.
     static {
-
         mapOfSerializers.put(Date.class, new JIMarshalUnMarshalHelper.DateImpl());
         mapOfSerializers.put(JICurrency.class, new JIMarshalUnMarshalHelper.JICurrencyImpl());
         mapOfSerializers.put(VariantBody.class, new JIMarshalUnMarshalHelper.JIVariant2Impl());
@@ -73,6 +72,7 @@ final class JIMarshalUnMarshalHelper {
         mapOfSerializers.put(JIUnsignedShort.class, new JIMarshalUnMarshalHelper.JIUnsignedShortImpl());
         mapOfSerializers.put(JIUnsignedInteger.class, new JIMarshalUnMarshalHelper.JIUnsignedIntImpl());
 //		mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
+        mapOfSerializers.put(JIWbemObjectArray.class, new JIMarshalUnMarshalHelper.JIWbemObjectArrayImpl());
 
     }
 
@@ -943,8 +943,7 @@ final class JIMarshalUnMarshalHelper {
             // code from jacobgen:
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(milliseconds);
-            milliseconds += (cal.get(Calendar.ZONE_OFFSET) + cal
-                    .get(Calendar.DST_OFFSET)); // add GMT offset
+            milliseconds += (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)); // add GMT offset
             result = (milliseconds / 86400000D) + 25569D;
 
             return result;
@@ -1278,6 +1277,26 @@ final class JIMarshalUnMarshalHelper {
         @Override
         public int getLengthInBytes(Object value, int FLAG) {
             return ((JIInterfacePointerBody) value).getLength();
+        }
+    }
+
+    private static class JIWbemObjectArrayImpl implements SerializerDeserializer {
+
+        @Override
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+            JIWbemObjectArray objectArray = new JIWbemObjectArray();
+            objectArray.decode(ndr, ndr.getBuffer());
+            return objectArray;
+        }
+
+        @Override
+        public int getLengthInBytes(Object value, int FLAG) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
     }
 

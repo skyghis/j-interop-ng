@@ -28,7 +28,6 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
-import rpc.core.UUID;
 
 /**
  * < p>
@@ -91,6 +90,12 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * dispatch is supported on the COM Object.
      */
     public JICallBuilder(boolean dispatchNotSupported) {
+        this();
+        this.dispatchNotSupported = dispatchNotSupported;
+    }
+
+    @Deprecated
+    public JICallBuilder(boolean dispatchNotSupported, int opNum) {
         this();
         this.dispatchNotSupported = dispatchNotSupported;
     }

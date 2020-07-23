@@ -24,18 +24,14 @@ import rpc.core.UUID;
 public interface Endpoint {
 
     public static final int MAYBE = 0x01;
-
     public static final int IDEMPOTENT = 0x02;
-
     public static final int BROADCAST = 0x04;
 
     public Transport getTransport();
 
     public PresentationSyntax getSyntax();
 
-    public void call(int semantics, UUID object, int opnum,
-            NdrObject ndrobj) throws IOException;
+    public void call(int semantics, UUID object, int opnum, NdrObject ndrobj) throws IOException;
 
     public void detach() throws IOException;
-
 }
