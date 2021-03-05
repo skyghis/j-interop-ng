@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Remove new line prefix on logs.
+- Update `jcifs-ng` from version `2.1.3` to `2.1.5`.
+- Update maven plugins dependencies.
 
 ## [3.0.0] - 2019-11-15
 ### Added
