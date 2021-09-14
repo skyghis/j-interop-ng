@@ -38,7 +38,7 @@ package org.jinterop.dcom.common;
  * comObject.registerUnreferencedHandler(session, new IJIUnreferenced(){<br>
  * public void unReferenced()<br>
  * {<br>
- *				//do something here<br>
+ * //do something here<br>
  * }<br>
  * });<br>
  * <br>

@@ -22,7 +22,7 @@ public class TestCOMServer {
     public TestCOMServer(String address, String[] args) throws JIException, UnknownHostException {
         JISession session = JISession.createSession(args[1], args[2], args[3]);
 
-        //instead of this the ProgID "TestCOMServer.ITestCOMServer"	can be used as well.
+        //instead of this the ProgID "TestCOMServer.ITestCOMServer" can be used as well.
         //comStub = new JIComServer(JIProgId.valueOf(session,"TestCOMServer.ITestCOMServer"),address,session);
         //CLSID of ITestCOMServer
         comStub = new JIComServer(JIClsid.valueOf("44A9CD09-0D9B-4FD2-9B8A-0151F2E0CAD1"), address, session);
@@ -61,9 +61,6 @@ public class TestCOMServer {
             TestCOMServer test = new TestCOMServer(args[0], args);
             test.execute();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
-
 }

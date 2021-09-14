@@ -173,11 +173,11 @@ final class JIComObjectImpl implements IJIComObject {
         return ptr.getIID();
     }
 
-//	public JIComServer getAssociatedComServer()
-//	{
-//		checkLocal();
-//		return session.getStub();
-//	}
+    //  public JIComServer getAssociatedComServer()
+    //  {
+    //    checkLocal();
+    //    return session.getStub();
+    //  }
     @Override
     public synchronized boolean isDispatchSupported() {
         checkLocal();

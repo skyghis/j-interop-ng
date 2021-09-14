@@ -36,7 +36,7 @@ final class JIObjectId implements Serializable {
 
     boolean hasExpired() {
         //8 minutes interval...giving COM Client some grace period.
-        return (System.currentTimeMillis() - lastPingTime) > 8 * 60 * 1000;//			lastPingTime = System.currentTimeMillis();
+        return (System.currentTimeMillis() - lastPingTime) > 8 * 60 * 1000;// lastPingTime = System.currentTimeMillis();
     }
 
     void updateLastPingTime() {
@@ -94,14 +94,4 @@ final class JIObjectId implements Serializable {
     public String toString() {
         return "{ IPID ref count is " + refcountofIPID + " } and OID in bytes[] " + Hexdump.toHexString(oid) + " , hasExpired " + hasExpired() + " } ";
     }
-
-//	void addIpid(String IPID)
-//	{
-//		listOfIpids.add(IPID);
-//	}
-//
-//	List getIpidList()
-//	{
-//		return listOfIpids;
-//	}
 }

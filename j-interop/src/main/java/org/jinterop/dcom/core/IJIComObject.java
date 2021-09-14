@@ -261,11 +261,6 @@ public interface IJIComObject extends Serializable {
      */
     public String getInterfaceIdentifier();
 
-//	/**
-//	 * @exclude
-//	 * @return
-//	 */
-//	public JIComServer getAssociatedComServer();
     /**
      * Returns <code>true</code> if <code>IDispatch</code> interface is
      * supported by this object.

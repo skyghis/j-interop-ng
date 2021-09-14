@@ -109,23 +109,17 @@ public class MSWord {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-
             JISystem.getLogger().setLevel(Level.INFO);
             JISystem.setInBuiltLogHandler(false);
             MSWord test = new MSWord(args[0], args);
             test.startWord();
             test.showWord();
 
-//			for (int i = 0; i < 10; i++) {
+            // for (int i = 0; i < 10; i++) {
             test.performOp();
-//			}
-
+            // }
             test.quitAndDestroy();
-
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
-
 }

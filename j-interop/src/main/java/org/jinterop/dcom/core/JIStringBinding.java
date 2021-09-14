@@ -106,14 +106,6 @@ final class JIStringBinding implements Serializable {
             ndr.writeUnsignedShort(networkAddress.charAt(i));
             i++;
         }
-
-//		//TODO testing only.
-//		if (networkAddress.length()%2 != 0)
-//		{
-//			ndr.writeUnsignedShort(0);
-//		}
         ndr.writeUnsignedShort(0); //null termination
-
     }
-
 }

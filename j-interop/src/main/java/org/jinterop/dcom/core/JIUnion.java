@@ -38,7 +38,7 @@ import org.jinterop.dcom.common.JISystem;
  *
  * <br>
  * <code>
- * 	JIUnion forTypeDesc = new JIUnion(Short.class); <br>
+ * JIUnion forTypeDesc = new JIUnion(Short.class); <br>
  * JIPointer ptrToTypeDesc = new JIPointer(typeDesc); <br>
  * JIPointer ptrToArrayDesc = new JIPointer(arrayDesc); <br>
  * forTypeDesc.addMember(TypeDesc.VT_PTR,ptrToTypeDesc); <br>
@@ -50,8 +50,6 @@ import org.jinterop.dcom.common.JISystem;
  *
  * The TypeDesc.VT_PTR is an <code>Integer</code> and is used as a discriminant
  * to select ptrTypeDesc, TypeDesc.VT_CARRAY chooses ptrArrayDesc. <br>
- *
- *
  *
  * @since 1.0
  */
@@ -87,7 +85,6 @@ public final class JIUnion implements Serializable {
         }
 
         this.discriminantClass = discriminantClass;
-
     }
 
     /**
@@ -240,9 +237,4 @@ public final class JIUnion implements Serializable {
 
         return alignment;
     }
-
-//	public String toString()
-//	{
-//		return  "[" + dsVsMember +  "]";
-//	}
 }

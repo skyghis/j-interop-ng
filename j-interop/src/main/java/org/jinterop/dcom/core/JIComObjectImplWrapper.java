@@ -84,13 +84,6 @@ public class JIComObjectImplWrapper implements IJIComObject {
         return comObject.getInterfaceIdentifier();
     }
 
-//	/**
-//	 * @exclude
-//	 */
-//	public JIComServer getAssociatedComServer()
-//	{
-//		return comObject.getAssociatedComServer();
-//	}
     @Override
     public boolean isDispatchSupported() {
         return comObject.isDispatchSupported();

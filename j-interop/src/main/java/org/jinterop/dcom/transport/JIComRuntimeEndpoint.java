@@ -116,12 +116,12 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                     responseCoPdu.setCallId(request.getCallId());
                     ((NdrObject) workerObject).encode(ndr, null);
                     int length = ndr.getBuffer().length > ndr.getBuffer().index ? ndr.getBuffer().length : ndr.getBuffer().index;
-//					  length = length + 4;
+                    // length = length + 4;
                     responseCoPdu.setAllocationHint(length + 4);
                     byte[] responsebytes = new byte[length + 4];
                     System.arraycopy(ndr.getBuffer().getBuffer(), 0, responsebytes, 0, responsebytes.length - 4);
                     responseCoPdu.setStub(responsebytes);
-//					  responseCoPdu.setStub(ndr.getBuffer().getBuffer());
+                    // responseCoPdu.setStub(ndr.getBuffer().getBuffer());
                     response = responseCoPdu;
 
                 } catch (JIRuntimeException e) {
@@ -157,7 +157,6 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                         default:
                         //nothing
                     }
-
                 }
 
                 response = context.accept(request);
@@ -176,12 +175,12 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                         context = ((AlterContextPdu) request).getContextList()[0]; //am expecting only one
                     }
 
-//					  if (successful)
-//					  {
-//						  //now select the Interface from the request and set that as the object expected to come.
-//						  workerObject.setCurrentJavaInstanceFromIID(context.abstractSyntax.toString().toUpperCase());
-//						  //set the component null;
-//					  }
+                    //  if (successful)
+                    //  {
+                    //    //now select the Interface from the request and set that as the object expected to come.
+                    //    workerObject.setCurrentJavaInstanceFromIID(context.abstractSyntax.toString().toUpperCase());
+                    //    //set the component null;
+                    //  }
                 }
             } else if (request instanceof FaultCoPdu) {
                 // TODO to throw or not to throw ...that is the question :)...i think it should be logged , but not thrown
@@ -193,12 +192,12 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
             } else if (request instanceof ShutdownPdu) {
                 throw new RpcException("Received shutdown request from server.");
             } else if (request instanceof Auth3Pdu) {
-//				  try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+                //try {
+                //  Thread.sleep(1000);
+                //} catch (InterruptedException e) {
+                //  // TODO Auto-generated catch block
+                //  e.printStackTrace();
+                //}
                 continue; //don't do anything here, the server will send another request
             }
             if (JISystem.getLogger().isLoggable(Level.INFO)) {

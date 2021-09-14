@@ -23,7 +23,7 @@ import java.io.Serializable;
  * <br>
  *
  * Implementation notes: The DCE spec calls for MacAddress as part of the UUID
- * algorythm. Since java supplies no mechanism for this ObjectId looks for a
+ * algorthm. Since java supplies no mechanism for this ObjectId looks for a
  * MACADDR system property consisting of a hex string of six bytes ( a 12
  * character hex string - no delimiters and no 0x token ). Failing to find said
  * system property ObjectId generates a random MACADDR and uses the last octet

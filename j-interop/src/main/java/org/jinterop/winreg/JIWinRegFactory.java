@@ -35,9 +35,8 @@ public class JIWinRegFactory {
 
     private JIWinRegFactory() {
     }
-    ;
 
-	private static JIWinRegFactory factory = null;
+    private static JIWinRegFactory factory = null;
 
     /**
      * Instantiates the Factory.
@@ -62,8 +61,7 @@ public class JIWinRegFactory {
      *
      * @param authInfo credentials for access to Windows Remote Registry service
      * @param serverName target server
-     * @param smbTransport true if SMB transport is required , false will return
-     * null.
+     * @param smbTransport true if SMB transport is required , false will return null.
      * @return
      * @throws UnknownHostException
      */

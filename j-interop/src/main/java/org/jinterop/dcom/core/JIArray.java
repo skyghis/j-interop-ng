@@ -132,9 +132,9 @@ public final class JIArray implements Serializable {
      * safeArrayBounds.addMember(Integer.class); <br>
      * safeArrayBounds.addMember(Integer.class); <br><br>
      *
-     *	//arraydesc <br>
+     *  //arraydesc <br>
      * JIStruct arrayDesc = new JIStruct(); <br>
-     *	//typedesc <br>
+     *  //typedesc <br>
      * JIStruct typeDesc = new JIStruct(); <br><br>
      *
      * arrayDesc.addMember(typeDesc);<br>
@@ -405,8 +405,7 @@ public final class JIArray implements Serializable {
     }
 
     int getSizeOfAllElementsInBytes() {
-//		int length = numElementsInAllDimensions * JIMarshalUnMarshalHelper.getLengthInBytes(clazz,((Object[])memberArray)[0],JIFlags.FLAG_NULL);
-
+        //int length = numElementsInAllDimensions * JIMarshalUnMarshalHelper.getLengthInBytes(clazz,((Object[])memberArray)[0],JIFlags.FLAG_NULL);
         //this means that decode has created this array, and we need to compute the size to stay consistent.
         if (sizeOfNestedArrayInBytes == -1) {
             sizeOfNestedArrayInBytes = computeLengthArray(memberArray);
@@ -416,8 +415,7 @@ public final class JIArray implements Serializable {
     }
 
     void encode(NetworkDataRepresentation ndr, Object array, List defferedPointers, int FLAG) {
-        //	ArrayList listofDefferedPointers = new ArrayList();
-
+        //ArrayList listofDefferedPointers = new ArrayList();
         if (isConformantProxy) {
             //first write the max counts ...First to last dimension.
             int i = 0;
@@ -614,7 +612,7 @@ public final class JIArray implements Serializable {
 
     void setMaxCountAndUpperBounds(List maxCount) {
         conformantMaxCounts = maxCount;
-        //	if (upperBounds == null) this will always be null since this api will get called from a decode and
+        //if (upperBounds == null) this will always be null since this api will get called from a decode and
         //in that the upperBounds is always null, since one does not know the dim expected.
         if (conformantMaxCounts.size() > 0) {
             //max elements will come now.

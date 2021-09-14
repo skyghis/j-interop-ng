@@ -173,7 +173,6 @@ final class JIRemUnknownServer extends Stub {
         try {
             detach();
         } catch (IOException e) {
-//			e.printStackTrace();
         }
     }
 
@@ -182,5 +181,4 @@ final class JIRemUnknownServer extends Stub {
 
         getProperties().setProperty("rpc.socketTimeout", Integer.toString(timeout));
     }
-
 }

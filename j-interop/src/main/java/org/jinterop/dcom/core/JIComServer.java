@@ -66,7 +66,6 @@ public final class JIComServer extends Stub {
     private static Properties defaults = new Properties();
 
     static {
-
         defaults.put("rpc.ntlm.lanManagerKey", "false");
         defaults.put("rpc.ntlm.sign", "false");
         defaults.put("rpc.ntlm.seal", "false");
@@ -74,11 +73,10 @@ public final class JIComServer extends Stub {
         defaults.put("rpc.ntlm.sso", "false");
         defaults.put("rpc.connectionContext", "rpc.security.ntlm.NtlmConnectionContext");
         defaults.put("rpc.socketTimeout", Integer.toString(0));
-//		rpc.connectionContext = rpc.security.ntlm.NtlmConnectionContext
-//		rpc.ntlm.sign = false
-//		rpc.ntlm.seal = false
-//		rpc.ntlm.keyExchange = false
-
+        // rpc.connectionContext = rpc.security.ntlm.NtlmConnectionContext
+        // rpc.ntlm.sign = false
+        // rpc.ntlm.seal = false
+        // rpc.ntlm.keyExchange = false
     }
 
     //private String address = null;
@@ -124,7 +122,7 @@ public final class JIComServer extends Stub {
      * The <code>JISession.createSession(JISession)</code> can be used to create
      * a new session.
      * @param interfacePointer reference to a different COM server pointer.
-     * @param ipAddress	Can be <code>null</code>. Sometimes there are many
+     * @param ipAddress Can be <code>null</code>. Sometimes there are many
      * adapters (virtual as well) on the Target machine to which this interface
      * pointer belongs, which may get sent as part of the interface pointer and
      * consequently this call will fail since it is a possibility that IP is not
@@ -171,7 +169,7 @@ public final class JIComServer extends Stub {
         JIStringBinding nameBinding = null;
         String targetAddress = ipAddress == null ? "" : ipAddress.trim();
 
-//		if (!targetAddress.equals(""))
+        //if (!targetAddress.equals(""))
         {
             //now we choose, otherwise the first one we get.
             while (i < addressBindings.length) {
@@ -210,11 +208,11 @@ public final class JIComServer extends Stub {
 
             binding = nameBinding == null ? binding : nameBinding;
         }
-//		else
-//		{
-//			//Just pick up the first one.
-//			binding = addressBindings[0];
-//		}
+        //else
+        //{
+        //  //Just pick up the first one.
+        //  binding = addressBindings[0];
+        //}
 
         //will use this last binding .
         //and currently only TCPIP is supported.
@@ -267,7 +265,7 @@ public final class JIComServer extends Stub {
         binding = null;
         nameBinding = null;
         i = 0;
-//		if (!targetAddress.equals(""))
+        // if (!targetAddress.equals(""))
         {
             //now we choose, otherwise the first one we get.
             while (i < bindings.length) {
@@ -305,11 +303,11 @@ public final class JIComServer extends Stub {
 
             binding = nameBinding == null ? binding : nameBinding;
         }
-//		else
-//		{
-//			//Just pick up the first one.
-//			binding = bindings[0];
-//		}
+        //else
+        //{
+        //  //Just pick up the first one.
+        //  binding = bindings[0];
+        //}
 
         //now set the NTLMv2 Session Security.
         if (session.isSessionSecurityEnabled()) {
@@ -715,8 +713,8 @@ public final class JIComServer extends Stub {
             if (serverInstantiated) {
                 throw new JIException(JIErrorCodes.JI_OBJECT_ALREADY_INSTANTIATED, (Throwable) null);
             }
-//			JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
-//			comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
+            // JIStdObjRef objRef = (JIStdObjRef)(remoteActivation.getMInterfacePointer().getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
+            // comObject = getObject(objRef.getIpid(),IJIUnknown.IID);
             comObject = JIFrameworkHelper.instantiateComObject(session, remoteActivation.getMInterfacePointer());
             if (remoteActivation.isDual) {
                 //IJIComObject comObject2 = getObject(remoteActivation.dispIpid,"00020400-0000-0000-c000-000000000046");
@@ -758,8 +756,8 @@ public final class JIComServer extends Stub {
                 throw new JIException(JIErrorCodes.JI_OBJECT_ALREADY_INSTANTIATED, (Throwable) null);
             }
 
-//			JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
-//			comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
+            // JIStdObjRef objRef = (JIStdObjRef)(interfacePtrCtor.getObjectReference(JIInterfacePointer.OBJREF_STANDARD));
+            // comObject = getObject(objRef.getIpid(),interfacePtrCtor.getIID());
             comObject = JIFrameworkHelper.instantiateComObject(session, interfacePtrCtor);
             //increasing the reference count.
             comObject.addRef();
@@ -774,19 +772,6 @@ public final class JIComServer extends Stub {
         return syntax;
     }
 
-//	/**
-//	 * @exclude
-//	 * @return
-//	 */
-//	String getIpid()
-//	{
-//		if (remoteActivation != null && remoteActivation.isActivationSuccessful())
-//		{
-//			return remoteActivation.getIPID();
-//		}
-//		else
-//			return null;
-//	}
     /**
      * Execute a Method on the COM Interface identified by the IID.
      *
@@ -883,8 +868,6 @@ public final class JIComServer extends Stub {
         try {
             detach();
         } catch (Exception e) {
-//			No need to print this out.
-//			e.printStackTrace();
         }
     }
 

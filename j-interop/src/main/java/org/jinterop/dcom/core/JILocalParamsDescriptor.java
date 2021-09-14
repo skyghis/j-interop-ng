@@ -39,7 +39,7 @@ import ndr.NetworkDataRepresentation;
  * <p>
  * </code> Corresponding <code>JILocalParamsDescriptor</code> would be :- <br>
  * <code>
- * 		JILocalParamsDescriptor paramObject = new JILocalParamsDescriptor(); <br>
+ * JILocalParamsDescriptor paramObject = new JILocalParamsDescriptor(); <br>
  * paramObject.addInParamAsObject(new JIPointer(IJIComObject.class,false),
  * JIFlags.FLAG_NULL); <br>
  * paramObject.addInParamAsType(JIVariant.class,JIFlags.FLAG_NULL);<br>
@@ -80,9 +80,8 @@ public final class JILocalParamsDescriptor implements Serializable {
 
     /**
      * Add <code>[in]</code> parameter at the end of the out parameter list.
-     * Typically callers are composite in nature <code>JIStruct</code> ,
-     * <code>JIUnions</code> , <code>JIPointer</code> and <code>JIString</code>
-     * .
+     * Typically callers are composite in nature <code>JIStruct</code>,
+     * <code>JIUnions</code>, <code>JIPointer</code> and <code>JIString</code>.
      *
      * @param param
      * @param FLAGS
@@ -120,5 +119,4 @@ public final class JILocalParamsDescriptor implements Serializable {
     void setSession(JISession session) {
         callObject.attachSession(session);
     }
-
 }

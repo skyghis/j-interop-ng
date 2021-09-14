@@ -101,7 +101,7 @@ final class JIComOxidDetails {
         if (remUnknownThread != null) {
             try {
                 remUnknownThread.interrupt();
-//				remUnknownThread.destroy();
+                //remUnknownThread.destroy();
             } catch (Exception e) {
                 JISystem.getLogger().log(Level.INFO, "JIComOxidDetails interruptRemUnknownThreadGroup {0}", e.toString());
             }

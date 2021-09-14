@@ -131,20 +131,20 @@ public final class JIStruct implements Serializable {
             ((JIVariant) member).setDeffered(true);
         } else if (memberClass.equals(JIString.class)) {
             ((JIString) member).setDeffered(true);
-        } else //		if (memberClass.equals(JIInterfacePointer.class))
-        //		{
-        //			((JIInterfacePointer)member).setDeffered(true);
-        //		}
-        //		else
-        //		if (memberClass.equals(JIDispatchImpl.class))
-        //		{
-        //			((JIComObjectImplWrapper)member).getInterfacePointer().setDeffered(true);
-        //		}
-        //		else
-        //		if (memberClass.equals(JIComObjectImpl.class))
-        //		{
-        //			((IJIComObject)member).getInterfacePointer().setDeffered(true);
-        //		}
+        } else //    if (memberClass.equals(JIInterfacePointer.class))
+        //    {
+        //      ((JIInterfacePointer)member).setDeffered(true);
+        //    }
+        //    else
+        //    if (memberClass.equals(JIDispatchImpl.class))
+        //    {
+        //      ((JIComObjectImplWrapper)member).getInterfacePointer().setDeffered(true);
+        //    }
+        //    else
+        //    if (memberClass.equals(JIComObjectImpl.class))
+        //    {
+        //      ((IJIComObject)member).getInterfacePointer().setDeffered(true);
+        //    }
         if (memberClass.equals(IJIComObject.class)) {
             ((IJIComObject) member).internal_setDeffered(true);
         }
@@ -336,9 +336,4 @@ public final class JIStruct implements Serializable {
 
         return alignment;
     }
-
-//	public String toString()
-//	{
-//		return "[" + listOfMembers + "]";
-//	}
 }

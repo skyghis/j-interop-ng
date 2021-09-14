@@ -9,24 +9,23 @@ import org.jinterop.dcom.impls.JIObjectFactory;
 public class DWebBrowserEvents2 {
 
     public DWebBrowserEvents2() {
-
     }
-//	[id(0x00000070), helpstring("Fired when the PutProperty method has been called.")]
-//	 void PropertyChange([in] BSTR szProperty);
 
+    //  [id(0x00000070), helpstring("Fired when the PutProperty method has been called.")]
+    //   void PropertyChange([in] BSTR szProperty);
     public void PropertyChange(JIString szProperty) {
         System.out.println("PropertyChange -> " + szProperty.getString());
     }
 
-//	[id(0x000000fa), helpstring("Fired before navigate occurs in the given WebBrowser (window or frameset element). The processing of this navigation may be modified.")]
-//	 void BeforeNavigate2(
-//	                 [in] IDispatch* pDisp,
-//	                 [in] VARIANT* URL,
-//	                 [in] VARIANT* Flags,
-//	                 [in] VARIANT* TargetFrameName,
-//	                 [in] VARIANT* PostData,
-//	                 [in] VARIANT* Headers,
-//	                 [in, out] VARIANT_BOOL* Cancel);
+    //  [id(0x000000fa), helpstring("Fired before navigate occurs in the given WebBrowser (window or frameset element). The processing of this navigation may be modified.")]
+    //   void BeforeNavigate2(
+    //                   [in] IDispatch* pDisp,
+    //                   [in] VARIANT* URL,
+    //                   [in] VARIANT* Flags,
+    //                   [in] VARIANT* TargetFrameName,
+    //                   [in] VARIANT* PostData,
+    //                   [in] VARIANT* Headers,
+    //                   [in, out] VARIANT_BOOL* Cancel);
     public JIVariant BeforeNavigate2(IJIComObject dispatch, JIVariant URL, JIVariant Flags, JIVariant TargetFrameName,
             JIVariant PostData, JIVariant Headers, JIVariant Cancel) throws JIException {
         dispatch = JIObjectFactory.narrowObject(dispatch);
@@ -245,5 +244,4 @@ public class DWebBrowserEvents2 {
             int dwValidFlagsMask) {
         System.out.println("WindowStateChanged - > " + dwWindowStateFlags + " , " + dwValidFlagsMask);
     }
-
 }

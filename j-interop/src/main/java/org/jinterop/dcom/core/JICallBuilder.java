@@ -28,7 +28,6 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
-import rpc.core.UUID;
 
 /**
  * < p>
@@ -47,7 +46,7 @@ import rpc.core.UUID;
  * obj.addInParamAsString(new JIString("j-Interop Rocks !"), JIFlags.FLAG_NULL);
  * <br>
  * obj.addInParamAsInt(100, JIFlags.FLAG_NULL); <br>
- *	//handle is previously obtained {@link IJIComObject} <br>
+ * //handle is previously obtained {@link IJIComObject} <br>
  * Object[] result = comObject.call(obj);
  * <br>
  * </code>
@@ -103,7 +102,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      *
      */
     public JICallBuilder() {
-//		enclosingParentsIPID = IPIDofParent;
+        //enclosingParentsIPID = IPIDofParent;
     }
 
     /**
@@ -131,15 +130,6 @@ public class JICallBuilder extends NdrObject implements Serializable {
         return enclosingParentsIPID;
     }
 
-//	/**Add IN parameter as <code>JIInterfacePointer</code> at the end of the Parameter list.
-//	 *
-//	 * @param value
-//	 * @param FLAGS from JIFlags (if need be)
-//	 */
-//	public void addInParamAsInterfacePointer(JIInterfacePointer interfacePointer, int FLAGS)
-//	{
-//		insertInParamAsInterfacePointerAt(inParams.size(),interfacePointer,FLAGS);
-//	}
     /**
      * Add <code>[in]</code> parameter as <code>IJIComObject</code> at the end
      * of the Parameter list.
@@ -627,7 +617,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * Returns the results as an <code>Object[]</code>. This array has to be
      * iterated over to get the individual values.
      */
-    //	only valid before the interpretation of read, after that has actual values
+    //only valid before the interpretation of read, after that has actual values
     public Object[] getResults() {
         //checkIfCalled();
         return outparams;
@@ -918,15 +908,6 @@ public class JICallBuilder extends NdrObject implements Serializable {
 
         int index = 0;
         if (inparams != null) {
-//			if (JISystem.getLogger().isLoggable(Level.FINEST))
-//			{
-//				String str = "";
-//				for (int i = 0;i < inparams.length;i++)
-//				{
-//					str = str + "In Param:[" + i + "] " + inparams[i] + "\n";
-//				}
-//				JISystem.getLogger().finest(str);
-//			}
             while (index < inparams.length) {
                 List listOfDefferedPointers = new ArrayList();
                 if (inparams[index] == null) {
@@ -938,25 +919,26 @@ public class JICallBuilder extends NdrObject implements Serializable {
                 int x = 0;
 
                 while (x < listOfDefferedPointers.size()) {
-//					thought of this today morning...change the logic here...the defeered pointers need to be
-//					completely serialized here. If they are also having nested deffered pointers then  those pointers
-//					should be "inserted" just after the current pointer itself.
-//					change the logic below to send out a new list and insert that list after the current x.
-//					consider the case when there is a Struct having a nested pointer to another struct and this struct
-//					itself having a pointer.
+//thought of this today morning...change the logic here...the defeered pointers need to be
+//completely serialized here. If they are also having nested deffered pointers then those pointers
+//should be "inserted" just after the current pointer itself.
+//change the logic below to send out a new list and insert that list after the current x.
+//consider the case when there is a Struct having a nested pointer to another struct and this struct
+//itself having a pointer.
 //
-//					Inparams order:- for 2 params.
-//					int f,Struct{int i;
-//								 Struct *ptr;
-//								 Struct *ptr2;
-//								 int j;
-//								}
+//Inparams order:- for 2 params.
+//  int f,Struct{
+//      int i;
+//      Struct *ptr;
+//      Struct *ptr2;
+//      int j;
+//  }
 //
-//					while serializing this struct the pointer 1 will get deffered and so will pointer 2. Now while writing
-//					the deffered pointers , we will find that the pointer 1 is pointing to a struct which has another deffered pointer (pointer to another struct maybe)
-//					in such case, the current logic will add the deffered pointer to the end of the listOfDefferedPointers list, effectively serializing it
-//					after the pointer 2 referent. But that is what is against the rules of DCERPC, in this case the referent of pointer 1 (struct with the pointer to another struct)
-//					should be serialized in place (following th rules of the struct serialization ofcourse) and should not go to the end of the list.
+//while serializing this struct the pointer 1 will get deffered and so will pointer 2. Now while writing
+//the deffered pointers , we will find that the pointer 1 is pointing to a struct which has another deffered pointer (pointer to another struct maybe)
+//in such case, the current logic will add the deffered pointer to the end of the listOfDefferedPointers list, effectively serializing it
+//after the pointer 2 referent. But that is what is against the rules of DCERPC, in this case the referent of pointer 1 (struct with the pointer to another struct)
+//should be serialized in place (following th rules of the struct serialization ofcourse) and should not go to the end of the list.
 
                     //JIMarshalUnMarshalHelper.serialize(ndr,JIPointer.class,(JIPointer)listOfDefferedPointers.get(x),listOfDefferedPointers,inparamFlags);
                     ArrayList newList = new ArrayList();
@@ -975,24 +957,24 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     @Override
     public void read(NetworkDataRepresentation ndr) {
-//		if (opnum == 10) FOR TESTING ONLY
-//		{
-//			byte[] buffer = new byte[360];
-//			FileInputStream inputStream;
-//			try {
-//				inputStream = new FileInputStream("c:/temp/ONEEVENTSTRUCT");
-//				inputStream.read(buffer,0,360);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//			NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
-//			ndr.setBuffer(ndrBuffer);
-//			NetworkDataRepresentation ndr2 = new NetworkDataRepresentation();
-//			ndr2.setBuffer(ndrBuffer);
-//			read2(ndr2);
-//		}
+        //    if (opnum == 10) FOR TESTING ONLY
+        //    {
+        //      byte[] buffer = new byte[360];
+        //      FileInputStream inputStream;
+        //      try {
+        //        inputStream = new FileInputStream("c:/temp/ONEEVENTSTRUCT");
+        //        inputStream.read(buffer,0,360);
+        //      } catch (Exception e) {
+        //        // TODO Auto-generated catch block
+        //        e.printStackTrace();
+        //      }
+        //
+        //      NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
+        //      ndr.setBuffer(ndrBuffer);
+        //      NetworkDataRepresentation ndr2 = new NetworkDataRepresentation();
+        //      ndr2.setBuffer(ndrBuffer);
+        //      read2(ndr2);
+        //    }
         //interpret based on the out params flags
         JIOrpcThat orpcThat = JIOrpcThat.decode(ndr);
         readPacket(ndr, false);
@@ -1076,7 +1058,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
                     comObjectImpl.replaceMembers(comObject);
                     JIFrameworkHelper.addComObjectToSession(comObjectImpl.getAssociatedSession(), comObjectImpl);
                     //Why did I put this here. We should do an addRef regardless of whether we give a pointer to COM or it gives us one.
-//					if (!fromCallback)
+                    //if (!fromCallback)
                     {
                         comObjectImpl.addRef();
                     }

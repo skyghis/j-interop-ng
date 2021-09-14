@@ -97,13 +97,13 @@ public class MSPowerPoint2 {
             System.out.println("Welcome to PowerPoint Manager !");
             System.out.println("Commands --> ");
             System.out.println("'O' <path_to_ppt>               Open PPT, ex:- O c:\\temp\\j-Interop.ppt");
-            System.out.println("'C'  							Close PPT");
-            System.out.println("'N'  							Next Action");
-            System.out.println("'P'  							Previous Action");
+            System.out.println("'C'                             Close PPT");
+            System.out.println("'N'                             Next Action");
+            System.out.println("'P'                             Previous Action");
             System.out.println("'G' <slide number>              Goto Slide, ex:- G 3");
-            System.out.println("'F' 							First Slide");
-            System.out.println("'L' 							Last Slide");
-            System.out.println("'Q' 				  			Quit PowerPoint Manager");
+            System.out.println("'F'                             First Slide");
+            System.out.println("'L'                             Last Slide");
+            System.out.println("'Q'                             Quit PowerPoint Manager");
 
             BufferedReader inputreader = new BufferedReader(new InputStreamReader(new BufferedInputStream(System.in)));
 

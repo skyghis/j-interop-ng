@@ -78,16 +78,16 @@ public class MSOutLookExpressContacts {
             String details = null;
             IJIDispatch contactItem = (IJIDispatch) JIObjectFactory.narrowObject((IJIComObject) res[0]);
             JIVariant res2 = contactItem.get("FullName");
-//			callObject = new JICallBuilder(contactItem.getIpid());
-//			callObject.setOpnum(124);
-//			callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
-//			res = contactItem.call(callObject);
+            //      callObject = new JICallBuilder(contactItem.getIpid());
+            //      callObject.setOpnum(124);
+            //      callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
+            //      res = contactItem.call(callObject);
             details = res2.getObjectAsString().getString();
 
-//			callObject.reInit();
-//			callObject.setOpnum(100);
-//			callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
-//			res = contactItem.call(callObject);
+            //      callObject.reInit();
+            //      callObject.setOpnum(100);
+            //      callObject.addOutParamAsObject(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR),JIFlags.FLAG_NULL);
+            //      res = contactItem.call(callObject);
             res2 = contactItem.get("Email1Address");
             details = details + "<" + res2.getObjectAsString().getString() + ">";
 
@@ -118,7 +118,5 @@ public class MSOutLookExpressContacts {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
-
 }

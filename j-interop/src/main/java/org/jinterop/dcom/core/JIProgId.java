@@ -91,28 +91,9 @@ public class JIProgId {
 
     private void getIdFromWinReg() throws JIException {
         IJIWinReg winreg;
-        //winreg = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),session.getPassword()),server,true);
-        //System.out.println("Encoding the password...");
-
-//		try {
-//			winreg = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),URLEncoder.encode(session.getPassword(),"UTF-8")),server,true);
-//		} catch (UnsupportedEncodingException e) {
-//			try {
-//				winreg = JIWinRegFactory.getSingleTon().getWinreg(new JIDefaultAuthInfoImpl(session.getDomain(),session.getUserName(),URLEncoder.encode(session.getPassword(),System.getProperty("file.encoding"))),server,true);
-//			} catch (UnsupportedEncodingException e1) {
-//				throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION2);
-//			}catch (UnknownHostException e2)
-//			{
-//				throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION3);
-//			}
-//		} catch (UnknownHostException e)
-//		{
-//			throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION3);
-//		}
         if (server == null) {
             server = session.getTargetServer();
         }
-
         try {
             if (session.isSSOEnabled()) {
                 winreg = JIWinRegFactory.getSingleTon().getWinreg(server, true);
@@ -133,7 +114,6 @@ public class JIProgId {
         clsid = JIClsid.valueOf(key.substring(key.indexOf('{') + 1, key.indexOf('}')));
         clsid.setAutoRegistration(autoRegister);
         JISystem.internal_setClsidtoProgId(progId, clsid.getCLSID());
-
     }
 
     /**

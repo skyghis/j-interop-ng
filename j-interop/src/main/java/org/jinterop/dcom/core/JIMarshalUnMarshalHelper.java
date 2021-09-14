@@ -18,7 +18,6 @@ package org.jinterop.dcom.core;
 
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -72,7 +71,7 @@ final class JIMarshalUnMarshalHelper {
         mapOfSerializers.put(JIUnsignedByte.class, new JIMarshalUnMarshalHelper.JIUnsignedByteImpl());
         mapOfSerializers.put(JIUnsignedShort.class, new JIMarshalUnMarshalHelper.JIUnsignedShortImpl());
         mapOfSerializers.put(JIUnsignedInteger.class, new JIMarshalUnMarshalHelper.JIUnsignedIntImpl());
-//		mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
+        //mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
 
     }
 
@@ -123,20 +122,20 @@ final class JIMarshalUnMarshalHelper {
                 return;
             }
 
-//			if (c.equals(JIDispatchImpl.class) || c.equals(IJIDispatch.class))
-//			{
-//				IJIComObject unknown = ((JIDispatchImpl)value).getCOMObject();
-//				JIInterfacePointer interfacePointer = new JIInterfacePointer(IJIDispatch.IID,unknown.getInterfacePointer());
-//				interfacePointer.encode(ndr,defferedPointers,FLAG);
-//				return ;
-//			}
-//
-//			if (c.equals(JIComObjectImpl.class) || c.equals(IJIComObject.class) || c.equals(IJIUnknown.class))
-//			{
-//				JIInterfacePointer interfacePointer = ((IJIComObject)value).getInterfacePointer();
-//				interfacePointer.encode(ndr,defferedPointers,FLAG);
-//				return ;
-//			}
+            //if (c.equals(JIDispatchImpl.class) || c.equals(IJIDispatch.class))
+            //{
+            //  IJIComObject unknown = ((JIDispatchImpl)value).getCOMObject();
+            //  JIInterfacePointer interfacePointer = new JIInterfacePointer(IJIDispatch.IID,unknown.getInterfacePointer());
+            //  interfacePointer.encode(ndr,defferedPointers,FLAG);
+            //  return ;
+            //}
+            //
+            //if (c.equals(JIComObjectImpl.class) || c.equals(IJIComObject.class) || c.equals(IJIUnknown.class))
+            //{
+            //  JIInterfacePointer interfacePointer = ((IJIComObject)value).getInterfacePointer();
+            //  interfacePointer.encode(ndr,defferedPointers,FLAG);
+            //  return ;
+            //}
             if (c.equals(JIInterfacePointer.class)) {
                 ((JIInterfacePointer) value).encode(ndr, defferedPointers, FLAG);
                 return;
@@ -370,120 +369,6 @@ final class JIMarshalUnMarshalHelper {
         }
     }
 
-//	private static class JIUnsignedImpl implements SerializerDeserializer {
-//
-//		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
-//		{
-//			IJIUnsigned unsigned = (IJIUnsigned)value;
-//			switch(unsigned.getType())
-//			{
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
-//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedByte.class,value,defferedPointers,FLAG);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
-//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedShort.class,value,defferedPointers,FLAG);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
-//					JIMarshalUnMarshalHelper.serialize(ndr,JIUnsignedInteger.class,value,defferedPointers,FLAG);
-//					break;
-//
-//				default:
-//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
-//			}
-//
-//		}
-//
-//		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
-//		{
-//			IJIUnsigned unsigned = null;
-//			int type = JIFlags.FLAG_NULL;
-//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)
-//			{
-//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
-//			}
-//			else
-//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)
-//			{
-//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
-//			}
-//			else
-//			if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)
-//			{
-//				type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
-//			}
-//
-//			switch(type)
-//			{
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
-//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedByte.class, defferedPointers, FLAG, additionalData);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
-//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedShort.class, defferedPointers, FLAG, additionalData);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
-//					unsigned = (IJIUnsigned)JIMarshalUnMarshalHelper.deSerialize(ndr, JIUnsignedInteger.class, defferedPointers, FLAG, additionalData);
-//					break;
-//
-//				default:
-//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
-//			}
-//
-//			return unsigned;
-//		}
-//
-//		public int getLengthInBytes(Object value,int FLAG)
-//		{
-//			IJIUnsigned unsigned = (IJIUnsigned)value;
-//			int length = 0;
-//			int type = JIFlags.FLAG_NULL;
-//			if (unsigned != null)
-//			{
-//				type = unsigned.getType();
-//			}
-//			else
-//			{
-//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE)
-//				{
-//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE;
-//				}
-//				else
-//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT)
-//				{
-//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT;
-//				}
-//				else
-//				if ((FLAG & JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT) == JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT)
-//				{
-//					type = JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT;
-//				}
-//			}
-//
-//			switch(type)
-//			{
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
-//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedByte.class,value,FLAG);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
-//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedShort.class,value,FLAG);
-//					break;
-//
-//				case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
-//					length = JIMarshalUnMarshalHelper.getLengthInBytes(JIUnsignedInteger.class,value,FLAG);
-//					break;
-//
-//				default:
-//					throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND),new String[]{"IJIUnsigned#" + unsigned.getType()}));
-//			}
-//
-//			return length;
-//		}
-//
-//	}
     private static class StructImpl implements SerializerDeserializer {
 
         @Override
@@ -545,29 +430,6 @@ final class JIMarshalUnMarshalHelper {
 
     }
 
-//	private static class IJIDispatchImpl implements SerializerDeserializer {
-//
-//
-//		public void serializeData(NetworkDataRepresentation ndr,Object value,List defferedPointers,int FLAG)
-//		{
-//			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
-//		}
-//
-//		public Object deserializeData(NetworkDataRepresentation ndr,List defferedPointers, Map additionalData, int FLAG)
-//		{
-//			throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
-//		}
-//
-//
-//		public int getLengthInBytes(Object value,int FLAG)
-//		{
-//			IJIComObject unknown = ((JIDispatchImpl)value).getCOMObject();
-//			JIInterfacePointer interfacePointer = new JIInterfacePointer(IJIDispatch.IID,unknown.getInterfacePointer());
-//			return ((JIInterfacePointer)interfacePointer).getLength();
-//		}
-//
-//
-//	}
     private static class JIVariant2Impl implements SerializerDeserializer {
 
         @Override
@@ -826,7 +688,7 @@ final class JIMarshalUnMarshalHelper {
                 }
             }
 
-//			now align by 8 bytes, since this is struct has a hyper, which I don't support yet
+            // now align by 8 bytes, since this is struct has a hyper, which I don't support yet
             double index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
             long i = (i = Math.round(index % 8.0)) == 0 ? 0 : 8 - i;
             ndr.writeOctetArray(new byte[(int) i], 0, (int) i);
@@ -876,11 +738,10 @@ final class JIMarshalUnMarshalHelper {
 
         @Override
         public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-//			if (value == null && FLAG == JIFlags.FLAG_REPRESENTATION_ARRAY)
-//			{
-//				value = new Double(Double.NaN);
-//			}
-
+            // if (value == null && FLAG == JIFlags.FLAG_REPRESENTATION_ARRAY)
+            // {
+            //   value = new Double(Double.NaN);
+            // }
             ndr.getBuffer().align(8);
             Encdec.enc_doublele(convertMillisecondsToWindowsTime(((Date) value).getTime()), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(8);
@@ -918,38 +779,30 @@ final class JIMarshalUnMarshalHelper {
          */
         private long convertWindowsTimeToMilliseconds(double comTime) {
             long result = 0;
-
             // code from jacobgen:
             comTime -= 25569D;
             Calendar cal = Calendar.getInstance();
-            result = Math.round(86400000L * comTime)
-                    - cal.get(Calendar.ZONE_OFFSET);
+            result = Math.round(86400000L * comTime) - cal.get(Calendar.ZONE_OFFSET);
             cal.setTime(new Date(result));
             result -= cal.get(Calendar.DST_OFFSET);
-
             return result;
-        }// convertWindowsTimeToMilliseconds()
+        }
 
         /**
-         * FROM JACAOB 1.10. www.danadler.com. Convert a Java time to a COM
-         * time.
+         * FROM JACAOB 1.10. www.danadler.com. Convert a Java time to a COM time.
          *
          * @param milliseconds Java time.
          * @return COM time.
          */
         private double convertMillisecondsToWindowsTime(long milliseconds) {
             double result = 0.0;
-
             // code from jacobgen:
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(milliseconds);
-            milliseconds += (cal.get(Calendar.ZONE_OFFSET) + cal
-                    .get(Calendar.DST_OFFSET)); // add GMT offset
+            milliseconds += (cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)); // add GMT offset
             result = (milliseconds / 86400000D) + 25569D;
-
             return result;
-        }//convertMillisecondsToWindowsTime()
-
+        }
     }
 
     private static class FloatImpl implements SerializerDeserializer {
@@ -976,12 +829,8 @@ final class JIMarshalUnMarshalHelper {
 
         @Override
         public int getLengthInBytes(Object value, int FLAG) {
-            {
-                return 4;
-            }
-
+            return 4;
         }
-
     }
 
     private static class StringImpl implements SerializerDeserializer {
@@ -1059,22 +908,20 @@ final class JIMarshalUnMarshalHelper {
                     i++;
                 }
 
-//					int strlen = str.length();
-//					ndr.writeUnsignedLong(strlen + 1);
-//					ndr.writeUnsignedLong(0);
-//					ndr.writeUnsignedLong(strlen + 1);
-//
-//					int i = 0;
-//					while (i < str.length())
-//					{
-//						ndr.writeUnsignedShort(str.charAt(i));
-//						i++;
-//					}
+                // int strlen = str.length();
+                // ndr.writeUnsignedLong(strlen + 1);
+                // ndr.writeUnsignedLong(0);
+                // ndr.writeUnsignedLong(strlen + 1);
+                //
+                // int i = 0;
+                // while (i < str.length())
+                // {
+                //   ndr.writeUnsignedShort(str.charAt(i));
+                //   i++;
+                // }
                 //null termination
                 ndr.writeUnsignedShort(0);
-
             }
-
         }
 
         @Override
@@ -1110,7 +957,6 @@ final class JIMarshalUnMarshalHelper {
                         if (actuallength == 0) {
                             return null;
                         }
-
                         ndr.readUnsignedLong();//eating offset
                         ndr.readUnsignedLong();//eating actuallength again
                         //now read array.
@@ -1122,7 +968,6 @@ final class JIMarshalUnMarshalHelper {
                         } else {
                             retString = new String(ret);
                         }
-
                         ndr.readUnsignedShort();
                     }
                 } else if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) {
@@ -1161,7 +1006,6 @@ final class JIMarshalUnMarshalHelper {
         @Override
         public int getLengthInBytes(Object value, int FLAG) {
             //rough estimate, this will vary from string to string
-
             int length = 4 + 4 + 4; //max len, offset ,actual length
 
             if (!((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_BSTR) == JIFlags.FLAG_REPRESENTATION_STRING_BSTR)) {
@@ -1175,16 +1019,14 @@ final class JIMarshalUnMarshalHelper {
                     length++;
                 }
             } else {
-//				if (value == null)
-//				{
-//					int i = 0;
-//				}
+                // if (value == null)
+                // {
+                //   int i = 0;
+                // }
                 length += ((CharSequence) value).length() * 2; //these are both unicode (utf-16le)
             }
-
             return length;
         }
-
     }
 
     private static class JIStringImpl implements SerializerDeserializer {

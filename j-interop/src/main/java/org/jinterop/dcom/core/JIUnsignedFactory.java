@@ -76,34 +76,34 @@ public final class JIUnsignedFactory {
         return retVal;
     }
 
-//	/** Returns template to be used during [out] params.
-//	 *
-//	 * @param flag
-//	 * @return
-//	 */
-//	public static IJIUnsigned getUnsigned(int flag)
-//	{
-//		IJIUnsigned retVal = null;
-//		switch(flag)
-//		{
-//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
-//				retVal = new JIUnsignedByte();
-//				break;
-//
-//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
-//				retVal = new JIUnsignedShort();
-//				break;
-//
-//			case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
-//				retVal = new JIUnsignedInteger();
-//				break;
-//			default:
-//				throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_INCORRECT_TYPE));
-//		}
-//
-//		return retVal;
-//
-//	}
+    //  /** Returns template to be used during [out] params.
+    //   *
+    //   * @param flag
+    //   * @return
+    //   */
+    //  public static IJIUnsigned getUnsigned(int flag)
+    //  {
+    //    IJIUnsigned retVal = null;
+    //    switch(flag)
+    //    {
+    //      case JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE:
+    //        retVal = new JIUnsignedByte();
+    //        break;
+    //
+    //      case JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT:
+    //        retVal = new JIUnsignedShort();
+    //        break;
+    //
+    //      case JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT:
+    //        retVal = new JIUnsignedInteger();
+    //        break;
+    //      default:
+    //        throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_INCORRECT_TYPE));
+    //    }
+    //
+    //    return retVal;
+    //
+    //  }
     private JIUnsignedFactory() {
     }
 }

@@ -693,11 +693,11 @@ public interface IJIWinReg {
             long l = (l = Math.round(ndr.getBuffer().getIndex() % 4.0)) == 0 ? 0 : 4 - l;
             ndr.readOctetArray(new byte[(int) l], 0, (int) l);
 
-//			it's a pointer
+            //it's a pointer
             //referent
             ndr.readUnsignedLong();
 
-//			buffer len , since it is uint16
+            //buffer len , since it is uint16
             ndr.readUnsignedShort();
             //buffer size, since it is uint16
             ndr.readUnsignedShort();
@@ -828,7 +828,7 @@ public interface IJIWinReg {
             long l = (l = Math.round(ndr.getBuffer().getIndex() % 4.0)) == 0 ? 0 : 4 - l;
             ndr.readOctetArray(new byte[(int) l], 0, (int) l);
 
-//			it's a pointer
+//      it's a pointer
             //referent
             ndr.readUnsignedLong();
 

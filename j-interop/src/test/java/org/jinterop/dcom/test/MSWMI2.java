@@ -32,8 +32,8 @@ public class MSWMI2 {
     public MSWMI2(String address, String[] args) throws JIException, UnknownHostException {
         this.address = address;
         session = JISession.createSession(args[1], args[2], args[3]);
-//		session.useSessionSecurity(true);
-//		session.setGlobalSocketTimeout(5000);
+        // session.useSessionSecurity(true);
+        // session.setGlobalSocketTimeout(5000);
         comStub = new JIComServer(JIClsid.valueOf("76a64158-cb41-11d1-8b02-00600806d9b6"), address, session);
         IJIComObject unknown = comStub.createInstance();
         comObject = unknown.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
@@ -42,8 +42,8 @@ public class MSWMI2 {
     }
 
     public void performOp() throws JIException, InterruptedException {
-//		IJIDispatch securityDisp = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Security_").getObjectAsComObject());
-//		securityDisp.put("ImpersonationLevel", new JIVariant(3));
+//    IJIDispatch securityDisp = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Security_").getObjectAsComObject());
+//    securityDisp.put("ImpersonationLevel", new JIVariant(3));
         JIVariant results[] = dispatch.callMethodA("ConnectServer", new Object[]{JIVariant.OPTIONAL_PARAM(), new JIString("ROOT\\CIMV2"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
             JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), new Integer(0), JIVariant.OPTIONAL_PARAM()});
 
@@ -97,5 +97,4 @@ public class MSWMI2 {
             e.printStackTrace();
         }
     }
-
 }

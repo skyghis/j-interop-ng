@@ -50,7 +50,7 @@ public final class JICurrency {
     private int units = 0;
     private int fractionalUnits = 0;
 
-//	private double value = 0;
+    // private double value = 0;
     public JICurrency(String value) {
         if (value.startsWith(".")) {
             value = "0" + value;
@@ -91,13 +91,4 @@ public final class JICurrency {
     public int getFractionalUnits() {
         return fractionalUnits;
     }
-
-//	/**Returns the encapsulated value.
-//	 *
-//	 * @return
-//	 */
-//	public double getValue()
-//	{
-//		return value;
-//	}
 }

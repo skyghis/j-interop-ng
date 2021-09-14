@@ -55,7 +55,6 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
  */
 final class JIInterfacePointer implements Serializable {
 
-//	static boolean inTest = true;
     private JIPointer member = null;
     private static final long serialVersionUID = 2508592294719469453L;
     static final byte[] OBJREF_SIGNATURE = {0x4d, 0x45, 0x4f, 0x57};  // 'MEOW'
@@ -197,49 +196,6 @@ final class JIInterfacePointer implements Serializable {
 
         return Arrays.equals(src.getOXID(), target.getOXID());
     }
-
-//    public static void main(String[] args) {
-//
-//
-//		byte[] buffer = new byte[183];
-//		FileInputStream inputStream;
-//		try {
-//			inputStream = new FileInputStream("F:/tmp/experiment/rawip2");
-//			inputStream.read(new byte[13],0,13);
-//			inputStream.read(buffer,0,183);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		NetworkDataRepresentation ndr = new NetworkDataRepresentation();
-//		NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
-//		ndr.setBuffer(ndrBuffer);
-//		ndrBuffer.length = 183;
-//
-//    	JIInterfacePointer ptr = JIInterfacePointer.decode(ndr, new ArrayList(), 0, new HashMap());
-//    	try {
-//    		JISystem.getLogger().setLevel(Level.FINEST);
-//			JISystem.setInBuiltLogHandler(false);
-//
-//		} catch (SecurityException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//
-//    	JISession session = JISession.createSession("deepspace9", "administrator", "enterprise");
-//    	session.useSessionSecurity(true);
-//    	try {
-//    		JIComServer comServer = new JIComServer(session,ptr,null);
-//			IJIComObject comObject = comServer.getInstance();
-//			comObject.queryInterface("87bc18dc-c8b3-11d5-ae96-00b0d0e93ca1");
-//		} catch (JIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 }
 
 /**

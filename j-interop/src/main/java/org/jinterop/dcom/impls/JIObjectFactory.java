@@ -39,7 +39,7 @@ import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
  * newComObject =
  * (IJIComObject)comObject.queryInterface("76A6415B-CB41-11d1-8B02-00600806D9B6");//ISWbemLocator
  * <br>
- *	//This will obtain the dispatch interface <br>
+ * This will obtain the dispatch interface<br>
  * dispatch =
  * (IJIDispatch)JIObjectFactory.narrowObject(newComObject.queryInterface(IJIDispatch.IID));
  * <br>
@@ -50,20 +50,17 @@ import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
 public class JIObjectFactory {
 
     /**
-     * < p>
      * Attaches an event handler to <code>comObject</code> for the source event
      * interface of COM , identified by the <code>sourceUUID</code>. The event
      * listener is itself identified by <code>eventListener</code>. An exception
      * will be raised if <code>sourceUUID</code> is not supported by the COM
      * Server.
-     * </p>
      *
      * @param comObject object to which the listener will be attached.
      * @param sourceUUID <code>IID</code> of the call back interface.
      * @param eventListener <code>IJIComObject</code> obtained using
      * {@link #buildObject(JISession, JILocalCoClass)}
-     * @return string identifier for this connection, please save this for
-     * eventual release using {@link #detachEventHandler(IJIComObject, String)}
+     * @return string identifier for this connection, please save this for eventual release using {@link #detachEventHandler(IJIComObject, String)}
      * @throws JIException
      * @throws IllegalArgumentException if any parameter is <code>null</code> or
      * <code>sourceUUID</code> is empty.
@@ -152,7 +149,7 @@ public class JIObjectFactory {
      * and link the <code>session</code> to the new one. This new session will
      * be destroyed when the parent <code>session</code> is destroyed.
      * @param rawBytes bytes representing the interface pointer.
-     * @param ipAddress	can be <code>null</code>. Sometimes there are many
+     * @param ipAddress can be <code>null</code>. Sometimes there are many
      * adapters (virtual as well) on the Target machine to which this interface
      * pointer belongs, which may get sent as part of the interface pointer and
      * consequently this call will fail since it is a possibility that IP is not

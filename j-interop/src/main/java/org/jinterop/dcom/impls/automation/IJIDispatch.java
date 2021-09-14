@@ -75,7 +75,7 @@ import org.jinterop.dcom.core.JIVariant;
  * }<br>
  * else<br>
  * {<br>
- *		//Do something...<br>
+ *    //Do something...<br>
  * }<br>
  * </code>
  * <p>
@@ -496,7 +496,7 @@ public interface IJIDispatch extends IJIComObject {
      * @throws IllegalArgumentException if the <code>name</code> is
      * <code>null</code> or empty.
      */
-    //	inparams.length == paramNames.length.
+    // inparams.length == paramNames.length.
     public void callMethod(String name, Object[] inparams, String[] paramNames) throws JIException;
 
     /**

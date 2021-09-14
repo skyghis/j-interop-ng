@@ -127,8 +127,8 @@ final class JIComTransport implements Transport {
     public void close() throws IOException {
         try {
             if (socket != null) {
-//            	input.close();
-//            	output.close();
+//              input.close();
+//              output.close();
                 socket.shutdownInput();
                 socket.shutdownOutput();
                 socket.close();

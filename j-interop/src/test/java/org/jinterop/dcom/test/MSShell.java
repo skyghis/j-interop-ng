@@ -31,13 +31,13 @@ public class MSShell {
         IJIComObject shellDispatch = comUnknown.queryInterface("D8F015C0-C278-11CE-A49E-444553540000");
 
         JICallBuilder callObject = new JICallBuilder();
-//		callObject.setOpnum(5);
-//		callObject.addInParamAsVariant(new JIVariant(new JIString("c:")),JIFlags.FLAG_NULL);
-//		Object result[] = shellDispatch.call(callObject);
+        //    callObject.setOpnum(5);
+        //    callObject.addInParamAsVariant(new JIVariant(new JIString("c:")),JIFlags.FLAG_NULL);
+        //    Object result[] = shellDispatch.call(callObject);
 
-//		callObject.reInit();
-//		callObject.setOpnum(7);
-//		result = shellDispatch.call(callObject);
+        //    callObject.reInit();
+        //    callObject.setOpnum(7);
+        //    result = shellDispatch.call(callObject);
         callObject.reInit();
         callObject.setOpnum(2);
         callObject.addInParamAsVariant(new JIVariant(2), JIFlags.FLAG_NULL);
@@ -57,12 +57,12 @@ public class MSShell {
         result = folder.call(callObject);
         IJIComObject test = JIObjectFactory.narrowObject((IJIComObject) result[0]);
 
-//		Not implemented by shell
-//		callObject.reInit();
-//		callObject.setOpnum(2);
-//		callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
-//		result = folder.call(callObject);
-//		test = JIObjectFactory.createCOMInstance(shellDispatch,(JIInterfacePointer)result[0]);
+        //    Not implemented by shell
+        //    callObject.reInit();
+        //    callObject.setOpnum(2);
+        //    callObject.addOutParamAsType(JIInterfacePointer.class,JIFlags.FLAG_NULL);
+        //    result = folder.call(callObject);
+        //    test = JIObjectFactory.createCOMInstance(shellDispatch,(JIInterfacePointer)result[0]);
         callObject.reInit();
         callObject.setOpnum(3);
         callObject.addOutParamAsType(IJIComObject.class, JIFlags.FLAG_NULL);
@@ -125,7 +125,6 @@ public class MSShell {
             System.out.print(" and size(in bytes) is: " + ((Integer) result[0]).intValue() + "\n");
 
         }
-
     }
 
     public static void main(String[] args) {
@@ -147,5 +146,4 @@ public class MSShell {
             e.printStackTrace();
         }
     }
-
 }

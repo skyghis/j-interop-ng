@@ -102,7 +102,7 @@ final class JIComOxidRuntimeHelper extends Stub {
     Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent, final List listOfSupportedInterfaces) throws IOException {
         final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
-//	    serverSocket.setSoTimeout(120*1000); //2 min timeout.
+        //serverSocket.setSoTimeout(120*1000); //2 min timeout.
         serverSocket.bind(null);
         int remUnknownPort = serverSocket.getLocalPort();
         //have to pick up a random name so adding the ipid of remunknown this is a uuid so the string is quite random.
@@ -202,10 +202,6 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     public void setCurrentObjectID(UUID objectId) {
         //does nothing.
     }
-//	public void setCurrentJavaInstanceFromIID(String iid)
-//	{
-//		//does nothing.
-//	}
 
     @Override
     public void setOpnum(int opnum) {
@@ -327,17 +323,17 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
         //only out params
 
         //want no port information associated with this.
-//		byte[] buffer = new byte[120];
-//		FileInputStream inputStream;
-//		try {
-//			inputStream = new FileInputStream("c:/serveralive2");
-//			inputStream.read(buffer,0,120);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
+        //    byte[] buffer = new byte[120];
+        //    FileInputStream inputStream;
+        //    try {
+        //      inputStream = new FileInputStream("c:/serveralive2");
+        //      inputStream.read(buffer,0,120);
+        //    } catch (Exception e) {
+        //      // TODO Auto-generated catch block
+        //      e.printStackTrace();
+        //    }
+        //
+        //    NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
         JIDualStringArray dualStringArray = new JIDualStringArray(-1);
 
         byte[] buffer = new byte[dualStringArray.getLength() + 4 /* COMVERSION */ + 16 /* 2 unknown 8 bytes */ + 16/* just in case */];
@@ -381,25 +377,25 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
             throw new JIRuntimeException(JIErrorCodes.RPC_E_INVALID_OXID);
         }
 
-//		byte[] buffer = new byte[424];
-//		FileInputStream inputStream;
-//		try {
-//			inputStream = new FileInputStream("c:/resolveoxid2");
-//			inputStream.read(buffer,0,424);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		try {
-//			details.getCOMRuntimeHelper().startRemUnknown();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
-//
+        //    byte[] buffer = new byte[424];
+        //    FileInputStream inputStream;
+        //    try {
+        //      inputStream = new FileInputStream("c:/resolveoxid2");
+        //      inputStream.read(buffer,0,424);
+        //    } catch (Exception e) {
+        //      // TODO Auto-generated catch block
+        //      e.printStackTrace();
+        //    }
+        //
+        //    try {
+        //      details.getCOMRuntimeHelper().startRemUnknown();
+        //    } catch (IOException e) {
+        //      // TODO Auto-generated catch block
+        //      e.printStackTrace();
+        //    }
+        //
+        //    NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
+        //
         //randomly create IPID and send, this is the ipid of the remunknown, we store it with remunknown object
         UUID uuid = details.getRemUnknownIpid() == null ? new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString())) : new UUID(details.getRemUnknownIpid());
 
@@ -554,15 +550,15 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         //call.
         String ipid = objectId.toString();
 
-//		if (!mapOfIpidsVsRef.containsKey(ipid.toUpperCase()))
-//		{
-//		    System.out.println(Thread.currentThread() + " -->> " + ipid.toUpperCase());
-//		    //we always give 5 references
-//		    mapOfIpidsVsRef.put(ipid.toUpperCase(),new Integer(5));
-//		}
+        //    if (!mapOfIpidsVsRef.containsKey(ipid.toUpperCase()))
+        //    {
+        //        System.out.println(Thread.currentThread() + " -->> " + ipid.toUpperCase());
+        //        //we always give 5 references
+        //        mapOfIpidsVsRef.put(ipid.toUpperCase(),new Integer(5));
+        //    }
         //this means the call came for IRemUnknown apis, since selfIpid is null or matches the objectID
         //if (selfIPID == null || selfIPID.equalsIgnoreCase(ipid))
-//		if ("00000131-0000-0000-C000-000000000046".equalsIgnoreCase(currentIID))
+        //    if ("00000131-0000-0000-C000-000000000046".equalsIgnoreCase(currentIID))
         if (selfIPID.equalsIgnoreCase(ipid)) {
             switch (opnum) {
                 case 3: //IRemUnknown QI.
@@ -872,19 +868,19 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
     //for all remunknown methods and calls component is null, alter context for IRemUnknown will make this
     //null.
-//	public void setCurrentJavaInstanceFromIID(String  iid)
-//	{
-//		int i = iid.indexOf(":");
-//		if (i != -1)
-//		{
-//			iid = iid.substring(0,i);
-//		}
-//		this.component = JIComOxidRuntime.getJavaComponentForIID(iid);
-//		if (component == null)
-//		{
-//			objectId = null;
-//		}
-//	}
+    //  public void setCurrentJavaInstanceFromIID(String  iid)
+    //  {
+    //    int i = iid.indexOf(":");
+    //    if (i != -1)
+    //    {
+    //      iid = iid.substring(0,i);
+    //    }
+    //    this.component = JIComOxidRuntime.getJavaComponentForIID(iid);
+    //    if (component == null)
+    //    {
+    //      objectId = null;
+    //    }
+    //  }
     @Override
     public void setCurrentObjectID(UUID objectId) {
         this.objectId = objectId;

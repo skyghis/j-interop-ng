@@ -76,7 +76,6 @@ final class JIOrpcThis implements Serializable {
 
         //the order here is important since the cid is always filled from the ctor hence will never be null.
         String cid2 = cidForCallback.get() == null ? cid : (String) cidForCallback.get();
-//		System.out.println(cid2);
         rpc.core.UUID uuid = new rpc.core.UUID(cid2);
         try {
             uuid.encode(ndr, ndr.getBuffer());

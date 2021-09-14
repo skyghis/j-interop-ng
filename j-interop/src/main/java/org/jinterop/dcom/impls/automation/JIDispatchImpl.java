@@ -88,8 +88,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         }
 
         JICallBuilder obj = new JICallBuilder(true);
-        obj.setOpnum(2);									//size of the array																	//1st is the num elements and second is the actual values
-
+        obj.setOpnum(2); //size of the array //1st is the num elements and second is the actual values
         JIString name = new JIString(apiName.trim(), JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR);
         JIArray array = new JIArray(new JIPointer[]{new JIPointer(name)}, true);
         obj.addInParamAsUUID(UUID.NIL_UUID, JIFlags.FLAG_NULL);
@@ -140,7 +139,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         }
 
         JICallBuilder obj = new JICallBuilder(true);
-        obj.setOpnum(2);									//size of the array																	//1st is the num elements and second is the actual values
+        obj.setOpnum(2); //size of the array //1st is the num elements and second is the actual values
 
         JIPointer[] pointers = new JIPointer[apiName.length];
 
@@ -195,11 +194,11 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         return (IJITypeInfo) JIObjectFactory.narrowObject((IJIComObject) result[0]);
     }
 
-//	//First inparams[0] will always be variant and the inparams[1] is expected to be an JIArray
-//	public JIVariant invoke(int dispId,int dispatchFlags,Object[] inparams) throws JIException
-//	{
-//		return invoke(dispId,dispatchFlags,inparams,null);
-//	}
+    //  //First inparams[0] will always be variant and the inparams[1] is expected to be an JIArray
+    //  public JIVariant invoke(int dispId,int dispatchFlags,Object[] inparams) throws JIException
+    //  {
+    //    return invoke(dispId,dispatchFlags,inparams,null);
+    //  }
     public JIVariant[] invoke(int dispId, int dispatchFlags, JIArray arrayOfVariantsInParams, JIArray arrayOfNamedDispIds, JIVariant outParamType) throws JIException {
         lastExcepInfo.clearAll();
         JICallBuilder obj = new JICallBuilder(true);
@@ -292,8 +291,8 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
                 JIAutomationException automationException = new JIAutomationException(e);
                 automationException.setExcepInfo(lastExcepInfo);
                 throw automationException;
-//				throw new JIException(obj.getHRESULT(),JISystem.getLocalizedMessage(obj.getHRESULT()) + " ==> Message from Server: " +
-//				text1 + text2 + text3);
+                // throw new JIException(obj.getHRESULT(),JISystem.getLocalizedMessage(obj.getHRESULT()) + " ==> Message from Server: " +
+                // text1 + text2 + text3);
             } else {
                 throw e;
             }
@@ -412,13 +411,13 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         callMethodA(getIDsOfNames(name), inparams);
     }
 
-    //	Ordinary params, will internally form Variant and the JIArray associated
+    //  Ordinary params, will internally form Variant and the JIArray associated
     @Override
     public void callMethod(int dispId, Object[] inparams) throws JIException {
         callMethodA(dispId, inparams);
     }
 
-//	Ordinary params, will internally form Variant and the JIArray associated
+    //  Ordinary params, will internally form Variant and the JIArray associated
     @Override
     public JIVariant[] callMethodA(String name, Object[] inparams) throws JIException {
         return callMethodA(getIDsOfNames(name), inparams);
@@ -449,14 +448,14 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             variants[i] = variant;
         }
 
-//		Integer[] array = new Integer[inparams.length];
-//		//now prepare the JIArray of dispIds.
-//		System.arraycopy(arrayOfDispIds,0,array,0,inparams.length);
-//		JIArray arrayOfValues = new JIArray(array,true);
+        //    Integer[] array = new Integer[inparams.length];
+        //    //now prepare the JIArray of dispIds.
+        //    System.arraycopy(arrayOfDispIds,0,array,0,inparams.length);
+        //    JIArray arrayOfValues = new JIArray(array,true);
         return invoke(dispId, FLAG, new JIArray(variants, true), null, null);
     }
 
-    //	Ordinary params, will internally form Variant and the JIArray associated
+    //  Ordinary params, will internally form Variant and the JIArray associated
     @Override
     public JIVariant[] callMethodA(int dispId, Object[] inparams) throws JIException {
         return callMethodA(dispId, inparams, IJIDispatch.DISPATCH_METHOD);

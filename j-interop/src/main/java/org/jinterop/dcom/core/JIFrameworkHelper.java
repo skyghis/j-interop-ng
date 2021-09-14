@@ -111,10 +111,10 @@ public final class JIFrameworkHelper {
                 retval = comServer.getInstance();
                 JIFrameworkHelper.link2Sessions(session, newsession);
             }
-//			else
-//			{
-//				retval = new JIComObjectImpl(newsession,ptr);
-//			}
+            //else
+            //{
+            //  retval = new JIComObjectImpl(newsession,ptr);
+            //}
 
             //this is so that the reference gets added correctly.
             session = newsession;

@@ -261,10 +261,6 @@ public final class JILocalCoClass implements Serializable {
         return interfaceDefinition.clazz;
     }
 
-//	public boolean isDispatchSupported()
-//	{
-//		return isDispatchSupported;
-//	}
     //called from com runtime.
     /**
      * @exclude
@@ -636,7 +632,7 @@ public final class JILocalCoClass implements Serializable {
      *
      * @return
      */
-//	 The bind-auth3 and all are then all done as per this <code>IID</code> and not IUnknown.
+    // The bind-auth3 and all are then all done as per this <code>IID</code> and not IUnknown.
     public boolean isCoClassUnderRealIID() {
         return realIID;
     }

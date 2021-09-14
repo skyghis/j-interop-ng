@@ -51,7 +51,7 @@ public final class FuncDesc implements Serializable {
 //    MEMBERID memid;                        // Function member ID.
 ///* [size_is] */ SCODE __RPC_FAR *lprgscode;
 ///* [size_is] */ ELEMDESC __RPC_FAR *lprgelemdescParam;
-//	FuncKind funckind;           // Specifies whether the function is virtual, static, or dispatch-only.
+//    FuncKind funckind;           // Specifies whether the function is virtual, static, or dispatch-only.
 //    InvokeKind invkind;        // Invocation kind. Indicates if this is a property function, and if so, what kind.
 //    CallConv callconv;        // Specifies the function's calling
 //                            // convention.
@@ -141,13 +141,12 @@ public final class FuncDesc implements Serializable {
         if (!ptr.isNull()) {
             JIArray arry = (JIArray) ptr.getReferent();
             Object[] obj = (Object[]) arry.getArrayInstance();
-//			ElemDesc[] arry2 = new ElemDesc[obj.length];
-//			for (int i = 0; i < obj.length; i++)
-//			{
-//				arry2[i] = new ElemDesc((JIStruct)obj[i]);
-//			}
-
-//			arrayOfElemDesc = new JIArray(arry2);
+            //ElemDesc[] arry2 = new ElemDesc[obj.length];
+            //for (int i = 0; i < obj.length; i++)
+            //{
+            //  arry2[i] = new ElemDesc((JIStruct)obj[i]);
+            //}
+            //arrayOfElemDesc = new JIArray(arry2);
             arrayOfElemDesc = new JIArray(obj);
         }
 
@@ -162,5 +161,4 @@ public final class FuncDesc implements Serializable {
         elemdescFunc = new ElemDesc(((JIStruct) values.getMember(10)));
         wFuncFlags = ((Number) values.getMember(11)).shortValue();
     }
-
 }

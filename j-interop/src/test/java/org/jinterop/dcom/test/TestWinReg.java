@@ -80,28 +80,28 @@ public class TestWinReg {
             registry.closeConnection();
 
 //
-//			//Open HKCR
-//			policyHandle = registry.winreg_OpenHKCR();
+//      //Open HKCR
+//      policyHandle = registry.winreg_OpenHKCR();
 //
-//			policyHandle2 = registry.winreg_OpenKey(policyHandle,"ClSID",IJIWinReg.KEY_ALL_ACCESS);
-//			policyHandle3 = registry.winreg_CreateKey(policyHandle2,"j-Interop007",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS);
-//			registry.winreg_CloseKey(policyHandle3);
-//			registry.winreg_CloseKey(policyHandle2);
-//			registry.winreg_CloseKey(policyHandle);
+//      policyHandle2 = registry.winreg_OpenKey(policyHandle,"ClSID",IJIWinReg.KEY_ALL_ACCESS);
+//      policyHandle3 = registry.winreg_CreateKey(policyHandle2,"j-Interop007",IJIWinReg.REG_OPTION_NON_VOLATILE,IJIWinReg.KEY_ALL_ACCESS);
+//      registry.winreg_CloseKey(policyHandle3);
+//      registry.winreg_CloseKey(policyHandle2);
+//      registry.winreg_CloseKey(policyHandle);
 //
-//			//Open HKCU
-//			policyHandle = registry.winreg_OpenHKCU();
+//      //Open HKCU
+//      policyHandle = registry.winreg_OpenHKCU();
 //
-//			policyHandle2 = registry.winreg_OpenKey(policyHandle,"Software\\Classes",IJIWinReg.KEY_ALL_ACCESS);
-//			registry.winreg_CloseKey(policyHandle2);
-//			registry.winreg_CloseKey(policyHandle);
+//      policyHandle2 = registry.winreg_OpenKey(policyHandle,"Software\\Classes",IJIWinReg.KEY_ALL_ACCESS);
+//      registry.winreg_CloseKey(policyHandle2);
+//      registry.winreg_CloseKey(policyHandle);
 //
-//			//Open HKU
-//			policyHandle = registry.winreg_OpenHKU();
+//      //Open HKU
+//      policyHandle = registry.winreg_OpenHKU();
 //
-//			policyHandle2 = registry.winreg_OpenKey(policyHandle,".DEFAULT",IJIWinReg.KEY_ALL_ACCESS);
-//			registry.winreg_CloseKey(policyHandle2);
-//			registry.winreg_CloseKey(policyHandle);
+//      policyHandle2 = registry.winreg_OpenKey(policyHandle,".DEFAULT",IJIWinReg.KEY_ALL_ACCESS);
+//      registry.winreg_CloseKey(policyHandle2);
+//      registry.winreg_CloseKey(policyHandle);
         } catch (JIException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -121,19 +121,18 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
 
         funcDescStruct.addMember(new JIPointer(new JIArray(elemDesc, null, 1, true)));
         //obj.addOutParamAsObject(new Pointer(new JIArray(elemDesc,null,1,true)), JIFlags.FLAG_NULL);
-
-//		obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
-//		obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
-//		obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
-//
-//		obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
-//		obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
-//
-//		obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
-//		obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
-//
-//		obj.addOutParamAsObject(elemDesc,JIFlags.FLAG_NULL);
-//		obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Integer.class,JIFlags.FLAG_NULL);
+        //
+        // obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
+        //
+        // obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
+        //
+        // obj.addOutParamAsObject(elemDesc,JIFlags.FLAG_NULL);
+        // obj.addOutParamAsObject(Short.class,JIFlags.FLAG_NULL);
         funcDescStruct.addMember(Integer.class);
         funcDescStruct.addMember(Integer.class);
         funcDescStruct.addMember(Integer.class);
@@ -235,13 +234,13 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return retVal;
     }
 
-//	HRESULT GetDllEntry(
-//			  MEMBERID  memid,
-//			  InvokeKind  invKind,
-//			  BSTR FAR*  pBstrDllName,
-//			  BSTR FAR*  pBstrName,
-//			  unsigned short FAR*  pwOrdinal
-//			);
+    //  HRESULT GetDllEntry(
+    //        MEMBERID  memid,
+    //        InvokeKind  invKind,
+    //        BSTR FAR*  pBstrDllName,
+    //        BSTR FAR*  pBstrName,
+    //        unsigned short FAR*  pwOrdinal
+    //      );
     @Override
     public Object[] getDllEntry(int memberId, int invKind) throws JIException {
         if (invKind != InvokeKind.INVOKE_FUNC.intValue() && invKind != InvokeKind.INVOKE_PROPERTYGET.intValue()
@@ -260,13 +259,13 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return comObject.call(callObject);
     }
 
-//	HRESULT GetDocumentation(
-//			  MEMBERID  memid,
-//			  BSTR FAR*  pBstrName,
-//			  BSTR FAR*  pBstrDocString,
-//			  unsigned long FAR*  pdwHelpContext,
-//			  BSTR FAR*  pBstrHelpFile
-//			);
+    //  HRESULT GetDocumentation(
+    //        MEMBERID  memid,
+    //        BSTR FAR*  pBstrName,
+    //        BSTR FAR*  pBstrDocString,
+    //        unsigned long FAR*  pdwHelpContext,
+    //        BSTR FAR*  pBstrHelpFile
+    //      );
     @Override
     public Object[] getDocumentation(int memberId) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);
@@ -341,10 +340,10 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         JIStruct paramDesc = new JIStruct();
         paramDesc.addMember(new JIPointer(paramDesc2, false));
         paramDesc.addMember(Short.class);
-//		JIStruct paramDesc = new JIStruct();
-//		paramDesc.addMember(new JIPointer(JIVariant.class,false));
-//		//paramDesc.addMember(JIVariant.class);
-//		paramDesc.addMember(Short.class);
+        //    JIStruct paramDesc = new JIStruct();
+        //    paramDesc.addMember(new JIPointer(JIVariant.class,false));
+        //    //paramDesc.addMember(JIVariant.class);
+        //    paramDesc.addMember(Short.class);
 
         elemDesc.addMember(typeDesc);
         elemDesc.addMember(paramDesc);
@@ -365,11 +364,11 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(4);
 
         //for experiment only
-//		JIArray arry = new JIArray(new Integer[]{new Integer(100),new Integer(200)},true);
-//		JIStruct struct = new JIStruct();
-//		struct.addMember(Short.valueOf((short)86));
-//		struct.addMember(arry);
-//		callObject.addInParamAsStruct(struct,JIFlags.FLAG_NULL);
+        //    JIArray arry = new JIArray(new Integer[]{new Integer(100),new Integer(200)},true);
+        //    JIStruct struct = new JIStruct();
+        //    struct.addMember(Short.valueOf((short)86));
+        //    struct.addMember(arry);
+        //    callObject.addInParamAsStruct(struct,JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(memberId, JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(maxNames, JIFlags.FLAG_NULL);
 
@@ -407,44 +406,44 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         return (IJITypeInfo) JIObjectFactory.narrowObject((IJIComObject) result[0]);
     }
 
-//	public int[] getIdOfNames(String[] names) throws JIException
-//	{
-//		JICallBuilder callObject = new JICallBuilder(true);
-//		callObject.setOpnum(7);
-//
-//		JIPointer[] pointers = new JIPointer[names.length];
-//
-//		for (int i = 0;i < names.length;i++)
-//		{
-//			if (names[i] == null || names[i].trim().equals(""))
-//			{
-//				throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
-//			}
-//			pointers[i] = new JIPointer(new JIString(names[i].trim(),JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
-//		}
-//
-//
-//		JIArray array = new JIArray(pointers,true);
-//		JIArray arrayOut = new JIArray(Integer.class,null,1,true);
-//
-//		callObject.addInParamAsArray(new JIArray(pointers,true),JIFlags.FLAG_NULL);
-//		callObject.addInParamAsInt(names.length,JIFlags.FLAG_NULL);
-//		callObject.addOutParamAsObject(arrayOut,JIFlags.FLAG_NULL);
-//
-//		Object[] result = comObject.call(callObject);
-//
-//		JIArray arrayOfResults = (JIArray)result[0];
-//		Integer[] arrayOfDispIds = (Integer[])arrayOfResults.getArrayInstance();
-//		int[] retVal = new int[names.length];
-//
-//		for (int i = 0;i < names.length;i++)
-//		{
-//			retVal[i] = arrayOfDispIds[i].intValue();
-//		}
-//
-//		return retVal;
-//
-//	}
+    //  public int[] getIdOfNames(String[] names) throws JIException
+    //  {
+    //    JICallBuilder callObject = new JICallBuilder(true);
+    //    callObject.setOpnum(7);
+    //
+    //    JIPointer[] pointers = new JIPointer[names.length];
+    //
+    //    for (int i = 0;i < names.length;i++)
+    //    {
+    //      if (names[i] == null || names[i].trim().equals(""))
+    //      {
+    //        throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
+    //      }
+    //      pointers[i] = new JIPointer(new JIString(names[i].trim(),JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
+    //    }
+    //
+    //
+    //    JIArray array = new JIArray(pointers,true);
+    //    JIArray arrayOut = new JIArray(Integer.class,null,1,true);
+    //
+    //    callObject.addInParamAsArray(new JIArray(pointers,true),JIFlags.FLAG_NULL);
+    //    callObject.addInParamAsInt(names.length,JIFlags.FLAG_NULL);
+    //    callObject.addOutParamAsObject(arrayOut,JIFlags.FLAG_NULL);
+    //
+    //    Object[] result = comObject.call(callObject);
+    //
+    //    JIArray arrayOfResults = (JIArray)result[0];
+    //    Integer[] arrayOfDispIds = (Integer[])arrayOfResults.getArrayInstance();
+    //    int[] retVal = new int[names.length];
+    //
+    //    for (int i = 0;i < names.length;i++)
+    //    {
+    //      retVal[i] = arrayOfDispIds[i].intValue();
+    //    }
+    //
+    //    return retVal;
+    //
+    //  }
     @Override
     public IJIComObject createInstance(String riid) throws JIException {
         JICallBuilder callObject = new JICallBuilder(true);

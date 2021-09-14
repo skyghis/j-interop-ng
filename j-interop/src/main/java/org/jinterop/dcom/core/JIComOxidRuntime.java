@@ -55,7 +55,6 @@ final class JIComOxidRuntime {
     private static Properties defaults2 = new Properties();
     private static boolean stopSystem = false;
     private static boolean resolverStarted = false;
-//	private static ArrayList listOfSockets = new ArrayList();
     private static int oxidResolverPort = -1;
 
     private static HashMap mapOfIPIDVsComponent = new HashMap(); //java client , com server
@@ -384,11 +383,11 @@ final class JIComOxidRuntime {
                 }
 
                 //No need to do this we are clearing the map anyways.
-//				for (Iterator itr2 = holder.currentSetOIDs.keySet().iterator();itr2.hasNext();)
-//				{
-//					JIObjectId oid = (JIObjectId)itr2.next();
-//					oid.setIPIDRefCountTo0();
-//				}
+                //  for (Iterator itr2 = holder.currentSetOIDs.keySet().iterator();itr2.hasNext();)
+                //  {
+                //    JIObjectId oid = (JIObjectId)itr2.next();
+                //    oid.setIPIDRefCountTo0();
+                //  }
                 holder.modified = true;
                 holder.currentSetOIDs.clear(); //being done since this session is being destroyed and the corresponding COM server
                 //need not be retained by us.
@@ -454,13 +453,12 @@ final class JIComOxidRuntime {
                 }
 
                 //close all sockets.
-//			    for (int i = 0; i < listOfSockets.size(); i++)
-//			    {
-//			    	Socket s = (Socket)listOfSockets.get(i);
-//			    	try {
-//						s.close();
-//					} catch (IOException e) {}
-//			    }
+                //  for (int i = 0; i < listOfSockets.size(); i++) {
+                //    Socket s = (Socket)listOfSockets.get(i);
+                //    try {
+                //      s.close();
+                //    } catch (IOException e) {}
+                //  }
             }
         };
 
@@ -509,13 +507,11 @@ final class JIComOxidRuntime {
             }
 
             component.setSession(session);
-//
-//			JIComOxidDetails details = 	(JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
-//
-//			if (details != null)
-//			{
-//				return details.getInterfacePtr();
-//			}
+            //JIComOxidDetails details =   (JIComOxidDetails)mapOfJavaVsOxidDetails.get(component);
+            //if (details != null)
+            //{
+            //  return details.getInterfacePtr();
+            //}
 
             //as the ID could be repeated, this is the ipid of the interface being requested.
             String ipid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
@@ -636,23 +632,23 @@ final class JIComOxidRuntime {
     }
 
     //since the IID is unique and we have to consider nested IIDs, this API will not work for component's IID
-//	static JILocalCoClass getJavaComponentForIID(String uniqueIID)
-//	{
-//		JILocalCoClass component = null;
-//		synchronized (mutex2) {
-//			for (int i = 0; i < listOfExportedJavaComponents.size(); i++ )
-//			{
-//				component = (JILocalCoClass)listOfExportedJavaComponents.get(i);
-//				if (component.isPresent(uniqueIID))
-//				{
-//					break;
-//				}
-//				component = null;
-//			}
-//		}
-//
-//		return component;
-//	}
+    //  static JILocalCoClass getJavaComponentForIID(String uniqueIID)
+    //  {
+    //    JILocalCoClass component = null;
+    //    synchronized (mutex2) {
+    //      for (int i = 0; i < listOfExportedJavaComponents.size(); i++ )
+    //      {
+    //        component = (JILocalCoClass)listOfExportedJavaComponents.get(i);
+    //        if (component.isPresent(uniqueIID))
+    //        {
+    //          break;
+    //        }
+    //        component = null;
+    //      }
+    //    }
+    //
+    //    return component;
+    //  }
     static JILocalCoClass getJavaComponentFromIPID(String ipid) {
         JILocalCoClass component = null;
         synchronized (mutex2) {

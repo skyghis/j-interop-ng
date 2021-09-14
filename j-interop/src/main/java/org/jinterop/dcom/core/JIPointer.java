@@ -81,11 +81,11 @@ public final class JIPointer implements Serializable {
             isNull = true;
         }
 
-//		if (value.getClass().equals(JIArray.class))
-//		{
-//			if (((JIArray)value).getDimensions() > 1)
-//				throw new IllegalArgumentException("Only single dimension arrays accepted");
-//		}
+        //if (value.getClass().equals(JIArray.class))
+        //{
+        //  if (((JIArray)value).getDimensions() > 1)
+        //    throw new IllegalArgumentException("Only single dimension arrays accepted");
+        //}
         //Should not defer since the enclosing struct,union,array will defer it by itself
         // this is important since , ptr to a ptr to a ptr (and more) will need to
         //deserialize completely after the first deferement i.e they are not further deffered.
@@ -139,12 +139,7 @@ public final class JIPointer implements Serializable {
             JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(referentIdToPut), defferedPointers, FLAG);
             isDeffered = false;
             isReferenceTypePtr = true;
-//			try{
             defferedPointers.add(this);
-//			}catch(NullPointerException e)
-//			{
-//				int ni = 0;
-//			}
             return;
         }
 
