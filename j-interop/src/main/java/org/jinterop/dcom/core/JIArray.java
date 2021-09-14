@@ -27,13 +27,11 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
 /**
- * < p>
  * Represents a C++ array which can display both <i>conformant and standard</i>
  * behaviors. Since this class forms a wrapper on the actual array, the
  * developer is expected to provide complete and final arrays (of Objects) to
  * this class. Modifying the wrapped array afterwards <b>will</b> have
  * unexpected results.
- * </p>
  * <p>
  * <i>Please refer to <b>MSExcel</b> examples for more details on how to use
  * this class.</i>
@@ -47,7 +45,7 @@ public final class JIArray implements Serializable {
 
     private static final long serialVersionUID = -8267477025978489665L;
     private Object memberArray = null;
-    private Class clazz = null;
+    private Class<?> clazz = null;
     private int[] upperBounds = null;
     private int dimension = -1;
     private int numElementsInAllDimensions = 0;
@@ -55,7 +53,7 @@ public final class JIArray implements Serializable {
     private boolean isVarying = false;
     private boolean isConformantProxy = false;
     private boolean isVaryingProxy = false;
-    private List conformantMaxCounts = new ArrayList(); //list of integers
+    private List<Integer> conformantMaxCounts = new ArrayList<>(); //list of integers
     private Object template = null;
     private int sizeOfNestedArrayInBytes = 0; //used in both encoding and decoding.
 
@@ -64,21 +62,16 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < p>
      * Creates an array object of the type specified by <code>clazz</code>. This
      * is used to prepare a template for decoding an array of that type. Used
      * only for setting as an <code>[out]</code> parameter in a JICallBuilder.
-     * </p><p>
+     * <p>
      * For example:- <br>
      * This call creates a template for a single dimension Integer array of size
      * 10.
      * <code>
-     * <br>
      * JIArray array = new JIArray(Integer.class,new int[]{10},1,false);
      * </code>
-     * <br>
-     *
-     * </P>
      *
      * @param clazz class whose instances will be members of the deserialized
      * array.
@@ -89,7 +82,7 @@ public final class JIArray implements Serializable {
      * @throws IllegalArgumentException if <code>upperBounds</code> is supplied
      * and its length is not equal to the <code>dimension</code> parameter.
      */
-    public JIArray(Class clazz, int[] upperBounds, int dimension, boolean isConformant) {
+    public JIArray(Class<?> clazz, int[] upperBounds, int dimension, boolean isConformant) {
         this.clazz = clazz;
         init2(upperBounds, dimension, isConformant, false);
     }
@@ -102,14 +95,13 @@ public final class JIArray implements Serializable {
      * array.
      * @param upperBounds highest index for each dimension.
      * @param dimension number of dimensions
-     * @param isConformant declares whether the array is <i>conformant</i> or
-     * not.
+     * @param isConformant declares whether the array is <i>conformant</i> or not.
      * @param isVarying declares whether the array is <i>varying</i> or not.
      * @throws IllegalArgumentException if <code>upperBounds</code> is supplied
      * and its length is not equal to the <code>dimension</code> parameter.
      *
      */
-    public JIArray(Class clazz, int[] upperBounds, int dimension, boolean isConformant, boolean isVarying) {
+    public JIArray(Class<?> clazz, int[] upperBounds, int dimension, boolean isConformant, boolean isVarying) {
         this.clazz = clazz;
         init2(upperBounds, dimension, isConformant, isVarying);
     }
@@ -173,9 +165,7 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < p>
      * Refer to {@link #JIArray(Object, int[], int, boolean)} for details.
-     *
      *
      * @param template can be only of the type <code>JIStruct</code>,
      * <code>JIPointer</code>, <code>JIUnion</code>, <code>JIString</code>
@@ -224,24 +214,21 @@ public final class JIArray implements Serializable {
         for (int i = 0; upperBounds != null && i < upperBounds.length; i++) {
             numElementsInAllDimensions += upperBounds[i];
             if (isConformant) {
-                conformantMaxCounts.add(new Integer(upperBounds[i]));
+                conformantMaxCounts.add(upperBounds[i]);
             }
         }
-
         //numElementsInAllDimensions = numElementsInAllDimensions * dimension;
     }
 
     /**
-     * < p>
      * Creates an object with <i>array</i> parameter as the nested Array. This
      * constructor is used when the developer wants to send an array to COM
      * server.
      * <p>
-     * Sample Usage :-
+     * Sample Usage :
      * <br>
      * <code>
      * JIArray array = new JIArray(new JIString[]{new JIString(name)},true);
-     * <br>
      * </code>
      *
      * @param array Array of any type. Primitive arrays are not allowed.
@@ -278,22 +265,18 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < p>
      * Creates an object with <i>array</i> parameter as the nested Array. This
      * constructor forms a <code>non-conformant</code> array and is used when
      * the developer wants to send an array to COM server.
      * <p>
-     * Sample Usage :-
-     * <br>
+     * Sample Usage :
      * <code>
      * JIArray array = new JIArray(new JIString[]{new JIString(name)},true);
-     * <br>
      * </code>
      *
      * @param array Array of any type. Primitive arrays are not allowed.
      * @throws IllegalArgumentException if the <code>array</code> is not an
-     * array or is of primitive type or is an array of
-     * <code>java.lang.Object</code>.
+     * array or is of primitive type or is an array of <code>java.lang.Object</code>.
      */
     public JIArray(Object array) {
         init(array);
@@ -315,17 +298,17 @@ public final class JIArray implements Serializable {
 
         this.memberArray = array;
 
-        ArrayList upperBounds2 = new ArrayList();
+        List<Integer> upperBounds2 = new ArrayList<>();
         String name = array.getClass().getName();
         Object subArray = array;
         numElementsInAllDimensions = 1;
         while (name.startsWith("[")) {
             name = name.substring(1);
             int x = ((Object[]) subArray).length;
-            upperBounds2.add(new Integer(x));
+            upperBounds2.add(x);
             numElementsInAllDimensions *= x;
             if (isConformant) {
-                conformantMaxCounts.add(new Integer(x));
+                conformantMaxCounts.add(x);
             }
             clazz = subArray.getClass().getComponentType();
             if (x == 0) //In which ever index the length is 0 , the array stops there, example Byte[0],Byte[0][10],Byte[10][0]
@@ -343,7 +326,7 @@ public final class JIArray implements Serializable {
 
         upperBounds = new int[upperBounds2.size()];
         for (int i = 0; i < upperBounds2.size(); i++) {
-            upperBounds[i] = ((Number) upperBounds2.get(i)).intValue();
+            upperBounds[i] = upperBounds2.get(i);
         }
         dimension++; //since it starts from -1.
         sizeOfNestedArrayInBytes = computeLengthArray(array);
@@ -356,8 +339,8 @@ public final class JIArray implements Serializable {
         for (int i = 0; i < o.length; i++) {
             if (name.charAt(1) != '[') {
                 Object o1[] = (Object[]) array;
-                for (int j = 0; j < o1.length; j++) {
-                    length += JIMarshalUnMarshalHelper.getLengthInBytes(o1.getClass().getComponentType(), o1[j], JIFlags.FLAG_NULL);
+                for (final Object o11 : o1) {
+                    length += JIMarshalUnMarshalHelper.getLengthInBytes(o1.getClass().getComponentType(), o11, JIFlags.FLAG_NULL);
                 }
                 return length;
             }
@@ -382,7 +365,7 @@ public final class JIArray implements Serializable {
      *
      * @return <code>class</code>
      */
-    public Class getArrayClass() {
+    public Class<?> getArrayClass() {
         return clazz;
     }
 
@@ -414,7 +397,7 @@ public final class JIArray implements Serializable {
         return sizeOfNestedArrayInBytes;
     }
 
-    void encode(NetworkDataRepresentation ndr, Object array, List defferedPointers, int FLAG) {
+    void encode(NetworkDataRepresentation ndr, Object array, List<JIPointer> defferedPointers, int FLAG) {
         //ArrayList listofDefferedPointers = new ArrayList();
         if (isConformantProxy) {
             //first write the max counts ...First to last dimension.
@@ -431,7 +414,7 @@ public final class JIArray implements Serializable {
             //write the offset and the actual count
             int i = 0;
             while (i < conformantMaxCounts.size()) {
-                JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), defferedPointers, FLAG);//offset
+                JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, 0, defferedPointers, FLAG);//offset
                 JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, conformantMaxCounts.get(i), defferedPointers, FLAG);//actual count
                 i++;
             }
@@ -472,7 +455,7 @@ public final class JIArray implements Serializable {
         return isVarying;
     }
 
-    Object decode(NetworkDataRepresentation ndr, Class arrayType, int dimension, List defferedPointers, int FLAG, Map additionalData) {
+    Object decode(NetworkDataRepresentation ndr, Class arrayType, int dimension, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         JIArray retVal = new JIArray();
         retVal.isConformantProxy = isConformantProxy;
         retVal.isVaryingProxy = isVaryingProxy;
@@ -481,7 +464,7 @@ public final class JIArray implements Serializable {
             //first read the max counts ...First to last dimension.
             int i = 0;
             while (i < dimension) {
-                retVal.conformantMaxCounts.add(JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData));
+                retVal.conformantMaxCounts.add((Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData));
                 i++;
             }
 
@@ -516,7 +499,7 @@ public final class JIArray implements Serializable {
 
             while (i < dimension) {
                 JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, null);///offset
-                retVal.conformantMaxCounts.add(JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData));//actual count
+                retVal.conformantMaxCounts.add((Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, defferedPointers, FLAG, additionalData));//actual count
                 i++;
             }
 
@@ -549,7 +532,7 @@ public final class JIArray implements Serializable {
         return retVal;
     }
 
-    private Object recurseDecode(JIArray retVal, NetworkDataRepresentation ndr, Class arrayType, int dimension, List defferedPointers, int FLAG, Map additionalData) {
+    private Object recurseDecode(JIArray retVal, NetworkDataRepresentation ndr, Class arrayType, int dimension, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         Object array = null;
         Class c = arrayType;
         for (int j = 0; j < dimension; j++) {

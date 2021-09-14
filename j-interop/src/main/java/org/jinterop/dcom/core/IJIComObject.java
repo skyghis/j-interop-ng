@@ -43,8 +43,6 @@ import org.jinterop.dcom.common.JIException;
  * using
  * {@link org.jinterop.dcom.impls.JIObjectFactory#narrowObject(IJIComObject)}
  * before being casted to the expected type.
- * <br>
- * </p>
  * <p>
  * Sample usage :-
  * <br>

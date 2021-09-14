@@ -48,12 +48,10 @@ import rpc.pdu.ShutdownPdu;
 
 /**
  * @exclude @since 1.0
- *
  */
 public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 
-    JIComRuntimeEndpoint(Transport transport,
-            PresentationSyntax syntax) {
+    JIComRuntimeEndpoint(Transport transport, PresentationSyntax syntax) {
         super(transport, syntax);
     }
 
@@ -63,7 +61,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
     }
 
     //use this oxidObject, it is actually OxidResolverImpl extends NdrObject.
-    public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List listOfSupportedInterfaces) throws IOException {
+    public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List<String> listOfSupportedInterfaces) throws IOException {
 
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
             JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] started new thread {0}", Thread.currentThread().getName());
@@ -74,26 +72,20 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
         }
 
         getTransport().getProperties().put("LISTOFSUPPORTEDINTERFACES", listOfSupportedInterfaces);
-
         bind();// will bind to the server and perform the initial bind\bind ack.
 
         while (true) {
-
             // first recieve and then answer
             ConnectionOrientedPdu response = null;
             ConnectionOrientedPdu request = receive();
 
-            if (!workerObject.isResolver()) {
-                int j = 0;
-            }
             if (JISystem.getLogger().isLoggable(Level.INFO)) {
                 JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] request : {0} , {1} workerObject is resolver: {2}", new Object[]{Thread.currentThread().getName(), request, workerObject.isResolver()});
             }
-            NdrBuffer buffer = null;
             NetworkDataRepresentation ndr = new NetworkDataRepresentation();
             workerObject.setCurrentIID(currentIID);
             if (request instanceof RequestCoPdu) {
-                buffer = new NdrBuffer(((RequestCoPdu) request).getStub(), 0);
+                NdrBuffer buffer = new NdrBuffer(((RequestCoPdu) request).getStub(), 0);
                 if (buffer.buf != null) {
                     if (JISystem.getLogger().isLoggable(Level.FINEST)) {
                         JISystem.getLogger().log(Level.FINEST, Hexdump.toHexString(buffer.buf));
@@ -174,7 +166,6 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                         successful = result[0].result == PresentationResult.ACCEPTANCE;
                         context = ((AlterContextPdu) request).getContextList()[0]; //am expecting only one
                     }
-
                     //  if (successful)
                     //  {
                     //    //now select the Interface from the request and set that as the object expected to come.

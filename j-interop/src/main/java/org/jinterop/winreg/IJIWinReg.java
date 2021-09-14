@@ -833,7 +833,7 @@ public interface IJIWinReg {
             ndr.readUnsignedLong();
 
             int type = ndr.readUnsignedLong();
-            retval[1] = new Integer(type);
+            retval[1] = type;
 
             ndr.readUnsignedLong();
 

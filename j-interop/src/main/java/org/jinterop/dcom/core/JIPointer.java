@@ -76,7 +76,7 @@ public final class JIPointer implements Serializable {
         if (value == null) {
             //since a null is being sent for a pointer , it has to be shown
             //as 0x0.
-            value = new Integer(0);
+            value = 0;
             isReferenceTypePtr = true;
             isNull = true;
         }
@@ -124,11 +124,11 @@ public final class JIPointer implements Serializable {
         return isNull ? null : referent;
     }
 
-    void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
+    void encode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG) {
 
         FLAG |= flags;
         if (isNull) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), defferedPointers, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, 0, defferedPointers, FLAG);
             return;
         }
         //it is deffered or part of an array, this logic will not get called twice since the
@@ -136,7 +136,7 @@ public final class JIPointer implements Serializable {
         if (!isNull && (isDeffered || (FLAG & JIFlags.FLAG_REPRESENTATION_ARRAY) == JIFlags.FLAG_REPRESENTATION_ARRAY /* ||
                  * (FLAG & JIFlags.FLAG_REPRESENTATION_NESTED_POINTER ) == JIFlags.FLAG_REPRESENTATION_NESTED_POINTER */)) {
             int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(referentIdToPut), defferedPointers, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, referentIdToPut, defferedPointers, FLAG);
             isDeffered = false;
             isReferenceTypePtr = true;
             defferedPointers.add(this);
@@ -145,14 +145,15 @@ public final class JIPointer implements Serializable {
 
         if (!isNull && !isReferenceTypePtr) {
             int referentIdToPut = referentId == -1 ? referent.hashCode() : referentId;
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(referentIdToPut), defferedPointers, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, referentIdToPut, defferedPointers, FLAG);
         }
 
         try {
             if (!isNull && referent.getClass().equals(JIVariant.class) && ((JIVariant) referent).isArray()) {
                 //write the length first before all elements
                 //ndr.writeUnsignedLong(((Object[])(((JIVariant)referent).getObject())).length);
-                JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(((Object[]) (((JIVariant) referent).getObject())).length), defferedPointers, FLAG);
+                final int length = ((Object[]) (((JIVariant) referent).getObject())).length;
+                JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, length, defferedPointers, FLAG);
             }
         } catch (JIException e) {
             throw new JIRuntimeException(e.getErrorCode());
@@ -164,7 +165,7 @@ public final class JIPointer implements Serializable {
 
     //class of type being decoded. If the type being expected is an array , the varType
     //should be the actual array type and not JIArray.
-    JIPointer decode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG, Map additionalData) {
+    JIPointer decode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         //shallowClone();
         FLAG |= flags;
 
@@ -232,7 +233,7 @@ public final class JIPointer implements Serializable {
      * @return
      */
     public Integer getReferentIdentifier() {
-        return new Integer(referentId);
+        return referentId;
     }
 
     /**

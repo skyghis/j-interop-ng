@@ -19,7 +19,6 @@ package ndr;
 public abstract class NdrObject {
 
     static final int opnum = -1;
-
     public Object value;
 
     public int getOpnum() {

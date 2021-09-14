@@ -33,17 +33,15 @@ import java.io.Serializable;
  * @author bobc
  *
  */
-public class UUID implements Identifier, Serializable {
+public final class UUID implements Identifier, Serializable {
 
+    private static final int UUID_LEN = 16;
     private static final long serialVersionUID = 1;
-
     private byte[] value = new byte[16];
 
     protected UUID(byte[] value) {
         this.setValue(value);
     }
-
-    private static final int UUID_LEN = 16;
 
     protected UUID(String hexString) {
         if ((2 * UUID_LEN) != hexString.length()) {
@@ -54,53 +52,33 @@ public class UUID implements Identifier, Serializable {
         this.setValue(idBytes);
     }
 
-    /**
-     * @see com.raf.foundation.Identifier#getValue()
-     */
     @Override
     public byte[] getValue() {
         return value;
     }
 
-    /**
-     * @param newValue
-     */
     protected void setValue(byte[] newValue) {
         if (UUID_LEN != newValue.length) {
             throw new IllegalArgumentException("Invalid UUID Length of :" + newValue.length);
         }
-
         this.value = newValue;
     }
 
-    /**
-     * @see com.raf.foundation.Identifier#toHexString()
-     */
     @Override
     public String toHexString() {
         return HexStringUtil.stringFromBytes(getValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return toHexString();
     }
 
-    /**
-     * Compares for equality.
-     *
-     * @return true if o is an ObjectId, and it's value equal.
-     * @param obj The object to which this id should be compared.
-     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof UUID)) {
             return false;
         }
-
         byte[] otherBinaryValue = ((UUID) obj).getValue();
         byte[] myBinaryValue = this.getValue();
 
@@ -112,14 +90,8 @@ public class UUID implements Identifier, Serializable {
         return true;
     }
 
-    /**
-     * Supports the java obect hashCode - lamely.
-     *
-     * @return hashcode.
-     */
     @Override
     public int hashCode() {
         return this.toHexString().hashCode();
     }
-
 }

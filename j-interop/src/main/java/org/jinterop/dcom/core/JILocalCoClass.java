@@ -47,36 +47,23 @@ import rpc.core.UUID;
 public final class JILocalCoClass implements Serializable {
 
     private static final long serialVersionUID = 5542223845228327383L;
+    private static final String IID_IDISPATCH = "00020400-0000-0000-c000-000000000046";
     private static Random randomGen = new Random(Double.doubleToRawLongBits(Math.random()));
     private final int identifier;
-    private WeakReference interfacePointer = null;
+    private WeakReference<JIInterfacePointer> interfacePointer = null;
     private boolean isAlreadyExported = false;
     private byte[] objectID = null;
     private JILocalInterfaceDefinition interfaceDefinition = null;
-
-    private static final String IID_IDispatch = "00020400-0000-0000-c000-000000000046";
-
-    private ArrayList listOfSupportedInterfaces = new ArrayList();
-
-    private ArrayList listOfSupportedEventInterfaces = new ArrayList();
-
-    private HashMap mapOfIIDsToInterfaceDefinitions = new HashMap();
-
+    private final List<String> listOfSupportedInterfaces = new ArrayList<>();
+    private final Map<String, JILocalInterfaceDefinition> mapOfIIDsToInterfaceDefinitions = new HashMap<>();
     private JISession session = null;
-
     private boolean realIID = false;
-
-    static {
-
-    }
-
-    private Map ipidVsIID = new HashMap();// will use this to identify which IID is being talked about
+    private final Map<String, String> ipidVsIID = new HashMap<>();// will use this to identify which IID is being talked about
     //if it is IDispatch then delegate to it's invoke.
-
-    private Map IIDvsIpid = new HashMap();// will use this to identify which IPID is being talked about
+    private final Map<String, String> IIDvsIpid = new HashMap<>();// will use this to identify which IPID is being talked about
 
     private void init(JILocalInterfaceDefinition interfaceDefinition, Class clazz, Object instance, boolean realIID) {
-        listOfSupportedInterfaces.add(IID_IDispatch.toUpperCase()); //IDispatch
+        listOfSupportedInterfaces.add(IID_IDISPATCH.toUpperCase()); //IDispatch
         listOfSupportedInterfaces.add("00000131-0000-0000-C000-000000000046"); //IRemUnknown
         this.interfaceDefinition = interfaceDefinition;
         interfaceDefinition.clazz = clazz;
@@ -115,7 +102,7 @@ public final class JILocalCoClass implements Serializable {
      * @param clazz <code>class</code> to instantiate for serving requests from
      * COM client. Must implement the <code>interfaceDefinition</code> fully.
      * @param useInterfaceDefinitionIID <code>true</code> if the
-     * <code>IID</code> of <code>interfaceDefinition</code
+     * <code>IID</code> of <code>interfaceDefinition</code>
      * should be used as to create the local COM Object. Use this when a reference other than <code>IUnknown*</code> is required.
      * For all {@link JIObjectFactory#attachEventHandler(IJIComObject, String,
      * IJIComObject)} operations this should be set to <code>false</code> since
@@ -158,7 +145,7 @@ public final class JILocalCoClass implements Serializable {
      * @param instance instance for serving requests from COM client. Must
      * implement the <code>interfaceDefinition</code> fully.
      * @param useInterfaceDefinitionIID <code>true</code> if the
-     * <code>IID</code> of <code>interfaceDefinition</code
+     * <code>IID</code> of <code>interfaceDefinition</code>
      * should be used as to create the local COM Object. Use this when a reference other than <code>IUnknown*</code> is required.
      * For all {@link JIObjectFactory#attachEventHandler(IJIComObject, String,
      * IJIComObject)} operations this should be set to <code>false</code> since
@@ -185,15 +172,13 @@ public final class JILocalCoClass implements Serializable {
      * @see #JILocalCoClass(JILocalInterfaceDefinition, Class)
      * @see #JILocalCoClass(JILocalInterfaceDefinition, Object)
      */
-    public void setSupportedEventInterfaces(List listOfIIDs) {
+    public void setSupportedEventInterfaces(List<String> listOfIIDs) {
         if (listOfIIDs != null) {
             for (int i = 0; i < listOfIIDs.size(); i++) {
-                String s = ((String) listOfIIDs.get(i)).toUpperCase();
+                String s = listOfIIDs.get(i).toUpperCase();
                 listOfSupportedInterfaces.add(s);
-                listOfSupportedEventInterfaces.add(s);
                 mapOfIIDsToInterfaceDefinitions.put(s, interfaceDefinition);
             }
-
         }
     }
 
@@ -214,7 +199,6 @@ public final class JILocalCoClass implements Serializable {
         interfaceDefinition.instance = instance;
         String s = interfaceDefinition.getInterfaceIdentifier().toUpperCase();
         listOfSupportedInterfaces.add(s);
-        listOfSupportedEventInterfaces.add(s);
         mapOfIIDsToInterfaceDefinitions.put(s, interfaceDefinition);
     }
 
@@ -237,7 +221,6 @@ public final class JILocalCoClass implements Serializable {
         interfaceDefinition.clazz = clazz;
         String s = interfaceDefinition.getInterfaceIdentifier().toUpperCase();
         listOfSupportedInterfaces.add(s);
-        listOfSupportedEventInterfaces.add(s);
         mapOfIIDsToInterfaceDefinitions.put(s, interfaceDefinition);
     }
 
@@ -274,7 +257,7 @@ public final class JILocalCoClass implements Serializable {
      */
     void setAssociatedInterfacePointer(JIInterfacePointer interfacePointer) {
         isAlreadyExported = true;
-        this.interfacePointer = new WeakReference(interfacePointer);
+        this.interfacePointer = new WeakReference<>(interfacePointer);
         String ipid = interfacePointer.getIPID().toUpperCase();
         String iid = interfacePointer.getIID().toUpperCase();
         IIDvsIpid.put(iid, ipid);
@@ -305,8 +288,7 @@ public final class JILocalCoClass implements Serializable {
      * @return
      */
     boolean isPresent(String iid) {
-        iid = iid.toUpperCase();
-        return listOfSupportedInterfaces.contains(iid);
+        return listOfSupportedInterfaces.contains(iid.toUpperCase());
     }
 
     /**
@@ -319,12 +301,9 @@ public final class JILocalCoClass implements Serializable {
     synchronized boolean exportInstance(String uniqueIID, String IPID) throws InstantiationException, IllegalAccessException {
         //Object retval = null;
         IPID = IPID.toUpperCase();
-
-        if (!isPresent(uniqueIID))//not supported IID.
-        {
+        if (!isPresent(uniqueIID)) {//not supported IID.
             return false;
         }
-
         IIDvsIpid.put(uniqueIID.toUpperCase(), IPID);
         ipidVsIID.put(IPID, uniqueIID.toUpperCase());
         return true;
@@ -358,12 +337,12 @@ public final class JILocalCoClass implements Serializable {
 
         Object retVal = null;//will be an array.
 
-        String iid = (String) ipidVsIID.get(IPID);
+        String iid = ipidVsIID.get(IPID);
         if (iid == null) {
             throw new JIException(JIErrorCodes.RPC_E_INVALID_OBJECT);
         }
 
-        JILocalInterfaceDefinition interfaceDefinitionOfClass = (JILocalInterfaceDefinition) mapOfIIDsToInterfaceDefinitions.get(iid);
+        JILocalInterfaceDefinition interfaceDefinitionOfClass = mapOfIIDsToInterfaceDefinitions.get(iid);
         interfaceDefinitionOfClass = interfaceDefinitionOfClass == null ? interfaceDefinition : interfaceDefinitionOfClass;
 
         JILocalMethodDescriptor methodDescriptor = null;
@@ -383,7 +362,7 @@ public final class JILocalCoClass implements Serializable {
                 case 3: //getTypeInfoCount
                     //not supported
                     retVal = new Object[1];
-                    ((Object[]) retVal)[0] = new Integer(0); //not supported
+                    ((Object[]) retVal)[0] = 0; //not supported
                     break;
                 case 4: //getTypeInfo
                     throw new JIException(JIErrorCodes.E_NOTIMPL);
@@ -405,14 +384,14 @@ public final class JILocalCoClass implements Serializable {
                     JIString apiName = (JIString) arrayObj[0];
                     JILocalMethodDescriptor info = interfaceDefinitionOfClass.getMethodDescriptor(apiName.getString());
                     if (info == null) {
-                        dispIds[0] = new Integer(JIErrorCodes.DISP_E_UNKNOWNNAME);
+                        dispIds[0] = JIErrorCodes.DISP_E_UNKNOWNNAME;
                     } else {
-                        dispIds[0] = new Integer(info.getMethodNum());
+                        dispIds[0] = info.getMethodNum();
                     }
 
                     //rest are all 0,1,2...parameters
                     for (int i = 1; i < arrayObj.length; i++) {
-                        dispIds[i] = new Integer(i - 1);
+                        dispIds[i] = i - 1;
                     }
 
                     JIArray results = new JIArray(dispIds);
@@ -475,7 +454,7 @@ public final class JILocalCoClass implements Serializable {
                         array = (JIArray) retresults[7];
                         JIVariant[] variants = (JIVariant[]) array.getArrayInstance();
                         for (int i = 0; i < indexs.length; i++) {
-                            params[indexs[i].intValue()] = variants[i];
+                            params[indexs[i]] = variants[i];
                         }
 
                     }
@@ -538,25 +517,17 @@ public final class JILocalCoClass implements Serializable {
             } catch (IllegalArgumentException e) {
                 JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.E_INVALIDARG, e);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | SecurityException e) {
                 JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.ERROR_ACCESS_DENIED, e);
-            } catch (InvocationTargetException e) {
+            } catch (InvocationTargetException | InstantiationException e) {
                 JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.E_UNEXPECTED, e);
-            } catch (SecurityException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
-                throw new JIException(JIErrorCodes.ERROR_ACCESS_DENIED, e);
             } catch (NoSuchMethodException e) {
                 JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.RPC_S_PROCNUM_OUT_OF_RANGE, e);
-            } catch (InstantiationException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
-                throw new JIException(JIErrorCodes.E_UNEXPECTED, e);
             }
-
         }
-
         return (Object[]) retVal;
     }
 
@@ -571,9 +542,6 @@ public final class JILocalCoClass implements Serializable {
         return interfaceDefinition;
     }
 
-    /**
-     * @exclude
-     */
     @Override
     public boolean equals(Object target) {
         if (target == null || !(target instanceof JILocalCoClass)) {
@@ -583,9 +551,6 @@ public final class JILocalCoClass implements Serializable {
         return identifier == ((JILocalCoClass) target).identifier;
     }
 
-    /**
-     * @exclude
-     */
     @Override
     public int hashCode() {
         return identifier;
@@ -594,35 +559,23 @@ public final class JILocalCoClass implements Serializable {
     /**
      * Returns the interface definition based on the IID of the interface.
      *
-     * @return <code>null</code> if no interface definition matching the
-     * <code>IID</code> has been found.
+     * @param IID
+     * @return <code>null</code> if no interface definition matching the <code>IID</code> has been found.
      */
     public JILocalInterfaceDefinition getInterfaceDefinition(String IID) {
-        return (JILocalInterfaceDefinition) mapOfIIDsToInterfaceDefinitions.get(IID.toUpperCase());
+        return mapOfIIDsToInterfaceDefinitions.get(IID.toUpperCase());
     }
 
-    /**
-     * @exclude @param IPID
-     * @return
-     */
     JILocalInterfaceDefinition getInterfaceDefinitionFromIPID(String IPID) {
-        return (JILocalInterfaceDefinition) mapOfIIDsToInterfaceDefinitions.get(ipidVsIID.get(IPID.toUpperCase()));
+        return mapOfIIDsToInterfaceDefinitions.get(ipidVsIID.get(IPID.toUpperCase()));
     }
 
-    /**
-     * @exclude
-     */
     String getIpidFromIID(String uniqueIID) {
-        return (String) IIDvsIpid.get(uniqueIID.toUpperCase());
+        return IIDvsIpid.get(uniqueIID.toUpperCase());
     }
 
-    /**
-     *
-     * @param uniqueIID
-     * @return
-     */
     String getIIDFromIpid(String ipid) {
-        return (String) ipidVsIID.get(ipid.toUpperCase());
+        return ipidVsIID.get(ipid.toUpperCase());
     }
 
     /**
@@ -656,7 +609,7 @@ public final class JILocalCoClass implements Serializable {
         return session;
     }
 
-    List getSupportedInterfaces() {
+    List<String> getSupportedInterfaces() {
         return listOfSupportedInterfaces;
     }
 }

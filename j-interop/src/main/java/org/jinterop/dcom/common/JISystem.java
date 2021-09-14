@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -66,16 +67,16 @@ public final class JISystem {
     private JISystem() {
     }
 
+    private static final Logger logger = Logger.getLogger("org.jinterop");
+    private static final Properties mapOfProgIdsVsClsids = new Properties();
+    private static final List<Object> socketQueue = new ArrayList<>();
+    private static final Map<String, String> mapOfHostnamesVsIPs = new HashMap<>();
     private static String pathToDB = null;
     private static Locale locale = Locale.getDefault();
     private static ResourceBundle resourceBundle = null;
-    private static Properties mapOfProgIdsVsClsids = new Properties();
-    private static ArrayList socketQueue = new ArrayList();
     private static JIComVersion comVersion = new JIComVersion();
     private static boolean autoRegister = false;
     private static boolean autoCollection = true;
-    private static final Logger logger = Logger.getLogger("org.jinterop");
-    private static final Map mapOfHostnamesVsIPs = new HashMap();
 
     /**
      * Returns the framework logger identified by the name "org.jinterop".
@@ -87,8 +88,7 @@ public final class JISystem {
     }
 
     /**
-     * Sets the COM version which the library would use for communicating with
-     * COM servers. Default is 5.2.
+     * Sets the COM version which the library would use for communicating with COM servers. Default is 5.2.
      *
      * @param comVersion new COM version
      */
@@ -98,7 +98,6 @@ public final class JISystem {
 
     /**
      * Returns COM version currently being used by the library.
-     *
      *
      * @return
      */
@@ -161,14 +160,13 @@ public final class JISystem {
     }
 
     private static String getLocalizedMessage(String key) {
-        String message = null;
+        String message;
         try {
             message = JISystem.getErrorMessages().getString(key);
             message = message + " [" + key + "]";
         } catch (MissingResourceException r) {
             message = "Message not found for errorCode: " + key;
         }
-
         return message;
     }
 
@@ -184,7 +182,6 @@ public final class JISystem {
         if (progId == null) {
             return null;
         }
-
         if (pathToDB == null) {
             synchronized (JISystem.class) {
                 if (pathToDB == null) {
@@ -202,10 +199,10 @@ public final class JISystem {
             loader = JISystem.class.getClassLoader(); // fallback
         }
 
-        Set locations = new HashSet();
+        Set<URL> locations = new HashSet<>();
         if (loader != null) {
             try {
-                Enumeration resources = loader.getResources("progIdVsClsidDB.properties");
+                Enumeration<URL> resources = loader.getResources("progIdVsClsidDB.properties");
                 while (resources.hasMoreElements()) {
                     locations.add(resources.nextElement());
                     break;
@@ -215,7 +212,7 @@ public final class JISystem {
         }
         try {
             if (locations.isEmpty()) {
-                Enumeration resources = ClassLoader.getSystemResources("progIdVsClsidDB.properties");
+                Enumeration<URL> resources = ClassLoader.getSystemResources("progIdVsClsidDB.properties");
                 while (resources.hasMoreElements()) {
                     locations.add(resources.nextElement());
                     break;
@@ -224,30 +221,24 @@ public final class JISystem {
         } catch (IOException ex) {
         }
 
-        Iterator iterator = locations.iterator();
+        Iterator<URL> iterator = locations.iterator();
         while (iterator.hasNext()) {
             try {
-                URL url = (URL) iterator.next();
+                URL url = iterator.next();
                 pathToDB = url.getPath();
-
                 try {
-
                     if (!pathToDB.startsWith("file:")) {
                         url = new URL("file:" + pathToDB);
                     }
-
                     if (logger.isLoggable(Level.INFO)) {
                         logger.log(Level.INFO, "progIdVsClsidDB file located at: {0}", url);
                     }
-
                     URLConnection con = url.openConnection();
-                    InputStream inputStream = con.getInputStream();
-                    mapOfProgIdsVsClsids.load(inputStream);
-                    inputStream.close();
-                    //outputStream = con.getOutputStream();
-                } catch (Exception e) {
+                    try (final InputStream inputStream = con.getInputStream()) {
+                        mapOfProgIdsVsClsids.load(inputStream);
+                    }
+                } catch (IOException e) {
                 }
-
                 //mapOfProgIdsVsClsids.load(new FileInputStream(pathToDB));
             } catch (Exception ex) {
                 //ex.printStackTrace();
@@ -268,34 +259,30 @@ public final class JISystem {
     public static void internal_writeProgIdsToFile() {
         if (pathToDB != null) {
             try {
-                FileOutputStream outputStream = new FileOutputStream(pathToDB);
-                mapOfProgIdsVsClsids.store(outputStream, "progId Vs ClsidDB");
-                outputStream.close();
+                try (final FileOutputStream outputStream = new FileOutputStream(pathToDB)) {
+                    mapOfProgIdsVsClsids.store(outputStream, "progId Vs ClsidDB");
+                }
             } catch (FileNotFoundException e) {
-
                 logger.throwing("JISystem", "writeProgIdsToFile", e);
             } catch (IOException e) {
-
                 logger.throwing("JISystem", "writeProgIdsToFile", e);
             }
         }
     }
 
-    //stores it in a temporary hash map here, and this is later persisted when the library is shutdown
     /**
-     * Stores it in a temporary hash map here, and this is later persisted when
-     * the library is shutdown
+     * Stores it in a temporary hash map here, and this is later persisted when the library is shutdown
      *
-     * @exclude
+     * @param progId
+     * @param clsid
      */
     public static void internal_setClsidtoProgId(String progId, String clsid) {
         mapOfProgIdsVsClsids.put(progId, clsid);
     }
 
     /**
-     * synchronisation will be performed by the oxid master
+     * Synchronization will be performed by the oxid master
      *
-     * @exclude
      * @return
      */
     public static Object internal_getSocket() {
@@ -306,9 +293,9 @@ public final class JISystem {
     }
 
     /**
-     * synchronisation will be performed by the oxid master
+     * Synchronization will be performed by the oxid master
      *
-     * @exclude
+     * @param socket
      */
     public static void internal_setSocket(Object socket) {
         //synchronized (socketQueue)
@@ -317,19 +304,15 @@ public final class JISystem {
         }
     }
 
-    /**
-     * @exclude @return
-     */
     public static synchronized void internal_initLogger() {
         logSystemPropertiesAndVersion();
     }
 
     private static void logSystemPropertiesAndVersion() {
         Properties pr = System.getProperties();
-        Iterator itr = pr.keySet().iterator();
+        Iterator<Object> itr = pr.keySet().iterator();
         String str = "";
         String jinteropVersion = JISystem.class.getPackage().getImplementationVersion();
-        Logger logger = Logger.getLogger("org.jinterop");
         if (logger.isLoggable(Level.INFO)) {
             logger.log(Level.INFO, "j-Interop Version = {0}\n", jinteropVersion);
             while (itr.hasNext()) {
@@ -367,7 +350,6 @@ public final class JISystem {
     }
 
     /**
-     * < p>
      * Sometimes the DCOM runtime of Windows will not send a ping on time to the
      * Framework. It is not very abnormal, since Windows can sometimes resort to
      * mechanisms other than DCOM to keep a reference count for the instances
@@ -375,7 +357,7 @@ public final class JISystem {
      * in 8 minutes , the Java Local Class is collected for GC. And if the COM
      * server requires a reference to it or acts on a previously obtained
      * reference , it is sent back an <i>Exception</i>. Please use this flag to
-     * set the Auto Collection status to ON or OFF. By Default, it is ON. </p>
+     * set the Auto Collection status to ON or OFF. By Default, it is ON.
      *
      * @param autoCollection <code>false</code> if auto collection should be
      * turned off.
@@ -434,10 +416,8 @@ public final class JISystem {
         if (hostname == null || IP == null || hostname.trim().length() == 0 || IP.trim().length() == 0) {
             throw new IllegalArgumentException();
         }
-
         //just check the validity of IP
         InetAddress.getByName(IP.trim());
-
         mapOfHostnamesVsIPs.put(hostname.trim().toUpperCase(), IP.trim());
     }
 
@@ -448,7 +428,7 @@ public final class JISystem {
      * @return <code>null</code> if a mapping could not be found.
      */
     public static synchronized String getIPForHostName(String hostname) {
-        return (String) mapOfHostnamesVsIPs.get(hostname.trim().toUpperCase());
+        return mapOfHostnamesVsIPs.get(hostname.trim().toUpperCase());
     }
 
     public static synchronized void internal_dumpMap() {

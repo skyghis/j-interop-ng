@@ -23,7 +23,6 @@ import org.jinterop.dcom.common.JISystem;
  * Stores the oxid details in memory.
  *
  * @since 1.0
- *
  */
 final class JIComOxidDetails {
 

@@ -95,7 +95,7 @@ public class SampleTestServer {
         int i = 4;
         Integer[] intAry = new Integer[i];
         for (int j = 0; j < i; j++) {
-            intAry[j] = new Integer(j);
+            intAry[j] = j;
         }
         JIArray ary = new JIArray(intAry, true);
         callObject.addInParamAsInt(i, JIFlags.FLAG_NULL);
@@ -327,13 +327,13 @@ public class SampleTestServer {
         Object results[];
 
         JIStruct simpleStruct = new JIStruct();
-        simpleStruct.addMember(new Integer(5));
+        simpleStruct.addMember(5);
         simpleStruct.addMember(new Double(25));
         simpleStruct.addMember(new Float(2.5));
 
-        Integer shortValue = new Integer(1);
+        Integer shortValue = 1;
         JIStruct simpleArrayStruct = new JIStruct();
-        simpleArrayStruct.addMember(new Integer(54));
+        simpleArrayStruct.addMember(54);
         simpleArrayStruct.addMember(new Double(5));
         simpleArrayStruct.addMember(JIUnsignedFactory.getUnsigned(shortValue, JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT));
         JIStruct[] structArray = new JIStruct[1];
@@ -391,7 +391,7 @@ public class SampleTestServer {
 
         JIUnsignedShort j;
         Long value = new Long(10);
-        Integer shortValue = new Integer(5);
+        Integer shortValue = 5;
         JIStruct varStruct = new JIStruct();
         varStruct.addMember(JIUnsignedFactory.getUnsigned(value, JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
         varStruct.addMember(new Float(1.1));
@@ -404,7 +404,7 @@ public class SampleTestServer {
         JIStruct pointStruct = new JIStruct();
         pointStruct.addMember(JIUnsignedFactory.getUnsigned(new Long(15), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
         pointStruct.addMember(JIUnsignedFactory.getUnsigned(new Long(10), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT));
-        pointStruct.addMember(new Byte((byte) 1));
+        pointStruct.addMember((byte) 1);
         JIStruct[] varStructArray = new JIStruct[1];
         varStructArray[0] = varStruct;
         pointStruct.addMember(new JIPointer(new JIArray(varStructArray, true))); //since this is an embedded pointer

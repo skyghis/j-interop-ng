@@ -35,7 +35,7 @@ public class MetrikonOPC {
         callObject.addInParamAsInt(0xFFFFFFFF, JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(1000, JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(1234, JIFlags.FLAG_NULL);
-        callObject.addInParamAsPointer(new JIPointer(new Integer(0)), JIFlags.FLAG_NULL);
+        callObject.addInParamAsPointer(new JIPointer(0), JIFlags.FLAG_NULL);
         callObject.addInParamAsPointer(new JIPointer(new Float(0.0)), JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(0, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);

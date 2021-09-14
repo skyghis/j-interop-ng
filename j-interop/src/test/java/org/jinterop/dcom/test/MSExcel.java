@@ -55,7 +55,7 @@ public class MSExcel {
         out = new Object[]{JIVariant.class};
         dispId = dispatchOfWorkBook.getIDsOfNames("Add");
 
-        outVal2 = dispatchOfWorkBook.callMethodA(dispId, new Object[]{new Integer(xlWorksheet)});
+        outVal2 = dispatchOfWorkBook.callMethodA(dispId, new Object[]{xlWorksheet});
         dispatchOfWorkBook = (IJIDispatch) JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
         dispId = dispatchOfWorkBook.getIDsOfNames("Worksheets");
@@ -134,7 +134,7 @@ public class MSExcel {
 
         dispId = dispatchActiveChart.getIDsOfNames("SetSourceData");
         out = new Object[]{JIVariant.class};
-        outVal2 = dispatchActiveChart.callMethodA(dispId, new Object[]{dispatchRange, new Short((short) xlColumns)}, new int[]{dispIds[1], dispIds[2]});//invoke(dispIds[0],IJIDispatch.DISPATCH_METHOD,new Object[]{variant,new JIArray(new Integer[]{new Integer(dispIds[1]),new Integer(dispIds[2])},true),null,null,null},null);
+        outVal2 = dispatchActiveChart.callMethodA(dispId, new Object[]{dispatchRange, (short) xlColumns}, new int[]{dispIds[1], dispIds[2]});//invoke(dispIds[0],IJIDispatch.DISPATCH_METHOD,new Object[]{variant,new JIArray(new Integer[]{new Integer(dispIds[1]),new Integer(dispIds[2])},true),null,null,null},null);
 
         JISession.destroySession(session);
     }

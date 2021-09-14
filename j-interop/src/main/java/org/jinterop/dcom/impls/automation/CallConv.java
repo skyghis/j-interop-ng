@@ -27,15 +27,15 @@ package org.jinterop.dcom.impls.automation;
  */
 public interface CallConv {
 
-    public static final Integer CC_FASTCALL = new Integer(0);
+    public static final Integer CC_FASTCALL = 0;
     /**
      * Indicates that the Cdecl calling convention is used for a method.
      */
-    public static final Integer CC_CDECL = new Integer(1);
+    public static final Integer CC_CDECL = 1;
     /**
      * Indicates that the Mscpascal calling convention is used for a method.
      */
-    public static final Integer CC_MSCPASCAL = new Integer(CC_CDECL.intValue() + (1));
+    public static final Integer CC_MSCPASCAL = CC_CDECL + (1);
     /**
      * Indicates that the Pascal calling convention is used for a method.
      */
@@ -43,27 +43,27 @@ public interface CallConv {
     /**
      * Indicates that the Macpascal calling convention is used for a method.
      */
-    public static final Integer CC_MACPASCAL = new Integer(CC_PASCAL.intValue() + 1);
+    public static final Integer CC_MACPASCAL = CC_PASCAL + 1;
     /**
      * Indicates that the Stdcall calling convention is used for a method.
      */
-    public static final Integer CC_STDCALL = new Integer(CC_MACPASCAL.intValue() + 1);
-    public static final Integer CC_FPFASTCALL = new Integer(CC_STDCALL.intValue() + 1);
+    public static final Integer CC_STDCALL = CC_MACPASCAL + 1;
+    public static final Integer CC_FPFASTCALL = CC_STDCALL + 1;
     /**
      * Indicates that the Syscall calling convention is used for a method.
      */
-    public static final Integer CC_SYSCALL = new Integer(CC_FPFASTCALL.intValue() + 1);
+    public static final Integer CC_SYSCALL = CC_FPFASTCALL + 1;
     /**
      * Indicates that the Mpwcdecl calling convention is used for a method.
      */
-    public static final Integer CC_MPWCDECL = new Integer(CC_SYSCALL.intValue() + 1);
+    public static final Integer CC_MPWCDECL = CC_SYSCALL + 1;
     /**
      * Indicates that the Mpwpascal calling convention is used for a method.
      */
-    public static final Integer CC_MPWPASCAL = new Integer(CC_MPWCDECL.intValue() + 1);
+    public static final Integer CC_MPWPASCAL = CC_MPWCDECL + 1;
     /**
      * Indicates the end of the CALLCONV enumeration.
      */
-    public static final Integer CC_MAX = new Integer(CC_MPWPASCAL.intValue() + 1);
+    public static final Integer CC_MAX = CC_MPWPASCAL + 1;
 
 }

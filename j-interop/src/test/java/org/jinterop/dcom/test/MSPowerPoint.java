@@ -50,7 +50,7 @@ public class MSPowerPoint {
             //IJIDispatch slides = (IJIDispatch)JIObjectFactory.createCOMInstance(unknown,ptr);
             IJIDispatch slides = (IJIDispatch) JIObjectFactory.narrowObject(presentation.get("Slides").getObjectAsComObject());
 
-            results = slides.callMethodA("Add", new Object[]{new Integer(1), new Integer(1)});
+            results = slides.callMethodA("Add", new Object[]{1, 1});
             //variant = results[0];
             //ptr = variant.getObjectAsInterfacePointer();
             IJIDispatch slide = (IJIDispatch) JIObjectFactory.narrowObject(results[0].getObjectAsComObject());
@@ -73,13 +73,13 @@ public class MSPowerPoint {
 
             if (i == 0) {
                 textrange.put("Text", new JIString("Presentation1").Variant);
-                presentation.callMethod("SaveAs", new Object[]{new JIString("C:\\temp\\presentation1.ppt").Variant, JIVariant.OPTIONAL_PARAM(), new Integer(-1)});
+                presentation.callMethod("SaveAs", new Object[]{new JIString("C:\\temp\\presentation1.ppt").Variant, JIVariant.OPTIONAL_PARAM(), -1});
                 Thread.sleep(3000);
                 presentation.callMethod("Close");
             } else {
                 textrange.put("Text", new JIString("Presentation2").Variant);
-                slides.callMethod("InsertFromFile", new Object[]{new JIString("C:\\temp\\presentation1.ppt"), new Integer(1), new Integer(1), new Integer(1)});
-                presentation.callMethod("SaveAs", new Object[]{new JIString("C:\\temp\\presentation2.ppt"), JIVariant.OPTIONAL_PARAM(), new Integer(-1)});
+                slides.callMethod("InsertFromFile", new Object[]{new JIString("C:\\temp\\presentation1.ppt"), 1, 1, 1});
+                presentation.callMethod("SaveAs", new Object[]{new JIString("C:\\temp\\presentation2.ppt"), JIVariant.OPTIONAL_PARAM(), -1});
                 Thread.sleep(3000);
                 presentation.callMethod("Close");
 

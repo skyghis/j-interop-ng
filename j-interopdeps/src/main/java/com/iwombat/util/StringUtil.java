@@ -3,9 +3,6 @@
  */
 package com.iwombat.util;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 /**
  * Class StringUtil Description: General utilities for string manipulation
  *
@@ -15,11 +12,9 @@ import java.util.StringTokenizer;
  * <br>
  * <dl><dt><b>Date:</b><dd>$Date: 2007/12/25 10:18:57 $</dd></dl>
  */
-public final class StringUtil extends Object {
+public final class StringUtil {
 
-    /**
-     * supress creation of instances of StringUtil
-     */
+    /** suppress creation of instances of StringUtil */
     private StringUtil() {
     }
 
@@ -56,28 +51,5 @@ public final class StringUtil extends Object {
         newString.append(temp);
 
         return newString.toString();
-    }
-
-    /**
-     * Method splitString Description: Split a delimited string into an
-     * ArrayList Much like the perl split function
-     *
-     * @param valueList
-     * @param delimiter
-     * @return $returnType
-     */
-    public static ArrayList splitString(String valueList, String delimiter) {
-
-        ArrayList result = new ArrayList();
-
-        if ((valueList != null) && (delimiter != null)) {
-            StringTokenizer splitter = new StringTokenizer(valueList, delimiter);
-
-            while (splitter.hasMoreTokens()) {
-                result.add(splitter.nextToken());
-            }
-        }
-
-        return result;
     }
 }

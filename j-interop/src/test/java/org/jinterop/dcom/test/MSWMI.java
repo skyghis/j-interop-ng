@@ -41,7 +41,7 @@ public class MSWMI {
     public void performOp() throws JIException, InterruptedException {
         System.gc();
         JIVariant results[] = dispatch.callMethodA("ConnectServer", new Object[]{new JIString(address), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
-            JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), new Integer(0), JIVariant.OPTIONAL_PARAM()});
+            JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), 0, JIVariant.OPTIONAL_PARAM()});
 
         //using the dispatch results above you can use the "ConnectServer" api to retrieve a pointer to IJIDispatch
         //of ISWbemServices
@@ -69,7 +69,7 @@ public class MSWMI {
 
         //Lets have a look at both.
         IJIDispatch wbemServices_dispatch = (IJIDispatch) JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
-        results = wbemServices_dispatch.callMethodA("InstancesOf", new Object[]{new JIString("Win32_Process"), new Integer(0), JIVariant.OPTIONAL_PARAM()});
+        results = wbemServices_dispatch.callMethodA("InstancesOf", new Object[]{new JIString("Win32_Process"), 0, JIVariant.OPTIONAL_PARAM()});
         IJIDispatch wbemObjectSet_dispatch = (IJIDispatch) JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
         JIVariant variant = wbemObjectSet_dispatch.get("_NewEnum");
         IJIComObject object2 = variant.getObjectAsComObject();
@@ -106,7 +106,7 @@ public class MSWMI {
             Object[] arrayObj = (Object[]) array.getArrayInstance();
             for (int j = 0; j < arrayObj.length; j++) {
                 IJIDispatch wbemObject_dispatch = (IJIDispatch) JIObjectFactory.narrowObject(((JIVariant) arrayObj[j]).getObjectAsComObject());
-                JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{new Integer(1)}))[0];
+                JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{1}))[0];
                 System.out.println(variant2.getObjectAsString().getString());
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             }

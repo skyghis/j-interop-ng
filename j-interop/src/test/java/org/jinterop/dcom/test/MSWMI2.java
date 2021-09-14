@@ -45,7 +45,7 @@ public class MSWMI2 {
 //    IJIDispatch securityDisp = (IJIDispatch)JIObjectFactory.narrowObject(dispatch.get("Security_").getObjectAsComObject());
 //    securityDisp.put("ImpersonationLevel", new JIVariant(3));
         JIVariant results[] = dispatch.callMethodA("ConnectServer", new Object[]{JIVariant.OPTIONAL_PARAM(), new JIString("ROOT\\CIMV2"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(),
-            JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), new Integer(0), JIVariant.OPTIONAL_PARAM()});
+            JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), 0, JIVariant.OPTIONAL_PARAM()});
 
         IJIDispatch wbemServices_dispatch = (IJIDispatch) JIObjectFactory.narrowObject((results[0]).getObjectAsComObject());
         results = wbemServices_dispatch.callMethodA("ExecQuery", new Object[]{new JIString("select * from Win32_OperatingSystem where Primary=True"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM()});
@@ -63,7 +63,7 @@ public class MSWMI2 {
             Object[] arrayObj = (Object[]) array.getArrayInstance();
             for (int j = 0; j < arrayObj.length; j++) {
                 IJIDispatch wbemObject_dispatch = (IJIDispatch) JIObjectFactory.narrowObject(((JIVariant) arrayObj[j]).getObjectAsComObject());
-                JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{new Integer(1)}))[0];
+                JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{1}))[0];
                 System.out.println(variant2.getObjectAsString().getString());
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             }

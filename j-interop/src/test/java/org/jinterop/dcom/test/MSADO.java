@@ -31,9 +31,9 @@ public class MSADO {
         IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
         typeInfo.getFuncDesc(0);
 
-        dispatch.callMethod("Open", new Object[]{new JIString("driver=Microsoft Access Driver (*.mdb);dbq=C:\\temp\\products.mdb"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), new Integer(-1)});
+        dispatch.callMethod("Open", new Object[]{new JIString("driver=Microsoft Access Driver (*.mdb);dbq=C:\\temp\\products.mdb"), JIVariant.OPTIONAL_PARAM(), JIVariant.OPTIONAL_PARAM(), -1});
 
-        JIVariant variant[] = dispatch.callMethodA("Execute", new Object[]{new JIString("SELECT * FROM Products"), new Integer(-1)});
+        JIVariant variant[] = dispatch.callMethodA("Execute", new Object[]{new JIString("SELECT * FROM Products"), -1});
         if (variant[0].isNull()) {
             System.out.println("Recordset is empty.");
         } else {
@@ -44,7 +44,7 @@ public class MSADO {
                 IJIDispatch fields = (IJIDispatch) JIObjectFactory.narrowObject(variant2.getObjectAsComObject());
                 int count = fields.get("Count").getObjectAsInt();
                 for (int i = 0; i < count; i++) {
-                    variant = fields.get("Item", new Object[]{new Integer(i)});
+                    variant = fields.get("Item", new Object[]{i});
                     IJIDispatch field = (IJIDispatch) JIObjectFactory.narrowObject(variant[0].getObjectAsComObject());
                     variant2 = field.get("Value");
                     Object val = null;
@@ -52,7 +52,7 @@ public class MSADO {
                         val = variant2.getObjectAsString().getString();
                     }
                     if (variant2.getType() == JIVariant.VT_I4) {
-                        val = new Integer(variant2.getObjectAsInt());
+                        val = variant2.getObjectAsInt();
                     }
                     System.out.println(field.get("Name").getObjectAsString().getString() + " = " + val + "[" + variant2.getType() + "]");
                 }

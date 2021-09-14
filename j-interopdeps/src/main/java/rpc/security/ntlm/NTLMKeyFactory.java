@@ -26,6 +26,7 @@ import java.security.DigestException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 class NTLMKeyFactory {
@@ -57,7 +58,7 @@ class NTLMKeyFactory {
      */
     byte[] getNTLMUserSessionKey(String password) throws UnsupportedEncodingException, DigestException {
         //look at NTLMPasswordAuthentication in jcifs. It supports only the NTLMUserSessionKey and the LMv2UserSessionKey...we need more :(
-        byte key[] = new byte[16];
+        byte key[];
         byte[] ntlmHash = Responses.ntlmHash(password);
         MD4 md4 = new MD4();
         md4.update(ntlmHash, 0, ntlmHash.length);
@@ -65,9 +66,8 @@ class NTLMKeyFactory {
         return key;
     }
 
-    byte[] getNTLMv2UserSessionKey(String target, String user, String password,
-            byte[] challenge, byte[] blob) throws Exception {
-        byte key[] = new byte[16];
+    byte[] getNTLMv2UserSessionKey(String target, String user, String password, byte[] challenge, byte[] blob) throws Exception {
+        byte key[];
         byte[] ntlm2Hash = Responses.ntlmv2Hash(target, user, password);
         byte[] data = new byte[challenge.length + blob.length];
         System.arraycopy(challenge, 0, data, 0, challenge.length);
@@ -104,7 +104,7 @@ class NTLMKeyFactory {
     }
 
     IRandom getARCFOUR(byte[] key) {
-        HashMap attrib = new HashMap();
+        Map<String, byte[]> attrib = new HashMap<>();
         IRandom keystream = new ARCFour();
         attrib.put(ARCFour.ARCFOUR_KEY_MATERIAL, key);
         keystream.init(attrib);

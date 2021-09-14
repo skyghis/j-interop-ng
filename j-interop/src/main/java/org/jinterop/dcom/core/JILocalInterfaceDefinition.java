@@ -39,13 +39,13 @@ public final class JILocalInterfaceDefinition implements Serializable {
 
     private static final long serialVersionUID = 7683984211902254797L;
     private String interfaceIdentifier = null;
-    private Map opnumVsMethodInfo = new HashMap();
-    private Map dispIdVsMethodInfo = new HashMap();
-    private Map nameVsMethodInfo = new HashMap();
+    private final Map<Integer, JILocalMethodDescriptor> opnumVsMethodInfo = new HashMap<>();
+    private final Map<Integer, JILocalMethodDescriptor> dispIdVsMethodInfo = new HashMap<>();
+    private final Map<String, JILocalMethodDescriptor> nameVsMethodInfo = new HashMap<>();
+    private boolean dispInterface = true;
     private int nextNum = 0;
     Object instance = null;
-    Class clazz = null;
-    private boolean dispInterface = true;
+    Class<?> clazz = null;
 
     /**
      * Creates an Interface definition. By default, the
@@ -93,16 +93,14 @@ public final class JILocalInterfaceDefinition implements Serializable {
         methodDescriptor.setMethodNum(nextNum);
         nextNum++;
 
-        opnumVsMethodInfo.put(new Integer(methodDescriptor.getMethodNum()), methodDescriptor);
+        opnumVsMethodInfo.put(methodDescriptor.getMethodNum(), methodDescriptor);
         if (dispInterface) {
             if (methodDescriptor.getMethodDispID() == -1) {
                 throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_METHODDESC_DISPID_MISSING));
             }
-            dispIdVsMethodInfo.put(new Integer(methodDescriptor.getMethodDispID()), methodDescriptor);
+            dispIdVsMethodInfo.put(methodDescriptor.getMethodDispID(), methodDescriptor);
         }
-
         nameVsMethodInfo.put(methodDescriptor.getMethodName(), methodDescriptor);
-
     }
 
     /**
@@ -113,7 +111,7 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * found.
      */
     public JILocalMethodDescriptor getMethodDescriptor(int opnum) {
-        return (JILocalMethodDescriptor) opnumVsMethodInfo.get(new Integer(opnum));
+        return opnumVsMethodInfo.get(opnum);
     }
 
     /**
@@ -124,7 +122,7 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * found.
      */
     public JILocalMethodDescriptor getMethodDescriptorForDispId(int dispId) {
-        return (JILocalMethodDescriptor) dispIdVsMethodInfo.get(new Integer(dispId));
+        return dispIdVsMethodInfo.get(dispId);
     }
 
     /**
@@ -135,7 +133,7 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * found.
      */
     public JILocalMethodDescriptor getMethodDescriptor(String name) {
-        return (JILocalMethodDescriptor) nameVsMethodInfo.get(name);
+        return nameVsMethodInfo.get(name);
     }
 
     /**
@@ -144,7 +142,7 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * @return
      */
     public JILocalMethodDescriptor[] getMethodDescriptors() {
-        return (JILocalMethodDescriptor[]) opnumVsMethodInfo.values().toArray(new JILocalMethodDescriptor[opnumVsMethodInfo.values().size()]);
+        return opnumVsMethodInfo.values().toArray(new JILocalMethodDescriptor[opnumVsMethodInfo.values().size()]);
     }
 
     /**
@@ -167,7 +165,7 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * @see #addMethodDescriptor(JILocalMethodDescriptor)
      */
     public void removeMethodDescriptor(int opnum) {
-        JILocalMethodDescriptor methodDescriptor = (JILocalMethodDescriptor) opnumVsMethodInfo.remove(new Integer(opnum));
+        JILocalMethodDescriptor methodDescriptor = opnumVsMethodInfo.remove(opnum);
         if (methodDescriptor != null) {
             nameVsMethodInfo.remove(methodDescriptor.getMethodName());
         }
@@ -184,9 +182,10 @@ public final class JILocalInterfaceDefinition implements Serializable {
      * @see #addMethodDescriptor(JILocalMethodDescriptor)
      */
     public void removeMethodDescriptor(String methodName) {
-        JILocalMethodDescriptor methodDescriptor = (JILocalMethodDescriptor) nameVsMethodInfo.remove(methodName);
+        JILocalMethodDescriptor methodDescriptor = nameVsMethodInfo.remove(methodName);
         if (methodDescriptor != null) {
-            nameVsMethodInfo.remove(new Integer(methodDescriptor.getMethodNum()));
+            opnumVsMethodInfo.remove(methodDescriptor.getMethodNum());
+            dispIdVsMethodInfo.remove(methodDescriptor.getMethodNum());
         }
     }
 

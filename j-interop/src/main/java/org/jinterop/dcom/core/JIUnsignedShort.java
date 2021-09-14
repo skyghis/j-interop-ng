@@ -30,7 +30,7 @@ public final class JIUnsignedShort implements IJIUnsigned {
     private final Integer shortValue;
 
     JIUnsignedShort(Integer shortValue) {
-        if (shortValue == null || shortValue.intValue() < 0) {
+        if (shortValue == null || shortValue < 0) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_NEGATIVE));
         }
         this.shortValue = shortValue;

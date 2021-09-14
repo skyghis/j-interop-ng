@@ -30,7 +30,7 @@ public final class JIUnsignedInteger implements IJIUnsigned {
     private final Long intValue;
 
     JIUnsignedInteger(Long intValue) {
-        if (intValue == null || intValue.longValue() < 0) {
+        if (intValue == null || intValue < 0) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_NEGATIVE));
         }
         this.intValue = intValue;

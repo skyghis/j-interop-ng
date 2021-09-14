@@ -232,7 +232,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
             throw new JIException(e);
         }
 
-        return new Object[]{new Integer(queryvalue.type), (queryvalue.buffer != null ? (Object) queryvalue.buffer : (Object) queryvalue.buffer2)};
+        return new Object[]{queryvalue.type, (queryvalue.buffer != null ? (Object) queryvalue.buffer : (Object) queryvalue.buffer2)};
     }
 
     @Override

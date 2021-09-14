@@ -36,15 +36,10 @@ import rpc.core.PresentationSyntax;
 final class JIComRuntimeTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
-
-    private Properties properties;
-
+    private final Properties properties;
     private Socket socket;
-
     private OutputStream output;
-
     private InputStream input;
-
     private boolean attached;
 
     JIComRuntimeTransport(String address, Properties properties)
@@ -79,7 +74,7 @@ final class JIComRuntimeTransport implements Transport {
         } catch (Exception ex) {
             try {
                 close();
-            } catch (Exception ignore) {
+            } catch (IOException ignore) {
             }
         }
         return endPoint;
@@ -119,8 +114,6 @@ final class JIComRuntimeTransport implements Transport {
         if (input == null) {
             input = socket.getInputStream();
         }
-        buffer.length = (input.read(buffer.getBuffer(), 0,
-                buffer.getCapacity()));
+        buffer.length = (input.read(buffer.getBuffer(), 0, buffer.getCapacity()));
     }
-
 }

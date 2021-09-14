@@ -41,29 +41,19 @@ import rpc.pdu.ShutdownPdu;
 
 public class ConnectionOrientedEndpoint implements Endpoint {
 
+    private static final Logger logger = Logger.getLogger("org.jinterop");
     public static final String CONNECTION_CONTEXT = "rpc.connectionContext";
-
+    private final Transport transport;
+    private final PresentationSyntax syntax;
+    private boolean bound;
+    private int contextIdCounter = 0;
+    private int contextIdToUse = contextIdCounter;
+    //This is so as to reuse the contextids for already exported contexts.
+    private final Map<String, Integer> uuidsVsContextIds = new HashMap<>();
+    protected String currentIID = null;
     protected ConnectionContext context;
 
-    private Transport transport;
-
-    private PresentationSyntax syntax;
-
-    private boolean bound;
-
-    private int callId;
-
-    private int contextIdCounter = 0;
-
-    private int contextIdToUse = contextIdCounter;
-
-    private static final Logger logger = Logger.getLogger("org.jinterop");
-
-    //This is so as to reuse the contextids for already exported contexts.
-    private Map uuidsVsContextIds = new HashMap();
-
-    public ConnectionOrientedEndpoint(Transport transport,
-            PresentationSyntax syntax) {
+    public ConnectionOrientedEndpoint(Transport transport, PresentationSyntax syntax) {
         this.transport = transport;
         this.syntax = syntax;
     }
@@ -105,13 +95,6 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         }
         send(request);
 
-//        if (semantics == 100)
-//        try{
-//        	Thread.sleep(100);
-//        }catch(Exception e)
-//        {
-//
-//        }
         if (request.getFlag(ConnectionOrientedPdu.PFC_MAYBE)) {
             return;
         }
@@ -138,6 +121,13 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         }
     }
 
+    @Override
+    public void detach() throws IOException {
+        bound = false;
+        context = null;
+        getTransport().close();
+    }
+
     protected void rebind() throws IOException {
         bound = false;
         bind();
@@ -150,16 +140,16 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         if (context != null) {
             bound = true;
             try {
-                Integer cid = (Integer) uuidsVsContextIds.get(getSyntax().toString().toUpperCase());
+                Integer cid = uuidsVsContextIds.get(getSyntax().toString().toUpperCase());
                 ConnectionOrientedPdu pdu = context.alter(
-                        new PresentationContext(cid == null ? ++contextIdCounter : cid.intValue(), getSyntax()));
+                        new PresentationContext(cid == null ? ++contextIdCounter : cid, getSyntax()));
                 boolean sendAlter = false;
                 if (cid == null) {
-                    uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
+                    uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), contextIdCounter);
                     contextIdToUse = contextIdCounter;
                     sendAlter = true;
                 } else {
-                    contextIdToUse = cid.intValue();
+                    contextIdToUse = cid;
                 }
 
                 if (sendAlter) {
@@ -188,15 +178,9 @@ public class ConnectionOrientedEndpoint implements Endpoint {
                         }
                     }
                 }
-            } catch (IOException ex) {
+            } catch (IOException | RuntimeException ex) {
                 bound = false;
                 throw ex;
-            } catch (RuntimeException ex) {
-                bound = false;
-                throw ex;
-            } catch (Exception ex) {
-                bound = false;
-                throw new IOException(ex.getMessage());
             }
         } else {
             connect();
@@ -212,21 +196,12 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         return context.getConnection().receive(getTransport());
     }
 
-    @Override
-    public void detach() throws IOException {
-        bound = false;
-        context = null;
-        getTransport().close();
-    }
-
-    protected String currentIID = null;
-
     private void connect() throws IOException {
         bound = true;
         contextIdCounter = 0;
         currentIID = null;
         try {
-            uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), new Integer(contextIdCounter));
+            uuidsVsContextIds.put(getSyntax().toString().toUpperCase(), contextIdCounter);
             context = createContext();
             ConnectionOrientedPdu pdu = context.init(
                     new PresentationContext(contextIdCounter, getSyntax()),
@@ -256,24 +231,12 @@ public class ConnectionOrientedEndpoint implements Endpoint {
                     send(pdu);
                 }
             }
-        } catch (IOException ex) {
+        } catch (IOException | RuntimeException ex) {
             try {
                 detach();
             } catch (IOException ignore) {
             }
             throw ex;
-        } catch (RuntimeException ex) {
-            try {
-                detach();
-            } catch (IOException ignore) {
-            }
-            throw ex;
-        } catch (Exception ex) {
-            try {
-                detach();
-            } catch (IOException ignore) {
-            }
-            throw new IOException(ex.getMessage());
         }
     }
 
@@ -282,15 +245,14 @@ public class ConnectionOrientedEndpoint implements Endpoint {
         if (properties == null) {
             return new BasicConnectionContext();
         }
-        String context = properties.getProperty(CONNECTION_CONTEXT);
-        if (context == null) {
+        final String connectionContext = properties.getProperty(CONNECTION_CONTEXT);
+        if (connectionContext == null) {
             return new BasicConnectionContext();
         }
         try {
-            return (ConnectionContext) Class.forName(context).newInstance();
-        } catch (Exception ex) {
+            return (ConnectionContext) Class.forName(connectionContext).newInstance();
+        } catch (ReflectiveOperationException ex) {
             throw new ProviderException(ex.getMessage());
         }
     }
-
 }
