@@ -22,9 +22,6 @@ Old _deprecated_ documentation have been transformed to Markdown and exist at [`
 
 ## Quick start
 
-**TODO**
-
-<!--
 Add this dependency to your project's POM (or equivalent for non-Maven users):
 
 ```xml
@@ -36,8 +33,6 @@ Add this dependency to your project's POM (or equivalent for non-Maven users):
 ```
 
 **TODO**: Simple use case.
-
--->
 
 ## Contributing
 

@@ -29,13 +29,14 @@ import org.jinterop.winreg.JIWinRegFactory;
  * < p>
  * Wrapper class used to define user friendly <code>ProgID</code>.
  * <p>
- * Definition from MSDN: <i>
+ * Definition from MSDN:
+ * <pre>
  * A ProgID, or programmatic identifier, is a registry entry that can be
  * associated with a CLSID. The format of a ProgID is
- * <Vendor>.<Component>.<Version>, separated by periods and with no spaces, as
+ * {@code <Vendor>.<Component>.<Version>}, separated by periods and with no spaces, as
  * in Word.Document.6. Like the CLSID, the ProgID identifies a class, but with
  * less precision.
- * </i>
+ * </pre>
  * <p>
  * This class uses the <code>WINREG</code> service to get the mapping between
  * the <code>ProgId</code> and the <code>CLSID</code>.
@@ -44,7 +45,6 @@ import org.jinterop.winreg.JIWinRegFactory;
  * Windows registry in a platform independent way using SMB. The internal
  * database is looked up first before making calls to <code>WINREG</code>
  * service.
- * </p>
  *
  * @since 1.0
  */
