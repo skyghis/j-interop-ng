@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add multiples missing errors codes ([#3]).
+- Preregister `WbemScripting.SWbemLocator` ClsidDB to avoid registry query when using WMI.
 
 ### Fixed
 - Fix crash when password contains modulo (`%`) character and program ID is not registered ([#5]).
