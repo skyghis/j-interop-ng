@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add multiples missing errors codes ([#3]).
 
+### Fixed
+- Fix crash when password contains modulo (`%`) character and program ID is not registered ([#5]).
+
+[#3]: https://github.com/skyghis/j-interop-ng/issues/3
+[#5]: https://github.com/skyghis/j-interop-ng/issues/5
+
 ## [3.1.0] - 2021-03-05
 ### Added
 - Recognize response codes `0xc0000008` and `0xc0000034`. Imported from Jeff Gehlbach work at [sourceforce patches#15](https://sourceforge.net/p/j-interop/patches/15/).

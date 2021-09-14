@@ -19,9 +19,6 @@ package rpc.ncacn_np;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import jcifs.CIFSContext;
 import jcifs.Credentials;
@@ -202,11 +199,6 @@ public class RpcTransport implements Transport {
                 String password = properties.getProperty("rpc.ncacn_np.password");
                 if (password == null) {
                     password = CifsContextSingleton.instance().getConfig().getDefaultPassword();
-                }
-                try {
-                    password = URLDecoder.decode(password, StandardCharsets.UTF_8.name());
-                } catch (UnsupportedEncodingException ex) {
-                    throw new IllegalStateException(ex);
                 }
                 credentials = new NtlmPasswordAuthenticator(domain, username, password);
             }

@@ -47,21 +47,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         super.setTransportFactory(new rpc.ncacn_np.TransportFactory());
         super.setProperties(new Properties());
         super.getProperties().setProperty("rpc.ncacn_np.username", authInfo.getUserName());
-        String password = authInfo.getPassword();
-//        try {
-//            password = URLEncoder.encode(authInfo.getPassword(), "utf-8");
-//        } catch (UnsupportedEncodingException e) {
-//            try {
-//                password = URLEncoder.encode(authInfo.getPassword(), System.getProperty("file.encoding"));
-//            } catch (UnsupportedEncodingException e1) {
-//                throw new JIRuntimeException(JIErrorCodes.JI_WINREG_EXCEPTION2);
-//            }
-//        }
-//        //some strange issue with the space character, it gets encoded to '+' (which is right) , but Windows refuses it.
-//        //Manually changing + to %20
-//        password = password.replace("+", "%20");
-
-        super.getProperties().setProperty("rpc.ncacn_np.password", password);
+        super.getProperties().setProperty("rpc.ncacn_np.password", authInfo.getPassword());
         super.getProperties().setProperty("rpc.ncacn_np.domain", authInfo.getDomain());
         serverName = serverName.trim();
         serverName = InetAddress.getByName(serverName).getHostAddress();
