@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add multiples missing errors codes ([#3]).
 - Preregister `WbemScripting.SWbemLocator` ClsidDB to avoid registry query when using WMI.
 
+### Changed
+- Update `jcifs-ng` from version `2.1.5` to `2.1.6`.
+- Update maven plugins dependencies.
+
 ### Fixed
 - Fix crash when password contains modulo (`%`) character and program ID is not registered ([#5]).
 
