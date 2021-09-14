@@ -63,18 +63,17 @@ import org.jinterop.dcom.common.JISystem;
  */
 public class JICallBuilder extends NdrObject implements Serializable {
 
+    private static final long serialVersionUID = -2939657500731135110L;
     static final String CURRENTSESSION = "CURRENTSESSION";
     static final String COMOBJECTS = "COMOBJECTS";
-
-    private static final long serialVersionUID = -2939657500731135110L;
     private int opnum = -1;
     private Object[] outparams = null;
     private boolean dispatchNotSupported = false;
     private String enclosingParentsIPID = null;
-    private ArrayList inparamFlags = new ArrayList();
-    private ArrayList outparamFlags = new ArrayList();
-    private ArrayList inParams = new ArrayList();
-    private ArrayList outParams = new ArrayList();
+    private List<Integer> inparamFlags = new ArrayList<>();
+    private List<Integer> outparamFlags = new ArrayList<>();
+    private List<Object> inParams = new ArrayList<>();
+    private List<Object> outParams = new ArrayList<>();
     private int hresult = 0;
     private boolean executed = false;
     private Object[] resultsOfException = null;
@@ -113,10 +112,10 @@ public class JICallBuilder extends NdrObject implements Serializable {
     //after reinit, except parent, nothing is available.
     public void reInit() {
         opnum = -1;
-        inParams = new ArrayList();
-        inparamFlags = new ArrayList();
-        outParams = new ArrayList();
-        outparamFlags = new ArrayList();
+        inParams = new ArrayList<>();
+        inparamFlags = new ArrayList<>();
+        outParams = new ArrayList<>();
+        outparamFlags = new ArrayList<>();
         hresult = -1;
         outparams = null;
         executed = false;
@@ -307,11 +306,10 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void setInParams(Object[] values, int FLAGS) {
-        for (int i = 0; i < values.length; i++) {
-            inParams.add(values[i]);
-            inparamFlags.add(new Integer(FLAGS)); //quite useless but do not want to change logic elsewhere
+        for (Object value1 : values) {
+            inParams.add(value1);
+            inparamFlags.add(FLAGS); //quite useless but do not want to change logic elsewhere
         }
-
     }
 
     /**
@@ -324,7 +322,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsComObjectAt(int index, IJIComObject value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -336,8 +334,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsIntAt(int index, int value, int FLAGS) {
-        inParams.add(index, new Integer(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -350,7 +348,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsUnsignedAt(int index, IJIUnsigned value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -362,8 +360,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsFloatAt(int index, float value, int FLAGS) {
-        inParams.add(index, new Float(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -375,8 +373,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsBooleanAt(int index, boolean value, int FLAGS) {
-        inParams.add(index, Boolean.valueOf(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -388,8 +386,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsShortAt(int index, short value, int FLAGS) {
-        inParams.add(index, new Short(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -401,8 +399,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsDoubleAt(int index, double value, int FLAGS) {
-        inParams.add(index, new Double(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -414,8 +412,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void insertInParamAsCharacterAt(int index, char value, int FLAGS) {
-        inParams.add(index, new Character(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inParams.add(index, value);
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -430,7 +428,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     //flags have to be String flags
     public void insertInParamAsStringAt(int index, String value, int FLAGS) {
         inParams.add(index, new JIString(value, FLAGS));
-        inparamFlags.add(index, new Integer(JIFlags.FLAG_NULL));
+        inparamFlags.add(index, JIFlags.FLAG_NULL);
     }
 
     /**
@@ -443,7 +441,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsVariantAt(int index, JIVariant value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(JIFlags.FLAG_NULL));
+        inparamFlags.add(index, JIFlags.FLAG_NULL);
     }
 
     /**
@@ -457,7 +455,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     //this is for dispatch, etc...more or less will never be used.
     public void insertInParamAsObjectAt(int index, Object value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -471,7 +469,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsUUIDAt(int index, String value, int FLAGS) {
         inParams.add(index, new rpc.core.UUID(value));
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -484,7 +482,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsPointerAt(int index, JIPointer value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -497,7 +495,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsStructAt(int index, JIStruct value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -510,7 +508,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertInParamAsArrayAt(int index, JIArray value, int FLAGS) {
         inParams.add(index, value);
-        inparamFlags.add(index, new Integer(FLAGS));
+        inparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -544,7 +542,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param clazz
      * @param FLAGS
      */
-    public void addOutParamAsType(Class clazz, int FLAGS) {
+    public void addOutParamAsType(Class<?> clazz, int FLAGS) {
         insertOutParamAt(outParams.size(), clazz, FLAGS);
     }
 
@@ -570,7 +568,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public void insertOutParamAt(int index, Object classOrInstance, int FLAGS) {
         outParams.add(index, classOrInstance);
-        outparamFlags.add(index, new Integer(FLAGS));
+        outparamFlags.add(index, FLAGS);
     }
 
     /**
@@ -607,7 +605,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     public void setOutParams(Object[] values, int FLAGS) {
         for (int i = 0; i < values.length; i++) {
             outParams.add(values[i]);
-            outparamFlags.add(new Integer(FLAGS));
+            outparamFlags.add(FLAGS);
         }
 
     }
@@ -655,7 +653,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public boolean getResultAsBooleanAt(int index) {
         checkIfCalled();
-        return ((Boolean) outparams[index]).booleanValue();
+        return ((Boolean) outparams[index]);
     }
 
     /**
@@ -690,7 +688,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      */
     public char getResultAsCharacterAt(int index) {
         checkIfCalled();
-        return ((Character) outparams[index]).charValue();
+        return ((Character) outparams[index]);
     }
 
     /**
@@ -909,9 +907,9 @@ public class JICallBuilder extends NdrObject implements Serializable {
         int index = 0;
         if (inparams != null) {
             while (index < inparams.length) {
-                List listOfDefferedPointers = new ArrayList();
+                List<JIPointer> listOfDefferedPointers = new ArrayList<>();
                 if (inparams[index] == null) {
-                    JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), listOfDefferedPointers, JIFlags.FLAG_NULL);
+                    JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, 0, listOfDefferedPointers, JIFlags.FLAG_NULL);
                 } else {
                     JIMarshalUnMarshalHelper.serialize(ndr, inparams[index].getClass(), inparams[index], listOfDefferedPointers, ((Number) inparamFlags.get(index)).intValue());
                 }
@@ -1014,23 +1012,21 @@ public class JICallBuilder extends NdrObject implements Serializable {
             JISystem.getLogger().finest(str);
         }
 
-        ArrayList comObjects = new ArrayList();
-        Map additionalData = new HashMap();
+        List<Object> comObjects = new ArrayList<>();
+        Map<String, Object> additionalData = new HashMap<>();
         additionalData.put(CURRENTSESSION, session);
         additionalData.put(COMOBJECTS, comObjects);
-        ArrayList results = new ArrayList();
+        List<Object> results = new ArrayList<>();
         //user has nothing to return.
         if (outparams != null && outparams.length > 0) {
             while (index < outparams.length) {
-                List listOfDefferedPointers = new ArrayList();
-                results.add(JIMarshalUnMarshalHelper.deSerialize(ndr, outparams[index], listOfDefferedPointers, ((Number) outparamFlags.get(index)).intValue(), additionalData));
+                List<JIPointer> listOfDefferedPointers = new ArrayList<>();
+                results.add(JIMarshalUnMarshalHelper.deSerialize(ndr, outparams[index], listOfDefferedPointers, outparamFlags.get(index), additionalData));
                 int x = 0;
-
                 while (x < listOfDefferedPointers.size()) {
-
-                    ArrayList newList = new ArrayList();
-                    JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, ((Number) outparamFlags.get(index)).intValue(), additionalData);
-                    ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
+                    List<JIPointer> newList = new ArrayList<>();
+                    JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, outparamFlags.get(index), additionalData);
+                    listOfDefferedPointers.get(x).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
                     x++;
                     listOfDefferedPointers.addAll(x, newList);
                 }
@@ -1041,7 +1037,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
             for (int i = 0; i < comObjects.size(); i++) {
                 JIComObjectImpl comObjectImpl = (JIComObjectImpl) comObjects.get(i);
                 try {
-                    IJIComObject comObject = null;
+                    IJIComObject comObject;
                     if (fromCallback) {
                         //this is a new IP , so make a new JIComServer for this.
                         JISession newsession = JISession.createSession(session);
@@ -1092,15 +1088,14 @@ public class JICallBuilder extends NdrObject implements Serializable {
     private int bufferLength() {
         int length = 0;
         Object[] inparams = inParams.toArray();
-        for (int i = 0; i < inparams.length; i++) {
-            if (inparams[i] == null) {
+        for (final Object inparam : inparams) {
+            if (inparam == null) {
                 length += 4;
                 continue;
             }
-            int length2 = JIMarshalUnMarshalHelper.getLengthInBytes(inparams[i].getClass(), inparams[i], JIFlags.FLAG_NULL);
+            int length2 = JIMarshalUnMarshalHelper.getLengthInBytes(inparam.getClass(), inparam, JIFlags.FLAG_NULL);
             length += length2;
         }
-
         return length + 2048; //2K extra for alignments, if any.
     }
 

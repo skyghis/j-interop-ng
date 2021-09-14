@@ -27,40 +27,40 @@ public interface TypeKind {
     /**
      * A set of enumerators.
      */
-    public static final Integer TKIND_ENUM = new Integer(0);
+    public static final Integer TKIND_ENUM = 0;
     /**
      * A structure with no methods.
      */
-    public static final Integer TKIND_RECORD = new Integer(1);
+    public static final Integer TKIND_RECORD = 1;
     /**
      * A module that can only have static functions and data (for example, a
      * DLL).
      */
-    public static final Integer TKIND_MODULE = new Integer(2);
+    public static final Integer TKIND_MODULE = 2;
     /**
      * A type that has virtual and pure functions.
      */
-    public static final Integer TKIND_INTERFACE = new Integer(3);
+    public static final Integer TKIND_INTERFACE = 3;
     /**
      * A set of methods and properties that are accessible through
      * IDispatch::Invoke. By default, dual interfaces return TKIND_DISPATCH.
      */
-    public static final Integer TKIND_DISPATCH = new Integer(4);
+    public static final Integer TKIND_DISPATCH = 4;
     /**
      * A set of implemented component object interfaces.
      */
-    public static final Integer TKIND_COCLASS = new Integer(5);
+    public static final Integer TKIND_COCLASS = 5;
     /**
      * A type that is an alias for another type.
      */
-    public static final Integer TKIND_ALIAS = new Integer(6);
+    public static final Integer TKIND_ALIAS = 6;
     /**
      * A union, all of whose members have an offset of zero.
      */
-    public static final Integer TKIND_UNION = new Integer(7);
+    public static final Integer TKIND_UNION = 7;
     /**
      * End of ENUM marker.
      */
-    public static final Integer TKIND_MAX = new Integer(8);
+    public static final Integer TKIND_MAX = 8;
 
 }

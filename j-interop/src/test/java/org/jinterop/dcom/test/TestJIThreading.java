@@ -135,8 +135,7 @@ public class TestJIThreading {
                             JIVariant.OPTIONAL_PARAM(),
                             JIVariant.OPTIONAL_PARAM(),
                             JIVariant.OPTIONAL_PARAM(),
-                            JIVariant.OPTIONAL_PARAM(),
-                            new Integer(0),
+                            JIVariant.OPTIONAL_PARAM(), 0,
                             JIVariant.OPTIONAL_PARAM()
                         }
                 )[0];

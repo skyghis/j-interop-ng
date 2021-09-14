@@ -243,8 +243,8 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
     //      );
     @Override
     public Object[] getDllEntry(int memberId, int invKind) throws JIException {
-        if (invKind != InvokeKind.INVOKE_FUNC.intValue() && invKind != InvokeKind.INVOKE_PROPERTYGET.intValue()
-                && invKind != InvokeKind.INVOKE_PROPERTYPUTREF.intValue() && invKind != InvokeKind.INVOKE_PROPERTYPUT.intValue()) {
+        if (invKind != InvokeKind.INVOKE_FUNC && invKind != InvokeKind.INVOKE_PROPERTYGET
+                && invKind != InvokeKind.INVOKE_PROPERTYPUTREF && invKind != InvokeKind.INVOKE_PROPERTYPUT) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.E_INVALIDARG));
         }
 
@@ -300,10 +300,10 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         vardesc.addMember(new JIPointer(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR)));
 
         JIUnion union = new JIUnion(Integer.class);
-        union.addMember(new Integer(VarDesc.VAR_PERINSTANCE), Integer.class);
-        union.addMember(new Integer(VarDesc.VAR_DISPATCH), Integer.class);
-        union.addMember(new Integer(VarDesc.VAR_STATIC), Integer.class);
-        union.addMember(new Integer(VarDesc.VAR_CONST), JIVariant.class);
+        union.addMember(VarDesc.VAR_PERINSTANCE, Integer.class);
+        union.addMember(VarDesc.VAR_DISPATCH, Integer.class);
+        union.addMember(VarDesc.VAR_STATIC, Integer.class);
+        union.addMember(VarDesc.VAR_CONST, JIVariant.class);
         vardesc.addMember(union);
 
         JIStruct elemDesc = new JIStruct();

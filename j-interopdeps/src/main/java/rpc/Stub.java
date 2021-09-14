@@ -25,13 +25,9 @@ import rpc.core.UUID;
 public abstract class Stub {
 
     private TransportFactory transportFactory;
-
     private Endpoint endpoint;
-
     private String object;
-
     private String address;
-
     private Properties properties;
 
     public String getAddress() {

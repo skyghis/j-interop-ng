@@ -24,15 +24,10 @@ import rpc.core.PresentationResult;
 public class AlterContextResponsePdu extends ConnectionOrientedPdu {
 
     public static final int ALTER_CONTEXT_RESPONSE_TYPE = 0x0f;
-
     private PresentationResult[] resultList;
-
     private int maxTransmitFragment = -1;
-
     private int maxReceiveFragment = -1;
-
     private int associationGroupId = 0;
-
     private Port secondaryAddress;
 
     @Override
@@ -84,7 +79,7 @@ public class AlterContextResponsePdu extends ConnectionOrientedPdu {
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
-        setAssociationGroupId((int) ndr.readUnsignedLong());
+        setAssociationGroupId(ndr.readUnsignedLong());
         Port secondaryAddress = new Port();
         secondaryAddress.read(ndr);
         setSecondaryAddress(secondaryAddress);

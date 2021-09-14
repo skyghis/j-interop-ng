@@ -19,7 +19,7 @@ public final class IdentifierFactory {
     }
 
     /**
-     * @return a new unique identifer.
+     * @return a new unique identifier.
      */
     public static Identifier createUniqueIdentifier() {
         return UUIDFactory.createUUID();
@@ -34,16 +34,5 @@ public final class IdentifierFactory {
      */
     public static Identifier createUniqueIdentifier(byte[] byteArray) {
         return UUIDFactory.createUUID(byteArray);
-    }
-
-    /**
-     * Creates Identifier from hex String representation of an existing
-     * Identifier
-     *
-     * @param hexString The String version of an existing Identifier.
-     * @return New Identifier from the existing hex String representation
-     */
-    public static Identifier createUniqueIdentifier(String hexString) {
-        return UUIDFactory.createUUID(hexString);
     }
 }

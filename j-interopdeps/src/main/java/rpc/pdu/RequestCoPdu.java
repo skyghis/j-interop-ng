@@ -134,7 +134,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
             try {
                 getObject().encode(ndr, ndr.getBuffer());
             } catch (NdrException ne) {
-            };
+            }
         }
     }
 

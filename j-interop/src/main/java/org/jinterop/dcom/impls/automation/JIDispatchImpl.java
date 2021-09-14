@@ -84,7 +84,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         Map innerMap = ((Map) cacheOfDispIds.get(apiName));
         if (innerMap != null) {
             Integer dispId = (Integer) innerMap.get(apiName);
-            return dispId.intValue();
+            return dispId;
         }
 
         JICallBuilder obj = new JICallBuilder(true);
@@ -129,7 +129,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
                     sendForAll = true;
                     break;
                 } else {
-                    values[i] = dispId.intValue();
+                    values[i] = dispId;
                 }
             }
 
@@ -172,7 +172,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 
         innerMap = innerMap == null ? new HashMap() : innerMap;
         for (int i = 0; i < apiName.length; i++) {
-            retVal[i] = arrayOfDispIds[i].intValue();
+            retVal[i] = arrayOfDispIds[i];
             innerMap.put(apiName[i], arrayOfDispIds[i]);
         }
 
@@ -235,8 +235,8 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
 
         dispParams.addMember(new JIPointer(arrayOfVariantsInParams)); //should be an array of variants
         dispParams.addMember(new JIPointer(arrayOfNamedDispIds)); //if there, this should be an array of variants , these too.
-        dispParams.addMember(new Integer(lengthVar));
-        dispParams.addMember(new Integer(lengthPtr));
+        dispParams.addMember(lengthVar);
+        dispParams.addMember(lengthPtr);
 
         obj.addInParamAsInt(dispId, JIFlags.FLAG_NULL);
         obj.addInParamAsUUID(UUID.NIL_UUID, JIFlags.FLAG_NULL);
@@ -334,7 +334,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             variants[i] = variant;
         }
 
-        invoke(dispId, propertyFlag, new JIArray(variants, true), new JIArray(new Integer[]{new Integer(DISPATCH_DISPID_PUTPUTREF)}, true), null);
+        invoke(dispId, propertyFlag, new JIArray(variants, true), new JIArray(new Integer[]{DISPATCH_DISPID_PUTPUTREF}, true), null);
         //invoke(dispId,propertyFlag,new JIArray(new JIVariant[]{inparam},true),new JIArray(new Integer[]{new Integer(propertyFlag)},true),null);
     }
 
@@ -492,7 +492,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         Integer[] array = new Integer[inparams.length];
         //now prepare the JIArray of dispIds.
         for (int i = 0; i < inparams.length; i++) {
-            array[i] = new Integer(dispIds[i]);
+            array[i] = dispIds[i];
         }
 
         JIArray arrayOfValues = new JIArray(array, true);
@@ -566,7 +566,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             JISystem.getLogger().throwing("JIDispatchImpl", "static initializer", e);
         }
         for (int i = 0; i < 100; i++) {
-            arrayOfDispIds[i] = new Integer(i);
+            arrayOfDispIds[i] = i;
         }
 
     }

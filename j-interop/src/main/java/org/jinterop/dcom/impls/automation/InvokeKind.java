@@ -26,12 +26,12 @@ public interface InvokeKind {
     /**
      * The member is called using a normal function invocation syntax
      */
-    public static final Integer INVOKE_FUNC = new Integer(1);
+    public static final Integer INVOKE_FUNC = 1;
 
     /**
      * The function is invoked using a normal property-access syntax.
      */
-    public static final Integer INVOKE_PROPERTYGET = new Integer(2);
+    public static final Integer INVOKE_PROPERTYGET = 2;
 
     /**
      * The function is invoked using a property value assignment syntax.
@@ -39,10 +39,10 @@ public interface InvokeKind {
      * property in the same way as assignment. For example:object.property : =
      * value.
      */
-    public static final Integer INVOKE_PROPERTYPUT = new Integer(4);
+    public static final Integer INVOKE_PROPERTYPUT = 4;
 
     /**
      * The function is invoked using a property reference assignment syntax.
      */
-    public static final Integer INVOKE_PROPERTYPUTREF = new Integer(8);
+    public static final Integer INVOKE_PROPERTYPUTREF = 8;
 }

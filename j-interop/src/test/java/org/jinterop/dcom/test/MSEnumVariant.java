@@ -32,11 +32,11 @@ public class MSEnumVariant {
     public void performOp() throws JIException {
         int i = 0;
         for (; i < 5; i++) {
-            dispatch.callMethod("Add", new Object[]{new Integer(i), new JIString("Key-" + i)});
+            dispatch.callMethod("Add", new Object[]{i, new JIString("Key-" + i)});
         }
 
         for (; i < 10; i++) {
-            dispatch.callMethod("Add", new Object[]{new Integer(i), JIVariant.OPTIONAL_PARAM()});
+            dispatch.callMethod("Add", new Object[]{i, JIVariant.OPTIONAL_PARAM()});
         }
 
         JIVariant variant = dispatch.get("_NewEnum");
@@ -51,7 +51,7 @@ public class MSEnumVariant {
             JIArray array = (JIArray) values[0];
             Object[] arrayObj = (Object[]) array.getArrayInstance();
             for (int j = 0; j < arrayObj.length; j++) {
-                System.out.println(((JIVariant) arrayObj[j]).getObjectAsInt() + "," + ((Integer) values[1]).intValue());
+                System.out.println(((JIVariant) arrayObj[j]).getObjectAsInt() + "," + ((Integer) values[1]));
             }
 
             int j = 0;

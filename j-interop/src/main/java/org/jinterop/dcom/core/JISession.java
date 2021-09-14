@@ -95,7 +95,7 @@ public final class JISession {
         private IPID_SessionID_Holder(String IPID, int sessionID, boolean isOnlySessionId, byte[] oid) {
             this.IPID = IPID;
             this.isOnlySessionIDPresent = isOnlySessionId;
-            this.sessionID = new Integer(sessionID);
+            this.sessionID = sessionID;
             this.oid = oid;
         }
     }
@@ -483,7 +483,7 @@ public final class JISession {
         //if stub is null then cleanup datastructures holding the session object only
         if (session.stub == null) {
             synchronized (MUTEX) {
-                mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
+                mapOfSessionIdsVsSessions.remove(session.getSessionIdentifier());
                 listOfSessions.remove(session);
             }
 
@@ -518,7 +518,7 @@ public final class JISession {
                     Entry entry = (Entry) iterator.next();
 //          IPID_SessionID_Holder holder = (IPID_SessionID_Holder)mapOfObjects.get(iterator.next());
                     IPID_SessionID_Holder holder = (IPID_SessionID_Holder) entry.getValue();
-                    if (session.getSessionIdentifier() != holder.sessionID.intValue()) {
+                    if (session.getSessionIdentifier() != holder.sessionID) {
                         continue;
                     }
                     String ipid = holder.IPID;
@@ -566,7 +566,7 @@ public final class JISession {
             }
         } finally {
             synchronized (MUTEX) {
-                mapOfSessionIdsVsSessions.remove(new Integer(session.getSessionIdentifier()));
+                mapOfSessionIdsVsSessions.remove(session.getSessionIdentifier());
                 listOfSessions.remove(session);
                 // and remove its entry from the map
                 if (session.stub.getServerInterfacePointer() != null) {
@@ -748,8 +748,8 @@ public final class JISession {
     private JIStruct prepareForReleaseRef(String IPID, int numInstancesfirsttime) throws JIException {
         JIStruct remInterface = new JIStruct();
         remInterface.addMember(new rpc.core.UUID(IPID));
-        remInterface.addMember(new Integer(numInstancesfirsttime + 5)); // numInstancesfirsttime of the original and 5 for the addRef done later on.
-        remInterface.addMember(new Integer(0));//private refs = 0
+        remInterface.addMember(numInstancesfirsttime + 5); // numInstancesfirsttime of the original and 5 for the addRef done later on.
+        remInterface.addMember(0);//private refs = 0
         if (JISystem.getLogger().isLoggable(Level.INFO)) {
             JISystem.getLogger().log(Level.INFO, "prepareForReleaseRef: Releasing numInstancesfirsttime + 5 references of IPID: {0} session: {1} , numInstancesfirsttime is {2}", new Object[]{IPID, getSessionIdentifier(), numInstancesfirsttime});
         }

@@ -139,11 +139,11 @@ public final class JIString implements Serializable {
         return type;
     }
 
-    void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
-        JIMarshalUnMarshalHelper.serialize(ndr, member.getClass(), member, defferedPointers, type | FLAG);
+    void encode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG) {
+        JIMarshalUnMarshalHelper.serialize(ndr, JIPointer.class, member, defferedPointers, type | FLAG);
     }
 
-    JIString decode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG, Map additionalData) {
+    JIString decode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         JIString newString = new JIString(type);
         newString.member = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, member, defferedPointers, type | FLAG, additionalData);
         return newString;

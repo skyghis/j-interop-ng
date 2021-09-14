@@ -44,35 +44,25 @@ public final class UUIDFactory {
     private UUIDFactory() {
 
     }
-    private static final long serialVersionUID = 1;
 
     // length of the ObjectId byte array
     private static final short OID_LENGTH = 16;
-
     // length to shift by one byte
     private static final short BYTE_SHIFT = 8;
-
     // byte and nibble masks
     private static final short LOW_BYTE_MASK = (short) ((short) (1 << BYTE_SHIFT) - 1);
-
     // private static final short HIGH_NIBBLE_MASK = (short) 0xf0;
     private static final short LOW_NIBBLE_MASK = (short) 0x0f;
-
     // maximum sequence number (four bytes)
     // leave room on high byte to stuff a version number
     private static final int MAX_SEQUENCE_NUMBER = 0x4000;
-
     // static sequence number
     private static int sequenceNumber = 0;
-
     // static MAC address
     private static byte[] macAddr;
-
     private static final short MACADDR_LENGTH = 6;
-
     // random number generator
     private static Random rand = new Random(System.currentTimeMillis());
-
     // last time encountered
     private static BigInteger lastTimestamp = BigInteger.ZERO;
 

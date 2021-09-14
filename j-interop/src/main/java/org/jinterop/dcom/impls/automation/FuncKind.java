@@ -28,25 +28,25 @@ public interface FuncKind {
      * The function is accessed the same as PUREVIRTUAL, except the function has
      * an implementation.
      */
-    public static final Integer FUNC_VIRTUAL = new Integer(0);
+    public static final Integer FUNC_VIRTUAL = 0;
     /**
      * The function is accessed through the virtual function table (VTBL), and
      * takes an implicit <i>this</i> pointer.
      */
-    public static final Integer FUNC_PUREVIRTUAL = new Integer(1);
+    public static final Integer FUNC_PUREVIRTUAL = 1;
     /**
      * The function is accessed by static address and takes an implicit
      * <i>this</i> pointer.
      */
-    public static final Integer FUNC_NONVIRTUAL = new Integer(2);
+    public static final Integer FUNC_NONVIRTUAL = 2;
     /**
      * The function is accessed by static address and does not take an implicit
      * <i>this</i> pointer.
      */
-    public static final Integer FUNC_STATIC = new Integer(3);
+    public static final Integer FUNC_STATIC = 3;
     /**
      * The function can be accessed only through IDispatch.
      */
-    public static final Integer FUNC_DISPATCH = new Integer(4);
+    public static final Integer FUNC_DISPATCH = 4;
 
 }

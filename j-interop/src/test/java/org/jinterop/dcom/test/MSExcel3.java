@@ -60,25 +60,25 @@ public class MSExcel3 {
         IJIDispatch range = (IJIDispatch) JIObjectFactory.narrowObject(outVal2[0].getObjectAsComObject());
 
         Integer[][] newValue = {
-            {new Integer(121), new Integer(117)},
-            {new Integer(111), new Integer(156)},
-            {new Integer(132), new Integer(138)},
-            {new Integer(116), new Integer(119)},
-            {new Integer(148), new Integer(126)},
-            {new Integer(163), new Integer(143)},
-            {new Integer(174), new Integer(135)},
-            {new Integer(136), new Integer(142)},
-            {new Integer(142), new Integer(163)},
-            {new Integer(121), new Integer(117)},
-            {new Integer(111), new Integer(156)},
-            {new Integer(132), new Integer(138)},
-            {new Integer(116), new Integer(119)},
-            {new Integer(148), new Integer(126)},
-            {new Integer(163), new Integer(143)},
-            {new Integer(174), new Integer(135)},
-            {new Integer(136), new Integer(142)},
-            {new Integer(142), new Integer(163)},
-            {new Integer(121), new Integer(117)}
+            {121, 117},
+            {111, 156},
+            {132, 138},
+            {116, 119},
+            {148, 126},
+            {163, 143},
+            {174, 135},
+            {136, 142},
+            {142, 163},
+            {121, 117},
+            {111, 156},
+            {132, 138},
+            {116, 119},
+            {148, 126},
+            {163, 143},
+            {174, 135},
+            {136, 142},
+            {142, 163},
+            {121, 117}
         };
 
         range.put("Value", new JIVariant(new JIArray(newValue)));

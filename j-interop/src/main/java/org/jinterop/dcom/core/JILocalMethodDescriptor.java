@@ -33,7 +33,7 @@ public final class JILocalMethodDescriptor {
     private String methodName = null;
     private int methodNum = -1;
     private int dispId = -1;
-    private Class[] inparametersAsClass = new Class[0];
+    private Class<?>[] inparametersAsClass = new Class<?>[0];
     private JILocalParamsDescriptor parameters = null;
 
     /**
@@ -76,12 +76,12 @@ public final class JILocalMethodDescriptor {
 
         this.parameters = parameters;
         Object[] params = parameters.getInParams();
-        inparametersAsClass = new Class[params.length];
+        inparametersAsClass = new Class<?>[params.length];
 
         for (int i = 0; i < params.length; i++) {
             Object obj = params[i];
             if (obj instanceof Class) {
-                Class c = (Class) obj;
+                Class<?> c = (Class) obj;
 
                 {
                     //get the primitive members here
@@ -152,7 +152,7 @@ public final class JILocalMethodDescriptor {
     /**
      * @exclude @return
      */
-    Class[] getInparametersAsClass() {
+    Class<?>[] getInparametersAsClass() {
         return inparametersAsClass;
     }
 }

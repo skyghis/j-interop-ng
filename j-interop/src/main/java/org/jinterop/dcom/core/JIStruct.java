@@ -202,7 +202,7 @@ public final class JIStruct implements Serializable {
         return listOfMembers.size();
     }
 
-    void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
+    void encode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG) {
         //first write all Max counts and then the rest of the structs
         for (int i = 0; i < listOfMaxCounts.size(); i++) {
             JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, listOfMaxCounts.get(i), null, FLAG);
@@ -227,7 +227,7 @@ public final class JIStruct implements Serializable {
         }
     }
 
-    JIStruct decode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG, Map additionalData) {
+    JIStruct decode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         JIStruct retVal = new JIStruct();
         ArrayList listOfMaxCounts2 = new ArrayList();
         //first read all Max counts and then the rest of the structs

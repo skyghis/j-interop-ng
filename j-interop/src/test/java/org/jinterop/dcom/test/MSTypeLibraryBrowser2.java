@@ -59,12 +59,12 @@ public class MSTypeLibraryBrowser2 {
             TypeAttr typeAttr = typeInfo.getTypeAttr();
             IJITypeInfo ptempInfo = null;
             TypeAttr pTempAttr = null;
-            if (typeAttr.typekind != TypeKind.TKIND_DISPATCH.intValue() && typeAttr.typekind != TypeKind.TKIND_COCLASS.intValue()) {
+            if (typeAttr.typekind != TypeKind.TKIND_DISPATCH && typeAttr.typekind != TypeKind.TKIND_COCLASS) {
                 int p = 0;
                 p++;
             }
 
-            if (typeAttr.typekind == TypeKind.TKIND_COCLASS.intValue()) {
+            if (typeAttr.typekind == TypeKind.TKIND_COCLASS) {
 
                 for (int i = 0; i < typeAttr.cImplTypes; i++) {
                     int nFlags = -1;
@@ -167,9 +167,9 @@ public class MSTypeLibraryBrowser2 {
 
                 for (int j = 0; j < pFuncDesc.cParams; j++) {
 
-                    if (types[j].typeDesc.vt == TypeDesc.VT_SAFEARRAY.shortValue()) {
+                    if (types[j].typeDesc.vt == TypeDesc.VT_SAFEARRAY) {
                         System.out.println("Param(" + j + ") type = SafeArray");
-                    } else if (types[j].typeDesc.vt == TypeDesc.VT_PTR.shortValue()) {
+                    } else if (types[j].typeDesc.vt == TypeDesc.VT_PTR) {
                         System.out.println("Param(" + j + ") type = Pointer");
                     } else {
                         System.out.println("Param(" + j + ") type = UserDefined");

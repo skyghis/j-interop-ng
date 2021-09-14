@@ -100,7 +100,7 @@ final class JIInterfacePointer implements Serializable {
         member.setDeffered(true);
     }
 
-    static JIInterfacePointer decode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG, Map additionalData) {
+    static JIInterfacePointer decode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
         JIInterfacePointer ptr = new JIInterfacePointer();
         if ((FLAG & JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2) == JIFlags.FLAG_REPRESENTATION_INTERFACEPTR_DECODE2) {
             ptr.member = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, new JIPointer(JIInterfacePointerBody.class, true), defferedPointers, FLAG, additionalData);
@@ -173,11 +173,11 @@ final class JIInterfacePointer implements Serializable {
         return ((JIInterfacePointerBody) (member.getReferent())).getLength();
     }
 
-    void encode(NetworkDataRepresentation ndr, List defferedPointers, int FLAG) {
+    void encode(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, int FLAG) {
 
         if ((FLAG & JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT) == JIFlags.FLAG_REPRESENTATION_SET_JIINTERFACEPTR_NULL_FOR_VARIANT) {
             //just encode a null.
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(0), defferedPointers, FLAG);
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, 0, defferedPointers, FLAG);
             return;
         }
         JIMarshalUnMarshalHelper.serialize(ndr, member.getClass(), member, defferedPointers, FLAG);

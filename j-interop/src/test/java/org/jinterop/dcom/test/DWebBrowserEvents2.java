@@ -175,7 +175,7 @@ public class DWebBrowserEvents2 {
             int CX,
             int CY) {
         System.out.println("ClientToHostWindow - > " + CX + " , " + CY);
-        return new Integer[]{new Integer(CX), new Integer(CY)};
+        return new Integer[]{CX, CY};
     }
 
     //    [id(0x0000010d), helpstring("Fired to indicate the security level of the current web page contents")]

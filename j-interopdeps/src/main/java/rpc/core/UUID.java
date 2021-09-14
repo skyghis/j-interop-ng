@@ -22,22 +22,9 @@ import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
-public class UUID extends NdrObject {
+public final class UUID extends NdrObject {
 
-    public static final String NIL_UUID
-            = "00000000-0000-0000-0000-000000000000";
-
-    private static final int TIMELOW_INDEX = 0;
-
-    private static final int TIMEMID_INDEX = 1;
-
-    private static final int TIMEHIGHANDVERSION_INDEX = 2;
-
-    private static final int CLOCKSEQHIGHANDRESERVED_INDEX = 3;
-
-    private static final int CLOCKSEQLOW_INDEX = 4;
-
-    private static final int NODE_INDEX = 5;
+    public static final String NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
     int timeLow, timeMid, timeHighAndVersion, clockSeqHighAndReserved, clockSeqLow;
     byte[] node = new byte[6];
@@ -71,70 +58,9 @@ public class UUID extends NdrObject {
         src.index += 6;
     }
 
-    /*
-     * public long getTimeLow() {
-     * return ((UnsignedLongHolder)
-     * structure.get(TIMELOW_INDEX)).getUnsignedLong();
-     * }
-     *
-     * public void setTimeLow(long timeLow) {
-     * ((UnsignedLongHolder) structure.get(TIMELOW_INDEX)).setUnsignedLong(
-     * timeLow);
-     * }
-     *
-     * public int getTimeMid() {
-     * return ((UnsignedShortHolder)
-     * structure.get(TIMEMID_INDEX)).getUnsignedShort();
-     * }
-     *
-     * public void setTimeMid(int timeMid) {
-     * ((UnsignedShortHolder) structure.get(TIMEMID_INDEX)).setUnsignedShort(
-     * timeMid);
-     * }
-     *
-     * public int getTimeHighAndVersion() {
-     * return ((UnsignedShortHolder)
-     * structure.get(TIMEHIGHANDVERSION_INDEX)).getUnsignedShort();
-     * }
-     *
-     * public void setTimeHighAndVersion(int timeHighAndVersion) {
-     * ((UnsignedShortHolder)
-     * structure.get(TIMEHIGHANDVERSION_INDEX)).setUnsignedShort(
-     * timeHighAndVersion);
-     * }
-     *
-     * public short getClockSeqHighAndReserved() {
-     * return ((UnsignedSmallHolder) structure.get(
-     * CLOCKSEQHIGHANDRESERVED_INDEX)).getUnsignedSmall();
-     * }
-     *
-     * public void setClockSeqHighAndReserved(short clockSeqHighAndReserved) {
-     * ((UnsignedSmallHolder) structure.get(
-     * CLOCKSEQHIGHANDRESERVED_INDEX)).setUnsignedSmall(
-     * clockSeqHighAndReserved);
-     * }
-     *
-     * public short getClockSeqLow() {
-     * return ((UnsignedSmallHolder) structure.get(
-     * CLOCKSEQLOW_INDEX)).getUnsignedSmall();
-     * }
-     *
-     * public void setClockSeqLow(short clockSeqLow) {
-     * ((UnsignedSmallHolder) structure.get(
-     * CLOCKSEQLOW_INDEX)).setUnsignedSmall(clockSeqLow);
-     * }
-     *
-     * public byte[] getNode() {
-     * return (byte[]) ((FixedArray) structure.get(NODE_INDEX)).getArray();
-     * }
-     *
-     * public void setNode(byte[] node) {
-     * ((FixedArray) structure.get(NODE_INDEX)).setArray(node);
-     * }
-     */
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 //        int timeLow = (int) (getTimeLow() & 0xffffffffl);
         buffer.append(Integer.toHexString((timeLow >> 28) & 0x0f));
         buffer.append(Integer.toHexString((timeLow >> 24) & 0x0f));

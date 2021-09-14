@@ -30,7 +30,7 @@ public final class JIUnsignedByte implements IJIUnsigned {
     private final Short byteValue;
 
     JIUnsignedByte(Short byteValue) {
-        if (byteValue == null || byteValue.shortValue() < 0) {
+        if (byteValue == null || byteValue < 0) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UNSIGNED_NEGATIVE));
         }
         this.byteValue = byteValue;

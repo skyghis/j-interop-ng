@@ -31,10 +31,10 @@ import org.jinterop.dcom.core.JIUnion;
 public final class TypeDesc implements Serializable {
 
     private static final long serialVersionUID = 6276233095707726579L;
-    public static final Short VT_PTR = new Short((short) 0x1a);
-    public static final Short VT_SAFEARRAY = new Short((short) 0x1b);
-    public static final Short VT_CARRAY = new Short((short) 0x1c);
-    public static final Short VT_USERDEFINED = new Short((short) 0x1d);
+    public static final Short VT_PTR = (short) 0x1a;
+    public static final Short VT_SAFEARRAY = (short) 0x1b;
+    public static final Short VT_CARRAY = (short) 0x1c;
+    public static final Short VT_USERDEFINED = (short) 0x1d;
 
     public final JIPointer typeDesc;
     public final JIPointer arrayDesc;

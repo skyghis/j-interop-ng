@@ -53,7 +53,7 @@ final class JIOxidResolver extends NdrObject {
     public void write(NetworkDataRepresentation ndr) {
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oxid);
         JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short((short) 1), new ArrayList(), JIFlags.FLAG_NULL);
-        JIMarshalUnMarshalHelper.serialize(ndr, JIArray.class, new JIArray(new Short[]{new Short((short) 7)}, true), new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY);
+        JIMarshalUnMarshalHelper.serialize(ndr, JIArray.class, new JIArray(new Short[]{(short) 7}, true), new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY);
     }
 
     @Override

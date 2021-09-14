@@ -17,7 +17,7 @@
 package rpc.security.ntlm;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 import java.util.Random;
@@ -342,11 +342,7 @@ public class NtlmAuthentication {
                     i++;//advance two bytes
                     byte[] domainb = new byte[length];
                     System.arraycopy(targetInformation, i, domainb, 0, length);
-                    try {
-                        target = new String(domainb, "UTF-16LE");
-                    } catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
+                    target = new String(domainb, StandardCharsets.UTF_16LE);
                     i = i + length;
                     i = targetInformation.length;
                     break;

@@ -109,7 +109,7 @@ public class MSShell {
             callObject2.addOutParamAsType(Boolean.class, JIFlags.FLAG_NULL);
             result = folderItem.call(callObject2);
 
-            boolean isFileSystemObject = ((Boolean) result[0]).booleanValue();
+            boolean isFileSystemObject = ((Boolean) result[0]);
 
             if (isFileSystemObject) {
                 System.out.print(" and is part of file system\n");
@@ -122,7 +122,7 @@ public class MSShell {
             callObject2.setOpnum(13);
             callObject2.addOutParamAsObject((Integer.class), JIFlags.FLAG_NULL);
             result = folderItem.call(callObject2);
-            System.out.print(" and size(in bytes) is: " + ((Integer) result[0]).intValue() + "\n");
+            System.out.print(" and size(in bytes) is: " + ((Integer) result[0]) + "\n");
 
         }
     }

@@ -47,7 +47,7 @@ final class JIOrpcExtentArray implements Serializable {
     public byte[] getData() {
         byte[] newData = new byte[data.length];
         for (int i = 0; i < data.length; i++) {
-            newData[i] = data[i].byteValue();
+            newData[i] = data[i];
         }
         return newData;
     }

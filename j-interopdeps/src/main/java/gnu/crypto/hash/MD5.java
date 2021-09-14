@@ -345,8 +345,8 @@ public class MD5 extends BaseHash {
     @Override
     public boolean selfTest() {
         if (valid == null) {
-            valid = new Boolean(DIGEST0.equals(Util.toString(new MD5().digest())));
+            valid = DIGEST0.equals(Util.toString(new MD5().digest()));
         }
-        return valid.booleanValue();
+        return valid;
     }
 }

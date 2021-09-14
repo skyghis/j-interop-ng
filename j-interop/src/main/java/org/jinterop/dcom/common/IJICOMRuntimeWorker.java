@@ -22,7 +22,6 @@ import rpc.core.UUID;
 /**
  * Framework Internal.
  *
- * @exclude
  * @since 1.0
  */
 public interface IJICOMRuntimeWorker {
@@ -35,7 +34,7 @@ public interface IJICOMRuntimeWorker {
 
     public UUID getCurrentObjectID();
 
-    public List getQIedIIDs();
+    public List<String> getQIedIIDs();
 
     public boolean isResolver();
 

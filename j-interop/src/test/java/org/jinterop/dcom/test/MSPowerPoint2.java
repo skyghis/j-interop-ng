@@ -60,7 +60,7 @@ public class MSPowerPoint2 {
     }
 
     public void savePresentationAs(IJIDispatch presentation, String fullEscapedPath) throws JIException {
-        presentation.callMethod("SaveAs", new Object[]{new JIString(fullEscapedPath).Variant, JIVariant.OPTIONAL_PARAM(), new Integer(-1)});
+        presentation.callMethod("SaveAs", new Object[]{new JIString(fullEscapedPath).Variant, JIVariant.OPTIONAL_PARAM(), -1});
     }
 
     public void goto_First_Slide(IJIDispatch view) throws JIException {
@@ -80,7 +80,7 @@ public class MSPowerPoint2 {
     }
 
     public void goto_Numbered_Slide(IJIDispatch view, int index) throws JIException {
-        view.callMethod("GotoSlide", new Object[]{new Integer(index), JIVariant.OPTIONAL_PARAM()});
+        view.callMethod("GotoSlide", new Object[]{index, JIVariant.OPTIONAL_PARAM()});
     }
 
     public static void main(String[] args) {

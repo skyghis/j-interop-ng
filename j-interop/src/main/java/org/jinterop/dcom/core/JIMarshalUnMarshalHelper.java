@@ -16,7 +16,7 @@
  */
 package org.jinterop.dcom.core;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -37,7 +37,7 @@ import rpc.core.UUID;
 
 final class JIMarshalUnMarshalHelper {
 
-    private static Map mapOfSerializers = new HashMap();
+    private static final Map<Class<?>, SerializerDeserializer> mapOfSerializers = new HashMap<>();
 
     //TODO This is very important , please note that arrays in C++ have a fixed size and unlike Java have to be
     //declared with there Max index right in the beginning. therefore all arrays (of any type) , will
@@ -45,7 +45,6 @@ final class JIMarshalUnMarshalHelper {
     // Basically the index on COMs side should match with the array length here...otherwise exception
     // will come. This has to be managed by IDL generator.
     static {
-
         mapOfSerializers.put(Date.class, new JIMarshalUnMarshalHelper.DateImpl());
         mapOfSerializers.put(JICurrency.class, new JIMarshalUnMarshalHelper.JICurrencyImpl());
         mapOfSerializers.put(VariantBody.class, new JIMarshalUnMarshalHelper.JIVariant2Impl());
@@ -72,7 +71,6 @@ final class JIMarshalUnMarshalHelper {
         mapOfSerializers.put(JIUnsignedShort.class, new JIMarshalUnMarshalHelper.JIUnsignedShortImpl());
         mapOfSerializers.put(JIUnsignedInteger.class, new JIMarshalUnMarshalHelper.JIUnsignedIntImpl());
         //mapOfSerializers.put(IJIUnsigned.class,new JIMarshalUnMarshalHelper.JIUnsignedImpl());
-
     }
 
     static byte[] readOctetArrayLE(NetworkDataRepresentation ndr, int length) {
@@ -92,36 +90,31 @@ final class JIMarshalUnMarshalHelper {
         }
     }
 
-    static void serialize(NetworkDataRepresentation ndr, Class c, Object value, List defferedPointers, int FLAG) {
+    static <T> void serialize(NetworkDataRepresentation ndr, Class<?> c, T value, List<JIPointer> defferedPointers, int FLAG) {
         if (c.equals(JIArray.class)) {
             ((JIArray) value).encode(ndr, ((JIArray) value).getArrayInstance(), defferedPointers, FLAG);
         } else {
             if ((c != IJIComObject.class || c != IJIDispatch.class) && value instanceof IJIComObject) {
                 c = IJIComObject.class;
             }
-
             alignMemberWhileEncoding(ndr, c, value);
 
             if (c.equals(JIString.class)) {
                 ((JIString) value).encode(ndr, defferedPointers, FLAG);
                 return;
             }
-
             if (c.equals(JIPointer.class)) {
                 ((JIPointer) value).encode(ndr, defferedPointers, FLAG);
                 return;
             }
-
             if (c.equals(JIStruct.class)) {
                 ((JIStruct) value).encode(ndr, defferedPointers, FLAG);
                 return;
             }
-
             if (c.equals(JIUnion.class)) {
                 ((JIUnion) value).encode(ndr, defferedPointers, FLAG);
                 return;
             }
-
             //if (c.equals(JIDispatchImpl.class) || c.equals(IJIDispatch.class))
             //{
             //  IJIComObject unknown = ((JIDispatchImpl)value).getCOMObject();
@@ -150,15 +143,14 @@ final class JIMarshalUnMarshalHelper {
                 ((VariantBody) value).encode(ndr, defferedPointers, FLAG);
                 return;
             }
-
             if (mapOfSerializers.get(c) == null) {
                 throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND), c.toString()));
             }
-            ((SerializerDeserializer) mapOfSerializers.get(c)).serializeData(ndr, value, defferedPointers, FLAG);
+            mapOfSerializers.get(c).serializeData(ndr, value, defferedPointers, FLAG);
         }
     }
 
-    static void alignMemberWhileEncoding(NetworkDataRepresentation ndr, Class c, Object obj) {
+    private static <T> void alignMemberWhileEncoding(NetworkDataRepresentation ndr, Class<?> c, T obj) {
         double index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
         if (c.equals(JIStruct.class)) {
             double align = new Integer(((JIStruct) obj).getAlignment()).doubleValue();
@@ -168,7 +160,8 @@ final class JIMarshalUnMarshalHelper {
             double align = new Integer(((JIUnion) obj).getAlignment()).doubleValue();
             long i = (long) ((i = Math.round(index % align)) == 0 ? 0 : align - i);
             ndr.writeOctetArray(new byte[(int) i], 0, (int) i);
-        } else if (/* c.equals(Character.class) || c.equals(Byte.class) || */c.equals(Integer.class) || c.equals(Float.class)
+        } else if (/* c.equals(Character.class) || c.equals(Byte.class) || */c.equals(Integer.class)
+                || c.equals(Float.class)
                 || c.equals(JIVariant.class)
                 || c.equals(String.class)
                 || c.equals(JIPointer.class)) {
@@ -185,7 +178,7 @@ final class JIMarshalUnMarshalHelper {
         }
     }
 
-    static void alignMemberWhileDecoding(NetworkDataRepresentation ndr, Class c, Object obj) {
+    private static <T> void alignMemberWhileDecoding(NetworkDataRepresentation ndr, Class<?> c, T obj) {
         double index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
         if (c.equals(JIStruct.class)) {
             double align = new Integer(((JIStruct) obj).getAlignment()).doubleValue();
@@ -212,12 +205,11 @@ final class JIMarshalUnMarshalHelper {
         }
     }
 
-    static Object deSerialize(NetworkDataRepresentation ndr, Object obj, List defferedPointers, int FLAG, Map additionalData) {
-        Class c = obj instanceof Class ? (Class) obj : obj.getClass();
+    static Object deSerialize(NetworkDataRepresentation ndr, Object obj, List<JIPointer> defferedPointers, int FLAG, Map additionalData) {
+        Class<?> c = obj instanceof Class ? (Class) obj : obj.getClass();
         if (c.equals(JIArray.class)) {
             return ((JIArray) obj).decode(ndr, ((JIArray) obj).getArrayClass(), ((JIArray) obj).getDimensions(), defferedPointers, FLAG, additionalData);
         } else {
-
             alignMemberWhileDecoding(ndr, c, obj);
 
             if (c.equals(JIPointer.class)) {
@@ -263,7 +255,6 @@ final class JIMarshalUnMarshalHelper {
             }
             return ((SerializerDeserializer) mapOfSerializers.get(obj)).deserializeData(ndr, defferedPointers, additionalData, FLAG);
         }
-
     }
 
     static int getLengthInBytes(Class c, Object obj, int FLAG) {
@@ -284,9 +275,9 @@ final class JIMarshalUnMarshalHelper {
 
     private interface SerializerDeserializer {
 
-        void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG);
+        void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG);
 
-        Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG);
+        Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG);
 
         int getLengthInBytes(Object value, int FLAG);
     }
@@ -294,12 +285,12 @@ final class JIMarshalUnMarshalHelper {
     private static class PointerImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -313,14 +304,14 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedIntImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, new Integer(((IJIUnsigned) value).getValue().intValue()), null, FLAG);
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
+            JIMarshalUnMarshalHelper.serialize(ndr, Integer.class, ((IJIUnsigned) value).getValue().intValue(), null, FLAG);
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             Integer b = (Integer) JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, FLAG, additionalData);
-            return JIUnsignedFactory.getUnsigned(new Long((b.intValue() & 0xFFFFFFFFL)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
+            return JIUnsignedFactory.getUnsigned((b & 0xFFFFFFFFL), JIFlags.FLAG_REPRESENTATION_UNSIGNED_INT);
         }
 
         @Override
@@ -333,14 +324,14 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedByteImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Byte.class, new Byte(((IJIUnsigned) value).getValue().byteValue()), null, FLAG);
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
+            JIMarshalUnMarshalHelper.serialize(ndr, Byte.class, ((IJIUnsigned) value).getValue().byteValue(), null, FLAG);
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             Byte b = (Byte) JIMarshalUnMarshalHelper.deSerialize(ndr, Byte.class, null, FLAG, additionalData);
-            return JIUnsignedFactory.getUnsigned(new Short((short) (b.byteValue() & 0xFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE);
+            return JIUnsignedFactory.getUnsigned((short) (b & 0xFF), JIFlags.FLAG_REPRESENTATION_UNSIGNED_BYTE);
         }
 
         @Override
@@ -353,14 +344,14 @@ final class JIMarshalUnMarshalHelper {
     private static class JIUnsignedShortImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short(((IJIUnsigned) value).getValue().shortValue()), null, FLAG);
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
+            JIMarshalUnMarshalHelper.serialize(ndr, Short.class, ((IJIUnsigned) value).getValue().shortValue(), null, FLAG);
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             Short b = (Short) JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, FLAG, additionalData);
-            return JIUnsignedFactory.getUnsigned(new Integer((b.shortValue() & 0xFFFF)), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);
+            return JIUnsignedFactory.getUnsigned((b & 0xFFFF), JIFlags.FLAG_REPRESENTATION_UNSIGNED_SHORT);
         }
 
         @Override
@@ -372,12 +363,12 @@ final class JIMarshalUnMarshalHelper {
     private static class StructImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -391,12 +382,12 @@ final class JIMarshalUnMarshalHelper {
     private static class UnionImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -410,12 +401,12 @@ final class JIMarshalUnMarshalHelper {
     private static class IJIComObjectSerDer implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             serialize(ndr, JIInterfacePointer.class, ((IJIComObject) value).internal_getInterfacePointer(), defferedPointers, FLAG);
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             JISession session = (JISession) additionalData.get(JICallBuilder.CURRENTSESSION);
             IJIComObject comObject = new JIComObjectImpl(session, (JIInterfacePointer) deSerialize(ndr, JIInterfacePointer.class, defferedPointers, FLAG, additionalData));
             ((Collection) additionalData.get(JICallBuilder.COMOBJECTS)).add(comObject);
@@ -433,12 +424,12 @@ final class JIMarshalUnMarshalHelper {
     private static class JIVariant2Impl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -452,12 +443,12 @@ final class JIMarshalUnMarshalHelper {
     private static class JIVariantImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -476,13 +467,13 @@ final class JIMarshalUnMarshalHelper {
     private static class CharacterImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
-            ndr.writeUnsignedSmall(((Character) value).charValue());
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
+            ndr.writeUnsignedSmall(((Character) value));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
-            Character c = new Character((char) ndr.readUnsignedSmall());
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
+            Character c = (char) ndr.readUnsignedSmall();
             return c;
         }
 
@@ -496,13 +487,13 @@ final class JIMarshalUnMarshalHelper {
     private static class ByteImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             ndr.writeUnsignedSmall(((Number) value).byteValue());
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
-            Byte c = new Byte((byte) ndr.readUnsignedSmall());
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
+            Byte c = (byte) ndr.readUnsignedSmall();
             return c;
         }
 
@@ -516,17 +507,17 @@ final class JIMarshalUnMarshalHelper {
     private static class ShortImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
-                value = new Short(Short.MIN_VALUE);
+                value = Short.MIN_VALUE;
             }
             ndr.writeUnsignedShort(((Number) value).shortValue());
 
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
-            Short s = new Short((short) ndr.readUnsignedShort());
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
+            Short s = (short) ndr.readUnsignedShort();
             return s;
         }
 
@@ -542,27 +533,27 @@ final class JIMarshalUnMarshalHelper {
     private static class BooleanImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
                 value = Boolean.FALSE;
             }
 
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL) == JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL) {
-                ndr.writeUnsignedShort(((Boolean) value).booleanValue() == true ? 0xFFFF : 0x0000);
+                ndr.writeUnsignedShort(((Boolean) value) == true ? 0xFFFF : 0x0000);
             } else {
-                ndr.writeBoolean(((Boolean) value).booleanValue());
+                ndr.writeBoolean(((Boolean) value));
             }
 
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             Boolean b = null;
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL) == JIFlags.FLAG_REPRESENTATION_VARIANT_BOOL) {
                 int s = ndr.readUnsignedShort();
                 b = s != 0 ? Boolean.TRUE : Boolean.FALSE;
             } else {
-                b = Boolean.valueOf(ndr.readBoolean());
+                b = ndr.readBoolean();
             }
 
             return b;
@@ -581,16 +572,16 @@ final class JIMarshalUnMarshalHelper {
     private static class IntegerImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
-                value = new Integer(Integer.MIN_VALUE);
+                value = Integer.MIN_VALUE;
             }
             ndr.writeUnsignedLong(((Number) value).intValue());
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
-            return new Integer(ndr.readUnsignedLong());
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
+            return ndr.readUnsignedLong();
         }
 
         @Override
@@ -605,9 +596,9 @@ final class JIMarshalUnMarshalHelper {
     private static class LongImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
-                value = new Long(Long.MIN_VALUE);
+                value = Long.MIN_VALUE;
             }
             ndr.getBuffer().align(8);
             Encdec.enc_uint64le(((Number) value).longValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
@@ -615,9 +606,9 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             ndr.getBuffer().align(8);
-            Long b = new Long(Encdec.dec_uint64le(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex()));
+            Long b = Encdec.dec_uint64le(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(8);
             return b;
         }
@@ -632,9 +623,9 @@ final class JIMarshalUnMarshalHelper {
     private static class DoubleImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
-                value = new Double(Double.NaN);
+                value = Double.NaN;
             }
 
             ndr.getBuffer().align(8);
@@ -644,9 +635,9 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             ndr.getBuffer().align(8);
-            Double b = new Double(Encdec.dec_doublele(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex()));
+            Double b = Encdec.dec_doublele(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(8);
 
             return b;
@@ -664,7 +655,7 @@ final class JIMarshalUnMarshalHelper {
     private static class JICurrencyImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             JICurrency currency = (JICurrency) value;
 
             int units = currency.getUnits();
@@ -679,8 +670,8 @@ final class JIMarshalUnMarshalHelper {
             int hibytes = 0;
             int lowbytes = 0;
             if (toSend2.length() > 8) {
-                lowbytes = Integer.valueOf(toSend2.substring(8), 16).intValue();
-                hibytes = Integer.valueOf(toSend2.substring(0, 8), 16).intValue();
+                lowbytes = Integer.valueOf(toSend2.substring(8), 16);
+                hibytes = Integer.valueOf(toSend2.substring(0, 8), 16);
             } else {
                 lowbytes = toSend;
                 if (toSend < 0) {
@@ -695,8 +686,8 @@ final class JIMarshalUnMarshalHelper {
 
             JIStruct struct = new JIStruct();
             try {
-                struct.addMember(new Integer(lowbytes));
-                struct.addMember(new Integer(hibytes));
+                struct.addMember(lowbytes);
+                struct.addMember(hibytes);
             } catch (JIException e) {
 
             }
@@ -705,7 +696,7 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             //first align
             double index = new Integer(ndr.getBuffer().getIndex()).doubleValue();
             long i = (i = Math.round(index % 8.0)) == 0 ? 0 : 8 - i;
@@ -737,7 +728,7 @@ final class JIMarshalUnMarshalHelper {
     private static class DateImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             // if (value == null && FLAG == JIFlags.FLAG_REPRESENTATION_ARRAY)
             // {
             //   value = new Double(Double.NaN);
@@ -749,7 +740,7 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             ndr.getBuffer().align(8);
             Date b = new Date(convertWindowsTimeToMilliseconds(Encdec.dec_doublele(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex())));
             ndr.getBuffer().advance(8);
@@ -808,9 +799,9 @@ final class JIMarshalUnMarshalHelper {
     private static class FloatImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if (value == null) {
-                value = new Float(Float.NaN);
+                value = Float.NaN;
             }
             ndr.getBuffer().align(4);
             Encdec.enc_floatle(((Number) value).floatValue(), ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
@@ -819,9 +810,9 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             ndr.getBuffer().align(4);
-            Float b = new Float(Encdec.dec_floatle(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex()));
+            Float b = Encdec.dec_floatle(ndr.getBuffer().getBuffer(), ndr.getBuffer().getIndex());
             ndr.getBuffer().advance(4);
 
             return b;
@@ -836,7 +827,7 @@ final class JIMarshalUnMarshalHelper {
     private static class StringImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_VALID_STRING) != JIFlags.FLAG_REPRESENTATION_VALID_STRING) {
                 throw new JIRuntimeException(JIErrorCodes.JI_UTIL_STRING_INVALID);
             }
@@ -847,12 +838,7 @@ final class JIMarshalUnMarshalHelper {
             }
             //BSTR encoding
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_BSTR) == JIFlags.FLAG_REPRESENTATION_STRING_BSTR) {
-                byte[] strBytes = null;
-                try {
-                    strBytes = str.getBytes("UTF-16LE");
-                } catch (UnsupportedEncodingException e) {
-                    throw new JIRuntimeException(JIErrorCodes.JI_UTIL_STRING_DECODE_CHARSET);
-                }
+                byte[] strBytes = str.getBytes(StandardCharsets.UTF_16LE);
                 //NDR representation Max count , then offset, then, actual count
                 //length of String (Maximum count)
                 ndr.writeUnsignedLong(strBytes.length / 2);
@@ -888,14 +874,7 @@ final class JIMarshalUnMarshalHelper {
                 //null termination
                 ndr.writeUnsignedShort(0);
             } else if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) {
-
-                byte[] strBytes = null;
-                try {
-                    strBytes = str.getBytes("UTF-16LE");
-                } catch (UnsupportedEncodingException e) {
-                    throw new JIRuntimeException(JIErrorCodes.JI_UTIL_STRING_DECODE_CHARSET);
-                }
-
+                byte[] strBytes = str.getBytes(StandardCharsets.UTF_16LE);
                 //bytes + 1
                 ndr.writeUnsignedLong(strBytes.length / 2 + 1);
                 ndr.writeUnsignedLong(0);
@@ -907,7 +886,6 @@ final class JIMarshalUnMarshalHelper {
                     ndr.writeUnsignedSmall(strBytes[i]);
                     i++;
                 }
-
                 // int strlen = str.length();
                 // ndr.writeUnsignedLong(strlen + 1);
                 // ndr.writeUnsignedLong(0);
@@ -925,81 +903,73 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             if ((FLAG & JIFlags.FLAG_REPRESENTATION_VALID_STRING) != JIFlags.FLAG_REPRESENTATION_VALID_STRING) {
                 throw new JIRuntimeException(JIErrorCodes.JI_UTIL_STRING_INVALID);
             }
             int retVal = -1;
             //StringBuffer buffer = new StringBuffer();
             String retString = null;
-            try {
+            //BSTR Decoding
+            if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_BSTR) == JIFlags.FLAG_REPRESENTATION_STRING_BSTR) {
+                //Read for user
+                ndr.readUnsignedLong();//eating max length
+                ndr.readUnsignedLong();//eating length in bytes
+                int actuallength = ndr.readUnsignedLong() * 2;
+                byte[] buffer = new byte[actuallength];
+                int i = 0;
+                while (i < actuallength) {
+                    retVal = ndr.readUnsignedSmall();
+                    buffer[i] = (byte) retVal;
+                    i++;
+                }
 
-                //BSTR Decoding
-                if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_BSTR) == JIFlags.FLAG_REPRESENTATION_STRING_BSTR) {
-                    //Read for user
-                    ndr.readUnsignedLong();//eating max length
-                    ndr.readUnsignedLong();//eating length in bytes
+                retString = new String(buffer, StandardCharsets.UTF_16LE);
+
+            } else //Normal String
+            if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) {
+                {
+                    int actuallength = ndr.readUnsignedLong(); //max length
+                    if (actuallength == 0) {
+                        return null;
+                    }
+                    ndr.readUnsignedLong();//eating offset
+                    ndr.readUnsignedLong();//eating actuallength again
+                    //now read array.
+                    char[] ret = new char[actuallength * 2 - 2];
+                    //read including the unsigned short (null chars)
+                    ndr.readCharacterArray(ret, 0, actuallength * 2 - 2);
+                    if (ret[ret.length - 1] == '0') {
+                        retString = new String(ret, 0, ret.length - 1);
+                    } else {
+                        retString = new String(ret);
+                    }
+                    ndr.readUnsignedShort();
+                }
+            } else if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) {
+
+                {
+                    int maxlength = ndr.readUnsignedLong();
+                    if (maxlength == 0) {
+                        return null;
+                    }
+                    ndr.readUnsignedLong();//eating offset
                     int actuallength = ndr.readUnsignedLong() * 2;
-                    byte[] buffer = new byte[actuallength];
+                    byte buffer[] = new byte[actuallength - 2];
                     int i = 0;
-                    while (i < actuallength) {
+                    //last 2 bytes , null termination will be eaten outside the loop
+                    while (i < actuallength - 2) {
                         retVal = ndr.readUnsignedSmall();
                         buffer[i] = (byte) retVal;
                         i++;
                     }
-
-                    retString = new String(buffer, "UTF-16LE");
-
-                } else //Normal String
-                if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPCTSTR) {
-                    {
-                        int actuallength = ndr.readUnsignedLong(); //max length
-                        if (actuallength == 0) {
-                            return null;
-                        }
-                        ndr.readUnsignedLong();//eating offset
-                        ndr.readUnsignedLong();//eating actuallength again
-                        //now read array.
-                        char[] ret = new char[actuallength * 2 - 2];
-                        //read including the unsigned short (null chars)
-                        ndr.readCharacterArray(ret, 0, actuallength * 2 - 2);
-                        if (ret[ret.length - 1] == '0') {
-                            retString = new String(ret, 0, ret.length - 1);
-                        } else {
-                            retString = new String(ret);
-                        }
+                    if (actuallength != 0) {
                         ndr.readUnsignedShort();
                     }
-                } else if ((FLAG & JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) == JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR) {
 
-                    {
-                        int maxlength = ndr.readUnsignedLong();
-                        if (maxlength == 0) {
-                            return null;
-                        }
-                        ndr.readUnsignedLong();//eating offset
-                        int actuallength = ndr.readUnsignedLong() * 2;
-                        byte buffer[] = new byte[actuallength - 2];
-                        int i = 0;
-                        //last 2 bytes , null termination will be eaten outside the loop
-                        while (i < actuallength - 2) {
-                            retVal = ndr.readUnsignedSmall();
-                            buffer[i] = (byte) retVal;
-                            i++;
-                        }
-                        if (actuallength != 0) {
-                            ndr.readUnsignedShort();
-                        }
-
-                        retString = new String(buffer, "UTF-16LE");
-
-                    }
-
+                    retString = new String(buffer, StandardCharsets.UTF_16LE);
                 }
-            } catch (UnsupportedEncodingException e) {
-                throw new JIRuntimeException(JIErrorCodes.JI_UTIL_STRING_DECODE_CHARSET);
             }
-
             return retString;
         }
 
@@ -1032,12 +1002,12 @@ final class JIMarshalUnMarshalHelper {
     private static class JIStringImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -1060,7 +1030,7 @@ final class JIMarshalUnMarshalHelper {
     private static class UUIDImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             try {
                 ((NdrObject) value).encode(ndr, ndr.getBuffer());
             } catch (NdrException e) {
@@ -1069,7 +1039,7 @@ final class JIMarshalUnMarshalHelper {
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             UUID ret = new UUID();
             try {
                 ret.decode(ndr, ndr.getBuffer());
@@ -1090,12 +1060,12 @@ final class JIMarshalUnMarshalHelper {
     private static class MInterfacePointerImpl implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             throw new IllegalStateException(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_INCORRECT_CALL));
         }
 
@@ -1108,12 +1078,12 @@ final class JIMarshalUnMarshalHelper {
     private static class MInterfacePointerImpl2 implements SerializerDeserializer {
 
         @Override
-        public void serializeData(NetworkDataRepresentation ndr, Object value, List defferedPointers, int FLAG) {
+        public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             ((JIInterfacePointerBody) value).encode(ndr, FLAG);
         }
 
         @Override
-        public Object deserializeData(NetworkDataRepresentation ndr, List defferedPointers, Map additionalData, int FLAG) {
+        public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
             return JIInterfacePointerBody.decode(ndr, FLAG);
         }
 

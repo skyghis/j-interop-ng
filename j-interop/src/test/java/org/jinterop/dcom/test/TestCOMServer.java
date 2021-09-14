@@ -35,7 +35,7 @@ public class TestCOMServer {
         dispatch = (IJIDispatch) JIObjectFactory.narrowObject(comObject.queryInterface(IJIDispatch.IID));
 
         //Now call via automation
-        Object results[] = dispatch.callMethodA("Add", new Object[]{new Integer(1), new Integer(2), new JIVariant(0, true)});
+        Object results[] = dispatch.callMethodA("Add", new Object[]{1, 2, new JIVariant(0, true)});
         System.out.println(results[1]);
 
         //now without automation
@@ -43,7 +43,7 @@ public class TestCOMServer {
         callObject.setOpnum(1);//obtained from the IDL or TypeLib.
         callObject.addInParamAsInt(1, JIFlags.FLAG_NULL);
         callObject.addInParamAsInt(2, JIFlags.FLAG_NULL);
-        callObject.addInParamAsPointer(new JIPointer(new Integer(0)), JIFlags.FLAG_NULL);
+        callObject.addInParamAsPointer(new JIPointer(0), JIFlags.FLAG_NULL);
         //Since the retval is a top level pointer , it will get replaced with it's base type.
         callObject.addOutParamAsObject(Integer.class, JIFlags.FLAG_NULL);
         results = comObject.call(callObject);
