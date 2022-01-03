@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Force minimal maven version to `3.6.0`.
+
+### Changed
+- Update `jcifs-ng` from version `2.1.6` to `2.1.7`.
+- Update maven plugins dependencies.
 
 ## [3.2.0] - 2021-09-14
 ### Added
