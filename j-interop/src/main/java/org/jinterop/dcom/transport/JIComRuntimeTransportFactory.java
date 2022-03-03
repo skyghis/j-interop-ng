@@ -19,12 +19,9 @@ package org.jinterop.dcom.transport;
 import java.util.Properties;
 import rpc.ProviderException;
 import rpc.Transport;
+import rpc.TransportFactory;
 
-/**
- * @exclude @since 1.0
- *
- */
-public final class JIComRuntimeTransportFactory extends rpc.TransportFactory {
+public final class JIComRuntimeTransportFactory extends TransportFactory {
 
     private static JIComRuntimeTransportFactory factory = null;
 
@@ -32,8 +29,7 @@ public final class JIComRuntimeTransportFactory extends rpc.TransportFactory {
     }
 
     @Override
-    public Transport createTransport(String address, Properties properties)
-            throws ProviderException {
+    public Transport createTransport(String address, Properties properties) throws ProviderException {
         return new JIComRuntimeTransport(address, properties);
     }
 

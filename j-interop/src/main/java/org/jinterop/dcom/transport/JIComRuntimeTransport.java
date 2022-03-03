@@ -21,6 +21,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Properties;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrBuffer;
 import org.jinterop.dcom.common.JISystem;
 import rpc.Endpoint;
@@ -29,23 +33,39 @@ import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
-/**
- * @exclude @since 1.0
- *
- */
-final class JIComRuntimeTransport implements Transport {
+public final class JIComRuntimeTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
+    private static final Supplier<Socket> DEFAULT_SOCKET_FACTORY = () -> (Socket) JISystem.internal_getSocket();
+    private final Supplier<Socket> socketFactory;
+    private final BiFunction<Transport, PresentationSyntax, Endpoint> endpointFactory;
     private final Properties properties;
     private Socket socket;
     private OutputStream output;
     private InputStream input;
     private boolean attached;
 
-    JIComRuntimeTransport(String address, Properties properties)
-            throws ProviderException {
-        this.properties = properties;
+    public JIComRuntimeTransport(String address, Properties properties) throws ProviderException {
         //address is ignored
+        this(properties, DEFAULT_SOCKET_FACTORY, JIComRuntimeEndpoint::new);
+    }
+
+    public JIComRuntimeTransport(Properties properties) {
+        this(properties, DEFAULT_SOCKET_FACTORY, JIComRuntimeEndpoint::new);
+    }
+
+    private JIComRuntimeTransport(Properties properties, Supplier<Socket> socketFactory, BiFunction<Transport, PresentationSyntax, Endpoint> endpointFactory) {
+        this.socketFactory = socketFactory;
+        this.endpointFactory = endpointFactory;
+        this.properties = properties;
+    }
+
+    public JIComRuntimeTransport withSocketFactory(Supplier<Socket> socketFactory) {
+        return new JIComRuntimeTransport(properties, socketFactory, endpointFactory);
+    }
+
+    public JIComRuntimeTransport withEndpointFactory(BiFunction<Transport, PresentationSyntax, Endpoint> endpointFactory) {
+        return new JIComRuntimeTransport(properties, socketFactory, endpointFactory);
     }
 
     @Override
@@ -66,26 +86,25 @@ final class JIComRuntimeTransport implements Transport {
 
         Endpoint endPoint = null;
         try {
-            socket = (Socket) JISystem.internal_getSocket();
+            socket = socketFactory.get();
             output = null;
             input = null;
             attached = true;
-            endPoint = new JIComRuntimeEndpoint(this, syntax);
-        } catch (Exception ex) {
-            try {
-                close();
-            } catch (IOException ignore) {
-            }
+            endPoint = endpointFactory.apply(this, syntax);
+        } catch (RuntimeException ex) {
+            close();
         }
         return endPoint;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         try {
             if (socket != null) {
                 socket.close();
             }
+        } catch (IOException ex) {
+            Logger.getLogger("org.jinterop").log(Level.WARNING, "Failed to close socket " + socket, ex);
         } finally {
             attached = false;
             socket = null;
