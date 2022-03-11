@@ -16,14 +16,11 @@
  */
 package org.jinterop.dcom.core;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIComVersion;
 import org.jinterop.dcom.common.JIException;
@@ -41,7 +38,7 @@ final class JIOrpcThis implements Serializable {
     private String cid = null;
 
     JIOrpcThis() {
-        cid = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+        cid = UUID.createHexString();
     }
 
     JIOrpcThis(UUID casualityIdentifier) {
@@ -76,12 +73,7 @@ final class JIOrpcThis implements Serializable {
 
         //the order here is important since the cid is always filled from the ctor hence will never be null.
         String cid2 = cidForCallback.get() == null ? cid : (String) cidForCallback.get();
-        rpc.core.UUID uuid = new rpc.core.UUID(cid2);
-        try {
-            uuid.encode(ndr, ndr.getBuffer());
-        } catch (NdrException e) {
-            JISystem.getLogger().throwing("JIOrpcThis", "encode", e);
-        }
+       UUID.encodeToBuffer(new UUID(cid2), ndr.getBuffer());
 
         int i = 0;
         if (arry != null && arry.length != 0) {
@@ -89,13 +81,7 @@ final class JIOrpcThis implements Serializable {
             ndr.writeUnsignedLong(0);
             while (i < arry.length) {
                 JIOrpcExtentArray arryy = arry[i];
-                uuid = new rpc.core.UUID(arryy.getGUID());
-                try {
-                    uuid.encode(ndr, ndr.getBuffer());
-                } catch (NdrException e) {
-                    JISystem.getLogger().throwing("JIOrpcThis", "encode", e);
-                }
-
+                UUID.encodeToBuffer(new UUID(arryy.getGUID()), ndr.getBuffer());
                 ndr.writeUnsignedLong(arryy.getSizeOfData());
                 ndr.writeOctetArray(arryy.getData(), 0, arryy.getSizeOfData());
                 i++;
@@ -113,17 +99,8 @@ final class JIOrpcThis implements Serializable {
 
         retval.version = new JIComVersion(majorVersion, minorVersion);
         retval.flags = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map))).intValue();
-
         JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map);//reserved.
-
-        rpc.core.UUID uuid = new rpc.core.UUID();
-        try {
-            uuid.decode(ndr, ndr.getBuffer());
-            retval.cid = uuid.toString();
-        } catch (NdrException e) {
-            JISystem.getLogger().throwing("JIOrpcThis", "decode", e);
-        }
-
+            retval.cid = new  UUID(ndr.getBuffer()).toString();
         JIStruct orpcextentarray = new JIStruct();
         try {
             //create the orpcextent struct
@@ -160,36 +137,32 @@ final class JIOrpcThis implements Serializable {
             //this won't fail...i am certain :)...
         }
 
-        List listOfDefferedPointers = new ArrayList();
+        List<JIPointer> listOfDefferedPointers = new ArrayList<>();
         JIPointer orpcextentarrayptr = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, new JIPointer(orpcextentarray), listOfDefferedPointers, JIFlags.FLAG_NULL, map);
         int x = 0;
 
         while (x < listOfDefferedPointers.size()) {
-            ArrayList newList = new ArrayList();
+            List<JIPointer> newList = new ArrayList<>();
             JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
-            ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
+            ( listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);
         }
 
-        ArrayList extentArrays = new ArrayList();
+        List<JIOrpcExtentArray> extentArrays = new ArrayList<>();
         //now read whether extend array exists or not
         if (!orpcextentarrayptr.isNull()) {
             JIPointer[] pointers = (JIPointer[]) ((JIArray) ((JIPointer) ((JIStruct) orpcextentarrayptr.getReferent()).getMember(2)).getReferent()).getArrayInstance();
-            for (int i = 0; i < pointers.length; i++) {
-                if (pointers[i].isNull()) {
+            for (JIPointer pointer : pointers) {
+                if (pointer.isNull()) {
                     continue;
                 }
-
-                JIStruct orpcextent2 = (JIStruct) pointers[i].getReferent();
+                JIStruct orpcextent2 = (JIStruct) pointer.getReferent();
                 Byte[] byteArray = (Byte[]) ((JIArray) orpcextent2.getMember(2)).getArrayInstance();
-
                 extentArrays.add(new JIOrpcExtentArray(orpcextent2.getMember(0).toString(), byteArray.length, byteArray));
             }
-
         }
-
-        retval.arry = (JIOrpcExtentArray[]) extentArrays.toArray(new JIOrpcExtentArray[extentArrays.size()]);
+        retval.arry = extentArrays.toArray(new JIOrpcExtentArray[0]);
 
         //decode can only be executed incase of a request made from the server side in case of a callback. so the thread making this
         //callback will store the cid from the decode operation in the threadlocal variable. In case an encode is performed using the

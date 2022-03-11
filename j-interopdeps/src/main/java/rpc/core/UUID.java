@@ -18,37 +18,40 @@ package rpc.core;
 
 import java.util.StringTokenizer;
 import ndr.NdrBuffer;
-import ndr.NdrException;
-import ndr.NdrObject;
-import ndr.NetworkDataRepresentation;
 
-public final class UUID extends NdrObject {
+public final class UUID {
 
     public static final String NIL_UUID = "00000000-0000-0000-0000-000000000000";
+    private int timeLow;
+    private int timeMid;
+    private int timeHighAndVersion;
+    private int clockSeqHighAndReserved;
+    private int clockSeqLow;
+    private byte[] node = new byte[6];
 
-    int timeLow, timeMid, timeHighAndVersion, clockSeqHighAndReserved, clockSeqLow;
-    byte[] node = new byte[6];
+    public static String createHexString() {
+        return java.util.UUID.randomUUID().toString().replace("-", "");
+    }
 
-    public UUID() {
+    public UUID(NdrBuffer src) {
+        decode(src);
     }
 
     public UUID(String uuid) {
         parse(uuid);
     }
 
-    @Override
-    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
-        dst.enc_ndr_long(timeLow);
-        dst.enc_ndr_short(timeMid);
-        dst.enc_ndr_short(timeHighAndVersion);
-        dst.enc_ndr_small(clockSeqHighAndReserved);
-        dst.enc_ndr_small(clockSeqLow);
-        System.arraycopy(node, 0, dst.buf, dst.index, 6);
+    public static void encodeToBuffer(UUID uuid, NdrBuffer dst) {
+        dst.enc_ndr_long(uuid.timeLow);
+        dst.enc_ndr_short(uuid.timeMid);
+        dst.enc_ndr_short(uuid.timeHighAndVersion);
+        dst.enc_ndr_small(uuid.clockSeqHighAndReserved);
+        dst.enc_ndr_small(uuid.clockSeqLow);
+        System.arraycopy(uuid.node, 0, dst.buf, dst.index, 6);
         dst.index += 6;
     }
 
-    @Override
-    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
+    public void decode(NdrBuffer src) {
         timeLow = src.dec_ndr_long();
         timeMid = src.dec_ndr_short();
         timeHighAndVersion = src.dec_ndr_short();
@@ -61,7 +64,6 @@ public final class UUID extends NdrObject {
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-//        int timeLow = (int) (getTimeLow() & 0xffffffffl);
         buffer.append(Integer.toHexString((timeLow >> 28) & 0x0f));
         buffer.append(Integer.toHexString((timeLow >> 24) & 0x0f));
         buffer.append(Integer.toHexString((timeLow >> 20) & 0x0f));
@@ -71,27 +73,23 @@ public final class UUID extends NdrObject {
         buffer.append(Integer.toHexString((timeLow >> 4) & 0x0f));
         buffer.append(Integer.toHexString(timeLow & 0x0f));
         buffer.append('-');
-//        int timeMid = getTimeMid();
         buffer.append(Integer.toHexString((timeMid >> 12) & 0x0f));
         buffer.append(Integer.toHexString((timeMid >> 8) & 0x0f));
         buffer.append(Integer.toHexString((timeMid >> 4) & 0x0f));
         buffer.append(Integer.toHexString(timeMid & 0x0f));
         buffer.append('-');
-//        int timeHighAndVersion = getTimeHighAndVersion();
         buffer.append(Integer.toHexString((timeHighAndVersion >> 12) & 0x0f));
         buffer.append(Integer.toHexString((timeHighAndVersion >> 8) & 0x0f));
         buffer.append(Integer.toHexString((timeHighAndVersion >> 4) & 0x0f));
         buffer.append(Integer.toHexString(timeHighAndVersion & 0x0f));
         buffer.append('-');
-//        short clockSeqHighAndReserved = getClockSeqHighAndReserved();
-        buffer.append(Integer.toHexString((clockSeqHighAndReserved >> 4)
-                & 0x0f));
+        buffer.append(Integer.toHexString((clockSeqHighAndReserved >> 4) & 0x0f));
         buffer.append(Integer.toHexString(clockSeqHighAndReserved & 0x0f));
-//        short clockSeqLow = getClockSeqLow();
+
         buffer.append(Integer.toHexString((clockSeqLow >> 4) & 0x0f));
         buffer.append(Integer.toHexString(clockSeqLow & 0x0f));
         buffer.append('-');
-//        byte[] node = getNode();
+
         for (int i = 0; i < 6; i++) {
             buffer.append(Integer.toHexString((node[i] >> 4) & 0x0f));
             buffer.append(Integer.toHexString(node[i] & 0x0f));
@@ -111,16 +109,7 @@ public final class UUID extends NdrObject {
         node = new byte[6];
         for (int i = 0; i < 6; i++) {
             int offset = i * 2;
-            node[i] = (byte) ((Character.digit(token.charAt(offset), 16) << 4)
-                    | Character.digit(token.charAt(offset + 1), 16));
+            node[i] = (byte) ((Character.digit(token.charAt(offset), 16) << 4) | Character.digit(token.charAt(offset + 1), 16));
         }
-        /*
-         * setTimeLow(timeLow);
-         * setTimeMid(timeMid);
-         * setTimeHighAndVersion(timeHighAndVersion);
-         * setClockSeqHighAndReserved(clockSeqHighAndReserved);
-         * setClockSeqLow(clockSeqLow);
-         * setNode(node);
-         */
     }
 }

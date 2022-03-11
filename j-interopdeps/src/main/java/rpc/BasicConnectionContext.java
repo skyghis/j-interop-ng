@@ -31,20 +31,14 @@ import rpc.pdu.ShutdownPdu;
 public class BasicConnectionContext implements ConnectionContext {
 
     private int maxTransmitFragment = DEFAULT_MAX_TRANSMIT_FRAGMENT;
-
     private int maxReceiveFragment = DEFAULT_MAX_RECEIVE_FRAGMENT;
-
     private Connection connection;
-
     private boolean established;
-
     private int transmitLength;
-
     private int receiveLength;
 
     @Override
-    public ConnectionOrientedPdu init(PresentationContext context,
-            Properties properties) throws IOException {
+    public ConnectionOrientedPdu init(PresentationContext context, Properties properties) {
         established = false;
         connection = new DefaultConnection();
         if (properties != null) {

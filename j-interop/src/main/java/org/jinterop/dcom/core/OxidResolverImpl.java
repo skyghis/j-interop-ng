@@ -3,8 +3,6 @@
  */
 package org.jinterop.dcom.core;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -225,7 +223,7 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
         //    NdrBuffer ndrBuffer = new NdrBuffer(buffer,0);
         //
         //randomly create IPID and send, this is the ipid of the remunknown, we store it with remunknown object
-        UUID uuid = details.getRemUnknownIpid() == null ? new UUID(GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString())) : new UUID(details.getRemUnknownIpid());
+        UUID uuid = details.getRemUnknownIpid() == null ? new UUID(UUID.createHexString()) : new UUID(details.getRemUnknownIpid());
 
         //create the bindings for this Java Object.
         //this port will go in the new bindings sent to the COM client.

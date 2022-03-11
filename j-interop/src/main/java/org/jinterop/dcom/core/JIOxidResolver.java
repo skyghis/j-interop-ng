@@ -17,12 +17,10 @@
 package org.jinterop.dcom.core;
 
 import java.util.ArrayList;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIComVersion;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import rpc.core.UUID;
 
 /**
@@ -52,8 +50,8 @@ final class JIOxidResolver extends NdrObject {
     @Override
     public void write(NetworkDataRepresentation ndr) {
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oxid);
-        JIMarshalUnMarshalHelper.serialize(ndr, Short.class, new Short((short) 1), new ArrayList(), JIFlags.FLAG_NULL);
-        JIMarshalUnMarshalHelper.serialize(ndr, JIArray.class, new JIArray(new Short[]{(short) 7}, true), new ArrayList(), JIFlags.FLAG_REPRESENTATION_ARRAY);
+        JIMarshalUnMarshalHelper.serialize(ndr, Short.class, (short) 1, new ArrayList<>(), JIFlags.FLAG_NULL);
+        JIMarshalUnMarshalHelper.serialize(ndr, JIArray.class, new JIArray(new Short[]{(short) 7}, true), new ArrayList<>(), JIFlags.FLAG_REPRESENTATION_ARRAY);
     }
 
     @Override
@@ -61,15 +59,7 @@ final class JIOxidResolver extends NdrObject {
         ndr.readUnsignedLong(); //pointer
         ndr.readUnsignedLong(); //some length component, irrelevant for us right now
         oxidBindings = JIDualStringArray.decode(ndr);
-        try {
-            UUID ipid2 = new UUID();
-            ipid2.decode(ndr, ndr.getBuffer());
-            ipid = (ipid2.toString());
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemActivation", "read", e);
-        }
-
+        ipid = (new UUID(ndr.getBuffer()).toString());
         //read the auth hint
         int authenticationHint = ndr.readUnsignedLong();
 

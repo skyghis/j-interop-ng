@@ -73,8 +73,7 @@ final class JIComTransport implements Transport {
         LOCALHOST = localhost;
     }
 
-    JIComTransport(String address, Properties properties)
-            throws ProviderException {
+    JIComTransport(String address, Properties properties) throws ProviderException {
         this.properties = properties;
         parse(address);
     }

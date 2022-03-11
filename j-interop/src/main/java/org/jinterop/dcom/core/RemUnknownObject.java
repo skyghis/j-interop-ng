@@ -3,15 +3,12 @@
  */
 package org.jinterop.dcom.core;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import ndr.NdrBuffer;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.IJICOMRuntimeWorker;
@@ -305,18 +302,12 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         JIOrpcThis.decode(ndr);
 
         //now get the IPID and export the component with a new IPID and IID.
-        UUID ipid = new rpc.core.UUID();
-        try {
-            ipid.decode(ndr, ndr.getBuffer());
-        } catch (NdrException e) {
-            JISystem.getLogger().throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
-        }
-
+        String ipid = new UUID(ndr.getBuffer()).toString();
         if (JISystem.getLogger().isLoggable(Level.FINEST)) {
             JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] IPID is {0}", ipid);
         }
         //set the JILocalCoClass., the ipid should not be null in this call.
-        JIComOxidDetails details = JIComOxidRuntime.getComponentFromIPID(ipid.toString());
+        JIComOxidDetails details = JIComOxidRuntime.getComponentFromIPID(ipid);
 
         if (details == null) {
             //not found, now throw an JIRuntimeException , so that a FaultPdu could be sent.
@@ -353,7 +344,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             //now for each QueryResult
             try {
                 int hresult = 0;
-                String ipid2 = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+                String ipid2 = UUID.createHexString();
                 if (!componentRef.isPresent(iid.toString())) {
                     hresult = JIErrorCodes.E_NOINTERFACE;
                 } else {

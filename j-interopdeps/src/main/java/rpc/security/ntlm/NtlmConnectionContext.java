@@ -39,21 +39,14 @@ import rpc.pdu.ShutdownPdu;
 public class NtlmConnectionContext implements ConnectionContext {
 
     private int maxTransmitFragment = DEFAULT_MAX_TRANSMIT_FRAGMENT;
-
     private int maxReceiveFragment = DEFAULT_MAX_RECEIVE_FRAGMENT;
-
     private NtlmConnection connection;
-
     private boolean established;
-
     private int transmitLength;
-
     private int receiveLength;
-
     private int assocGroupId = 0;
 
-    public ConnectionOrientedPdu init2(PresentationContext context,
-            Properties properties) throws IOException {
+    public ConnectionOrientedPdu init2(PresentationContext context, Properties properties) {
         established = false;
         if (properties != null) {
             String maxTransmit = properties.getProperty(MAX_TRANSMIT_FRAGMENT);
@@ -75,17 +68,14 @@ public class NtlmConnectionContext implements ConnectionContext {
     }
 
     @Override
-    public ConnectionOrientedPdu init(PresentationContext context,
-            Properties properties) throws IOException {
-
+    public ConnectionOrientedPdu init(PresentationContext context, Properties properties) throws IOException {
         BindPdu pdu = (BindPdu) init2(context, properties);
         pdu.resetCallIdCounter();
         return pdu;
     }
 
     @Override
-    public ConnectionOrientedPdu alter(PresentationContext context)
-            throws IOException {
+    public ConnectionOrientedPdu alter(PresentationContext context) {
         established = false;
         AlterContextPdu pdu = new AlterContextPdu();
         pdu.setContextList(new PresentationContext[]{context});
@@ -94,9 +84,8 @@ public class NtlmConnectionContext implements ConnectionContext {
     }
 
     @Override
-    public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
-            throws IOException {
-        PresentationResult[] results = null;
+    public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu) throws IOException {
+        PresentationResult[] results;
         switch (pdu.getType()) {
             case BindAcknowledgePdu.BIND_ACKNOWLEDGE_TYPE:
                 BindAcknowledgePdu bindAck = (BindAcknowledgePdu) pdu;
@@ -170,5 +159,4 @@ public class NtlmConnectionContext implements ConnectionContext {
     public boolean isEstablished() {
         return established;
     }
-
 }

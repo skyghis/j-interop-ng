@@ -38,8 +38,12 @@ import rpc.core.UUID;
  */
 public class JIClsid {
 
-    private UUID nestedUUID = new UUID();
+    private final UUID nestedUUID;
     private boolean autoRegister = false;
+
+    private JIClsid(String uuid) {
+        this.nestedUUID = new UUID(uuid);
+    }
 
     /**
      * Indicates to the framework, if Windows Registry settings for DLL\OCX
@@ -78,10 +82,6 @@ public class JIClsid {
         return new JIClsid(uuid);
     }
 
-    private JIClsid(String uuid) {
-        this.nestedUUID.parse(uuid);
-    }
-
     /**
      * String representation of the wrapped class identifier.
      *
@@ -90,5 +90,4 @@ public class JIClsid {
     public String getCLSID() {
         return nestedUUID.toString();
     }
-
 }

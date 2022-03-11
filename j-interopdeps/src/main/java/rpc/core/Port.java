@@ -16,13 +16,13 @@
  */
 package rpc.core;
 
-import ndr.NdrBuffer;
+import java.util.Objects;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
 public class Port extends NdrObject {
 
-    public String portSpec;
+    private String portSpec;
 
     public Port() {
         this(null);
@@ -36,11 +36,10 @@ public class Port extends NdrObject {
     public void read(NetworkDataRepresentation ndr) {
         int length = ndr.readUnsignedShort();
         if (length > 0) {
-            NdrBuffer buf = ndr.getBuffer();
-            char[] portSpec = new char[length - 1];
-            ndr.readCharacterArray(portSpec, 0, portSpec.length);
+            char[] portSpecChars = new char[length - 1];
+            ndr.readCharacterArray(portSpecChars, 0, portSpecChars.length);
             ndr.readUnsignedSmall(); // null terminator
-            this.portSpec = new String(portSpec);
+            this.portSpec = new String(portSpecChars);
         } else {
             this.portSpec = null;
         }
@@ -62,12 +61,23 @@ public class Port extends NdrObject {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Port)) {
-            return false;
-        }
-        return (portSpec != null) ? portSpec.equals(((Port) obj).portSpec)
-                : ((Port) obj).portSpec == null;
+    public int hashCode() {
+        return Objects.hashCode(portSpec);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final Port other = (Port) obj;
+        return Objects.equals(this.portSpec, other.portSpec);
+    }
+
+    public String getPortSpec() {
+        return portSpec;
+    }
 }

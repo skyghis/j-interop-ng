@@ -18,12 +18,11 @@ package org.jinterop.dcom.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import ndr.NdrException;
+import java.util.List;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIComVersion;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import rpc.core.UUID;
 
 final class JIRemActivation extends NdrObject {
@@ -79,14 +78,7 @@ final class JIRemActivation extends NdrObject {
         orpcThis.encode(ndr);
 
         //JIClsid of the component being activated.
-        UUID uuid = new UUID();
-        uuid.parse(clsid.toString());
-        try {
-            uuid.encode(ndr, ndr.buf);
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemActivation", "write", e);
-        }
+        UUID.encodeToBuffer(new UUID(clsid.toString()), ndr.buf);
         if (monikerName == null) {
             ndr.writeUnsignedLong(0);
         } else {
@@ -104,22 +96,9 @@ final class JIRemActivation extends NdrObject {
         ndr.writeUnsignedLong(2); //Array length
 
         //IID of IUnknown , this is hard coded here, standard way of COM is to first get a handle to the IUnknown
-        uuid.parse("00000000-0000-0000-c000-000000000046");
-        try {
-            uuid.encode(ndr, ndr.buf);
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemActivation", "write", e);
-        }
-
+        UUID.encodeToBuffer(new UUID("00000000-0000-0000-c000-000000000046"), ndr.buf);
         //checking for IDispatch support
-        uuid.parse("00020400-0000-0000-c000-000000000046");
-        try {
-            uuid.encode(ndr, ndr.buf);
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemActivation", "write", e);
-        }
+        UUID.encodeToBuffer(new UUID("00020400-0000-0000-c000-000000000046"), ndr.buf);
 
         ndr.writeUnsignedLong(1); //Protocol Sequences available
         ndr.writeUnsignedLong(1); //Array length
@@ -155,15 +134,7 @@ final class JIRemActivation extends NdrObject {
         //component which has been specified as the JIClsid. This may differ in multiple invokations of
         //of remote activation as everytime a new object may be created at the server per call. This is all
         //server implementation dependent.
-        try {
-            UUID ipid2 = new UUID();
-            ipid2.decode(ndr, ndr.getBuffer());
-            ipid = (ipid2.toString());
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemActivation", "read", e);
-        }
-
+        ipid = (new UUID(ndr.getBuffer()).toString());
         //read the auth hint
         authenticationHint = ndr.readUnsignedLong();
 
@@ -180,21 +151,18 @@ final class JIRemActivation extends NdrObject {
 
         //int numRet = ndr.readUnsignedLong();//Number of interface pointers returned. Currently only 2.
         JIArray array = new JIArray(JIInterfacePointer.class, null, 1, true);
-        ArrayList listOfDefferedPointers = new ArrayList();
-        array = (JIArray) JIMarshalUnMarshalHelper.deSerialize(ndr, array, listOfDefferedPointers, JIFlags.FLAG_NULL, new HashMap());
+        List<JIPointer> listOfDefferedPointers = new ArrayList<>();
+        array = (JIArray) JIMarshalUnMarshalHelper.deSerialize(ndr, array, listOfDefferedPointers, JIFlags.FLAG_NULL, new HashMap<>());
         int x = 0;
-
         while (x < listOfDefferedPointers.size()) {
-
-            ArrayList newList = new ArrayList();
+            List<JIPointer> newList = new ArrayList<>();
             JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, null);
-            ((JIPointer) listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
+            listOfDefferedPointers.get(x).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);
         }
         JIInterfacePointer[] arrayObjs = (JIInterfacePointer[]) array.getArrayInstance();
         mInterfacePointer = arrayObjs[0];
-
         if (arrayObjs[1] != null) {
             //dual is supported since the IDispatch was obtained
             isDual = true;

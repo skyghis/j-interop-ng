@@ -17,9 +17,8 @@
 package org.jinterop.dcom.core;
 
 import java.io.Serializable;
-import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
-import org.jinterop.dcom.common.JISystem;
+import rpc.core.UUID;
 
 final class JIStdObjRef implements Serializable {
 
@@ -60,14 +59,7 @@ final class JIStdObjRef implements Serializable {
         // ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         // jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), objRef.oid, 0, objRef.oid.length);
         // objRef.oidString = byteArrayOutputStream.toString();
-        try {
-            rpc.core.UUID ipid2 = new rpc.core.UUID();
-            ipid2.decode(ndr, ndr.getBuffer());
-            objRef.ipidOfthisObjectRef = ipid2.toString();
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIStdObjRef", "decode", e);
-        }
+        objRef.ipidOfthisObjectRef = new UUID(ndr.getBuffer()).toString();
         //if (JISystem.getLogger().isLoggable(Level.WARNING))
         //{
         //  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -103,14 +95,7 @@ final class JIStdObjRef implements Serializable {
         ndr.writeUnsignedLong(publicRefs);
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oxid);
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oid);
-
-        try {
-            rpc.core.UUID ipid = new rpc.core.UUID(ipidOfthisObjectRef);
-            ipid.encode(ndr, ndr.getBuffer());
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIStdObjRef", "encode", e);
-        }
+        UUID.encodeToBuffer(new UUID(ipidOfthisObjectRef), ndr.getBuffer());
     }
 
     @Override

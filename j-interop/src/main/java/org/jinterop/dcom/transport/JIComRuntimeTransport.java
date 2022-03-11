@@ -24,7 +24,6 @@ import java.util.Properties;
 import ndr.NdrBuffer;
 import org.jinterop.dcom.common.JISystem;
 import rpc.Endpoint;
-import rpc.ProviderException;
 import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
@@ -42,8 +41,7 @@ public class JIComRuntimeTransport implements Transport {
     private InputStream input;
     private boolean attached;
 
-    protected JIComRuntimeTransport(String address, Properties properties)
-            throws ProviderException {
+    protected JIComRuntimeTransport(String address, Properties properties) {
         this.properties = properties;
         //address is ignored
     }
@@ -79,15 +77,13 @@ public class JIComRuntimeTransport implements Transport {
         }
         return endPoint;
     }
-    
-    protected Endpoint getEndpoint(PresentationSyntax syntax) throws Exception
-    {
-   	 return new JIComRuntimeEndpoint(this, syntax);
+
+    protected Endpoint getEndpoint(PresentationSyntax syntax) throws Exception {
+        return new JIComRuntimeEndpoint(this, syntax);
     }
-    
-    protected Socket getSocket() throws Exception
-    {
-   	 return (Socket) JISystem.internal_getSocket();
+
+    protected Socket getSocket() throws Exception {
+        return (Socket) JISystem.internal_getSocket();
     }
 
     @Override

@@ -22,14 +22,10 @@ import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
-public class PresentationSyntax extends NdrObject {
+public final class PresentationSyntax extends NdrObject {
 
-    private static final int UUID_INDEX = 0;
-
-    private static final int VERSION_INDEX = 1;
-
-    UUID uuid;
-    int version;
+    private UUID uuid;
+    private int version;
 
     public PresentationSyntax() {
     }
@@ -75,29 +71,24 @@ public class PresentationSyntax extends NdrObject {
 
     @Override
     public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
-        uuid.encode(ndr, dst);
+        UUID.encodeToBuffer(uuid, dst);
         dst.enc_ndr_long(version);
     }
 
     @Override
     public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
-        uuid = new UUID();
-        uuid.decode(ndr, src);
+        uuid = new UUID(src);
         version = src.dec_ndr_long();
     }
 
     @Override
     public String toString() {
-        return getUuid().toString() + ":" + getMajorVersion() + "."
-                + getMinorVersion();
+        return getUuid().toString() + ":" + getMajorVersion() + "." + getMinorVersion();
     }
 
     public void parse(String syntax) {
         StringTokenizer tokenizer = new StringTokenizer(syntax, ":.");
-        uuid = new UUID();
-        uuid.parse(tokenizer.nextToken());
-        setVersion(Integer.parseInt(tokenizer.nextToken()),
-                Integer.parseInt(tokenizer.nextToken()));
+        uuid = new UUID(tokenizer.nextToken());
+        setVersion(Integer.parseInt(tokenizer.nextToken()), Integer.parseInt(tokenizer.nextToken()));
     }
-
 }
