@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -69,7 +70,7 @@ public final class JISystem {
 
     private static final Logger logger = Logger.getLogger("org.jinterop");
     private static final Properties mapOfProgIdsVsClsids = new Properties();
-    private static final List<Object> socketQueue = new ArrayList<>();
+    private static final List<Socket> socketQueue = new ArrayList<>();
     private static final Map<String, String> mapOfHostnamesVsIPs = new HashMap<>();
     private static String pathToDB = null;
     private static Locale locale = Locale.getDefault();
@@ -285,7 +286,7 @@ public final class JISystem {
      *
      * @return
      */
-    public static Object internal_getSocket() {
+    public static Socket internal_getSocket() {
         //synchronized (socketQueue)
         {
             return socketQueue.remove(0);
@@ -297,7 +298,7 @@ public final class JISystem {
      *
      * @param socket
      */
-    public static void internal_setSocket(Object socket) {
+    public static void internal_setSocket(Socket socket) {
         //synchronized (socketQueue)
         {
             socketQueue.add(socket);

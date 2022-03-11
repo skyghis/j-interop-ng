@@ -22,24 +22,16 @@ import rpc.core.PresentationContext;
 
 public interface ConnectionContext {
 
-    public static final String MAX_TRANSMIT_FRAGMENT
-            = "rpc.connectionContext.maxTransmitFragment";
-
-    public static final String MAX_RECEIVE_FRAGMENT
-            = "rpc.connectionContext.maxReceiveFragment";
-
+    public static final String MAX_TRANSMIT_FRAGMENT = "rpc.connectionContext.maxTransmitFragment";
+    public static final String MAX_RECEIVE_FRAGMENT = "rpc.connectionContext.maxReceiveFragment";
     public static final int DEFAULT_MAX_TRANSMIT_FRAGMENT = 4280;
-
     public static final int DEFAULT_MAX_RECEIVE_FRAGMENT = 4280;
 
-    public ConnectionOrientedPdu init(PresentationContext context,
-            Properties properties) throws IOException;
+    public ConnectionOrientedPdu init(PresentationContext context, Properties properties) throws IOException;
 
-    public ConnectionOrientedPdu alter(PresentationContext context)
-            throws IOException;
+    public ConnectionOrientedPdu alter(PresentationContext context) throws IOException;
 
-    public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu)
-            throws IOException;
+    public ConnectionOrientedPdu accept(ConnectionOrientedPdu pdu) throws IOException;
 
     public Connection getConnection();
 

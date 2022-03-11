@@ -20,10 +20,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
+import rpc.core.UUID;
 
 /**
  * < p>
@@ -265,18 +264,9 @@ class JIInterfacePointerBody implements Serializable {
             return null;
         }
 
-        try {
-            rpc.core.UUID ipid2 = new rpc.core.UUID();
-            ipid2.decode(ndr, ndr.getBuffer());
-            ptr.iid = ipid2.toString();
-        } catch (NdrException e) {
-            JISystem.getLogger().throwing("JIInterfacePointer", "decode", e);
-        }
-
+        ptr.iid = new UUID(ndr.getBuffer()).toString();
         ptr.stdObjRef = JIStdObjRef.decode(ndr);
-
         ptr.resolverAddr = JIDualStringArray.decode(ndr);
-
         return ptr;
     }
 
@@ -302,18 +292,9 @@ class JIInterfacePointerBody implements Serializable {
             return null;
         }
 
-        try {
-            rpc.core.UUID ipid2 = new rpc.core.UUID();
-            ipid2.decode(ndr, ndr.getBuffer());
-            ptr.iid = ipid2.toString();
-        } catch (NdrException e) {
-            JISystem.getLogger().throwing("JIInterfacePointer", "decode", e);
-        }
-
+        ptr.iid = new UUID(ndr.getBuffer()).toString();
         ptr.stdObjRef = JIStdObjRef.decode(ndr);
-
         ptr.resolverAddr = JIDualStringArray.decode(ndr);
-
         return ptr;
     }
 
@@ -387,26 +368,14 @@ class JIInterfacePointerBody implements Serializable {
         ndr.writeOctetArray(JIInterfacePointer.OBJREF_SIGNATURE, 0, 4);
         //std ref
         ndr.writeUnsignedLong(JIInterfacePointer.SORF_OXRES1);
-
-        try {
-            rpc.core.UUID ipid2 = new rpc.core.UUID(iid);
-
-            if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID) == JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID) {
-                ipid2 = new rpc.core.UUID(IJIComObject.IID);
-            } else if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) == JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) {
-                ipid2 = new rpc.core.UUID(IJIDispatch.IID);
-            }
-
-            ipid2.encode(ndr, ndr.getBuffer());
-        } catch (NdrException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        UUID ipid2 = new UUID(iid);
+        if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID) == JIFlags.FLAG_REPRESENTATION_USE_IUNKNOWN_IID) {
+            ipid2 = new UUID(IJIComObject.IID);
+        } else if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) == JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) {
+            ipid2 = new UUID(IJIDispatch.IID);
         }
-
+        UUID.encodeToBuffer(ipid2, ndr.getBuffer());
         stdObjRef.encode(ndr);
-
         resolverAddr.encode(ndr);
-
     }
-
 }

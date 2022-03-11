@@ -23,28 +23,20 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import ndr.NdrBuffer;
-import ndr.NdrException;
 import ndr.NetworkDataRepresentation;
 import rpc.ConnectionOrientedPdu;
 import rpc.Fragmentable;
 import rpc.core.UUID;
 
-public class RequestCoPdu extends ConnectionOrientedPdu
-        implements Fragmentable {
-
-    public static final int REQUEST_TYPE = 0x00;
-
-    private byte[] stub;
-
-    private int allocationHint = 0;
-
-    private int contextId = 0;
-
-    private int opnum = 0;
-
-    private UUID object;
+public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragmentable {
 
     private static final Logger logger = Logger.getLogger("org.jinterop");
+    public static final int REQUEST_TYPE = 0x00;
+    private byte[] stub;
+    private int allocationHint = 0;
+    private int contextId = 0;
+    private int opnum = 0;
+    private UUID object;
 
     @Override
     public int getType() {
@@ -109,19 +101,15 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 
     @Override
     protected void readBody(NetworkDataRepresentation ndr) {
-        UUID object = null;
+        UUID uuid = null;
         NdrBuffer src = ndr.getBuffer();
         setAllocationHint(src.dec_ndr_long());
         setContextId(src.dec_ndr_short());
         setOpnum(src.dec_ndr_short());
         if (getFlag(PFC_OBJECT_UUID)) {
-            object = new UUID();
-            try {
-                object.decode(ndr, src);
-            } catch (NdrException ne) {
-            }
+            uuid = new UUID(src);
         }
-        setObject(object);
+        setObject(uuid);
     }
 
     @Override
@@ -131,10 +119,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu
         dst.enc_ndr_short(getContextId());
         dst.enc_ndr_short(getOpnum());
         if (getFlag(PFC_OBJECT_UUID)) {
-            try {
-                getObject().encode(ndr, ndr.getBuffer());
-            } catch (NdrException ne) {
-            }
+            UUID.encodeToBuffer(getObject(), ndr.getBuffer());
         }
     }
 
@@ -227,12 +212,10 @@ public class RequestCoPdu extends ConnectionOrientedPdu
 
     private class FragmentIterator implements Iterator {
 
-        private int stubSize;
-
+        private final int stubSize;
         private int index = 0;
-
 //        private boolean firstfragsent = false;
-        private int callId = callIdCounter++;
+        private final int callId = callIdCounter++;
 
         public FragmentIterator(int stubSize) {
             this.stubSize = stubSize;

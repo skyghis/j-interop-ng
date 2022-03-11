@@ -42,8 +42,7 @@ public final class JIComRuntimeConnectionContext extends BasicConnectionContext 
     // this returns null, so that a recieve is performed first.
 
     @Override
-    public ConnectionOrientedPdu init(PresentationContext context,
-            Properties properties) throws IOException {
+    public ConnectionOrientedPdu init(PresentationContext context, Properties properties) {
         super.init(context, properties);
         this.properties = properties;
         return null;

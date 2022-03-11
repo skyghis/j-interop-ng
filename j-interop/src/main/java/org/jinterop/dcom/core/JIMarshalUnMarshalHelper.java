@@ -1040,21 +1040,13 @@ final class JIMarshalUnMarshalHelper {
 
         @Override
         public Object deserializeData(NetworkDataRepresentation ndr, List<JIPointer> defferedPointers, Map additionalData, int FLAG) {
-            UUID ret = new UUID();
-            try {
-                ret.decode(ndr, ndr.getBuffer());
-            } catch (NdrException e) {
-                JISystem.getLogger().throwing("UUIDImpl", "deserializeData", e);
-                ret = null;
-            }
-            return ret;
+            return new UUID(ndr.getBuffer());
         }
 
         @Override
         public int getLengthInBytes(Object value, int FLAG) {
             return 16;
         }
-
     }
 
     private static class MInterfacePointerImpl implements SerializerDeserializer {

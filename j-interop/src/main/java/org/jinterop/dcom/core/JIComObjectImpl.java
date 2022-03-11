@@ -16,8 +16,6 @@
  */
 package org.jinterop.dcom.core;
 
-import com.iwombat.foundation.IdentifierFactory;
-import com.iwombat.util.GUIDUtil;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,6 +23,7 @@ import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
+import rpc.core.UUID;
 
 /**
  * Implementation for IJIComObject. There is a 1 to 1 mapping between this and a
@@ -43,7 +42,7 @@ final class JIComObjectImpl implements IJIComObject {
     private boolean dualInfo = false;
     private transient JISession session = null;
     private JIInterfacePointer ptr = null;
-    private Map connectionPointInfo = null;
+    private Map<String, Object[]> connectionPointInfo = null;
     private int timeout = 0;
     private final boolean isLocal;
 
@@ -199,9 +198,9 @@ final class JIComObjectImpl implements IJIComObject {
         checkLocal();
         if (connectionPointInfo == null) //lazy creation, since this is used by event callbacks only.
         {
-            connectionPointInfo = new HashMap();
+            connectionPointInfo = new HashMap<>();
         }
-        String uniqueId = GUIDUtil.guidStringFromHexString(IdentifierFactory.createUniqueIdentifier().toHexString());
+        String uniqueId = UUID.createHexString();
         connectionPointInfo.put(uniqueId, new Object[]{connectionPoint, cookie});
         return uniqueId;
     }
@@ -209,13 +208,13 @@ final class JIComObjectImpl implements IJIComObject {
     @Override
     public synchronized Object[] internal_getConnectionInfo(String identifier) {
         checkLocal();
-        return (Object[]) connectionPointInfo.get(identifier);
+        return connectionPointInfo.get(identifier);
     }
 
     @Override
     public synchronized Object[] internal_removeConnectionInfo(String identifier) {
         checkLocal();
-        return (Object[]) connectionPointInfo.remove(identifier);
+        return connectionPointInfo.remove(identifier);
     }
 
     @Override

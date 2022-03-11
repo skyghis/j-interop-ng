@@ -18,11 +18,9 @@ package org.jinterop.dcom.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import rpc.core.UUID;
 
 final class JIRemUnknown extends NdrObject {
@@ -52,25 +50,11 @@ final class JIRemUnknown extends NdrObject {
         orpcthis.encode(ndr);
 
         //now write the IPID
-        UUID uuid = new UUID(ipidOfIUnknown);
-        try {
-            uuid.encode(ndr, ndr.buf);
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemUnknown", "write", e);
-        }
-
+        UUID.encodeToBuffer(new UUID(ipidOfIUnknown), ndr.buf);
         ndr.writeUnsignedShort(1);//1 interfaces. (requested IID)
         ndr.writeUnsignedShort(0);//byte alignment
         ndr.writeUnsignedLong(1);//length of the array
-        uuid = new UUID(requestedIID);
-        try {
-            uuid.encode(ndr, ndr.buf);
-        } catch (NdrException e) {
-
-            JISystem.getLogger().throwing("JIRemUnknown", "Performing a QueryInterface for " + requestedIID, e);
-        }
-
+        UUID.encodeToBuffer(new UUID(requestedIID), ndr.buf);
         ndr.writeUnsignedLong(0); //TODO Index Matching , there seems to be a bug in
         // the jarapac system, it only reads upto (length - 6) bytes and one has to have another
         // call after that or incomplete request will go. in case no param is present just put an unsigned long = 0.
@@ -90,7 +74,7 @@ final class JIRemUnknown extends NdrObject {
         ndr.readUnsignedLong();
 
         //and now the JIInterfacePointer itself.
-        iidPtr = JIInterfacePointer.decode(ndr, new ArrayList(), JIFlags.FLAG_NULL, new HashMap());
+        iidPtr = JIInterfacePointer.decode(ndr, new ArrayList<>(), JIFlags.FLAG_NULL, new HashMap<>());
         //final hresult
         hresult1 = ndr.readUnsignedLong();
         if (hresult1 != 0) {

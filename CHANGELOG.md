@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Replace iwombat `UUID` implementation by java integrated one.
 - Update maven plugins dependencies.
 
 ## [3.3.0] - 2022-01-03
