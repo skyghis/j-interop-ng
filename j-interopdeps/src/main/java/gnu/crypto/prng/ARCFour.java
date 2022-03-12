@@ -42,7 +42,6 @@ package gnu.crypto.prng;
 // library, but you are not obligated to do so.  If you do not wish to
 // do so, delete this exception statement from your version.
 // ----------------------------------------------------------------------------
-import gnu.crypto.Registry;
 import java.util.Map;
 
 /**
@@ -82,8 +81,7 @@ public class ARCFour extends BasePRNG {
     /**
      * The attributes property name for the key bytes.
      */
-    public static final String ARCFOUR_KEY_MATERIAL
-            = "gnu.crypto.prng.arcfour.key-material";
+    public static final String ARCFOUR_KEY_MATERIAL = "gnu.crypto.prng.arcfour.key-material";
 
     /**
      * The size of the internal S-box.
@@ -103,7 +101,7 @@ public class ARCFour extends BasePRNG {
      * Default 0-arguments constructor.
      */
     public ARCFour() {
-        super(Registry.ARCFOUR_PRNG);
+        super("arcfour");
     }
 
     // Methods implementing BasePRNG.

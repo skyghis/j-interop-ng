@@ -17,9 +17,10 @@
 package rpc.security.ntlm;
 
 import gnu.crypto.prng.IRandom;
-import gnu.crypto.util.Util;
-import java.io.ByteArrayOutputStream;
+import gnu.crypto.prng.LimitReachedException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jcifs.ntlmssp.NtlmFlags;
@@ -31,20 +32,17 @@ import rpc.Security;
 
 public class Ntlm1 implements NtlmFlags, Security {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final int NTLM1_VERIFIER_LENGTH = 16;
-
     private IRandom clientCipher = null;
     private IRandom serverCipher = null;
     private byte[] clientSigningKey = null;
     private byte[] serverSigningKey = null;
     private NTLMKeyFactory keyFactory = null;
     private boolean isServer = false;
-    private int protectionLevel;
-
+    private final int protectionLevel;
     private int requestCounter = 0;
     private int responseCounter = 0;
-
-    private static final Logger logger = Logger.getLogger("org.jinterop");
 
     public Ntlm1(int flags, byte[] sessionKey, boolean isServer) {
 
@@ -65,11 +63,11 @@ public class Ntlm1 implements NtlmFlags, Security {
         //Used by the client to decrypt server messages
         serverCipher = keyFactory.getARCFOUR(serverSealingKey);
 
-        if (logger.isLoggable(Level.FINEST)) {
-            logger.log(Level.FINEST, "Client Signing Key derieved from the session key: [{0}]", Util.dumpString(clientSigningKey));
-            logger.log(Level.FINEST, "Client Sealing Key derieved from the session key: [{0}]", Util.dumpString(clientSealingKey));
-            logger.log(Level.FINEST, "Server Signing Key derieved from the session key: [{0}]", Util.dumpString(serverSigningKey));
-            logger.log(Level.FINEST, "Server Sealing Key derieved from the session key: [{0}]", Util.dumpString(serverSealingKey));
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "Client Signing Key derieved from the session key: [{0}]", dumpString(clientSigningKey));
+            LOGGER.log(Level.FINEST, "Client Sealing Key derieved from the session key: [{0}]", dumpString(clientSealingKey));
+            LOGGER.log(Level.FINEST, "Server Signing Key derieved from the session key: [{0}]", dumpString(serverSigningKey));
+            LOGGER.log(Level.FINEST, "Server Sealing Key derieved from the session key: [{0}]", dumpString(serverSealingKey));
         }
     }
 
@@ -94,8 +92,8 @@ public class Ntlm1 implements NtlmFlags, Security {
         try {
             NdrBuffer buffer = ndr.getBuffer();
 
-            byte[] signingKey = null;
-            IRandom cipher = null;
+            byte[] signingKey;
+            IRandom cipher;
 
             //reverse of what it is
             if (!isServer) {
@@ -114,10 +112,10 @@ public class Ntlm1 implements NtlmFlags, Security {
                 System.arraycopy(data, 0, ndr.getBuffer().buf, index, data.length);
             }
 
-            if (logger.isLoggable(Level.FINEST)) {
-                logger.info("AFTER Decryption");
-                logger.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
-                logger.log(Level.FINEST, "\nLength is: {0}", data.length);
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.info("AFTER Decryption");
+                LOGGER.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
+                LOGGER.log(Level.FINEST, "\nLength is: {0}", data.length);
             }
 
             byte[] verifier = keyFactory.signingPt1(responseCounter, signingKey, buffer.getBuffer(), verifierIndex);
@@ -141,10 +139,10 @@ public class Ntlm1 implements NtlmFlags, Security {
             responseCounter++;
 
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, "", ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             throw ex;
         } catch (Exception ex) {
-            logger.log(Level.SEVERE, "", ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             throw new IntegrityException("General error: " + ex.getMessage());
         }
     }
@@ -155,8 +153,8 @@ public class Ntlm1 implements NtlmFlags, Security {
         try {
             NdrBuffer buffer = ndr.getBuffer();
 
-            byte[] signingKey = null;
-            IRandom cipher = null;
+            byte[] signingKey;
+            IRandom cipher;
             if (isServer) {
                 signingKey = serverSigningKey;
                 cipher = serverCipher;
@@ -168,11 +166,10 @@ public class Ntlm1 implements NtlmFlags, Security {
             byte[] verifier = keyFactory.signingPt1(requestCounter, signingKey, buffer.getBuffer(), verifierIndex);
             byte[] data = new byte[length];
             System.arraycopy(ndr.getBuffer().getBuffer(), index, data, 0, data.length);
-            if (logger.isLoggable(Level.FINEST)) {
-                logger.info("BEFORE Encryption");
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                logger.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
-                logger.log(Level.INFO, "Length is: {0}", data.length);
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.info("BEFORE Encryption");
+                LOGGER.log(Level.FINEST, "\n{0}", Hexdump.toHexString(data));
+                LOGGER.log(Level.INFO, "Length is: {0}", data.length);
             }
 
             if (getProtectionLevel() == PROTECTION_LEVEL_PRIVACY) {
@@ -182,16 +179,21 @@ public class Ntlm1 implements NtlmFlags, Security {
             keyFactory.signingPt2(verifier, cipher);
             buffer.setIndex(verifierIndex);
             buffer.writeOctetArray(verifier, 0, verifier.length);
-
-//            if (isServer && !isFragmented)
-//            {
-//            	responseCounter++;
-//            }
             requestCounter++;
 
-        } catch (Exception ex) {
+        } catch (LimitReachedException | NoSuchAlgorithmException | RuntimeException ex) {
             throw new IntegrityException("General error: " + ex.getMessage());
         }
     }
+    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 
+    public static String dumpString(byte[] bytes) {
+        byte[] hexChars = new byte[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
+    }
 }

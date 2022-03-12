@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Replace custom `MD4` and `MD5` implementation by java integrated one.
 - Replace iwombat `UUID` implementation by java integrated one.
 - Update maven plugins dependencies.
 

@@ -1,11 +1,9 @@
 /**
  * Extracted from http://davenport.sourceforge.net/ntlm.html
  * Copyright © 2003, 2006 Eric Glass (eric.glass@gmail.com)
- *
  */
 package rpc.security.ntlm;
 
-import gnu.crypto.hash.MD4;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -160,9 +158,7 @@ public class Responses {
      */
     static byte[] ntlmHash(String password) {
         byte[] unicodePassword = password.getBytes(StandardCharsets.UTF_16LE);
-        MD4 md4 = new MD4();
-        md4.update(unicodePassword, 0, unicodePassword.length);
-        return md4.digest();
+        return MD4.digest(unicodePassword);
     }
 
     /**
