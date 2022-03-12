@@ -16,8 +16,6 @@
  */
 package rpc.security.ntlm;
 
-import gnu.crypto.hash.MD4;
-import gnu.crypto.hash.MD5;
 import gnu.crypto.prng.ARCFour;
 import gnu.crypto.prng.IRandom;
 import gnu.crypto.prng.LimitReachedException;
@@ -58,12 +56,8 @@ class NTLMKeyFactory {
      */
     byte[] getNTLMUserSessionKey(String password) throws UnsupportedEncodingException, DigestException {
         //look at NTLMPasswordAuthentication in jcifs. It supports only the NTLMUserSessionKey and the LMv2UserSessionKey...we need more :(
-        byte key[];
         byte[] ntlmHash = Responses.ntlmHash(password);
-        MD4 md4 = new MD4();
-        md4.update(ntlmHash, 0, ntlmHash.length);
-        key = md4.digest();
-        return key;
+        return MD4.digest(ntlmHash);
     }
 
     byte[] getNTLMv2UserSessionKey(String target, String user, String password, byte[] challenge, byte[] blob) throws Exception {
@@ -134,9 +128,7 @@ class NTLMKeyFactory {
         byte[] dataforhash = new byte[secondarySessionKey.length + clientSigningMagicConstant.length];
         System.arraycopy(secondarySessionKey, 0, dataforhash, 0, secondarySessionKey.length);
         System.arraycopy(clientSigningMagicConstant, 0, dataforhash, secondarySessionKey.length, clientSigningMagicConstant.length);
-        MD5 md5 = new MD5();
-        md5.update(dataforhash, 0, dataforhash.length);
-        return md5.digest();
+        return MD5.digest(dataforhash);
     }
 
     byte[] generateClientSealingKeyUsingNegotiatedSecondarySessionKey(byte[] secondarySessionKey) {
@@ -144,9 +136,7 @@ class NTLMKeyFactory {
         byte[] dataforhash = new byte[secondarySessionKey.length + clientSealingMagicConstant.length];
         System.arraycopy(secondarySessionKey, 0, dataforhash, 0, secondarySessionKey.length);
         System.arraycopy(clientSealingMagicConstant, 0, dataforhash, secondarySessionKey.length, clientSealingMagicConstant.length);
-        MD5 md5 = new MD5();
-        md5.update(dataforhash, 0, dataforhash.length);
-        return md5.digest();
+        return MD5.digest(dataforhash);
     }
 
     byte[] generateServerSigningKeyUsingNegotiatedSecondarySessionKey(byte[] secondarySessionKey) {
@@ -154,9 +144,7 @@ class NTLMKeyFactory {
         byte[] dataforhash = new byte[secondarySessionKey.length + serverSigningMagicConstant.length];
         System.arraycopy(secondarySessionKey, 0, dataforhash, 0, secondarySessionKey.length);
         System.arraycopy(serverSigningMagicConstant, 0, dataforhash, secondarySessionKey.length, serverSigningMagicConstant.length);
-        MD5 md5 = new MD5();
-        md5.update(dataforhash, 0, dataforhash.length);
-        return md5.digest();
+        return MD5.digest(dataforhash);
     }
 
     byte[] generateServerSealingKeyUsingNegotiatedSecondarySessionKey(byte[] secondarySessionKey) {
@@ -164,9 +152,7 @@ class NTLMKeyFactory {
         byte[] dataforhash = new byte[secondarySessionKey.length + serverSealingMagicConstant.length];
         System.arraycopy(secondarySessionKey, 0, dataforhash, 0, secondarySessionKey.length);
         System.arraycopy(serverSealingMagicConstant, 0, dataforhash, secondarySessionKey.length, serverSealingMagicConstant.length);
-        MD5 md5 = new MD5();
-        md5.update(dataforhash, 0, dataforhash.length);
-        return md5.digest();
+        return MD5.digest(dataforhash);
     }
 
     //TODO merge the signing routine for both client and server all that they differ by are keys...as expected
@@ -185,9 +171,7 @@ class NTLMKeyFactory {
 
         byte[] sign = Responses.hmacMD5(seqNumPlusData, signingKey);
 
-        for (int i = 0; i < 8; i++) {
-            retval[i + 4] = sign[i];
-        }
+        System.arraycopy(sign, 0, retval, 4, 8);
 
         retval[12] = (byte) (sequenceNumber & 0xFF);
         retval[13] = (byte) ((sequenceNumber >> 8) & 0xFF);

@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * A JNI client to SSPI based CPP program (DLL) that returns the user
  * credentials for NTLM authentication.
- * <p/>
+ * <p>
  * The DLL name is ntlmauth.dll.
  *
  * @author Magendran Sathaiah (mahi@aztec.soft.net)
