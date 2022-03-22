@@ -33,7 +33,7 @@ import rpc.core.PresentationSyntax;
  * @exclude @since 1.0
  *
  */
-final class JIComRuntimeTransport implements Transport {
+public class JIComRuntimeTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
     private final Properties properties;
