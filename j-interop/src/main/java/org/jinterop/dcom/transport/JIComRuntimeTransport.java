@@ -37,12 +37,12 @@ public class JIComRuntimeTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
     private final Properties properties;
-    private Socket socket;
+    protected Socket socket;
     private OutputStream output;
     private InputStream input;
     private boolean attached;
 
-    JIComRuntimeTransport(String address, Properties properties)
+    protected JIComRuntimeTransport(String address, Properties properties)
             throws ProviderException {
         this.properties = properties;
         //address is ignored
@@ -66,11 +66,11 @@ public class JIComRuntimeTransport implements Transport {
 
         Endpoint endPoint = null;
         try {
-            socket = (Socket) JISystem.internal_getSocket();
+            socket = this.getSocket();
             output = null;
             input = null;
             attached = true;
-            endPoint = new JIComRuntimeEndpoint(this, syntax);
+            endPoint = this.getEndpoint(syntax);
         } catch (Exception ex) {
             try {
                 close();
@@ -78,6 +78,16 @@ public class JIComRuntimeTransport implements Transport {
             }
         }
         return endPoint;
+    }
+    
+    protected Endpoint getEndpoint(PresentationSyntax syntax) throws Exception
+    {
+   	 return new JIComRuntimeEndpoint(this, syntax);
+    }
+    
+    protected Socket getSocket() throws Exception
+    {
+   	 return (Socket) JISystem.internal_getSocket();
     }
 
     @Override
