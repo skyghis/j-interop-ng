@@ -45,7 +45,7 @@ public class NetworkDataRepresentation {
     }
 
     public boolean readBoolean() {
-        return buf.dec_ndr_small() == 0 ? false : true;
+        return buf.dec_ndr_small() != 0;
     }
 
     public void writeBoolean(boolean value) {

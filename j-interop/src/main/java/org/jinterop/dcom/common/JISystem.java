@@ -43,32 +43,21 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * < p>
  * Class implemented for defining system wide changes.
- *
  * <p>
  * A note on logging: The framework exposes JRE based logger "org.jinterop".
- * Applications need to attach their own handler to this logger. If you would
- * like to set the in-built handler, which writes to a file
- * <code>j-Interop.log</code> in the <code>java.io.tmpdir</code> directory,
- * please use the {@link #setInBuiltLogHandler(boolean)}. Please note that the
- * <code>level</code> for the logger and all other configuration parameters
- * should be set directly on the logger instance, using
- * <code>LogManager.getLogger("org.jinterop")</code></p>
- *
+ * Applications need to attach their own handler to this logger.
  * <p>
- * <b>Note</b>: Methods starting with <i>internal_</i> keyword are internal to
- * the framework and must not be called by the developer.
+ * <b>Note</b>: Methods starting with <i>internal_</i> keyword are internal to the framework and must not be called by the developer.
  *
  * @since 1.0
- *
  */
 public final class JISystem {
 
     private JISystem() {
     }
 
-    private static final Logger logger = Logger.getLogger("org.jinterop");
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final Properties mapOfProgIdsVsClsids = new Properties();
     private static final List<Socket> socketQueue = new ArrayList<>();
     private static final Map<String, String> mapOfHostnamesVsIPs = new HashMap<>();
@@ -79,13 +68,9 @@ public final class JISystem {
     private static boolean autoRegister = false;
     private static boolean autoCollection = true;
 
-    /**
-     * Returns the framework logger identified by the name "org.jinterop".
-     *
-     * @return
-     */
+    @Deprecated
     public static Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     /**
@@ -231,8 +216,8 @@ public final class JISystem {
                     if (!pathToDB.startsWith("file:")) {
                         url = new URL("file:" + pathToDB);
                     }
-                    if (logger.isLoggable(Level.INFO)) {
-                        logger.log(Level.INFO, "progIdVsClsidDB file located at: {0}", url);
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "progIdVsClsidDB file located at: {0}", url);
                     }
                     URLConnection con = url.openConnection();
                     try (final InputStream inputStream = con.getInputStream()) {
@@ -246,8 +231,8 @@ public final class JISystem {
             }
         }
 
-        if (logger.isLoggable(Level.INFO)) {
-            logger.log(Level.INFO, "progIdVsClsidDB: {0}", mapOfProgIdsVsClsids);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "progIdVsClsidDB: {0}", mapOfProgIdsVsClsids);
         }
     }
 
@@ -264,9 +249,9 @@ public final class JISystem {
                     mapOfProgIdsVsClsids.store(outputStream, "progId Vs ClsidDB");
                 }
             } catch (FileNotFoundException e) {
-                logger.throwing("JISystem", "writeProgIdsToFile", e);
+                LOGGER.throwing("JISystem", "writeProgIdsToFile", e);
             } catch (IOException e) {
-                logger.throwing("JISystem", "writeProgIdsToFile", e);
+                LOGGER.throwing("JISystem", "writeProgIdsToFile", e);
             }
         }
     }
@@ -314,13 +299,13 @@ public final class JISystem {
         Iterator<Object> itr = pr.keySet().iterator();
         String str = "";
         String jinteropVersion = JISystem.class.getPackage().getImplementationVersion();
-        if (logger.isLoggable(Level.INFO)) {
-            logger.log(Level.INFO, "j-Interop Version = {0}\n", jinteropVersion);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "j-Interop Version = {0}\n", jinteropVersion);
             while (itr.hasNext()) {
                 String key = (String) itr.next();
                 str = str + key + " = " + pr.getProperty(key) + "\n";
             }
-            logger.info(str);
+            LOGGER.info(str);
         }
     }
 
@@ -377,18 +362,12 @@ public final class JISystem {
         return autoCollection;
     }
 
-    /**
-     * Used to set the in built log handler.
-     *
-     * @param useParentHandlers true if parent handlers should be used.
-     * @throws IOException
-     * @throws SecurityException
-     */
+    @Deprecated
     public static void setInBuiltLogHandler(boolean useParentHandlers) throws SecurityException, IOException {
-        logger.setUseParentHandlers(useParentHandlers);
+        LOGGER.setUseParentHandlers(useParentHandlers);
         FileHandler fileHandler = new FileHandler("%t/j-Interop%g.log", 0, 1, true);
         fileHandler.setFormatter(new SimpleFormatter());
-        logger.addHandler(fileHandler);
+        LOGGER.addHandler(fileHandler);
     }
 
     /**
@@ -433,8 +412,8 @@ public final class JISystem {
     }
 
     public static synchronized void internal_dumpMap() {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            getLogger().log(Level.INFO, "mapOfHostnamesVsIPs: {0}", mapOfHostnamesVsIPs);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "mapOfHostnamesVsIPs: {0}", mapOfHostnamesVsIPs);
         }
     }
 }

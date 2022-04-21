@@ -32,7 +32,7 @@ public class NtlmConnection extends DefaultConnection {
 
     private static int contextSerial;
 
-    private NtlmAuthentication authentication;
+    private final NtlmAuthentication authentication;
 
     protected Properties properties;
 
@@ -69,7 +69,7 @@ public class NtlmConnection extends DefaultConnection {
                 // server gets authenticate from client
                 Type2Message type2 = (Type2Message) ntlm;
                 ntlm = new Type3Message(verifier.body);
-                boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();
+                boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2"));
                 if (usentlmv2) {
                     authentication.createSecurityWhenServer(ntlm);
                     setSecurity(authentication.getSecurity());
@@ -96,7 +96,7 @@ public class NtlmConnection extends DefaultConnection {
             // client sends authenticate to server
             Type2Message type2 = (Type2Message) ntlm;
             ntlm = authentication.createType3(type2);
-            boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2")).booleanValue();
+            boolean usentlmv2 = Boolean.valueOf(properties.getProperty("rpc.ntlm.ntlm2"));
             if (usentlmv2) {
                 setSecurity(authentication.getSecurity());
             }

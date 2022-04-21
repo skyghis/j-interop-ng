@@ -24,7 +24,7 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
 /**
- * < p>
+ * <p>
  * Class representing a COM string. The Wide Char (<code>LPWSTR</code>) and the
  * <code>BSTR</code> are both encoded by the server in "UTF-16LE". This encoding
  * will be preserved by the library for all to and fro operations.

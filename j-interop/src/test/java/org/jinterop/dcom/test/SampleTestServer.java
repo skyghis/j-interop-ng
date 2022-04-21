@@ -427,7 +427,6 @@ public class SampleTestServer {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            JISystem.setInBuiltLogHandler(false);
             JISystem.setAutoRegisteration(true);
             SampleTestServer test = new SampleTestServer(args[0], args);
 

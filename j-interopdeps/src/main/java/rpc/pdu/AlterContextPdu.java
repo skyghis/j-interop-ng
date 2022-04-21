@@ -73,7 +73,7 @@ public class AlterContextPdu extends ConnectionOrientedPdu {
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
-        setAssociationGroupId((int) ndr.readUnsignedLong());
+        setAssociationGroupId(ndr.readUnsignedLong());
         int count = ndr.readUnsignedSmall();
         PresentationContext[] contextList = new PresentationContext[count];
         for (int i = 0; i < count; i++) {

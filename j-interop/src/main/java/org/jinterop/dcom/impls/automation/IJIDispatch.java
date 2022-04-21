@@ -21,7 +21,7 @@ import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIVariant;
 
 /**
- * < p>
+ * <p>
  * Represents the Windows COM <code>IDispatch</code> Interface.
  *
  * <p>

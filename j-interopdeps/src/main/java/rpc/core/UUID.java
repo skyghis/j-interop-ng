@@ -18,8 +18,10 @@ package rpc.core;
 
 import java.util.StringTokenizer;
 import ndr.NdrBuffer;
+import ndr.NdrObject;
+import ndr.NetworkDataRepresentation;
 
-public final class UUID {
+public final class UUID extends NdrObject {
 
     public static final String NIL_UUID = "00000000-0000-0000-0000-000000000000";
     private int timeLow;
@@ -30,7 +32,7 @@ public final class UUID {
     private byte[] node = new byte[6];
 
     public static String createHexString() {
-        return java.util.UUID.randomUUID().toString().replace("-", "");
+        return java.util.UUID.randomUUID().toString();
     }
 
     public UUID(NdrBuffer src) {
@@ -41,13 +43,23 @@ public final class UUID {
         parse(uuid);
     }
 
-    public static void encodeToBuffer(UUID uuid, NdrBuffer dst) {
-        dst.enc_ndr_long(uuid.timeLow);
-        dst.enc_ndr_short(uuid.timeMid);
-        dst.enc_ndr_short(uuid.timeHighAndVersion);
-        dst.enc_ndr_small(uuid.clockSeqHighAndReserved);
-        dst.enc_ndr_small(uuid.clockSeqLow);
-        System.arraycopy(uuid.node, 0, dst.buf, dst.index, 6);
+    @Override
+    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
+        encode(dst);
+    }
+
+    @Override
+    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
+        decode(src);
+    }
+
+    public void encode(NdrBuffer dst) {
+        dst.enc_ndr_long(timeLow);
+        dst.enc_ndr_short(timeMid);
+        dst.enc_ndr_short(timeHighAndVersion);
+        dst.enc_ndr_small(clockSeqHighAndReserved);
+        dst.enc_ndr_small(clockSeqLow);
+        System.arraycopy(node, 0, dst.buf, dst.index, 6);
         dst.index += 6;
     }
 

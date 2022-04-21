@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrBuffer;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
@@ -32,9 +33,10 @@ import rpc.core.UUID;
 
 //This object should have serialized access only , i.e at a time only 1 read --> write , cycle should happen
 // it is not multithreaded safe.
+//override read\write\opnum etc. here, use the util apis to decompose this.
 class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
-    //override read\write\opnum etc. here, use the util apis to decompose this.
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private final Random random = new Random(System.currentTimeMillis());
     private int opnum = -1;
     private NdrBuffer buffer = null;
@@ -85,8 +87,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
                 buffer = ResolveOxid2(ndr);
                 break;
             default: //should not have arrived here.
-                if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().warning("Oxid Object: DEFAULTED !!!");
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.warning("Oxid Object: DEFAULTED !!!");
                 }
                 throw new JIRuntimeException(JIErrorCodes.RPC_S_PROCNUM_OUT_OF_RANGE);
         }
@@ -94,8 +96,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     }
 
     private NdrBuffer SimplePing(NetworkDataRepresentation ndr) {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Oxid Object: SimplePing");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Oxid Object: SimplePing");
         }
         byte b[] = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr, 8);//setid
         JIComOxidRuntime.addUpdateSets(new JISetId(b), new ArrayList<>(), new ArrayList<>());
@@ -108,8 +110,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     }
 
     private NdrBuffer ComplexPing(NetworkDataRepresentation ndr) {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Oxid Object: ComplexPing");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Oxid Object: ComplexPing");
         }
         byte b[] = JIMarshalUnMarshalHelper.readOctetArrayLE(ndr, 8);//setid
         JIMarshalUnMarshalHelper.deSerialize(ndr, Short.class, null, JIFlags.FLAG_NULL, null);//seqId.
@@ -143,8 +145,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     }
 
     private NdrBuffer ServerAlive() {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Oxid Object: ServerAlive");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Oxid Object: ServerAlive");
         }
         byte[] buffer = new byte[32]; //16 + 16=just in case
         NdrBuffer ndrBuffer = new NdrBuffer(buffer, 0);
@@ -156,8 +158,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     }
 
     private NdrBuffer ServerAlive2() {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Oxid Object: ServerAlive2");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Oxid Object: ServerAlive2");
         }
         //there is no in params for this.
         //only out params
@@ -196,8 +198,8 @@ class OxidResolverImpl extends NdrObject implements IJICOMRuntimeWorker {
     //will prepare a NdrBuffer for reply to this call
 
     private NdrBuffer ResolveOxid2(NetworkDataRepresentation ndr) {
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().info("Oxid Object: ResolveOxid2");
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.info("Oxid Object: ResolveOxid2");
         }
         //System.err.println("VIKRAM: resolve oxid thread Id = " + Thread.currentThread().getId());
         //first read the OXID, then consult the oxid master about it's details.

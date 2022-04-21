@@ -384,7 +384,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(5);
         callObject.addInParamAsInt(index, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
-        return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
+        return ((Number) (comObject.call(callObject)[0])).intValue();
     }
 
     @Override
@@ -393,7 +393,7 @@ final class JITypeInfoImpl extends JIComObjectImplWrapper implements IJITypeInfo
         callObject.setOpnum(6);
         callObject.addInParamAsInt(index, JIFlags.FLAG_NULL);
         callObject.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);
-        return ((Number) (((Object[]) comObject.call(callObject))[0])).intValue();
+        return ((Number) (comObject.call(callObject)[0])).intValue();
     }
 
     @Override

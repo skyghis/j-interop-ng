@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -34,7 +35,7 @@ import org.jinterop.dcom.impls.JIObjectFactory;
 import rpc.core.UUID;
 
 /**
- * < p>
+ * <p>
  * Represents a Java <code>COCLASS</code>.
  * <p>
  * <i>Please refer to MSInternetExplorer, Test_ITestServer2_Impl,
@@ -46,6 +47,7 @@ import rpc.core.UUID;
  */
 public final class JILocalCoClass implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = 5542223845228327383L;
     private static final String IID_IDISPATCH = "00020400-0000-0000-c000-000000000046";
     private static Random randomGen = new Random(Double.doubleToRawLongBits(Math.random()));
@@ -426,8 +428,8 @@ public final class JILocalCoClass implements Serializable {
 
                     info = interfaceDefinitionOfClass.getMethodDescriptorForDispId(dispId);
                     if (info == null) {
-                        if (JISystem.getLogger().isLoggable(Level.SEVERE)) {
-                            JISystem.getLogger().log(Level.SEVERE, "MethodDescriptor not found for DispId :- {0}", dispId);
+                        if (LOGGER.isLoggable(Level.SEVERE)) {
+                            LOGGER.log(Level.SEVERE, "MethodDescriptor not found for DispId :- {0}", dispId);
                         }
 
                         throw new JIException(JIErrorCodes.DISP_E_MEMBERNOTFOUND);
@@ -473,8 +475,8 @@ public final class JILocalCoClass implements Serializable {
                 default: //others are normal API calls ...Opnum - 6 is there real Opnum. 0,1,2 and 3,4,5,6
                     isStandardCall = true;
                     Opnum -= 4; //adjust for only IDispatch(3,4,5,6) , IUnknown(0,1,2) will get adjusted below.
-                    if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().log(Level.INFO, "Standard call came: Opnum is {0}", Opnum);
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "Standard call came: Opnum is {0}", Opnum);
                     }
 
             }
@@ -495,13 +497,13 @@ public final class JILocalCoClass implements Serializable {
             Class calleeClazz = interfaceDefinitionOfClass.instance == null ? interfaceDefinitionOfClass.clazz : interfaceDefinitionOfClass.instance.getClass();
             Method method = null;
             try {
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "methodDescriptor: {0}", methodDescriptor.getMethodName());
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "methodDescriptor: {0}", methodDescriptor.getMethodName());
                 }
                 method = calleeClazz.getDeclaredMethod(methodDescriptor.getMethodName(), methodDescriptor.getInparametersAsClass());
                 Object calleeInstance = interfaceDefinitionOfClass.instance == null ? calleeClazz.newInstance() : interfaceDefinitionOfClass.instance;
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "Call Back Method to be executed: {0} , to be executed on {1}", new Object[]{method, calleeInstance});
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "Call Back Method to be executed: {0} , to be executed on {1}", new Object[]{method, calleeInstance});
                 }
                 Object result = method.invoke(calleeInstance, params);
 
@@ -515,16 +517,16 @@ public final class JILocalCoClass implements Serializable {
                 }
 
             } catch (IllegalArgumentException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
+                LOGGER.throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.E_INVALIDARG, e);
             } catch (IllegalAccessException | SecurityException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
+                LOGGER.throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.ERROR_ACCESS_DENIED, e);
             } catch (InvocationTargetException | InstantiationException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
+                LOGGER.throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.E_UNEXPECTED, e);
             } catch (NoSuchMethodException e) {
-                JISystem.getLogger().throwing("JILocalCoClass", "invokeMethod", e);
+                LOGGER.throwing("JILocalCoClass", "invokeMethod", e);
                 throw new JIException(JIErrorCodes.RPC_S_PROCNUM_OUT_OF_RANGE, e);
             }
         }
@@ -579,7 +581,7 @@ public final class JILocalCoClass implements Serializable {
     }
 
     /**
-     * < p>
+     * <p>
      * Returns <code>true</code> if the primary interface definition represents
      * a real <code>IID</code> .
      *

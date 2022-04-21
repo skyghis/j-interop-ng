@@ -46,7 +46,7 @@ public class PresentationException extends BindException {
     }
 
     private static String message(PresentationResult result) {
-        StringBuffer message = new StringBuffer();
+        StringBuilder message = new StringBuilder();
         switch (result.result) {
             case PresentationResult.ACCEPTANCE:
                 message.append("ACCEPTANCE");

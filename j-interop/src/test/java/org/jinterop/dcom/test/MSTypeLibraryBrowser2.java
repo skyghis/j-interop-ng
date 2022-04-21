@@ -2,8 +2,8 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIComServer;
@@ -25,6 +25,7 @@ import org.jinterop.dcom.impls.automation.VarDesc;
 
 public class MSTypeLibraryBrowser2 {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comServer = null;
     private IJIDispatch dispatch = null;
     private IJIComObject unknown = null;
@@ -222,8 +223,7 @@ public class MSTypeLibraryBrowser2 {
                 System.out.println("Please provide address domain username password progIdOfApplication");
                 return;
             }
-            JISystem.getLogger().setLevel(Level.OFF);
-            JISystem.setInBuiltLogHandler(false);
+            LOGGER.setLevel(Level.OFF);
             MSTypeLibraryBrowser2 typeLibraryBrowser = new MSTypeLibraryBrowser2(args[0], args);
             typeLibraryBrowser.start();
         } catch (Exception e) {

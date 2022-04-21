@@ -21,6 +21,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIDefaultAuthInfoImpl;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -63,23 +64,23 @@ import rpc.Stub;
  */
 public final class JIComServer extends Stub {
 
-    private static Properties defaults = new Properties();
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+    private static final Properties DEFAULTS = new Properties();
 
     static {
-        defaults.put("rpc.ntlm.lanManagerKey", "false");
-        defaults.put("rpc.ntlm.sign", "false");
-        defaults.put("rpc.ntlm.seal", "false");
-        defaults.put("rpc.ntlm.keyExchange", "false");
-        defaults.put("rpc.ntlm.sso", "false");
-        defaults.put("rpc.connectionContext", "rpc.security.ntlm.NtlmConnectionContext");
-        defaults.put("rpc.socketTimeout", Integer.toString(0));
+        DEFAULTS.put("rpc.ntlm.lanManagerKey", "false");
+        DEFAULTS.put("rpc.ntlm.sign", "false");
+        DEFAULTS.put("rpc.ntlm.seal", "false");
+        DEFAULTS.put("rpc.ntlm.keyExchange", "false");
+        DEFAULTS.put("rpc.ntlm.sso", "false");
+        DEFAULTS.put("rpc.connectionContext", "rpc.security.ntlm.NtlmConnectionContext");
+        DEFAULTS.put("rpc.socketTimeout", Integer.toString(0));
         // rpc.connectionContext = rpc.security.ntlm.NtlmConnectionContext
         // rpc.ntlm.sign = false
         // rpc.ntlm.seal = false
         // rpc.ntlm.keyExchange = false
     }
 
-    //private String address = null;
     private JIRemActivation remoteActivation = null;
     private JIOxidResolver oxidResolver = null;
     private String clsid = null;
@@ -91,11 +92,8 @@ public final class JIComServer extends Stub {
     private boolean timeoutModifiedfrom0 = false;
     private JIInterfacePointer interfacePtrCtor = null;
 
-    private JIComServer() {
-    }
-
     /**
-     * < p>
+     * <p>
      * Instantiates a JIComServer represented by the interfacePointer param.
      * There are cases where a COM server may hand down a reference to a
      * different COM server(which may or may not be on the same machine) and we
@@ -144,13 +142,13 @@ public final class JIComServer extends Stub {
             throw new JIException(JIErrorCodes.JI_SESSION_ALREADY_ESTABLISHED);
         }
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
+        if (LOGGER.isLoggable(Level.INFO)) {
             JISystem.internal_dumpMap();
         }
 
         super.setTransportFactory(JIComTransportFactory.getSingleTon());
         //now read the session and prepare information for the stub.
-        super.setProperties(new Properties(defaults));
+        super.setProperties(new Properties(DEFAULTS));
         super.getProperties().setProperty("rpc.security.username", session.getUserName());
         super.getProperties().setProperty("rpc.security.password", session.getPassword());
         super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
@@ -336,7 +334,7 @@ public final class JIComServer extends Stub {
     }
 
     /**
-     * < p>
+     * <p>
      * <code>JIProgId</code> based constructor with the host machine for COM
      * server being <i>LOCALHOST</i>.
      *
@@ -354,7 +352,7 @@ public final class JIComServer extends Stub {
     }
 
     /**
-     * < p>
+     * <p>
      * <code>{@link JIClsid}</code> based constructor with the host machine for
      * COM server being <i>LOCALHOST</i>.
      *
@@ -372,7 +370,7 @@ public final class JIComServer extends Stub {
     }
 
     /**
-     * < p>
+     * <p>
      * Refer {@link #JIComServer(JIProgId, JISession)} for details.
      *
      * @param progId user-friendly string such as "Excel.Application" ,
@@ -413,7 +411,7 @@ public final class JIComServer extends Stub {
     }
 
     /**
-     * < p>
+     * <p>
      * Refer {@link #JIComServer(JIClsid, JISession)} for details.
      *
      *
@@ -450,7 +448,7 @@ public final class JIComServer extends Stub {
     private void initialise(JIClsid clsid, String address, JISession session) throws JIException {
         super.setTransportFactory(JIComTransportFactory.getSingleTon());
         //now read the session and prepare information for the stub.
-        super.setProperties(new Properties(defaults));
+        super.setProperties(new Properties(DEFAULTS));
         super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
         super.setAddress(address);
 
@@ -466,7 +464,7 @@ public final class JIComServer extends Stub {
             super.getProperties().setProperty("rpc.ntlm.domain", session.getDomain());
         }
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
+        if (LOGGER.isLoggable(Level.INFO)) {
             JISystem.internal_dumpMap();
         }
 
@@ -477,8 +475,8 @@ public final class JIComServer extends Stub {
             init();
         } catch (JIException e) {
             if (e.getErrorCode() == 0x80040154) {
-                if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().warning("Got the class not registered exception , will attempt setting entries based on status flags...");
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.warning("Got the class not registered exception , will attempt setting entries based on status flags...");
                 }
                 //try registering the dll\ocx on our own
                 //check for clsid.autoregister flag
@@ -506,7 +504,7 @@ public final class JIComServer extends Stub {
                         registry.closeConnection();
                     } catch (UnknownHostException e1) {
                         //auto registration failed as well...
-                        JISystem.getLogger().throwing("JIComServer", "initialise", e1);
+                        LOGGER.throwing("JIComServer", "initialise", e1);
                         throw new JIException(JIErrorCodes.JI_WINREG_EXCEPTION3, e1);
                     }
                     //lets retry
@@ -563,8 +561,8 @@ public final class JIComServer extends Stub {
                 try {
                     detach();
                 } catch (IOException e) {
-                    if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().log(Level.WARNING, "Unable to detach during init: {0}", e);
+                    if (LOGGER.isLoggable(Level.WARNING)) {
+                        LOGGER.log(Level.WARNING, "Unable to detach during init: {0}", e);
                     }
                 }
             }

@@ -11,6 +11,7 @@ package org.jinterop.dcom.test;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
@@ -22,6 +23,8 @@ import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class Main {
+
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
 
     public void Execute(JIString str) {
         System.out.println(str.getString());
@@ -43,8 +46,7 @@ public class Main {
             String username = args[2];
             String password = args[3];
 
-            JISystem.getLogger().setLevel(Level.FINEST);
-            JISystem.setInBuiltLogHandler(false);
+            LOGGER.setLevel(Level.FINEST);
             JISystem.setAutoRegisteration(true);
             JISession session3 = JISession.createSession(domain, username, password);
             session3.useSessionSecurity(true);

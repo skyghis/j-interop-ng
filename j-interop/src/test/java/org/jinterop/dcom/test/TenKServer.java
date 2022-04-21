@@ -8,11 +8,11 @@ import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class Test10KServer {
+public class TenKServer {
 
-    private JIComServer comStub = null;
-    private IJIDispatch dispatch = null;
-    private IJIComObject unknown = null;
+    private final JIComServer comStub = null;
+    private final IJIDispatch dispatch = null;
+    private final IJIComObject unknown = null;
 
     public static void main(String[] args) {
 
@@ -22,7 +22,6 @@ public class Test10KServer {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            JISystem.setInBuiltLogHandler(false);
             JISystem.setAutoRegisteration(true);
             for (int i = 0; i < 10000; ++i) {
 

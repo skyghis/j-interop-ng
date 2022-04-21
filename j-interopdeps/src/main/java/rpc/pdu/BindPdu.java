@@ -33,7 +33,7 @@ public class BindPdu extends ConnectionOrientedPdu {
     private int associationGroupId = 0;
 
     public void resetCallIdCounter() {
-        super.callIdCounter = 0;
+        ConnectionOrientedPdu.callIdCounter = 0;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class BindPdu extends ConnectionOrientedPdu {
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
-        setAssociationGroupId((int) ndr.readUnsignedLong());
+        setAssociationGroupId(ndr.readUnsignedLong());
         int count = ndr.readUnsignedSmall();
         PresentationContext[] contextList = new PresentationContext[count];
         for (int i = 0; i < count; i++) {

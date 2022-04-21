@@ -185,7 +185,6 @@ public class SampleTestServerCallback {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            JISystem.setInBuiltLogHandler(false);
             JISystem.setAutoRegisteration(true);
             for (int i = 0; i < 100; i++) {
                 System.out.println("**********************Invoking callback sequence....\n");

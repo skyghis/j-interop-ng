@@ -1,14 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- Force load of `BouncyCastleProvider` to ensure `MD4` implementation exists. Can by disabled by java boolean property `ignore_bouncycastleprovider`.
+
 ### Changed
+- Update maven plugins dependencies.
+- Numerous code cleanups, I hope I didn't break anything.
+
+### Deprecated
+- Use a `LOGGER` per class instead of using `JISystem.getLogger`.
+- Deprecate `JISystem.setInBuiltLogHandler`.
+
+### Removed
 - Replace custom `MD4` and `MD5` implementation by java integrated one.
 - Replace iwombat `UUID` implementation by java integrated one.
-- Update maven plugins dependencies.
+- Disable execution of "tests" files when compiling.
 
 ## [3.3.0] - 2022-01-03
 ### Added

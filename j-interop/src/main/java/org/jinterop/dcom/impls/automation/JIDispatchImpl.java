@@ -19,6 +19,7 @@ package org.jinterop.dcom.impls.automation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
@@ -43,23 +44,34 @@ import rpc.core.UUID;
  */
 final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch {
 
-    /**
-     *
-     */
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+    public static final int FLAG_TYPEINFO_SUPPORTED = 1;
+    public static final int FLAG_TYPEINFO_NOTSUPPORTED = 0;
     private static final long serialVersionUID = 4908149252176353846L;
+    private static final JIStruct EXCEPINFO = new JIStruct();
 
-    //IJIComObject comObject = null;
-    private Map cacheOfDispIds = new HashMap();
+    static {
+        try {
+            EXCEPINFO.addMember(Short.class);
+            EXCEPINFO.addMember(Short.class);
+            EXCEPINFO.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
+            EXCEPINFO.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
+            EXCEPINFO.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
+            EXCEPINFO.addMember(Integer.class);
+            EXCEPINFO.addMember(new JIPointer(null, true));
+            EXCEPINFO.addMember(new JIPointer(null, true));
+            EXCEPINFO.addMember(Integer.class);
+        } catch (JIException e) {
+            LOGGER.throwing("JIDispatchImpl", "static initializer", e);
+        }
+
+    }
+    private final Map<String, Map<String, Integer>> cacheOfDispIds = new HashMap<>();
+    private final JIExcepInfo lastExcepInfo = new JIExcepInfo();
 
     JIDispatchImpl(IJIComObject comObject) {
         super(comObject);
-        //this.comObject = comObject;
     }
-
-    private final JIExcepInfo lastExcepInfo = new JIExcepInfo();
-
-    public static final int FLAG_TYPEINFO_SUPPORTED = 1;
-    public static final int FLAG_TYPEINFO_NOTSUPPORTED = 0;
 
     public IJIComObject getCOMObject() {
         return comObject;
@@ -81,10 +93,9 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_DISP_INCORRECT_VALUE_FOR_GETIDNAMES));
         }
 
-        Map innerMap = ((Map) cacheOfDispIds.get(apiName));
+        Map<String, Integer> innerMap = cacheOfDispIds.get(apiName);
         if (innerMap != null) {
-            Integer dispId = (Integer) innerMap.get(apiName);
-            return dispId;
+            return innerMap.get(apiName);
         }
 
         JICallBuilder obj = new JICallBuilder(true);
@@ -103,8 +114,8 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             throw new JIException(obj.getHRESULT());
         }
 
-        innerMap = new HashMap();
-        innerMap.put(apiName, ((Object[]) ((JIArray) result[0]).getArrayInstance())[0]);
+        innerMap = new HashMap<>();
+        innerMap.put(apiName, (Integer) ((Object[]) ((JIArray) result[0]).getArrayInstance())[0]);
         cacheOfDispIds.put(apiName, innerMap);
 
         //first will be the length , and the next will be the actual value.
@@ -245,13 +256,13 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         obj.addInParamAsStruct(dispParams, JIFlags.FLAG_REPRESENTATION_IDISPATCH_INVOKE);
 
         //now add the extra params if exist.
-        if (listOfVariantPtrs.size() > 0) {
+        if (!listOfVariantPtrs.isEmpty()) {
             //write length
             obj.addInParamAsInt(listOfPositions.size(), JIFlags.FLAG_NULL);
             //then write the array
-            obj.addInParamAsArray(new JIArray(listOfPositions.toArray(new Integer[listOfPositions.size()]), true), JIFlags.FLAG_NULL);
+            obj.addInParamAsArray(new JIArray(listOfPositions.toArray(new Integer[0]), true), JIFlags.FLAG_NULL);
             //now write the array of variant ptrs
-            obj.addInParamAsArray(new JIArray(listOfVariantPtrs.toArray(new JIVariant[listOfVariantPtrs.size()]), true), JIFlags.FLAG_NULL);
+            obj.addInParamAsArray(new JIArray(listOfVariantPtrs.toArray(new JIVariant[0]), true), JIFlags.FLAG_NULL);
         }
 
         obj.addInParamAsObject(null, JIFlags.FLAG_NULL); //results --> currently all are null and this param is not required as the outparam carries this info.
@@ -265,7 +276,7 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
             outparams[0] = outParamType; //fill from users input
         }
 
-        outparams[1] = excepInfo;
+        outparams[1] = EXCEPINFO;
         outparams[2] = new JIPointer(Integer.class, true);
         outparams[3] = new JIArray(JIVariant.class, null, 1, true);
 
@@ -546,29 +557,6 @@ final class JIDispatchImpl extends JIComObjectImplWrapper implements IJIDispatch
         }
 
         return callMethodA(dispIds[0], inparams, newDispIds);
-    }
-
-    private static final Integer[] arrayOfDispIds = new Integer[100];
-    private static final JIStruct excepInfo = new JIStruct();
-
-    static {
-        try {
-            excepInfo.addMember(Short.class);
-            excepInfo.addMember(Short.class);
-            excepInfo.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
-            excepInfo.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
-            excepInfo.addMember(new JIString(JIFlags.FLAG_REPRESENTATION_STRING_BSTR));
-            excepInfo.addMember(Integer.class);
-            excepInfo.addMember(new JIPointer(null, true));
-            excepInfo.addMember(new JIPointer(null, true));
-            excepInfo.addMember(Integer.class);
-        } catch (JIException e) {
-            JISystem.getLogger().throwing("JIDispatchImpl", "static initializer", e);
-        }
-        for (int i = 0; i < 100; i++) {
-            arrayOfDispIds[i] = i;
-        }
-
     }
 
     @Override

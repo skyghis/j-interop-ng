@@ -18,20 +18,16 @@ package ndr;
 
 public abstract class NdrObject {
 
-    static final int opnum = -1;
-    public Object value;
-
     public int getOpnum() {
-        return opnum;
+        return -1;
     }
 
-    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
+    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
         ndr.buf = dst;
         write(ndr);
-        /* just for compatibility with jarapac < 0.2 */
     }
 
-    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
+    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
         ndr.buf = src;
         read(ndr);
     }

@@ -29,7 +29,7 @@ public final class JIAutomationException extends JIException {
         super(e.getErrorCode(), e.getMessage(), e.getCause());
     }
 
-    private JIExcepInfo excepInfo = new JIExcepInfo();
+    private final JIExcepInfo excepInfo = new JIExcepInfo();
 
     void setExcepInfo(JIExcepInfo excepInfo) {
         this.excepInfo.errorCode = excepInfo.errorCode;

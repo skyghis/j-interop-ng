@@ -16,7 +16,6 @@
  */
 package rpc.core;
 
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
@@ -70,10 +69,7 @@ public class PresentationResult extends NdrObject {
         //if (result == ACCEPTANCE) //commenting this since the entire packet should be decoded VRC
         {
             transferSyntax = new PresentationSyntax();
-            try {
-                transferSyntax.decode(ndr, ndr.getBuffer());
-            } catch (NdrException ne) {
-            }
+            transferSyntax.decode(ndr, ndr.getBuffer());
         }
     }
 
@@ -85,11 +81,7 @@ public class PresentationResult extends NdrObject {
         //if (result == ACCEPTANCE && transferSyntax != null)
         if (transferSyntax != null) //commenting this since the entire packet should be written VRC
         {
-            try {
-                transferSyntax.encode(ndr, ndr.getBuffer());
-            } catch (NdrException ne) {
-            }
+            transferSyntax.encode(ndr, ndr.getBuffer());
         }
     }
-
 }

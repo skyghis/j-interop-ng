@@ -26,7 +26,7 @@ import org.jinterop.dcom.core.JISession;
 import org.jinterop.dcom.impls.automation.Internal_JIAutomationFactory;
 
 /**
- * < p>
+ * <p>
  * Factory class for creating COM objects.
  * <p>
  *

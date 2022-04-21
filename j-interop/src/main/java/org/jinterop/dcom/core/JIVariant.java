@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -32,7 +33,7 @@ import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 /**
- * < p>
+ * <p>
  * Class representing the <code>VARIANT</code> datatype.
  * <p>
  * Please use the <code>byRef</code> flag based constructors for <i>by
@@ -60,6 +61,7 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
  */
 public final class JIVariant implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = 5101290038004040628L;
 
     private static final class EMPTY {
@@ -340,8 +342,8 @@ public final class JIVariant implements Serializable {
             }
             return (JIVariant) ctor.newInstance(new Object[]{o, isByRef});
         } catch (Exception e) {
-            if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                JISystem.getLogger().log(Level.WARNING, "Could not create Variant for {0} , isByRef {1}", new Object[]{o, isByRef});
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.log(Level.WARNING, "Could not create Variant for {0} , isByRef {1}", new Object[]{o, isByRef});
             }
         }
 

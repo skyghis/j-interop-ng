@@ -108,8 +108,8 @@ final class JIDualStringArray implements Serializable {
         // 2 bytes for num entries and 2 bytes for sec offset.
         dualStringArray.length = dualStringArray.length + 2 + 2;
 
-        dualStringArray.stringBinding = (JIStringBinding[]) listOfStringBindings.toArray(new JIStringBinding[listOfStringBindings.size()]);
-        dualStringArray.securityBinding = (JISecurityBinding[]) listOfSecurityBindings.toArray(new JISecurityBinding[listOfSecurityBindings.size()]);
+        dualStringArray.stringBinding = (JIStringBinding[]) listOfStringBindings.toArray(new JIStringBinding[0]);
+        dualStringArray.securityBinding = (JISecurityBinding[]) listOfSecurityBindings.toArray(new JISecurityBinding[0]);
         return dualStringArray;
     }
 

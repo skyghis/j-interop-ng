@@ -19,7 +19,7 @@ package org.jinterop.dcom.core;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import org.jinterop.dcom.common.JISystem;
+import java.util.logging.Logger;
 import org.jinterop.dcom.transport.JIComTransportFactory;
 import rpc.Endpoint;
 import rpc.Stub;
@@ -37,6 +37,7 @@ import rpc.Stub;
  */
 final class JIComOxidStub extends Stub {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final Properties DEFAULTS = new Properties();
 
     static {
@@ -73,7 +74,7 @@ final class JIComOxidStub extends Stub {
         try {
             call(Endpoint.IDEMPOTENT, pingObject);
         } catch (IOException e) {
-            JISystem.getLogger().throwing("JIComOxidStub", "call", e);
+            LOGGER.throwing("JIComOxidStub", "call", e);
         }
 
         //returns setId.

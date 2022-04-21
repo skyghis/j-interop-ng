@@ -16,56 +16,9 @@
  */
 package rpc;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
 
-public abstract class TransportFactory {
+public interface TransportFactory {
 
-    private static Properties defaultProperties;
-
-    @Deprecated //FIXME: Seem unused
-    public static Properties getDefaultProperties() {
-        synchronized (TransportFactory.class) {
-            if (defaultProperties == null) {
-                Properties properties = new Properties();
-                String defaults = null;
-                try {
-                    defaults = System.getProperty("rpc.properties");
-                } catch (Exception ex) {
-                }
-                if (defaults != null) {
-                    URL url = null;
-                    try {
-                        url = new URL(new File(".").toURI().toURL(), defaults);
-                        properties.load(url.openStream());
-                    } catch (MalformedURLException ex) {
-                        throw new IllegalArgumentException("Bad location " + defaults + ": " + ex.getMessage());
-                    } catch (IOException | RuntimeException ex) {
-                        throw new IllegalArgumentException("Unable to load " + " RPC properties from " + url + ": " + ex.getMessage());
-                    }
-                } else {
-                    try {
-                        properties.load(TransportFactory.class.getResourceAsStream("/rpc.properties"));
-                    } catch (IOException | RuntimeException ex) {
-                        try {
-                            properties.load(ClassLoader.getSystemResourceAsStream("/rpc.properties"));
-                        } catch (IOException | RuntimeException ignore) {
-                        }
-                    }
-                }
-                defaultProperties = properties;
-            }
-        }
-        Properties properties = new Properties(defaultProperties);
-        try {
-            properties.putAll(System.getProperties());
-        } catch (Exception ex) {
-        }
-        return properties;
-    }
-
-    public abstract Transport createTransport(String address, Properties properties) throws ProviderException;
+    Transport createTransport(String address, Properties properties) throws ProviderException;
 }

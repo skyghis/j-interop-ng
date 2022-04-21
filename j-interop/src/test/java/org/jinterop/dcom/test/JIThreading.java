@@ -1,7 +1,7 @@
 package org.jinterop.dcom.test;
 
-import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIComServer;
@@ -12,8 +12,9 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class TestJIThreading {
+public class JIThreading {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     static final String domain = "fdgnt";
     static final String user = "roopchand";
     static final String password = "QweQwe007";
@@ -32,18 +33,8 @@ public class TestJIThreading {
     }
 
     public void setUp() {
-
-        try {
-            JISystem.setInBuiltLogHandler(false);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         JISystem.setAutoRegisteration(true);
-        JISystem.getLogger().setLevel(Level.ALL);
+        LOGGER.setLevel(Level.ALL);
     }
 
     public void testThreading() {
@@ -62,12 +53,11 @@ public class TestJIThreading {
         boolean keepSleeping = true;
         while (keepSleeping) {
             try {
-                for (int i = 0; i < threads.length; i++) {
-                    Thread thread = threads[i];
+                for (Thread thread : threads) {
                     thread.join();
                 }
             } catch (InterruptedException e) {
-                JISystem.getLogger().log(Level.SEVERE, "InterruptedException caught", e);
+                LOGGER.log(Level.SEVERE, "InterruptedException caught", e);
             }
 
             break;
@@ -143,13 +133,13 @@ public class TestJIThreading {
                 JISession.destroySession(session);
                 System.out.println("doStuff() run complete");
             } catch (Exception e) {
-                JISystem.getLogger().log(Level.SEVERE, "Caught exception: ", e);
+                LOGGER.log(Level.SEVERE, "Caught exception: ", e);
             }
         }
     }
 
     public static void main(String[] args) {
-        TestJIThreading testJIThreading = new TestJIThreading();
+        JIThreading testJIThreading = new JIThreading();
         testJIThreading.setUp();
         testJIThreading.testThreading();
     }

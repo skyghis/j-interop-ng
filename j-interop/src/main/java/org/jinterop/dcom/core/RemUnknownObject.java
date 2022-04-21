@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrBuffer;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
@@ -26,13 +27,13 @@ import org.jinterop.dcom.common.IJICOMRuntimeWorker;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import rpc.core.UUID;
 
 //This object should have serialized access only , i.e at a time only 1 read --> write , cycle should happen
 //it is not multithreaded safe.
 class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final JIStruct REM_INTERFACE_REF = new JIStruct();
 
     static {
@@ -41,7 +42,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             REM_INTERFACE_REF.addMember(Integer.class);
             REM_INTERFACE_REF.addMember(Integer.class);
         } catch (JIException shouldnothappen) {
-            JISystem.getLogger().throwing("RemUnknownObject", "Static Initialiser", shouldnothappen);
+            LOGGER.throwing("RemUnknownObject", "Static Initialiser", shouldnothappen);
         }
     }
     private final String selfIPID;
@@ -191,7 +192,7 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             //call is being made , and was previously exported during Q.I. The component value was filled during an
             //alter context or bind, again made some calls before.
             if (component == null) {
-                JISystem.getLogger().log(Level.SEVERE, "JIComOxidRuntimeHelper RemUnknownObject read(): component is null , opnum is {0} , IPID is {1} , selfIpid is {2}", new Object[]{opnum, ipid, selfIPID});
+                LOGGER.log(Level.SEVERE, "JIComOxidRuntimeHelper RemUnknownObject read(): component is null , opnum is {0} , IPID is {1} , selfIpid is {2}", new Object[]{opnum, ipid, selfIPID});
             }
             byte b[] = null;
             Object result = null;
@@ -202,8 +203,8 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                 result = component.invokeMethod(ipid, opnum, ndr);
             } catch (JIException e) {
                 hresult = e.getErrorCode();
-                JISystem.getLogger().log(Level.SEVERE, "Exception occured: {0}", e.getErrorCode());
-                JISystem.getLogger().throwing("RemUnknownObject", "read", e);
+                LOGGER.log(Level.SEVERE, "Exception occured: {0}", e.getErrorCode());
+                LOGGER.throwing("RemUnknownObject", "read", e);
             }
 
             //now if opnum was 6 then this is a dispatch call , so response has to be dispatch response
@@ -306,16 +307,16 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
     private NdrBuffer QueryInterface(NetworkDataRepresentation ndr) {
         //now to decompose all
-        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().finest("Within RemUnknownObject: QueryInterface");
-            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] Before call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.finest("Within RemUnknownObject: QueryInterface");
+            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] Before call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
         }
         JIOrpcThis.decode(ndr);
 
         //now get the IPID and export the component with a new IPID and IID.
         String ipid = new UUID(ndr.getBuffer()).toString();
-        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] IPID is {0}", ipid);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] IPID is {0}", ipid);
         }
         //set the JILocalCoClass., the ipid should not be null in this call.
         JIComOxidDetails details = JIComOxidRuntime.getComponentFromIPID(ipid);
@@ -326,8 +327,8 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
         }
 
         JILocalCoClass componentRef = details.getReferent();
-        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] JIJavcCoClass is {0}", componentRef.getCoClassIID());
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] JIJavcCoClass is {0}", componentRef.getCoClassIID());
         }
 
         ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, null))).intValue();//refs , don't really care about this.
@@ -349,8 +350,8 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
 
         for (int i = 0; i < arrayOfUUIDs.length; i++) {
             UUID iid = (UUID) arrayOfUUIDs[i];
-            if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] Array iid[{0}] is {1}", new Object[]{i, iid});
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] Array iid[{0}] is {1}", new Object[]{i, iid});
             }
             //now for each QueryResult
             try {
@@ -363,17 +364,17 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                     try {
                         tmpIpid = componentRef.getIpidFromIID(iid.toString());
                     } catch (Exception e) {
-                        JISystem.getLogger().throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
+                        LOGGER.throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
                     }
 
                     if (tmpIpid == null) {
-                        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is null for iid {0}", iid);
+                        if (LOGGER.isLoggable(Level.FINEST)) {
+                            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is null for iid {0}", iid);
                         }
                         componentRef.exportInstance(iid.toString(), ipid2);
                     } else {
-                        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is NOT null for iid {0} and ipid sent back is {1}", new Object[]{iid, ipid2});
+                        if (LOGGER.isLoggable(Level.FINEST)) {
+                            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] tmpIpid is NOT null for iid {0} and ipid sent back is {1}", new Object[]{iid, ipid2});
                         }
                         ipid2 = tmpIpid;
                     }
@@ -387,11 +388,11 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
                 //add it to the exported Ipids map
                 mapOfIpidsVsRef.put(ipid2.toUpperCase(), objRef.getPublicRefs());
 
-                if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] for which the stdObjRef is {0}", objRef);
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] for which the stdObjRef is {0}", objRef);
                 }
             } catch (IllegalAccessException | InstantiationException e) {
-                JISystem.getLogger().throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
+                LOGGER.throwing("JIComOxidRuntimeHelper", "QueryInterface", e);
             }
 
             String iidtemp = iid.toString().toUpperCase() + ":0.0";
@@ -400,8 +401,8 @@ class RemUnknownObject extends NdrObject implements IJICOMRuntimeWorker {
             }
         }
 
-        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-            JISystem.getLogger().log(Level.FINEST, "RemUnknownObject: [QI] After call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "RemUnknownObject: [QI] After call terminated listOfIIDsQIed are: {0}", listOfIIDsQIed);
         }
 
         return buffer;

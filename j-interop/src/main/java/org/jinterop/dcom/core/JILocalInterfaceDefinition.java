@@ -23,7 +23,7 @@ import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JISystem;
 
 /**
- * < p>
+ * <p>
  * Forms the definition of a COM interface to be used in callbacks. Method
  * overloads are <b>not</b> allowed.
  *

@@ -25,7 +25,7 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
 import rpc.core.UUID;
 
 /**
- * < p>
+ * <p>
  * Class representing a Marshalled Interface Pointer. You will never use the
  * members of this class directly, but always as an implementation of
  * <code>IJIComObject</code> interface.
@@ -374,7 +374,7 @@ class JIInterfacePointerBody implements Serializable {
         } else if ((FLAGS & JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) == JIFlags.FLAG_REPRESENTATION_USE_IDISPATCH_IID) {
             ipid2 = new UUID(IJIDispatch.IID);
         }
-        UUID.encodeToBuffer(ipid2, ndr.getBuffer());
+        ipid2.encode(ndr.getBuffer());
         stdObjRef.encode(ndr);
         resolverAddr.encode(ndr);
     }

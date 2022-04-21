@@ -28,7 +28,7 @@ import rpc.ConnectionOrientedPdu;
 import rpc.Fragmentable;
 import rpc.core.UUID;
 
-public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragmentable {
+public class RequestCoPdu extends ConnectionOrientedPdu implements Fragmentable {
 
     private static final Logger logger = Logger.getLogger("org.jinterop");
     public static final int REQUEST_TYPE = 0x00;
@@ -119,26 +119,25 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
         dst.enc_ndr_short(getContextId());
         dst.enc_ndr_short(getOpnum());
         if (getFlag(PFC_OBJECT_UUID)) {
-            UUID.encodeToBuffer(getObject(), ndr.getBuffer());
+            getObject().encode(ndr.getBuffer());
         }
     }
 
     protected void readStub(NetworkDataRepresentation ndr) {
         NdrBuffer src = ndr.getBuffer();
         src.align(8);
-        byte[] stub = null;
+        byte[] fragmentStub = null;
         int length = getFragmentLength() - src.getIndex();
         if (length > 0) {
-            stub = new byte[length];
-            ndr.readOctetArray(stub, 0, length);
+            fragmentStub = new byte[length];
+            ndr.readOctetArray(fragmentStub, 0, length);
         }
-        setStub(stub);
+        setStub(fragmentStub);
     }
 
     protected void writeStub(NetworkDataRepresentation ndr) {
         NdrBuffer dst = ndr.getBuffer();
         dst.align(8, (byte) 0);
-        byte[] stub = getStub();
         if (stub != null) {
             ndr.writeOctetArray(stub, 0, stub.length);
         }
@@ -146,7 +145,6 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
 
     @Override
     public Iterator fragment(int size) {
-        byte[] stub = getStub();
         if (stub == null) {
             return Arrays.asList(new RequestCoPdu[]{this}).iterator();
         }
@@ -170,24 +168,24 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
         }
         try {
             RequestCoPdu pdu = (RequestCoPdu) fragments.next();
-            byte[] stub = pdu.getStub();
-            if (stub == null) {
-                stub = new byte[0];
+            byte[] pduStub = pdu.getStub();
+            if (pduStub == null) {
+                pduStub = new byte[0];
             }
             while (fragments.hasNext()) {
                 RequestCoPdu fragment = (RequestCoPdu) fragments.next();
                 byte[] fragmentStub = fragment.getStub();
                 if (fragmentStub != null && fragmentStub.length > 0) {
-                    byte[] tmp = new byte[stub.length + fragmentStub.length];
-                    System.arraycopy(stub, 0, tmp, 0, stub.length);
-                    System.arraycopy(fragmentStub, 0, tmp, stub.length,
+                    byte[] tmp = new byte[pduStub.length + fragmentStub.length];
+                    System.arraycopy(pduStub, 0, tmp, 0, pduStub.length);
+                    System.arraycopy(fragmentStub, 0, tmp, pduStub.length,
                             fragmentStub.length);
-                    stub = tmp;
+                    pduStub = tmp;
                 }
             }
-            int length = stub.length;
+            int length = pduStub.length;
             if (length > 0) {
-                pdu.setStub(stub);
+                pdu.setStub(pduStub);
                 pdu.setAllocationHint(length);
             } else {
                 pdu.setStub(null);
@@ -210,14 +208,13 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
         }
     }
 
-    private class FragmentIterator implements Iterator {
+    private class FragmentIterator implements Iterator<RequestCoPdu> {
 
         private final int stubSize;
         private int index = 0;
-//        private boolean firstfragsent = false;
         private final int callId = callIdCounter++;
 
-        public FragmentIterator(int stubSize) {
+        FragmentIterator(int stubSize) {
             this.stubSize = stubSize;
         }
 
@@ -227,7 +224,7 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
         }
 
         @Override
-        public Object next() {
+        public RequestCoPdu next() {
             if (index >= stub.length) {
                 throw new NoSuchElementException();
             }
@@ -272,7 +269,5 @@ public class RequestCoPdu extends ConnectionOrientedPdu        implements Fragme
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
-
 }

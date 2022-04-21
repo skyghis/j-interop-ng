@@ -1,6 +1,7 @@
 package org.jinterop.dcom.test;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JICallBuilder;
@@ -17,7 +18,9 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class Test_ITestServer2_Impl {
+public class ITestServer2_Impl {
+
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
 
     public void Execute(JIString str) {
         System.out.println(str.getString());
@@ -36,14 +39,13 @@ public class Test_ITestServer2_Impl {
         try {
 
             JISystem.setAutoRegisteration(true);
-            JISystem.setInBuiltLogHandler(false);
-            JISystem.getLogger().setLevel(Level.ALL);
+            LOGGER.setLevel(Level.ALL);
             JISession session1 = JISession.createSession(args[1], args[2], args[3]);
             JISession session2 = JISession.createSession(args[1], args[2], args[3]);
             JIComServer testServer1 = new JIComServer(JIProgId.valueOf("TestJavaServer.TestServer1"), args[0], session1);
             IJIComObject unkTestServer1 = testServer1.createInstance();
             IJIComObject testServer1Intf = JIObjectFactory.narrowObject(unkTestServer1.queryInterface("2A93A24D-59FE-4DE0-B67E-B8D41C9F57F8"));
-            IJIDispatch dispatch1 = (IJIDispatch) JIObjectFactory.narrowObject(unkTestServer1.queryInterface(IJIDispatch.IID));;
+            IJIDispatch dispatch1 = (IJIDispatch) JIObjectFactory.narrowObject(unkTestServer1.queryInterface(IJIDispatch.IID));
 
             //First lets call the ITestServer1.Call_TestServer2_Java using the Dispatch interface
             //Acquire a reference to ITestServer2
@@ -76,7 +78,7 @@ public class Test_ITestServer2_Impl {
             JILocalMethodDescriptor methodDescriptor = new JILocalMethodDescriptor("Execute", 1, parameterObject);
             interfaceDefinition.addMethodDescriptor(methodDescriptor);
             //Create the Java Server class. This contains the instance to be called by the COM Server ITestServer1.
-            JILocalCoClass _testServer2 = new JILocalCoClass(interfaceDefinition, new Test_ITestServer2_Impl());
+            JILocalCoClass _testServer2 = new JILocalCoClass(interfaceDefinition, new ITestServer2_Impl());
             //Get a interface pointer to the Java CO Class. The template could be any IJIComObject since only the session is reused.
             IJIComObject __testServer2 = JIObjectFactory.buildObject(session1, _testServer2);
             //Call our Java server. The same message should be printed on the Java console.

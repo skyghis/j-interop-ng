@@ -26,8 +26,7 @@ import rpc.ConnectionOrientedPdu;
 import rpc.FaultCodes;
 import rpc.Fragmentable;
 
-public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
-        Fragmentable {
+public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes, Fragmentable {
 
     public static final int FAULT_TYPE = 0x03;
 
@@ -105,7 +104,7 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         setAllocationHint(ndr.readUnsignedLong());
         setContextId(ndr.readUnsignedShort());
         setCancelCount(ndr.readUnsignedSmall());
-        setStatus((int) ndr.readUnsignedLong());
+        setStatus(ndr.readUnsignedLong());
     }
 
     @Override
@@ -199,11 +198,11 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
 
     private class FragmentIterator implements Iterator {
 
-        private int stubSize;
+        private final int stubSize;
 
         private int index = 0;
 
-        public FragmentIterator(int stubSize) {
+        FragmentIterator(int stubSize) {
             this.stubSize = stubSize;
         }
 
@@ -242,7 +241,5 @@ public class FaultCoPdu extends ConnectionOrientedPdu implements FaultCodes,
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
-
 }

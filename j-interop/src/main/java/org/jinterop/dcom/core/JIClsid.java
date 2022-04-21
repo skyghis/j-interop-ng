@@ -19,7 +19,7 @@ package org.jinterop.dcom.core;
 import rpc.core.UUID;
 
 /**
- * < p>
+ * <p>
  * Wrapper for class identifier to a COM Object.
  * <p>
  * Definition from MSDN: <i> A universally unique identifier (UUID) that

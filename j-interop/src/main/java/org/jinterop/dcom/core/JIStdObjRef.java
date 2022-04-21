@@ -60,11 +60,11 @@ final class JIStdObjRef implements Serializable {
         // jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), objRef.oid, 0, objRef.oid.length);
         // objRef.oidString = byteArrayOutputStream.toString();
         objRef.ipidOfthisObjectRef = new UUID(ndr.getBuffer()).toString();
-        //if (JISystem.getLogger().isLoggable(Level.WARNING))
+        //if (LOGGER.isLoggable(Level.WARNING))
         //{
         //  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         //  jcifs.util.Hexdump.hexdump(new PrintStream(byteArrayOutputStream), objRef.oid, 0, objRef.oid.length);
-        //  JISystem.getLogger().warning("Decode of StdObjref Adding references for " + objRef.ipidOfthisObjectRef + " , num references recieved from COM server: " + objRef.publicRefs + " , the OID is " + byteArrayOutputStream.toString());
+        //  LOGGER.warning("Decode of StdObjref Adding references for " + objRef.ipidOfthisObjectRef + " , num references recieved from COM server: " + objRef.publicRefs + " , the OID is " + byteArrayOutputStream.toString());
         //  JISession.debug_addIpids(objRef.ipidOfthisObjectRef, 5);
         //}
         return objRef;
@@ -95,7 +95,7 @@ final class JIStdObjRef implements Serializable {
         ndr.writeUnsignedLong(publicRefs);
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oxid);
         JIMarshalUnMarshalHelper.writeOctetArrayLE(ndr, oid);
-        UUID.encodeToBuffer(new UUID(ipidOfthisObjectRef), ndr.getBuffer());
+        new UUID(ipidOfthisObjectRef).encode(ndr.getBuffer());
     }
 
     @Override

@@ -224,7 +224,6 @@ public class NdrBuffer {
             case 2:
                 /* ptr */
                 enc_ndr_long(getDceReferent(obj));
-                return;
         }
     }
 

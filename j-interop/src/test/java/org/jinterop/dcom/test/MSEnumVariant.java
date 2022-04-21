@@ -50,8 +50,8 @@ public class MSEnumVariant {
             Object[] values = enumVARIANT.next(1);
             JIArray array = (JIArray) values[0];
             Object[] arrayObj = (Object[]) array.getArrayInstance();
-            for (int j = 0; j < arrayObj.length; j++) {
-                System.out.println(((JIVariant) arrayObj[j]).getObjectAsInt() + "," + ((Integer) values[1]));
+            for (Object arrayObj1 : arrayObj) {
+                System.out.println(((JIVariant) arrayObj1).getObjectAsInt() + "," + ((Integer) values[1]));
             }
 
             int j = 0;

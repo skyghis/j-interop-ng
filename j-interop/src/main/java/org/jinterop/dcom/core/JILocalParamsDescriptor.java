@@ -20,7 +20,7 @@ import java.io.Serializable;
 import ndr.NetworkDataRepresentation;
 
 /**
- * < p>
+ * <p>
  * Provides a way to express parameters for a particular method. These are only
  * <code>[in]</code> parameters, the <code>[out]</code> parameters are decided
  * at the implementation level. If the <code>IDL</code> method being described
@@ -55,7 +55,7 @@ import ndr.NetworkDataRepresentation;
  */
 public final class JILocalParamsDescriptor implements Serializable {
 
-    private JICallBuilder callObject = new JICallBuilder();
+    private final JICallBuilder callObject = new JICallBuilder();
     private static final long serialVersionUID = -4274963180104543505L;
 
     /**

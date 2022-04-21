@@ -21,7 +21,7 @@ import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIException;
 
 /**
- * < p>
+ * <p>
  * Represents a Windows COM Object. Instances of this interface can be retrieved
  * by the following ways only :-
  * <ul>
@@ -79,7 +79,7 @@ public interface IJIComObject extends Serializable {
     public final String IID = "00000000-0000-0000-c000-000000000046";
 
     /**
-     * < p>
+     * <p>
      * Retrieve interface references based on <code>iid</code>. Make sure to
      * narrow before casting to the expected type.
      * <p>
@@ -105,7 +105,7 @@ public interface IJIComObject extends Serializable {
     public IJIComObject queryInterface(String iid) throws JIException;
 
     /**
-     * < P>
+     * <p>
      * Increases the reference count on the COM server by 5 (currently hard
      * coded). The developer should refrain from calling this API, as
      * referencing is maintained internally by the system though he is not
@@ -122,7 +122,7 @@ public interface IJIComObject extends Serializable {
     public void addRef() throws JIException;
 
     /**
-     * < P>
+     * <p>
      * Decreases the reference count on the COM server by 5 (currently hard
      * coded). The developer should refrain from calling this API, as
      * referencing is maintained internally by the system though he is not
@@ -152,7 +152,7 @@ public interface IJIComObject extends Serializable {
     public String getIpid();
 
     /**
-     * < P>
+     * <p>
      * Executes a method call on the actual COM object represented by this
      * interface. All the data like parameter information, operation number etc.
      * are prepared and sent via the <code>JICallBuilder</code>.
@@ -196,7 +196,7 @@ public interface IJIComObject extends Serializable {
     public Object[] call(JICallBuilder obj) throws JIException;
 
     /**
-     * < P>
+     * <p>
      * Refer {@link #call(JICallBuilder)} for details on this method.
      * </P>
      *
@@ -215,7 +215,7 @@ public interface IJIComObject extends Serializable {
     public Object[] call(JICallBuilder obj, int timeout) throws JIException;
 
     /**
-     * < p>
+     * <p>
      * Sets a timeout for all socket level operations done on this object.
      * Calling this overrides the global socket timeout at the
      * <code>JISession</code> level. To unset a previous timeout, pass 0 as a

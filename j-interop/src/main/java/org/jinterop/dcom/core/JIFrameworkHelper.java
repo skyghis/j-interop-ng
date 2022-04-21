@@ -19,6 +19,7 @@ package org.jinterop.dcom.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrBuffer;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -31,6 +32,8 @@ import org.jinterop.dcom.common.JISystem;
  * @exclude
  */
 public final class JIFrameworkHelper {
+
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
 
     /**
      * @exclude @param src
@@ -96,8 +99,8 @@ public final class JIFrameworkHelper {
         IJIComObject retval = null;
         JIInterfacePointer stubPtr = JIFrameworkHelper.getInterfacePointerOfStub(session);
         if (!JIInterfacePointer.isOxidEqual(stubPtr, ptr)) {
-            if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                JISystem.getLogger().log(Level.WARNING, "NEW SESSION IDENTIFIED ! for ptr {0}", ptr);
+            if (LOGGER.isLoggable(Level.WARNING)) {
+                LOGGER.log(Level.WARNING, "NEW SESSION IDENTIFIED ! for ptr {0}", ptr);
             }
             //first check if a session for this OXID does not already exist and thus its stub
             JISession newsession = JIFrameworkHelper.resolveSessionForOXID(ptr.getOXID());
@@ -203,8 +206,8 @@ public final class JIFrameworkHelper {
             throw new JIException(JIErrorCodes.JI_CALLBACK_INVALID_ID);
         }
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.INFO, "Detaching event handler for  comObject: {0} , identifier: {1}", new Object[]{comObject.getInterfaceIdentifier(), identifier});
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "Detaching event handler for  comObject: {0} , identifier: {1}", new Object[]{comObject.getInterfaceIdentifier(), identifier});
         }
 
         IJIComObject connectionPointer = (IJIComObject) connectionInfo[0];
@@ -230,8 +233,8 @@ public final class JIFrameworkHelper {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_CALLBACK_INVALID_PARAMS));
         }
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.INFO, "Attaching event handler for  comObject: {0} , sourceUUID: {1} , eventListener: {2} and eventListner IPID: {3}", new Object[]{comObject.getInterfaceIdentifier(), sourceUUID, eventListener.getInterfaceIdentifier(), eventListener.getIpid()});
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "Attaching event handler for  comObject: {0} , sourceUUID: {1} , eventListener: {2} and eventListner IPID: {3}", new Object[]{comObject.getInterfaceIdentifier(), sourceUUID, eventListener.getInterfaceIdentifier(), eventListener.getIpid()});
         }
         //IID of IConnectionPointContainer :- B196B284-BAB4-101A-B69C-00AA00341D07
         IJIComObject connectionPointContainer = comObject.queryInterface("B196B284-BAB4-101A-B69C-00AA00341D07");
@@ -251,8 +254,8 @@ public final class JIFrameworkHelper {
         //used to unadvise from the connectionpoint
         Integer dwcookie = ((Integer) obj[0]);
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.INFO, "Event handler returned cookie {0}", dwcookie);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "Event handler returned cookie {0}", dwcookie);
         }
         connectionPointContainer.release();
 

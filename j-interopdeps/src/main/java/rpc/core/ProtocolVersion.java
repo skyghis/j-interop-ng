@@ -17,7 +17,6 @@
 package rpc.core;
 
 import ndr.NdrBuffer;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
@@ -42,13 +41,13 @@ public class ProtocolVersion extends NdrObject {
     }
 
     @Override
-    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
+    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
         dst.enc_ndr_small(majorVersion);
         dst.enc_ndr_small(minorVersion);
     }
 
     @Override
-    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
+    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
         majorVersion = src.dec_ndr_small();
         minorVersion = src.dec_ndr_small();
     }

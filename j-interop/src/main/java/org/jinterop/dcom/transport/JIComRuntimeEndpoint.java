@@ -19,6 +19,7 @@ package org.jinterop.dcom.transport;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
 import ndr.NdrObject;
@@ -26,7 +27,6 @@ import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.IJICOMRuntimeWorker;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import rpc.ConnectionOrientedEndpoint;
 import rpc.ConnectionOrientedPdu;
 import rpc.FaultException;
@@ -51,6 +51,8 @@ import rpc.pdu.ShutdownPdu;
  */
 public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+
     JIComRuntimeEndpoint(Transport transport, PresentationSyntax syntax) {
         super(transport, syntax);
     }
@@ -63,8 +65,8 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
     //use this oxidObject, it is actually OxidResolverImpl extends NdrObject.
     public void processRequests(IJICOMRuntimeWorker workerObject, String baseIID, List<String> listOfSupportedInterfaces) throws IOException {
 
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] started new thread {0}", Thread.currentThread().getName());
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] started new thread {0}", Thread.currentThread().getName());
         }
         //this iid is the component IID just in case.
         if (baseIID != null) {
@@ -79,16 +81,16 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
             ConnectionOrientedPdu response = null;
             ConnectionOrientedPdu request = receive();
 
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] request : {0} , {1} workerObject is resolver: {2}", new Object[]{Thread.currentThread().getName(), request, workerObject.isResolver()});
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] request : {0} , {1} workerObject is resolver: {2}", new Object[]{Thread.currentThread().getName(), request, workerObject.isResolver()});
             }
             NetworkDataRepresentation ndr = new NetworkDataRepresentation();
             workerObject.setCurrentIID(currentIID);
             if (request instanceof RequestCoPdu) {
                 NdrBuffer buffer = new NdrBuffer(((RequestCoPdu) request).getStub(), 0);
                 if (buffer.buf != null) {
-                    if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                        JISystem.getLogger().log(Level.FINEST, Hexdump.toHexString(buffer.buf));
+                    if (LOGGER.isLoggable(Level.FINEST)) {
+                        LOGGER.log(Level.FINEST, Hexdump.toHexString(buffer.buf));
                     }
                     // System.err.println("Vikram: " + Long.toString(Thread.currentThread().getId()));
                     // jcifs.util.Hexdump.hexdump(System.err, buffer.buf, 0, buffer.buf.length);
@@ -117,7 +119,7 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                     response = responseCoPdu;
 
                 } catch (JIRuntimeException e) {
-                    JISystem.getLogger().throwing("JIComRuntimeEndpoint", "processRequests", e);
+                    LOGGER.throwing("JIComRuntimeEndpoint", "processRequests", e);
                     //create a fault PDU
                     response = new FaultCoPdu();
                     response.setCallId(request.getCallId());
@@ -191,14 +193,14 @@ public final class JIComRuntimeEndpoint extends ConnectionOrientedEndpoint {
                 //}
                 continue; //don't do anything here, the server will send another request
             }
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] response : {0} , {1}", new Object[]{Thread.currentThread().getName(), response});
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] response : {0} , {1}", new Object[]{Thread.currentThread().getName(), response});
             }
             //now send the response.
             send(response);
 
             if (workerObject.workerOver()) {
-                JISystem.getLogger().log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] Worker is over, all IPID references have been released. Thread {0} will now exit.", Thread.currentThread().getName());
+                LOGGER.log(Level.INFO, "processRequests: [JIComRuntimeEndPoint] Worker is over, all IPID references have been released. Thread {0} will now exit.", Thread.currentThread().getName());
                 break;
             }
         }
