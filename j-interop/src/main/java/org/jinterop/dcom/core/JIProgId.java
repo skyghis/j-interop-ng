@@ -26,7 +26,7 @@ import org.jinterop.winreg.JIPolicyHandle;
 import org.jinterop.winreg.JIWinRegFactory;
 
 /**
- * < p>
+ * <p>
  * Wrapper class used to define user friendly <code>ProgID</code>.
  * <p>
  * Definition from MSDN:

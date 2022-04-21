@@ -43,7 +43,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 
     private boolean established = false;
     private Properties properties = null;
-    private List listOfInterfacesSupported = Collections.synchronizedList(new ArrayList());
+    private final List listOfInterfacesSupported = Collections.synchronizedList(new ArrayList());
 
     // this returns null, so that a recieve is performed first.
     @Override
@@ -67,20 +67,18 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
                 PresentationContext[] presentationContexts = ((BindPdu) pdu).getContextList();
                 reply = new BindAcknowledgePdu();
                 PresentationResult[] result = new PresentationResult[1];
-                for (int i = 0; i < presentationContexts.length; i++) {
-                    PresentationContext presentationContext = presentationContexts[i];
-
-                    boolean contains = false;
-                    synchronized (listOfInterfacesSupported) {
-                        contains = listOfInterfacesSupported.contains(presentationContext.abstractSyntax.toString().toUpperCase());
-                    }
-                    if (!contains) {
-                        //create a fault PDU stating the syntax is not supported.
-                        result[0] = new PresentationResult(PresentationResult.PROVIDER_REJECTION, PresentationResult.ABSTRACT_SYNTAX_NOT_SUPPORTED, new PresentationSyntax(UUID.NIL_UUID + ":0.0"));
-                        ((BindAcknowledgePdu) reply).setResultList(result);
-                        break;
-                    }
+            for (PresentationContext presentationContext : presentationContexts) {
+                boolean contains = false;
+                synchronized (listOfInterfacesSupported) {
+                    contains = listOfInterfacesSupported.contains(presentationContext.abstractSyntax.toString().toUpperCase());
                 }
+                if (!contains) {
+                    //create a fault PDU stating the syntax is not supported.
+                    result[0] = new PresentationResult(PresentationResult.PROVIDER_REJECTION, PresentationResult.ABSTRACT_SYNTAX_NOT_SUPPORTED, new PresentationSyntax(UUID.NIL_UUID + ":0.0"));
+                    ((BindAcknowledgePdu) reply).setResultList(result);
+                    break;
+                }
+            }
 
                 //all okay
                 if (((BindAcknowledgePdu) reply).getResultList() == null) {
@@ -92,25 +90,25 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 
                 //issue a challenge against the request info
                 break;
+
             case AlterContextPdu.ALTER_CONTEXT_TYPE:
                 established = true;
 
                 presentationContexts = ((AlterContextPdu) pdu).getContextList();
                 reply = new AlterContextResponsePdu();
                 result = new PresentationResult[1];
-                for (int i = 0; i < presentationContexts.length; i++) {
-                    PresentationContext presentationContext = presentationContexts[i];
-                    boolean contains = false;
-                    synchronized (listOfInterfacesSupported) {
-                        contains = listOfInterfacesSupported.contains(presentationContext.abstractSyntax.toString().toUpperCase());
-                    }
-                    if (!contains) {
-                        //create a fault PDU stating the syntax is not supported.
-                        result[0] = new PresentationResult(PresentationResult.PROVIDER_REJECTION, PresentationResult.ABSTRACT_SYNTAX_NOT_SUPPORTED, new PresentationSyntax(UUID.NIL_UUID + ":0.0"));
-                        ((AlterContextResponsePdu) reply).setResultList(result);
-                        break;
-                    }
+            for (PresentationContext presentationContext : presentationContexts) {
+                boolean contains = false;
+                synchronized (listOfInterfacesSupported) {
+                    contains = listOfInterfacesSupported.contains(presentationContext.abstractSyntax.toString().toUpperCase());
                 }
+                if (!contains) {
+                    //create a fault PDU stating the syntax is not supported.
+                    result[0] = new PresentationResult(PresentationResult.PROVIDER_REJECTION, PresentationResult.ABSTRACT_SYNTAX_NOT_SUPPORTED, new PresentationSyntax(UUID.NIL_UUID + ":0.0"));
+                    ((AlterContextResponsePdu) reply).setResultList(result);
+                    break;
+                }
+            }
 
                 //all okay
                 if (((AlterContextResponsePdu) reply).getResultList() == null) {
@@ -123,6 +121,7 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
 
                 //issue a challenge against the request info
                 break;
+
             default:
                 reply = super.accept(reply);
         }

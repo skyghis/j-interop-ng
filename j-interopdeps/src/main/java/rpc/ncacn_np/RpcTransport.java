@@ -36,19 +36,17 @@ import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
-public class RpcTransport implements Transport {
+public final class RpcTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_np";
     private static final String LOCALHOST = CifsContextSingleton.instance().getNameServiceClient().getLocalHost().getHostName();
     private String address;
     private CIFSContext smbContext;
-    private Properties properties;
+    private final Properties properties;
     private SmbNamedPipe pipe;
     OutputStream out;
     InputStream in;
     InputStream in2;
-    private int writeSize;
-    private int readSize;
     private boolean attached;
     private boolean first;
 
@@ -146,7 +144,7 @@ public class RpcTransport implements Transport {
         buffer.length = off;
     }
 
-    protected void parse(String address) throws ProviderException {
+    void parse(String address) throws ProviderException {
         if (address == null) {
             throw new ProviderException("Null address.");
         }

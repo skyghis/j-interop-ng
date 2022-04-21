@@ -4,22 +4,19 @@
  */
 package rpc.security.ntlm;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
+import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Calculates the various Type 3 responses.
  */
-public class Responses {
+public final class Responses {
+
+    private Responses() {
+    }
 
     /**
      * Calculates the LM Response for the given challenge, using the specified
@@ -30,7 +27,7 @@ public class Responses {
      *
      * @return The LM Response.
      */
-    public static byte[] getLMResponse(String password, byte[] challenge) throws Exception {
+    public static byte[] getLMResponse(String password, byte[] challenge) {
         byte[] lmHash = lmHash(password);
         return lmResponse(lmHash, challenge);
     }
@@ -44,7 +41,7 @@ public class Responses {
      *
      * @return The NTLM Response.
      */
-    public static byte[] getNTLMResponse(String password, byte[] challenge) throws Exception {
+    public static byte[] getNTLMResponse(String password, byte[] challenge) {
         byte[] ntlmHash = ntlmHash(password);
         return lmResponse(ntlmHash, challenge);
     }
@@ -63,9 +60,8 @@ public class Responses {
      * @param clientNonce The random 8-byte client nonce.
      *
      * @return The NTLMv2 Response.
-     * @throws java.security.NoSuchAlgorithmException
      */
-    public static byte[][] getNTLMv2Response(String target, String user, String password, byte[] targetInformation, byte[] challenge, byte[] clientNonce) throws NoSuchAlgorithmException {
+    public static byte[][] getNTLMv2Response(String target, String user, String password, byte[] targetInformation, byte[] challenge, byte[] clientNonce) {
         byte[][] retval = new byte[2][];
         byte[] ntlmv2Hash = ntlmv2Hash(target, user, password);
         byte[] blob = createBlob(targetInformation, clientNonce);
@@ -85,51 +81,35 @@ public class Responses {
      * @param clientNonce The random 8-byte client nonce.
      *
      * @return The LMv2 Response.
-     * @throws java.security.NoSuchAlgorithmException
      */
-    public static byte[] getLMv2Response(String target, String user, String password, byte[] challenge, byte[] clientNonce) throws NoSuchAlgorithmException {
+    public static byte[] getLMv2Response(String target, String user, String password, byte[] challenge, byte[] clientNonce) {
         byte[] ntlmv2Hash = ntlmv2Hash(target, user, password);
         return lmv2Response(ntlmv2Hash, clientNonce, challenge);
     }
 
     /**
-     * Calculates the NTLM2 Session Response for the given challenge, using the
-     * specified password and client nonce.
+     * Calculates the NTLM2 Session Response for the given challenge, using the specified password and client nonce.
      *
      * @param password The user's password.
      * @param challenge The Type 2 challenge from the server.
      * @param clientNonce The random 8-byte client nonce.
-     *
-     * @return The NTLM2 Session Response. This is placed in the NTLM response
-     * field of the Type 3 message; the LM response field contains the client
-     * nonce, null-padded to 24 bytes.
-     * @throws UnsupportedEncodingException
-     * @throws NoSuchAlgorithmException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws IllegalStateException
-     * @throws NoSuchPaddingException
-     * @throws InvalidKeyException
+     * @return The NTLM2 Session Response. This is placed in the NTLM response field of the Type 3 message; the LM response field contains the client nonce, null-padded to 24 bytes.
      */
-    public static byte[] getNTLM2SessionResponse(String password, byte[] challenge, byte[] clientNonce) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalStateException, IllegalBlockSizeException, BadPaddingException {
-        byte[] ntlmHash = ntlmHash(password);
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-        md5.update(challenge);
-        md5.update(clientNonce);
-        byte[] sessionHash = new byte[8];
-        System.arraycopy(md5.digest(), 0, sessionHash, 0, 8);
+    public static byte[] getNTLM2SessionResponse(String password, byte[] challenge, byte[] clientNonce) {
+        final byte[] ntlmHash = ntlmHash(password);
+        final byte[] sessionHash = new byte[8];
+        final byte[] challengeHash = DigestHelper.md5(challenge, clientNonce);
+        System.arraycopy(challengeHash, 0, sessionHash, 0, 8);
         return lmResponse(ntlmHash, sessionHash);
     }
 
     /**
      * Creates the LM Hash of the user's password.
      *
-     * @param password The password.
-     *
-     * @return The LM Hash of the given password, used in the calculation of the
-     * LM Response.
+     * @param password The password
+     * @return The LM Hash of the given password, used in the calculation of the LM Response
      */
-    private static byte[] lmHash(String password) throws Exception {
+    private static byte[] lmHash(String password) {
         byte[] oemPassword = password.toUpperCase().getBytes(StandardCharsets.US_ASCII);
         int length = Math.min(oemPassword.length, 14);
         byte[] keyBytes = new byte[14];
@@ -137,41 +117,41 @@ public class Responses {
         Key lowKey = createDESKey(keyBytes, 0);
         Key highKey = createDESKey(keyBytes, 7);
         byte[] magicConstant = "KGS!@#$%".getBytes(StandardCharsets.US_ASCII);
-        Cipher des = Cipher.getInstance("DES/ECB/NoPadding");
-        des.init(Cipher.ENCRYPT_MODE, lowKey);
-        byte[] lowHash = des.doFinal(magicConstant);
-        des.init(Cipher.ENCRYPT_MODE, highKey);
-        byte[] highHash = des.doFinal(magicConstant);
-        byte[] lmHash = new byte[16];
-        System.arraycopy(lowHash, 0, lmHash, 0, 8);
-        System.arraycopy(highHash, 0, lmHash, 8, 8);
-        return lmHash;
+        try {
+            Cipher des = Cipher.getInstance("DES/ECB/NoPadding");
+            des.init(Cipher.ENCRYPT_MODE, lowKey);
+            byte[] lowHash = des.doFinal(magicConstant);
+            des.init(Cipher.ENCRYPT_MODE, highKey);
+            byte[] highHash = des.doFinal(magicConstant);
+            byte[] lmHash = new byte[16];
+            System.arraycopy(lowHash, 0, lmHash, 0, 8);
+            System.arraycopy(highHash, 0, lmHash, 8, 8);
+            return lmHash;
+        } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
      * Creates the NTLM Hash of the user's password.
      *
-     * @param password The password.
-     *
-     * @return The NTLM Hash of the given password, used in the calculation of
-     * the NTLM Response and the NTLMv2 and LMv2 Hashes.
+     * @param password The password
+     * @return The NTLM Hash of the given password, used in the calculation of the NTLM Response and the NTLMv2 and LMv2 Hashes
      */
     static byte[] ntlmHash(String password) {
-        byte[] unicodePassword = password.getBytes(StandardCharsets.UTF_16LE);
-        return MD4.digest(unicodePassword);
+        final byte[] unicodePassword = password.getBytes(StandardCharsets.UTF_16LE);
+        return DigestHelper.md4(unicodePassword);
     }
 
     /**
      * Creates the NTLMv2 Hash of the user's password.
      *
-     * @param target The authentication target (i.e., domain).
-     * @param user The username.
-     * @param password The password.
-     *
-     * @return The NTLMv2 Hash, used in the calculation of the NTLMv2 and LMv2
-     * Responses.
+     * @param target The authentication target (i.e., domain)
+     * @param user The username
+     * @param password The password
+     * @return The NTLMv2 Hash, used in the calculation of the NTLMv2 and LMv2 Responses
      */
-    static byte[] ntlmv2Hash(String target, String user, String password) throws NoSuchAlgorithmException {
+    static byte[] ntlmv2Hash(String target, String user, String password) {
         byte[] ntlmHash = ntlmHash(password);
         String identity = user.toUpperCase() + target;
         return hmacMD5(identity.getBytes(StandardCharsets.UTF_16LE), ntlmHash);
@@ -180,34 +160,32 @@ public class Responses {
     /**
      * Creates the LM Response from the given hash and Type 2 challenge.
      *
-     * @param hash The LM or NTLM Hash.
-     * @param challenge The server challenge from the Type 2 message.
-     *
-     * @return The response (either LM or NTLM, depending on the provided hash).
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws IllegalStateException
+     * @param hash The LM or NTLM Hash
+     * @param challenge The server challenge from the Type 2 message
+     * @return The response (either LM or NTLM, depending on the provided hash)
      */
-    private static byte[] lmResponse(byte[] hash, byte[] challenge) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalStateException, IllegalBlockSizeException, BadPaddingException {
+    private static byte[] lmResponse(byte[] hash, byte[] challenge) {
+        byte[] lmResponse = new byte[24];
+
         byte[] keyBytes = new byte[21];
         System.arraycopy(hash, 0, keyBytes, 0, 16);
         Key lowKey = createDESKey(keyBytes, 0);
         Key middleKey = createDESKey(keyBytes, 7);
         Key highKey = createDESKey(keyBytes, 14);
-        Cipher des = Cipher.getInstance("DES/ECB/NoPadding");
-        des.init(Cipher.ENCRYPT_MODE, lowKey);
-        byte[] lowResponse = des.doFinal(challenge);
-        des.init(Cipher.ENCRYPT_MODE, middleKey);
-        byte[] middleResponse = des.doFinal(challenge);
-        des.init(Cipher.ENCRYPT_MODE, highKey);
-        byte[] highResponse = des.doFinal(challenge);
-        byte[] lmResponse = new byte[24];
-        System.arraycopy(lowResponse, 0, lmResponse, 0, 8);
-        System.arraycopy(middleResponse, 0, lmResponse, 8, 8);
-        System.arraycopy(highResponse, 0, lmResponse, 16, 8);
+        try {
+            Cipher des = Cipher.getInstance("DES/ECB/NoPadding");
+            des.init(Cipher.ENCRYPT_MODE, lowKey);
+            byte[] lowResponse = des.doFinal(challenge);
+            des.init(Cipher.ENCRYPT_MODE, middleKey);
+            byte[] middleResponse = des.doFinal(challenge);
+            des.init(Cipher.ENCRYPT_MODE, highKey);
+            byte[] highResponse = des.doFinal(challenge);
+            System.arraycopy(lowResponse, 0, lmResponse, 0, 8);
+            System.arraycopy(middleResponse, 0, lmResponse, 8, 8);
+            System.arraycopy(highResponse, 0, lmResponse, 16, 8);
+        } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException(ex);
+        }
         return lmResponse;
     }
 
@@ -222,7 +200,7 @@ public class Responses {
      * @return The response (either NTLMv2 or LMv2, depending on the client
      * data).
      */
-    private static byte[] lmv2Response(byte[] hash, byte[] clientData, byte[] challenge) throws NoSuchAlgorithmException {
+    private static byte[] lmv2Response(byte[] hash, byte[] clientData, byte[] challenge) {
         byte[] data = new byte[challenge.length + clientData.length];
         System.arraycopy(challenge, 0, data, 0, challenge.length);
         System.arraycopy(clientData, 0, data, challenge.length, clientData.length);
@@ -243,20 +221,11 @@ public class Responses {
      *
      * @return The blob, used in the calculation of the NTLMv2 Response.
      */
-    static byte[] createBlob(byte[] targetInformation,
-            byte[] clientNonce) {
-        byte[] blobSignature = new byte[]{
-            (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00
-        };
-        byte[] reserved = new byte[]{
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-        };
-        byte[] unknown1 = new byte[]{
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-        };
-        byte[] unknown2 = new byte[]{
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-        };
+    static byte[] createBlob(byte[] targetInformation, byte[] clientNonce) {
+        byte[] blobSignature = {(byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00};
+        byte[] reserved = {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        byte[] unknown1 = {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+        byte[] unknown2 = {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
         long time = System.currentTimeMillis();
         time += 11644473600000l; // milliseconds from January 1, 1601 -> epoch.
         time *= 10000; // tenths of a microsecond.
@@ -277,13 +246,11 @@ public class Responses {
         offset += reserved.length;
         System.arraycopy(timestamp, 0, blob, offset, timestamp.length);
         offset += timestamp.length;
-        System.arraycopy(clientNonce, 0, blob, offset,
-                clientNonce.length);
+        System.arraycopy(clientNonce, 0, blob, offset, clientNonce.length);
         offset += clientNonce.length;
         System.arraycopy(unknown1, 0, blob, offset, unknown1.length);
         offset += unknown1.length;
-        System.arraycopy(targetInformation, 0, blob, offset,
-                targetInformation.length);
+        System.arraycopy(targetInformation, 0, blob, offset, targetInformation.length);
         offset += targetInformation.length;
         System.arraycopy(unknown2, 0, blob, offset, unknown2.length);
         return blob;
@@ -293,13 +260,11 @@ public class Responses {
      * Calculates the HMAC-MD5 hash of the given data using the specified
      * hashing key.
      *
-     * @param data The data for which the hash will be calculated.
-     * @param key The hashing key.
-     *
-     * @return The HMAC-MD5 hash of the given data.
-     * @throws NoSuchAlgorithmException
+     * @param data The data for which the hash will be calculated
+     * @param key The hashing key
+     * @return The HMAC-MD5 hash of the given data
      */
-    static byte[] hmacMD5(byte[] data, byte[] key) throws NoSuchAlgorithmException {
+    static byte[] hmacMD5(byte[] data, byte[] key) {
         byte[] ipad = new byte[64];
         byte[] opad = new byte[64];
         for (int i = 0; i < 64; i++) {
@@ -313,12 +278,11 @@ public class Responses {
         byte[] content = new byte[data.length + 64];
         System.arraycopy(ipad, 0, content, 0, 64);
         System.arraycopy(data, 0, content, 64, data.length);
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-        data = md5.digest(content);
+        data = DigestHelper.md5(content);
         content = new byte[data.length + 64];
         System.arraycopy(opad, 0, content, 0, 64);
         System.arraycopy(data, 0, content, 64, data.length);
-        return md5.digest(content);
+        return DigestHelper.md5(content);
     }
 
     /**
@@ -350,8 +314,7 @@ public class Responses {
     /**
      * Applies odd parity to the given byte array.
      *
-     * @param bytes The data whose parity bits are to be adjusted for odd
-     * parity.
+     * @param bytes The data whose parity bits are to be adjusted for odd parity
      */
     private static void oddParity(byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {

@@ -2,8 +2,8 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIComServer;
@@ -14,8 +14,9 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class MSExcel2_Test {
+public class MSExcel2_ {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comServer = null;
     private IJIDispatch dispatch = null;
     private IJIComObject unknown = null;
@@ -24,7 +25,7 @@ public class MSExcel2_Test {
     private IJIDispatch dispatchOfWorkSheet = null;
     private JISession session = null;
 
-    public MSExcel2_Test(String address, String[] args) throws JIException, UnknownHostException {
+    public MSExcel2_(String address, String[] args) throws JIException, UnknownHostException {
         session = JISession.createSession(args[1], args[2], args[3]);
         session.useSessionSecurity(true);
         comServer = new JIComServer(JIProgId.valueOf("Excel.Application"), address, session);
@@ -68,9 +69,9 @@ public class MSExcel2_Test {
 
         JIVariant[][] newValue = new JIVariant[nRow][3];
 
-        for (int i = 0; i < newValue.length; i++) {
-            for (int j = 0; j < newValue[i].length; j++) {
-                newValue[i][j] = new JIVariant((10.0 * Math.random()));
+        for (JIVariant[] newValue1 : newValue) {
+            for (int j = 0; j < newValue1.length; j++) {
+                newValue1[j] = new JIVariant((10.0 * Math.random()));
             }
         }
 
@@ -85,9 +86,9 @@ public class MSExcel2_Test {
         JIVariant variant2 = dispRange.get("Value2");
         JIArray newValue2 = variant2.getObjectAsArray();
         newValue = (JIVariant[][]) newValue2.getArrayInstance();
-        for (int i = 0; i < newValue.length; i++) {
-            for (int j = 0; j < newValue[i].length; j++) {
-                System.out.print(newValue[i][j] + "\t");
+        for (JIVariant[] newValue1 : newValue) {
+            for (JIVariant item : newValue1) {
+                System.out.print(item + "\t");
             }
             System.out.println();
         }
@@ -111,16 +112,12 @@ public class MSExcel2_Test {
 
         try {
 
-            JISystem.getLogger().setLevel(Level.FINEST);
+            LOGGER.setLevel(Level.FINEST);
 
             if (args.length < 4) {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-
-            //JISystem.setInBuiltLogHandler(false);
-            //Logger l = Logger.getLogger("org.jinterop");
-            //l.setLevel(Level.FINEST);
             int nRow = 600;
 
             if (args.length > 4) {
@@ -131,7 +128,7 @@ public class MSExcel2_Test {
                 }
             }
 
-            MSExcel2_Test test = new MSExcel2_Test(args[0], args);
+            MSExcel2_ test = new MSExcel2_(args[0], args);
 
             test.startExcel();
             test.showExcel();

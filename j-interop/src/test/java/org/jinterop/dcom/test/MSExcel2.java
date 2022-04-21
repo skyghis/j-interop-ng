@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
 import org.jinterop.dcom.core.JIArray;
 import org.jinterop.dcom.core.JIComServer;
@@ -86,9 +85,9 @@ public class MSExcel2 {
         JIVariant variant2 = dispRange.get("Value2");
         JIArray newValue2 = variant2.getObjectAsArray();
         newValue = (JIVariant[][]) newValue2.getArrayInstance();
-        for (int i = 0; i < newValue.length; i++) {
-            for (int j = 0; j < newValue[i].length; j++) {
-                System.out.print(newValue[i][j] + "\t");
+        for (JIVariant[] newValue1 : newValue) {
+            for (JIVariant item : newValue1) {
+                System.out.print(item + "\t");
             }
             System.out.println();
         }
@@ -105,7 +104,6 @@ public class MSExcel2 {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            JISystem.setInBuiltLogHandler(false);
             Logger l = Logger.getLogger("org.jinterop");
             l.setLevel(Level.FINEST);
             MSExcel2 test = new MSExcel2(args[0], args);

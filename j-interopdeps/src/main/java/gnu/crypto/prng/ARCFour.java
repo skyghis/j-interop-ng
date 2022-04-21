@@ -109,10 +109,10 @@ public class ARCFour extends BasePRNG {
     @Override
     public Object clone() {
         ARCFour copy = new ARCFour();
-        copy.s = (s != null) ? (byte[]) s.clone() : null;
+        copy.s = (s != null) ? s.clone() : null;
         copy.m = m;
         copy.n = n;
-        copy.buffer = (buffer != null) ? (byte[]) buffer.clone() : null;
+        copy.buffer = (buffer != null) ? buffer.clone() : null;
         copy.ndx = ndx;
         copy.initialised = initialised;
         return copy;

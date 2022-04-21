@@ -26,8 +26,8 @@ import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrBuffer;
-import org.jinterop.dcom.common.JISystem;
 import rpc.Endpoint;
 import rpc.ProviderException;
 import rpc.RpcException;
@@ -45,33 +45,16 @@ import rpc.core.PresentationSyntax;
 final class JIComTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
-
-    private static final String LOCALHOST;
-
-    private Properties properties;
-
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+    private static final String LOCALHOST = getLocalhostName();
+    private final Properties properties;
     private String host;
-
     private int port;
-
     private Socket socket;
-
     private OutputStream output;
-
     private InputStream input;
-
     private boolean attached;
-
     private SocketChannel channel = null;
-
-    static {
-        String localhost = null;
-        try {
-            localhost = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException ex) {
-        }
-        LOCALHOST = localhost;
-    }
 
     JIComTransport(String address, Properties properties) throws ProviderException {
         this.properties = properties;
@@ -94,8 +77,8 @@ final class JIComTransport implements Transport {
             throw new RpcException("Transport already attached.");
         }
         try {
-            if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().log(Level.FINEST, "Opening socket on {0}", new InetSocketAddress(InetAddress.getByName(host), port));
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.log(Level.FINEST, "Opening socket on {0}", new InetSocketAddress(InetAddress.getByName(host), port));
             }
             channel = SocketChannel.open();
             socket = channel.socket();
@@ -104,7 +87,7 @@ final class JIComTransport implements Transport {
             try {
                 timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
             } catch (NumberFormatException ex) {
-                JISystem.getLogger().log(Level.WARNING, "Invalid timeout value " + this.properties.getProperty("rpc.socketTimeout"), ex);
+                LOGGER.log(Level.WARNING, "Invalid timeout value " + this.properties.getProperty("rpc.socketTimeout"), ex);
             }
             socket.setSoTimeout(timeout);
             socket.connect(new InetSocketAddress(InetAddress.getByName(host), port), timeout);
@@ -132,8 +115,8 @@ final class JIComTransport implements Transport {
                 socket.shutdownOutput();
                 socket.close();
                 channel.close();
-                if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().log(Level.FINEST, "Socket closed... {0} host {1} , port {2}", new Object[]{socket, host, port});
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    LOGGER.log(Level.FINEST, "Socket closed... {0} host {1} , port {2}", new Object[]{socket, host, port});
                 }
             }
         } finally {
@@ -170,7 +153,7 @@ final class JIComTransport implements Transport {
                 buffer.getCapacity()));
     }
 
-    void parse(String address) throws ProviderException {
+    private void parse(String address) throws ProviderException {
         if (address == null) {
             throw new ProviderException("Null address.");
         }
@@ -200,4 +183,12 @@ final class JIComTransport implements Transport {
         host = server;
     }
 
+    private static String getLocalhostName() {
+        String localhost = null;
+        try {
+            localhost = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException ex) {
+        }
+        return localhost;
+    }
 }

@@ -19,7 +19,7 @@ package org.jinterop.dcom.impls.automation;
 import org.jinterop.dcom.common.JIException;
 
 /**
- * < p>
+ * <p>
  * Represents the Windows COM <code>IEnumVARIANT</code> Interface.
  * <p>
  * Sample Usage:- <br>

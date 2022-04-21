@@ -13,13 +13,13 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class TestCOMServer {
+public class COMServer {
 
     private JIComServer comStub = null;
     private IJIDispatch dispatch = null;
     private IJIComObject unknown = null;
 
-    public TestCOMServer(String address, String[] args) throws JIException, UnknownHostException {
+    public COMServer(String address, String[] args) throws JIException, UnknownHostException {
         JISession session = JISession.createSession(args[1], args[2], args[3]);
 
         //instead of this the ProgID "TestCOMServer.ITestCOMServer" can be used as well.
@@ -52,13 +52,12 @@ public class TestCOMServer {
     }
 
     public static void main(String[] args) {
-
         try {
             if (args.length < 4) {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            TestCOMServer test = new TestCOMServer(args[0], args);
+            COMServer test = new COMServer(args[0], args);
             test.execute();
         } catch (Exception e) {
         }

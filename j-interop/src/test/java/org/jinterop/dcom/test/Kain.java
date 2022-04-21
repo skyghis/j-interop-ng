@@ -11,13 +11,13 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class KainTest {
+public class Kain {
 
     private JIComServer comServer = null;
-    private IJIDispatch dispatch = null;
+    private final IJIDispatch dispatch = null;
     private IJIComObject unknown = null;
 
-    public KainTest(String address, String[] args) throws JIException, UnknownHostException {
+    public Kain(String address, String[] args) throws JIException, UnknownHostException {
         JISession session = JISession.createSession(args[1], args[2], args[3]);
         comServer = new JIComServer(JIProgId.valueOf("Word.Application"), address, session);
     }
@@ -125,7 +125,7 @@ public class KainTest {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            KainTest test = new KainTest(args[0], args);
+            Kain test = new Kain(args[0], args);
             test.startWord();
             test.showWord();
             test.performOp();

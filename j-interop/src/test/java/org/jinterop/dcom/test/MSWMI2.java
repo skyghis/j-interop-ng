@@ -2,6 +2,7 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
@@ -23,6 +24,7 @@ import org.jinterop.dcom.impls.automation.IJIEnumVariant;
  */
 public class MSWMI2 {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comStub = null;
     private IJIComObject comObject = null;
     private IJIDispatch dispatch = null;
@@ -61,8 +63,8 @@ public class MSWMI2 {
             Object[] values = enumVARIANT.next(1);
             JIArray array = (JIArray) values[0];
             Object[] arrayObj = (Object[]) array.getArrayInstance();
-            for (int j = 0; j < arrayObj.length; j++) {
-                IJIDispatch wbemObject_dispatch = (IJIDispatch) JIObjectFactory.narrowObject(((JIVariant) arrayObj[j]).getObjectAsComObject());
+            for (Object arrayObj1 : arrayObj) {
+                IJIDispatch wbemObject_dispatch = (IJIDispatch) JIObjectFactory.narrowObject(((JIVariant) arrayObj1).getObjectAsComObject());
                 JIVariant variant2 = (wbemObject_dispatch.callMethodA("GetObjectText_", new Object[]{1}))[0];
                 System.out.println(variant2.getObjectAsString().getString());
                 System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -83,8 +85,7 @@ public class MSWMI2 {
                 return;
             }
 
-            JISystem.setInBuiltLogHandler(false);
-            JISystem.getLogger().setLevel(Level.FINEST);
+            LOGGER.setLevel(Level.FINEST);
             JISystem.setAutoRegisteration(true);
             MSWMI2 test = new MSWMI2(args[0], args);
             for (int i = 0; i < 2; i++) {

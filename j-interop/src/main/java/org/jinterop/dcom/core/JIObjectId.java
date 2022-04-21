@@ -19,11 +19,12 @@ package org.jinterop.dcom.core;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcifs.util.Hexdump;
-import org.jinterop.dcom.common.JISystem;
 
 final class JIObjectId implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = -4335536047242439700L;
     private final byte[] oid;
     private int refcountofIPID = 0;
@@ -59,8 +60,8 @@ final class JIObjectId implements Serializable {
         this.oid = oid;
         this.dontping = dontping;
         if (dontping) {
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().log(Level.INFO, "DONT PING is true for OID: {0}", toString());
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, "DONT PING is true for OID: {0}", toString());
             }
         }
     }

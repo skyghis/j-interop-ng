@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
@@ -50,6 +51,7 @@ import rpc.core.UUID;
  */
 final class JIComOxidRuntime {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final Properties defaults = new Properties();
     private static final Properties defaults2 = new Properties();
     private static boolean stopSystem = false;
@@ -107,8 +109,8 @@ final class JIComOxidRuntime {
         @Override
         public void run() {
             synchronized (mutex2) {
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().info("Running ServerPingTimerTask !");
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.info("Running ServerPingTimerTask !");
                 }
                 Iterator<JIObjectId> itr = mapOfOIDVsComponents.keySet().iterator();
                 while (itr.hasNext()) {
@@ -139,8 +141,8 @@ final class JIComOxidRuntime {
     static void destroySessionOIDs(int sessionId) {
         synchronized (mutex2) {
 
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().log(Level.INFO, "destroySessionOIDs for session: {0}", sessionId);
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, "destroySessionOIDs for session: {0}", sessionId);
             }
             final List<JIObjectId> oids = mapOfSessionIdsVsOIDs.remove(sessionId);
             if (oids == null || oids.isEmpty()) {
@@ -174,8 +176,8 @@ final class JIComOxidRuntime {
             synchronized (mutex3) {
                 itr = new HashMap<>(mapOfSessionVsPingSetHolder).entrySet().iterator();
             }
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().info("Running ClientPingTimerTask !");
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.info("Running ClientPingTimerTask !");
             }
             //iterate over the map and get the corresponding stubs and use there sessions to
             //stub is created here and used per address
@@ -219,8 +221,8 @@ final class JIComOxidRuntime {
                         }
                     }
                 }
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is {0}", holder.currentSetOIDs.size());
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "Within ClientPingTimerTask: holder.currentSetOIDs, current size of which is {0}", holder.currentSetOIDs.size());
                 }
 
                 //this is the first time this is going and objects with no references will not be added to ping set.
@@ -240,8 +242,8 @@ final class JIComOxidRuntime {
                 //there on...
                 holder.setId = stub.call(isSimplePing, holder.setId, listOfAddedOIDs, listOfRemovedOIDs, isSimplePing ? 0 : holder.seqNum++);
 
-                if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                    JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: holder.seqNum {0}", holder.seqNum);
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    LOGGER.log(Level.INFO, "Within ClientPingTimerTask: holder.seqNum {0}", holder.seqNum);
                 }
 
                 holder.modified = false;
@@ -249,8 +251,8 @@ final class JIComOxidRuntime {
                 if (holder.closed) {
                     //this means that this set is empty and there is no need for it. The set has emptied  itself and
                     //will get removed from COM servers side as well.
-                    if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().log(Level.INFO, "Within ClientPingTimerTask: Holder {0} is empty, will remove this from mapOfSessionVsPingSetHolder", holder);
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "Within ClientPingTimerTask: Holder {0} is empty, will remove this from mapOfSessionVsPingSetHolder", holder);
                     }
                     itr.remove();
                     synchronized (mutex3) {
@@ -292,8 +294,8 @@ final class JIComOxidRuntime {
                     //have to update this oid, since the one from parameters is a "new" one.
                     oid = oid2;
                 } else {
-                    if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().log(Level.INFO, "addUpdateOXIDs: Adding OID to holder {0}, current size of currentSetOIDs is {1}", new Object[]{holder, holder.currentSetOIDs.size()});
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "addUpdateOXIDs: Adding OID to holder {0}, current size of currentSetOIDs is {1}", new Object[]{holder, holder.currentSetOIDs.size()});
                     }
                     holder.currentSetOIDs.put(oid, oid);
                     holder.modified = true;
@@ -301,8 +303,8 @@ final class JIComOxidRuntime {
             }
 
             oid.incrementIPIDRefCountBy1();
-            if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                JISystem.getLogger().log(Level.INFO, "addUpdateOXIDs: finally this oid is {0}", oid);
+            if (LOGGER.isLoggable(Level.INFO)) {
+                LOGGER.log(Level.INFO, "addUpdateOXIDs: finally this oid is {0}", oid);
             }
         }
 
@@ -318,16 +320,16 @@ final class JIComOxidRuntime {
                     //temp gets replaced by the real one.
                     oid = oid2;
                 } else {
-                    if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().log(Level.WARNING, "In delIPIDReference: Could not find Original OID for this temp OID for session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
+                    if (LOGGER.isLoggable(Level.WARNING)) {
+                        LOGGER.log(Level.WARNING, "In delIPIDReference: Could not find Original OID for this temp OID for session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
                     }
                     return;
                 }
 
                 //this is the same OID as in the PingSetHolder.
                 oid.decrementIPIDRefCountBy1();
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "delIPIDReference: Decrementing reference count for IPID {0} on OID {1}", new Object[]{IPID, oid});
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "delIPIDReference: Decrementing reference count for IPID {0} on OID {1}", new Object[]{IPID, oid});
                 }
 
                 //should we retain this now ??? , we need not send a ping for this as well. It is being retained for the last ping only.
@@ -338,13 +340,13 @@ final class JIComOxidRuntime {
                         holder.closed = true;
                         mapOfSessionVsPingSetHolder.remove(session);
                     }
-                    if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().log(Level.INFO, "delIPIDReference: sessionid {0}Ref count is <= 0, for OID {1}, holder status: {2}", new Object[]{session.getSessionIdentifier(), oid, holder.closed});
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "delIPIDReference: sessionid {0}Ref count is <= 0, for OID {1}, holder status: {2}", new Object[]{session.getSessionIdentifier(), oid, holder.closed});
                     }
                 }
             } else {
-                if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().log(Level.WARNING, "In delIPIDReference: Could not find PingSetHolder for this session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, "In delIPIDReference: Could not find PingSetHolder for this session: {0} , temp oid is {1} , and IPID is {2}", new Object[]{session.getSessionIdentifier(), oid, IPID});
                 }
             }
         }
@@ -355,8 +357,8 @@ final class JIComOxidRuntime {
             //make sure this is the IP address
             PingSetHolder holder = mapOfSessionVsPingSetHolder.get(session);
             if (holder != null) {
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "clearIPIDsforSession: holder.currentSetOIDs''s size is {0}", holder.currentSetOIDs.size());
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "clearIPIDsforSession: holder.currentSetOIDs''s size is {0}", holder.currentSetOIDs.size());
                 }
 
                 //No need to do this we are clearing the map anyways.
@@ -402,19 +404,13 @@ final class JIComOxidRuntime {
         Runnable thread = new Runnable() {
             @Override
             public void run() {
-
-                try {
-                    final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+                try (final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
                     serverSocket = serverSocketChannel.socket();//new ServerSocket(0); //bind on any free port
                     serverSocket.bind(null);
                     oxidResolverPort = serverSocket.getLocalPort();
-                    //System.err.println("VIKRAM: oxidResolverPort: " + oxidResolverPort);
                     // server infinite loop
                     while (!stopSystem) {
                         Socket socket = serverSocket.accept();
-                        //listOfSockets.add(socket);
-                        //System.err.println("VIKRAM: Accepting new Call from " + socket.getPort());
-                        //in a multithreaded scenario this will be serialized.
                         synchronized (mutex) {
                             JISystem.internal_setSocket(socket);
                             //now create the JIComOxidRuntimeHelper Object and start it.
@@ -423,19 +419,9 @@ final class JIComOxidRuntime {
                             JIComOxidRuntimeHelper oxidResolver = new JIComOxidRuntimeHelper(properties);
                             oxidResolver.startOxid(socket.getLocalPort(), socket.getPort());
                         }
-
                     }
                 } catch (IOException e) {
-                    //e.printStackTrace();
                 }
-
-                //close all sockets.
-                //  for (int i = 0; i < listOfSockets.size(); i++) {
-                //    Socket s = (Socket)listOfSockets.get(i);
-                //    try {
-                //      s.close();
-                //    } catch (IOException e) {}
-                //  }
             }
         };
 
@@ -460,9 +446,7 @@ final class JIComOxidRuntime {
         pingTimer_2minutes.cancel();
         pingTimer_8minutes.cancel();
 
-        Iterator<JIComOxidStub> itr = mapOfAddressVsStub.values().iterator();
-        while (itr.hasNext()) {
-            JIComOxidStub s = itr.next();
+        for (JIComOxidStub s : mapOfAddressVsStub.values()) {
             s.close();
         }
         mapOfAddressVsStub.clear(); //will clean up all the others as well

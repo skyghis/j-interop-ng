@@ -83,7 +83,7 @@ public class JIComRuntimeTransport implements Transport {
     }
 
     protected Socket getSocket() throws Exception {
-        return (Socket) JISystem.internal_getSocket();
+        return JISystem.internal_getSocket();
     }
 
     @Override

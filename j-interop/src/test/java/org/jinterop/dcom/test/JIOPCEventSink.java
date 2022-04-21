@@ -70,10 +70,10 @@ public class JIOPCEventSink {
             public void run() {
                 EventNotificationListener[] l;
                 synchronized (listeners) {
-                    l = (EventNotificationListener[]) listeners.toArray(new EventNotificationListener[listeners.size()]);
+                    l = (EventNotificationListener[]) listeners.toArray(new EventNotificationListener[0]);
                 }
-                for (int i = 0; i < l.length; i++) {
-                    l[i].onEvent(events);
+                for (EventNotificationListener l1 : l) {
+                    l1.onEvent(events);
                 }
             }
         }, "Opc event sink thread").start();

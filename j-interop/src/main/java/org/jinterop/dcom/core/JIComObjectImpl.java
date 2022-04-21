@@ -19,6 +19,7 @@ package org.jinterop.dcom.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.IJIUnreferenced;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
@@ -34,9 +35,7 @@ import rpc.core.UUID;
  */
 final class JIComObjectImpl implements IJIComObject {
 
-    /**
-     *
-     */
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = -1661750453596032089L;
     private boolean isDual = false;
     private boolean dualInfo = false;
@@ -96,11 +95,9 @@ final class JIComObjectImpl implements IJIComObject {
 
         obj.addOutParamAsType(Short.class, JIFlags.FLAG_NULL);//size
         obj.addOutParamAsType(Integer.class, JIFlags.FLAG_NULL);//Hresult for size
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.INFO, "addRef: Adding 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.INFO, "addRef: Adding 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
         }
-
-        JISession.debug_addIpids(ptr.getIPID(), 5);
 
         session.getStub2().addRef_ReleaseRef(obj);
 
@@ -124,9 +121,8 @@ final class JIComObjectImpl implements IJIComObject {
         // same with release.
         obj.addInParamAsInt(5, JIFlags.FLAG_NULL);
         obj.addInParamAsInt(0, JIFlags.FLAG_NULL);//private refs = 0
-        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-            JISystem.getLogger().log(Level.WARNING, "RELEASE called directly ! removing 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
-            JISession.debug_delIpids(ptr.getIPID(), 5);
+        if (LOGGER.isLoggable(Level.INFO)) {
+            LOGGER.log(Level.WARNING, "RELEASE called directly ! removing 5 references for {0} session: {1}", new Object[]{ptr.getIPID(), session.getSessionIdentifier()});
         }
         session.getStub2().addRef_ReleaseRef(obj);
     }

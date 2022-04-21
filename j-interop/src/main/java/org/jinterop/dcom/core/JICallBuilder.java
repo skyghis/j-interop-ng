@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -30,7 +31,7 @@ import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 
 /**
- * < p>
+ * <p>
  * Class used for setting up information such as <code>[in]</code>
  * ,<code>[out]</code> parameters and the method number for executing a call to
  * the COM server.
@@ -63,6 +64,7 @@ import org.jinterop.dcom.common.JISystem;
  */
 public class JICallBuilder extends NdrObject implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = -2939657500731135110L;
     static final String CURRENTSESSION = "CURRENTSESSION";
     static final String COMOBJECTS = "COMOBJECTS";
@@ -94,7 +96,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
     }
 
     /**
-     * < p>
+     * <p>
      * Constructs a builder object. It is assumed that <code>IDispatch</code>
      * interface is supported by the <code>IJIComObject</code> on which this
      * builder would act.
@@ -603,8 +605,8 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @param FLAGS from JIFlags (if need be).
      */
     public void setOutParams(Object[] values, int FLAGS) {
-        for (int i = 0; i < values.length; i++) {
-            outParams.add(values[i]);
+        for (Object value1 : values) {
+            outParams.add(value1);
             outparamFlags.add(FLAGS);
         }
 
@@ -813,7 +815,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @return
      */
     public Integer[] getInparamFlags() {
-        return (Integer[]) inparamFlags.toArray(new Integer[inparamFlags.size()]);
+        return inparamFlags.toArray(new Integer[0]);
     }
 
     /**
@@ -822,7 +824,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
      * @return
      */
     public Integer[] getOutparamFlags() {
-        return (Integer[]) outparamFlags.toArray(new Integer[outparamFlags.size()]);
+        return outparamFlags.toArray(new Integer[0]);
     }
 
     /**
@@ -1003,13 +1005,13 @@ public class JICallBuilder extends NdrObject implements Serializable {
 
         outparams = outParams.toArray();
 
-        if (JISystem.getLogger().isLoggable(Level.FINEST)) {
+        if (LOGGER.isLoggable(Level.FINEST)) {
             String str = "";
             for (int i = 0; i < outparams.length; i++) {
                 str = str + "Out Param:[" + i + "]" + outparams[i] + "\n";
             }
 
-            JISystem.getLogger().finest(str);
+            LOGGER.finest(str);
         }
 
         List<Object> comObjects = new ArrayList<>();
@@ -1060,7 +1062,7 @@ public class JICallBuilder extends NdrObject implements Serializable {
                     }
 
                 } catch (JIException e) {
-                    JISystem.getLogger().throwing("JICallBuilder", "readPacket", e);
+                    LOGGER.throwing("JICallBuilder", "readPacket", e);
                     throw new JIRuntimeException(e.getErrorCode());
                 }
                 //replace the members of the original com objects by the completed ones.

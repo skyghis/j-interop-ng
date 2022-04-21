@@ -15,7 +15,7 @@ import org.jinterop.winreg.JIWinRegFactory;
  * before passing them to WinReg example.
  *
  */
-public class TestWinReg {
+public class WinReg {
 
     public static void main(String[] args) {
 

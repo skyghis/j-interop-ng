@@ -78,7 +78,7 @@ final class JIRemActivation extends NdrObject {
         orpcThis.encode(ndr);
 
         //JIClsid of the component being activated.
-        UUID.encodeToBuffer(new UUID(clsid.toString()), ndr.buf);
+        new UUID(clsid.toString()).encode(ndr.buf);
         if (monikerName == null) {
             ndr.writeUnsignedLong(0);
         } else {
@@ -96,9 +96,9 @@ final class JIRemActivation extends NdrObject {
         ndr.writeUnsignedLong(2); //Array length
 
         //IID of IUnknown , this is hard coded here, standard way of COM is to first get a handle to the IUnknown
-        UUID.encodeToBuffer(new UUID("00000000-0000-0000-c000-000000000046"), ndr.buf);
+        new UUID("00000000-0000-0000-c000-000000000046").encode(ndr.buf);
         //checking for IDispatch support
-        UUID.encodeToBuffer(new UUID("00020400-0000-0000-c000-000000000046"), ndr.buf);
+        new UUID("00020400-0000-0000-c000-000000000046").encode(ndr.buf);
 
         ndr.writeUnsignedLong(1); //Protocol Sequences available
         ndr.writeUnsignedLong(1); //Array length

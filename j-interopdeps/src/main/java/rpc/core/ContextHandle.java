@@ -18,7 +18,7 @@ package rpc.core;
 
 import ndr.NdrObject;
 
-public class ContextHandle extends NdrObject {
+public final class ContextHandle extends NdrObject {
 
     int attributes;
     UUID uuid;

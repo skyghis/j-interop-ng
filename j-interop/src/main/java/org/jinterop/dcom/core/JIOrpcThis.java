@@ -30,8 +30,7 @@ import rpc.core.UUID;
 final class JIOrpcThis implements Serializable {
 
     private static final long serialVersionUID = 9148006530957254901L;
-    private static ThreadLocal cidForCallback = new ThreadLocal();
-
+    private static ThreadLocal<String> CID_FOR_CALLBACK = new ThreadLocal<>();
     private int flags = 0;
     private JIOrpcExtentArray[] arry = null;
     private JIComVersion version = JISystem.getCOMVersion();
@@ -71,9 +70,9 @@ final class JIOrpcThis implements Serializable {
         ndr.writeUnsignedLong(flags); // No Flags
         ndr.writeUnsignedLong(0); // Reserved ...always 0.
 
-        //the order here is important since the cid is always filled from the ctor hence will never be null.
-        String cid2 = cidForCallback.get() == null ? cid : (String) cidForCallback.get();
-       UUID.encodeToBuffer(new UUID(cid2), ndr.getBuffer());
+        // the order here is important since the cid is always filled from the ctor hence will never be null.
+        String cid2 = CID_FOR_CALLBACK.get() == null ? cid : CID_FOR_CALLBACK.get();
+        new UUID(cid2).encode(ndr.getBuffer());
 
         int i = 0;
         if (arry != null && arry.length != 0) {
@@ -81,7 +80,7 @@ final class JIOrpcThis implements Serializable {
             ndr.writeUnsignedLong(0);
             while (i < arry.length) {
                 JIOrpcExtentArray arryy = arry[i];
-                UUID.encodeToBuffer(new UUID(arryy.getGUID()), ndr.getBuffer());
+                new UUID(arryy.getGUID()).encode(ndr.getBuffer());
                 ndr.writeUnsignedLong(arryy.getSizeOfData());
                 ndr.writeOctetArray(arryy.getData(), 0, arryy.getSizeOfData());
                 i++;
@@ -100,7 +99,7 @@ final class JIOrpcThis implements Serializable {
         retval.version = new JIComVersion(majorVersion, minorVersion);
         retval.flags = ((Number) (JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map))).intValue();
         JIMarshalUnMarshalHelper.deSerialize(ndr, Integer.class, null, JIFlags.FLAG_NULL, map);//reserved.
-            retval.cid = new  UUID(ndr.getBuffer()).toString();
+        retval.cid = new UUID(ndr.getBuffer()).toString();
         JIStruct orpcextentarray = new JIStruct();
         try {
             //create the orpcextent struct
@@ -144,7 +143,7 @@ final class JIOrpcThis implements Serializable {
         while (x < listOfDefferedPointers.size()) {
             List<JIPointer> newList = new ArrayList<>();
             JIPointer replacement = (JIPointer) JIMarshalUnMarshalHelper.deSerialize(ndr, listOfDefferedPointers.get(x), newList, JIFlags.FLAG_NULL, map);
-            ( listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
+            (listOfDefferedPointers.get(x)).replaceSelfWithNewPointer(replacement); //this should replace the value in the original place.
             x++;
             listOfDefferedPointers.addAll(x, newList);
         }
@@ -168,7 +167,7 @@ final class JIOrpcThis implements Serializable {
         //callback will store the cid from the decode operation in the threadlocal variable. In case an encode is performed using the
         //same thread then we know that this is a nested call. Hence will replace the cid with the thread local cid. For the calls being in
         //case of encode this value will not be used if the encode thread is of the client and not of JIComOxidRuntimeHelper.
-        cidForCallback.set(retval.cid);
+        CID_FOR_CALLBACK.set(retval.cid);
         return retval;
     }
 

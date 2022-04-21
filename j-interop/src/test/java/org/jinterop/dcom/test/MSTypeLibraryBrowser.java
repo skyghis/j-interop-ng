@@ -30,7 +30,7 @@ public class MSTypeLibraryBrowser {
         unknown = comServer.createInstance();
         dispatch = (IJIDispatch) JIObjectFactory.narrowObject(unknown.queryInterface(IJIDispatch.IID));
         IJITypeInfo typeInfo = dispatch.getTypeInfo(0);
-        IJITypeLib typeLib = (IJITypeLib) ((Object[]) typeInfo.getContainingTypeLib())[0];
+        IJITypeLib typeLib = (IJITypeLib) typeInfo.getContainingTypeLib()[0];
         Object[] result = typeLib.getDocumentation(-1);
         System.out.println(((JIString) result[0]).getString());
         System.out.println(((JIString) result[1]).getString());
@@ -88,7 +88,5 @@ public class MSTypeLibraryBrowser {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
-
 }

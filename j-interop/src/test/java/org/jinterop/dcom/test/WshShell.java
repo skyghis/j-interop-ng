@@ -2,6 +2,7 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
@@ -15,27 +16,15 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class WshShell {
 
-    private final int xlWorksheet = -4167;
-
-    private final int xlXYScatterLinesNoMarkers = 75;
-
-    private final int xlColumns = 2;
-
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comServer = null;
-
     private IJIDispatch dispatch = null;
-
     private IJIComObject unknown = null;
-
-    private IJIDispatch dispatchOfWorkSheet = null;
-
-    private IJIDispatch dispatchOfWorkBook = null;
-
     private JISession session = null;
 
     public WshShell(String address, String domain, String username, String password) throws JIException, UnknownHostException {
 
-        JISystem.getLogger().setLevel(Level.SEVERE);
+        LOGGER.setLevel(Level.SEVERE);
 
         session = JISession.createSession(domain, username, password);
 

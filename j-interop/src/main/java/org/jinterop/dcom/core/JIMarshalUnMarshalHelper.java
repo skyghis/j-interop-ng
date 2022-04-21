@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import jcifs.util.Encdec;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -37,6 +37,7 @@ import rpc.core.UUID;
 
 final class JIMarshalUnMarshalHelper {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final Map<Class<?>, SerializerDeserializer> mapOfSerializers = new HashMap<>();
 
     //TODO This is very important , please note that arrays in C++ have a fixed size and unlike Java have to be
@@ -253,7 +254,7 @@ final class JIMarshalUnMarshalHelper {
             if (mapOfSerializers.get(obj) == null) {
                 throw new IllegalStateException(MessageFormat.format(JISystem.getLocalizedMessage(JIErrorCodes.JI_UTIL_SERDESER_NOT_FOUND), obj.toString()));
             }
-            return ((SerializerDeserializer) mapOfSerializers.get(obj)).deserializeData(ndr, defferedPointers, additionalData, FLAG);
+            return mapOfSerializers.get(obj).deserializeData(ndr, defferedPointers, additionalData, FLAG);
         }
     }
 
@@ -1033,8 +1034,8 @@ final class JIMarshalUnMarshalHelper {
         public void serializeData(NetworkDataRepresentation ndr, Object value, List<JIPointer> defferedPointers, int FLAG) {
             try {
                 ((NdrObject) value).encode(ndr, ndr.getBuffer());
-            } catch (NdrException e) {
-                JISystem.getLogger().throwing("UUIDImpl", "serializeData", e);
+            } catch (RuntimeException e) {
+                LOGGER.throwing("UUIDImpl", "serializeData", e);
             }
         }
 

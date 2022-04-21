@@ -23,9 +23,8 @@ import rpc.TransportFactory;
 
 /**
  * @exclude @since 1.0
- *
  */
-public final class JIComTransportFactory extends TransportFactory {
+public final class JIComTransportFactory implements TransportFactory {
 
     private static JIComTransportFactory factory = null;
 

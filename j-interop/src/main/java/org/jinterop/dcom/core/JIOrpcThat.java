@@ -133,20 +133,18 @@ final class JIOrpcThat implements Serializable {
         //int ptr = ndr.readUnsignedLong();
         if (!orpcextentarrayptr.isNull()) {
             JIPointer[] pointers = (JIPointer[]) ((JIArray) ((JIPointer) ((JIStruct) orpcextentarrayptr.getReferent()).getMember(2)).getReferent()).getArrayInstance();
-            for (int i = 0; i < pointers.length; i++) {
-                if (pointers[i].isNull()) {
+            for (JIPointer pointer : pointers) {
+                if (pointer.isNull()) {
                     continue;
                 }
-
-                JIStruct orpcextent2 = (JIStruct) pointers[i].getReferent();
+                JIStruct orpcextent2 = (JIStruct) pointer.getReferent();
                 Byte[] byteArray = (Byte[]) ((JIArray) orpcextent2.getMember(2)).getArrayInstance();
-
                 extentArrays.add(new JIOrpcExtentArray(orpcextent2.getMember(0).toString(), byteArray.length, byteArray));
             }
 
         }
 
-        orpcthat.setExtentArray((JIOrpcExtentArray[]) extentArrays.toArray(new JIOrpcExtentArray[extentArrays.size()]));
+        orpcthat.setExtentArray((JIOrpcExtentArray[]) extentArrays.toArray(new JIOrpcExtentArray[0]));
 
         return orpcthat;
     }

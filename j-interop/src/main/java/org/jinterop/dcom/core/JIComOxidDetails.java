@@ -17,7 +17,7 @@
 package org.jinterop.dcom.core;
 
 import java.util.logging.Level;
-import org.jinterop.dcom.common.JISystem;
+import java.util.logging.Logger;
 
 /**
  * Stores the oxid details in memory.
@@ -26,26 +26,26 @@ import org.jinterop.dcom.common.JISystem;
  */
 final class JIComOxidDetails {
 
-    private JILocalCoClass referent = null;
-    private String ipid = null;
-    private String remUnknownIpid = null;
-    private JIOxid oxid = null;
-    private JIObjectId oid = null;
-    private String iid = null;
-    private JIComOxidRuntimeHelper comRuntimeHelper = null;
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+    private final JILocalCoClass referent;
+    private final String ipid;
+    private final JIOxid oxid;
+    private final JIObjectId oid;
+    private final String iid;
+    private final JIComOxidRuntimeHelper comRuntimeHelper;
     private int portForRemUnknown = -1;
     private int protectionLevel = 2;
+    private String remUnknownIpid = null;
     private ThreadGroup remUnknownThread = null;
 
-    JIComOxidDetails(JILocalCoClass javaInstance, JIOxid oxid, JIObjectId oid,
-            String iid, String ipid, JIInterfacePointer ptr, JIComOxidRuntimeHelper helper, int protectionLevel) {
-        referent = javaInstance;
+    JIComOxidDetails(JILocalCoClass javaInstance, JIOxid oxid, JIObjectId oid, String iid, String ipid, JIInterfacePointer ptr, JIComOxidRuntimeHelper helper, int protectionLevel) {
+        this.referent = javaInstance;
         this.ipid = ipid;
         this.oxid = oxid;
         this.oid = oid;
         this.iid = iid;
         this.protectionLevel = protectionLevel;
-        comRuntimeHelper = helper;
+        this.comRuntimeHelper = helper;
     }
 
     void setPortForRemUnknown(int port) {
@@ -102,8 +102,9 @@ final class JIComOxidDetails {
                 remUnknownThread.interrupt();
                 //remUnknownThread.destroy();
             } catch (Exception e) {
-                JISystem.getLogger().log(Level.INFO, "JIComOxidDetails interruptRemUnknownThreadGroup {0}", e.toString());
+                LOGGER.log(Level.INFO, "JIComOxidDetails interruptRemUnknownThreadGroup {0}", e.toString());
             }
+            remUnknownThread = null;
         }
     }
 }

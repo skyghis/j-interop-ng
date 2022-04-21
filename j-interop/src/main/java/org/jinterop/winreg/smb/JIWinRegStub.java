@@ -33,11 +33,9 @@ import rpc.Stub;
 
 /**
  * @exclude @since 1.0
- *
  */
-public class JIWinRegStub extends Stub implements IJIWinReg {
+public final class JIWinRegStub extends Stub implements IJIWinReg {
 
-    //"ncacn_np:" + servername + "[\\PIPE\\winreg]"
     public JIWinRegStub(IJIAuthInfo authInfo, String serverName) throws UnknownHostException {
         super();
         if (authInfo == null) {
@@ -49,10 +47,8 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         super.getProperties().setProperty("rpc.ncacn_np.username", authInfo.getUserName());
         super.getProperties().setProperty("rpc.ncacn_np.password", authInfo.getPassword());
         super.getProperties().setProperty("rpc.ncacn_np.domain", authInfo.getDomain());
-        serverName = serverName.trim();
-        serverName = InetAddress.getByName(serverName).getHostAddress();
-        super.setAddress("ncacn_np:" + serverName + "[\\PIPE\\winreg]");
-
+        final String cleanServerName = InetAddress.getByName(serverName.trim()).getHostAddress();
+        super.setAddress("ncacn_np:" + cleanServerName + "[\\PIPE\\winreg]");
     }
 
     public JIWinRegStub(String serverName) throws UnknownHostException {
@@ -60,9 +56,8 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         super.setTransportFactory(new rpc.ncacn_np.TransportFactory());
         super.setProperties(new Properties());
         super.getProperties().setProperty("rpc.ntlm.sso", "true");
-        serverName = serverName.trim();
-        serverName = InetAddress.getByName(serverName).getHostAddress();
-        super.setAddress("ncacn_np:" + serverName + "[\\PIPE\\winreg]");
+        final String cleanServerName = InetAddress.getByName(serverName.trim()).getHostAddress();
+        super.setAddress("ncacn_np:" + cleanServerName + "[\\PIPE\\winreg]");
 
     }
 
@@ -79,9 +74,7 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         } catch (JIRuntimeException e) {
             throw new JIException(e);
         }
-
         System.arraycopy(openhklm.policyhandle, 0, handle.handle, 0, 20);
-
         return handle;
     }
 
@@ -210,8 +203,6 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         } catch (JIRuntimeException e) {
             throw new JIException(e);
         }
-
-        //return queryvalue.key;
         return queryvalue.buffer;
     }
 
@@ -376,22 +367,6 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         return enumvalue.retval;
     }
 
-    private void setValue(setValue setvalue) throws JIException {
-        try {
-            call(Endpoint.IDEMPOTENT, setvalue);
-        } catch (IOException e) {
-            throw new JIException(JIErrorCodes.RPC_E_UNEXPECTED, e);
-        } catch (JIRuntimeException e) {
-            throw new JIException(e);
-        }
-    }
-
-    @Override
-    protected String getSyntax() {
-        // WinReg Service
-        return "338cd001-2244-31f1-aaaa-900038001003:1.0";
-    }
-
     @Override
     public void closeConnection() throws JIException {
         try {
@@ -401,4 +376,19 @@ public class JIWinRegStub extends Stub implements IJIWinReg {
         }
     }
 
+    @Override
+    protected String getSyntax() {
+        // WinReg Service
+        return "338cd001-2244-31f1-aaaa-900038001003:1.0";
+    }
+
+    private void setValue(setValue setvalue) throws JIException {
+        try {
+            call(Endpoint.IDEMPOTENT, setvalue);
+        } catch (IOException e) {
+            throw new JIException(JIErrorCodes.RPC_E_UNEXPECTED, e);
+        } catch (JIRuntimeException e) {
+            throw new JIException(e);
+        }
+    }
 }

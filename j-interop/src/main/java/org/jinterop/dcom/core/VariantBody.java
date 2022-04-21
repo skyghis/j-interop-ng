@@ -21,15 +21,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import ndr.NetworkDataRepresentation;
 import org.jinterop.dcom.common.JIErrorCodes;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JIRuntimeException;
-import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 class VariantBody implements Serializable {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final long serialVersionUID = -8484108480626831102L;
     public static final short VT_PTR = 0x1A;
     public static final short VT_SAFEARRAY = 0x1B;
@@ -72,7 +73,6 @@ class VariantBody implements Serializable {
     private boolean is2Dimensional = false;
     private Object obj = null;
     private int type = -1;
-    //private JIArray objArray = null;
     private JIStruct safeArrayStruct = null;
     private boolean isArray = false;
     private boolean isScode = false;
@@ -197,26 +197,6 @@ class VariantBody implements Serializable {
         }
     }
 
-    //  VariantBody(JIArray obj, Class nestedClass, boolean is2Dimensional,boolean isByRef)
-    //  {
-    //
-    //    this.objArray = obj;
-    //    isArray = true;
-    //    this.nestedArraysRealClass = nestedClass;
-    //    this.is2Dimensional = is2Dimensional;
-    //    //please remember JIVariant is a pointer and VariantBody is just the referent part of that.
-    //
-    //
-    //    //for an unsupported type this could be null
-    //    //but then this is my bug, any thread entering this ctor , will support a type.
-    //    this.isByRef = isByRef;
-    //    Integer types = ((Integer)JIVariant.supportedTypes.get(obj.getClass()));
-    //    if (types != null)
-    //    {
-    //      type = types.intValue() | (isByRef ? JIVariant.VT_BYREF:0);
-    //    }
-    //
-    //  }
     /**
      * Returns the contained object.
      *
@@ -540,8 +520,8 @@ class VariantBody implements Serializable {
             ndr.writeUnsignedLong(value);
             ndr.getBuffer().setIndex(currentIndex);
 
-            if (JISystem.getLogger().isLoggable(Level.FINEST)) {
-                JISystem.getLogger().log(Level.FINEST, "Variant length is {0} , value {1} , variant type{2}", new Object[]{length, value, type});
+            if (LOGGER.isLoggable(Level.FINEST)) {
+                LOGGER.log(Level.FINEST, "Variant length is {0} , value {1} , variant type{2}", new Object[]{length, value, type});
             }
             // if (safeArrayStruct != null && isArray)
             // {
@@ -719,17 +699,16 @@ class VariantBody implements Serializable {
             length += 4; //for max count of the array.
             if (isVariantArray) {
                 //each variant is 3 (size 20 = 20/8 = 3)
-                for (int i = 0; i < array.length; i++) {
-                    JIVariant variant = (JIVariant) array[i];
+                for (Object array1 : array) {
+                    JIVariant variant = (JIVariant) array1;
                     length += variant.getLengthInBytes(FLAG);//* 8;//((VariantBody)(variant.member.getReferent())).variantType * 8;
                 }
-
                 //now for the "user" pointer part
                 //length = length + array.length * 4;
             } else {
                 //normal non variant array has been sent...
-                for (int i = 0; i < array.length; i++) {
-                    length += getMaxLength2(array[i].getClass(), array[i]);
+                for (Object array1 : array) {
+                    length += getMaxLength2(array1.getClass(), array1);
                 }
             }
         } else {
@@ -906,7 +885,7 @@ class VariantBody implements Serializable {
             if (type2 != null) {
                 type = type2;
             } else {
-                JISystem.getLogger().log(Level.WARNING, "In getVarType: Unsupported Type found ! {0} , please add this to the supportedType map ! ", c);
+                LOGGER.log(Level.WARNING, "In getVarType: Unsupported Type found ! {0} , please add this to the supportedType map ! ", c);
                 //make that an array of variants
                 type2 = JIVariant.getSupportedType(JIVariant.class, FLAG);
             }
@@ -993,8 +972,8 @@ class VariantBody implements Serializable {
 
             Class c = JIVariant.getSupportedClass(type);
             if (c == null) {
-                if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                    JISystem.getLogger().log(Level.WARNING, "From JIVariant: while decoding an Array, type {0} , was not found in supportedTypes_classes map , hence using JIVariant instead...", type);
+                if (LOGGER.isLoggable(Level.WARNING)) {
+                    LOGGER.log(Level.WARNING, "From JIVariant: while decoding an Array, type {0} , was not found in supportedTypes_classes map , hence using JIVariant instead...", type);
                 }
                 //not available , lets try with JIVariant.
                 //This is a bug, I should have the type.

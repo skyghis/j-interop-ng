@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbException;
 import org.jinterop.dcom.common.JIErrorCodes;
@@ -36,13 +37,14 @@ import rpc.Stub;
 import rpc.core.UUID;
 
 /**
- * Used to manipulate Oxid details. one instance is created per binding call to
- * the oxid resolver.
+ * Used to manipulate Oxid details.
+ * One instance is created per binding call to the oxid resolver.
  *
  * @since 1.0
- *
  */
 final class JIComOxidRuntimeHelper extends Stub {
+
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
 
     JIComOxidRuntimeHelper(Properties properties) {
         super.setTransportFactory(JIComRuntimeTransportFactory.getSingleTon());
@@ -61,15 +63,15 @@ final class JIComOxidRuntimeHelper extends Stub {
             @Override
             public void run() {
                 try {
-                    if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                        JISystem.getLogger().log(Level.INFO, "started startOxid thread: {0}", Thread.currentThread().getName());
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "started startOxid thread: {0}", Thread.currentThread().getName());
                     }
                     attach();
                     ((JIComRuntimeEndpoint) getEndpoint()).processRequests(new OxidResolverImpl(getProperties()), null, new ArrayList<>());
                 } catch (IOException e) {
-                    if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().throwing("Oxid Resolver Thread", "run", e);
-                        JISystem.getLogger().log(Level.WARNING, "Oxid Resolver Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
+                    if (LOGGER.isLoggable(Level.WARNING)) {
+                        LOGGER.throwing("Oxid Resolver Thread", "run", e);
+                        LOGGER.log(Level.WARNING, "Oxid Resolver Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
                     }
                 } finally {
                     try {
@@ -77,8 +79,8 @@ final class JIComOxidRuntimeHelper extends Stub {
                     } catch (IOException e) {
                     }
                 }
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "terminating startOxid thread: {0}", Thread.currentThread().getName());
+                if (LOGGER.isLoggable(Level.INFO)) {
+                    LOGGER.log(Level.INFO, "terminating startOxid thread: {0}", Thread.currentThread().getName());
                 }
             }
         }, "jI_OxidResolver_Client[" + portNumLocal + " , " + portNumRemote + "]");
@@ -88,85 +90,85 @@ final class JIComOxidRuntimeHelper extends Stub {
 
     //returns the port to which the server is listening.
     Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent, final List<String> listOfSupportedInterfaces) throws IOException {
-        final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
-        //serverSocket.setSoTimeout(120*1000); //2 min timeout.
-        serverSocket.bind(null);
-        int remUnknownPort = serverSocket.getLocalPort();
-        //have to pick up a random name so adding the ipid of remunknown this is a uuid so the string is quite random.
-        final ThreadGroup remUnknownForThisListener = new ThreadGroup("ThreadGroup - " + baseIID + "[" + ipidOfRemUnknown + "]");
-        remUnknownForThisListener.setDaemon(true);
-        Thread remUnknownThread = new Thread(remUnknownForThisListener, new Runnable() {
-            @Override
-            public void run() {
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "started RemUnknown listener thread for : {0}", Thread.currentThread().getName());
-                }
-                try {
+        try (final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+            final ServerSocket serverSocket = serverSocketChannel.socket();//new ServerSocket(0);
+            //serverSocket.setSoTimeout(120*1000); //2 min timeout.
+            serverSocket.bind(null);
+            int remUnknownPort = serverSocket.getLocalPort();
+            //have to pick up a random name so adding the ipid of remunknown this is a uuid so the string is quite random.
+            final ThreadGroup remUnknownForThisListener = new ThreadGroup("ThreadGroup - " + baseIID + "[" + ipidOfRemUnknown + "]");
+            remUnknownForThisListener.setDaemon(true);
+            Thread remUnknownThread = new Thread(remUnknownForThisListener, new Runnable() {
+                @Override
+                public void run() {
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "started RemUnknown listener thread for : {0}", Thread.currentThread().getName());
+                    }
+                    try {
 
-                    while (true) {
-                        final Socket socket = serverSocket.accept();
-                        if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                            JISystem.getLogger().log(Level.INFO, "RemUnknown listener: Got Connection from {0}", socket.getPort());
-                        }
+                        while (!Thread.currentThread().isInterrupted()) {
+                            final Socket socket = serverSocket.accept();
+                            if (LOGGER.isLoggable(Level.INFO)) {
+                                LOGGER.log(Level.INFO, "RemUnknown listener: Got Connection from {0}", socket.getPort());
+                            }
 
-                        //now create the JIComOxidRuntimeHelper Object and start it. We need a new one since the old one is already attached to the listener.
-                        final JIComOxidRuntimeHelper remUnknownHelper = new JIComOxidRuntimeHelper(getProperties());
-                        synchronized (JIComOxidRuntime.mutex) {
-                            JISystem.internal_setSocket(socket);
-                            remUnknownHelper.attach();
-                        }
+                            //now create the JIComOxidRuntimeHelper Object and start it. We need a new one since the old one is already attached to the listener.
+                            final JIComOxidRuntimeHelper remUnknownHelper = new JIComOxidRuntimeHelper(getProperties());
+                            synchronized (JIComOxidRuntime.mutex) {
+                                JISystem.internal_setSocket(socket);
+                                remUnknownHelper.attach();
+                            }
 
-                        //now start a new thread with this socket
-                        Thread remUnknown = new Thread(remUnknownForThisListener, new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    ((JIComRuntimeEndpoint) remUnknownHelper.getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown, ipidOfComponent), baseIID, listOfSupportedInterfaces);
-                                } catch (SmbAuthException e) {
-                                    JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
-                                    throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_AUTH_FAILURE);
-                                } catch (SmbException e) {
-                                    //System.out.println(e.getMessage());
-                                    JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
-                                    throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_SMB_FAILURE);
-                                } catch (ClosedByInterruptException e) {
-                                    JISystem.getLogger().log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownThread (not listener){0} is purposefully closed by interruption.", Thread.currentThread().getName());
-                                } catch (IOException e) {
-                                    JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
-                                } finally {
+                            //now start a new thread with this socket
+                            Thread remUnknown = new Thread(remUnknownForThisListener, new Runnable() {
+                                @Override
+                                public void run() {
                                     try {
-                                        remUnknownHelper.detach();
+                                        ((JIComRuntimeEndpoint) remUnknownHelper.getEndpoint()).processRequests(new RemUnknownObject(ipidOfRemUnknown, ipidOfComponent), baseIID, listOfSupportedInterfaces);
+                                    } catch (SmbAuthException e) {
+                                        LOGGER.log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
+                                        throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_AUTH_FAILURE);
+                                    } catch (SmbException e) {
+                                        //System.out.println(e.getMessage());
+                                        LOGGER.log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
+                                        throw new JIRuntimeException(JIErrorCodes.JI_CALLBACK_SMB_FAILURE);
+                                    } catch (ClosedByInterruptException e) {
+                                        LOGGER.log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownThread (not listener){0} is purposefully closed by interruption.", Thread.currentThread().getName());
                                     } catch (IOException e) {
+                                        LOGGER.log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownThread (not listener)", e);
+                                    } finally {
+                                        try {
+                                            remUnknownHelper.detach();
+                                        } catch (IOException e) {
+                                        }
                                     }
                                 }
-                            }
-                        }, "jI_RemUnknown[" + baseIID + " , L(" + socket.getLocalPort() + "):R(" + socket.getPort() + ")]");
-                        remUnknown.setDaemon(true);
-                        remUnknown.start();
+                            }, "jI_RemUnknown[" + baseIID + " , L(" + socket.getLocalPort() + "):R(" + socket.getPort() + ")]");
+                            remUnknown.setDaemon(true);
+                            remUnknown.start();
+                        }
+                    } catch (ClosedByInterruptException e) {
+                        LOGGER.log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownListener{0} is purposefully closed by interruption.", Thread.currentThread().getName());
+                    } catch (IOException e) {
+                        if (LOGGER.isLoggable(Level.WARNING)) {
+                            LOGGER.log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownListener", e);
+                            LOGGER.log(Level.WARNING, "RemUnknownListener Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
+                        }
+                    } catch (Throwable e) {
+                        if (LOGGER.isLoggable(Level.WARNING)) {
+                            LOGGER.log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownListener", e);
+                        }
                     }
-                } catch (ClosedByInterruptException e) {
-                    JISystem.getLogger().log(Level.INFO, "JIComOxidRuntimeHelper RemUnknownListener{0} is purposefully closed by interruption.", Thread.currentThread().getName());
-                } catch (IOException e) {
-                    if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownListener", e);
-                        JISystem.getLogger().log(Level.WARNING, "RemUnknownListener Thread: {0} , on thread Id: {1}", new Object[]{e.getMessage(), Thread.currentThread().getName()});
-                    }
-                    //e.printStackTrace();
-                } catch (Throwable e) {
-                    if (JISystem.getLogger().isLoggable(Level.WARNING)) {
-                        JISystem.getLogger().log(Level.WARNING, "JIComOxidRuntimeHelper RemUnknownListener", e);
+
+                    if (LOGGER.isLoggable(Level.INFO)) {
+                        LOGGER.log(Level.INFO, "terminating RemUnknownListener thread: {0}", Thread.currentThread().getName());
                     }
                 }
+            }, "jI_RemUnknownListener[" + baseIID + " , " + remUnknownPort + "]");
 
-                if (JISystem.getLogger().isLoggable(Level.INFO)) {
-                    JISystem.getLogger().log(Level.INFO, "terminating RemUnknownListener thread: {0}", Thread.currentThread().getName());
-                }
-            }
-        }, "jI_RemUnknownListener[" + baseIID + " , " + remUnknownPort + "]");
-
-        remUnknownThread.setDaemon(true);
-        remUnknownThread.start();
-        return new Object[]{remUnknownPort, remUnknownForThisListener};
+            remUnknownThread.setDaemon(true);
+            remUnknownThread.start();
+            return new Object[]{remUnknownPort, remUnknownForThisListener};
+        }
     }
 }

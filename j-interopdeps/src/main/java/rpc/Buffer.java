@@ -16,7 +16,7 @@
  */
 package rpc;
 
-public class Buffer {
+public final class Buffer {
 
     public static final int NO_INCREMENT = 0;
 

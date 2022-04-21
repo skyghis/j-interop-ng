@@ -17,7 +17,7 @@
 package org.jinterop.dcom.common;
 
 /**
- * < p>
+ * <p>
  * Implement this interface receive notifications for <code>IJIComObject</code>s
  * when they get garbage collected. This also means that the actual interface
  * reference on the COM server have a reference count of 0 and will get garbage

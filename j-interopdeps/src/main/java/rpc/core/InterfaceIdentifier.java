@@ -19,7 +19,7 @@ package rpc.core;
 import java.util.StringTokenizer;
 import ndr.NdrObject;
 
-public class InterfaceIdentifier extends NdrObject {
+public final class InterfaceIdentifier extends NdrObject {
 
     UUID uuid;
     int majorVersion, minorVersion;

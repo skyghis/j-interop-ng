@@ -27,7 +27,7 @@ import org.jinterop.dcom.common.JISystem;
 public final class JIUnsignedFactory {
 
     /**
-     * < p>
+     * <p>
      * Returns an implementation for each of the <code>unsigned</code> type.
      * Only 3 types are supported at present <code>Byte</code>,
      * <code>Short</code>, <code>Integer</code>.

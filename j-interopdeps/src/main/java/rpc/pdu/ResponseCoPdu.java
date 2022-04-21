@@ -209,11 +209,11 @@ public class ResponseCoPdu extends ConnectionOrientedPdu
 
     private class FragmentIterator implements Iterator {
 
-        private int stubSize;
+        private final int stubSize;
 
         private int index = 0;
 
-        public FragmentIterator(int stubSize) {
+        FragmentIterator(int stubSize) {
             this.stubSize = stubSize;
         }
 

@@ -36,11 +36,11 @@ public final class JIStruct implements Serializable {
 
     private static final long serialVersionUID = 7708214775854162549L;
 
-    private List listOfMembers = new ArrayList();
-    private List listOfMaxCounts = new ArrayList(); //keeps a list of Max counts for each array dimension, arrays
+    private final List listOfMembers = new ArrayList();
+    private final List listOfMaxCounts = new ArrayList(); //keeps a list of Max counts for each array dimension, arrays
     //following one another are inserted in sequential order.
 
-    private List listOfDimensions = new ArrayList();
+    private final List listOfDimensions = new ArrayList();
     private boolean arrayAdded = false;
 
     public static final JIStruct MEMBER_IS_EMPTY = new JIStruct();

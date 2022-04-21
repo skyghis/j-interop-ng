@@ -18,7 +18,6 @@ package rpc.core;
 
 import java.util.StringTokenizer;
 import ndr.NdrBuffer;
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
@@ -70,13 +69,13 @@ public final class PresentationSyntax extends NdrObject {
     }
 
     @Override
-    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) throws NdrException {
-        UUID.encodeToBuffer(uuid, dst);
+    public void encode(NetworkDataRepresentation ndr, NdrBuffer dst) {
+        uuid.encode(dst);
         dst.enc_ndr_long(version);
     }
 
     @Override
-    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) throws NdrException {
+    public void decode(NetworkDataRepresentation ndr, NdrBuffer src) {
         uuid = new UUID(src);
         version = src.dec_ndr_long();
     }

@@ -29,7 +29,7 @@ import rpc.Stub;
 
 final class JIRemUnknownServer extends Stub {
 
-    private static Properties defaults = new Properties();
+    private static final Properties defaults = new Properties();
 
     static {
 

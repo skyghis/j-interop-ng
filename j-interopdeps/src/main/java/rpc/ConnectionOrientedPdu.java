@@ -211,7 +211,7 @@ public abstract class ConnectionOrientedPdu extends NdrObject implements Protoco
         ndr.setFormat(format);
         setFragmentLength(ndr.readUnsignedShort());
         setAuthenticatorLength(ndr.readUnsignedShort());
-        this.callId = ((int) ndr.readUnsignedLong());
+        this.callId = ndr.readUnsignedLong();
     }
 
     protected void writeHeader(NetworkDataRepresentation ndr) {

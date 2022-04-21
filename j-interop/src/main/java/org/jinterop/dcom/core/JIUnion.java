@@ -28,7 +28,7 @@ import org.jinterop.dcom.common.JIRuntimeException;
 import org.jinterop.dcom.common.JISystem;
 
 /**
- * < p>
+ * <p>
  * This class represents the <code>Union</code> data type. Its usage is dictated
  * by the discriminant which acts as a "switch" to select the correct member to
  * be serialized\deserialzed.

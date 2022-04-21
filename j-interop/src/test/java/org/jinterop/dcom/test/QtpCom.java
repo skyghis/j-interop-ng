@@ -2,6 +2,7 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
@@ -13,19 +14,17 @@ import org.jinterop.dcom.core.JIVariant;
 import org.jinterop.dcom.impls.JIObjectFactory;
 import org.jinterop.dcom.impls.automation.IJIDispatch;
 
-public class QtpComTest {
+public class QtpCom {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comServer = null;
-
     private IJIDispatch dispatch = null;
-
     private IJIComObject unknown = null;
-
     private JISession session = null;
 
-    public QtpComTest(String address, String domain, String username, String password) throws JIException, UnknownHostException {
+    public QtpCom(String address, String domain, String username, String password) throws JIException, UnknownHostException {
 
-        JISystem.getLogger().setLevel(Level.FINEST);
+        LOGGER.setLevel(Level.FINEST);
 
         /* Let the j-Interop library do this for you. You can set the "autoRegistration" flag in the
          *
@@ -85,7 +84,7 @@ public class QtpComTest {
         //"automationsvr01", "AUTOMATION", "Automated_User", "@utom@tion"
         try {
 
-            QtpComTest comQtp = new QtpComTest("localhost", "domain", "username", "password");
+            QtpCom comQtp = new QtpCom("localhost", "domain", "username", "password");
 
             comQtp.startQTP();
 

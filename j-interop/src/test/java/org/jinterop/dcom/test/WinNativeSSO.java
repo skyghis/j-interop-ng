@@ -5,7 +5,7 @@ import org.jinterop.dcom.core.JIClsid;
 import org.jinterop.dcom.core.JIComServer;
 import org.jinterop.dcom.core.JISession;
 
-public class TestWinNativeSSO {
+public class WinNativeSSO {
 
     public static void main(String[] args) {
 

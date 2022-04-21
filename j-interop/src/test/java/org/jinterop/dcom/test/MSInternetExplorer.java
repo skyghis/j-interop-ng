@@ -360,7 +360,6 @@ public class MSInternetExplorer {
                 return;
             }
 
-            JISystem.setInBuiltLogHandler(false);
             Logger l = Logger.getLogger("org.jinterop");
             l.setLevel(Level.INFO);
             MSInternetExplorer internetExplorer = new MSInternetExplorer(args[0], args);

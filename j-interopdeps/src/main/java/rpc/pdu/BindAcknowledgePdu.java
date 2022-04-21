@@ -84,7 +84,7 @@ public class BindAcknowledgePdu extends ConnectionOrientedPdu {
     protected void readBody(NetworkDataRepresentation ndr) {
         setMaxTransmitFragment(ndr.readUnsignedShort());
         setMaxReceiveFragment(ndr.readUnsignedShort());
-        setAssociationGroupId((int) ndr.readUnsignedLong());
+        setAssociationGroupId(ndr.readUnsignedLong());
         Port secondaryAddress = new Port();
         secondaryAddress.read(ndr);
         setSecondaryAddress(secondaryAddress);

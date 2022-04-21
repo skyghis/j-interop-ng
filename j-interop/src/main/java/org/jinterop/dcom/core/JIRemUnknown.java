@@ -50,11 +50,11 @@ final class JIRemUnknown extends NdrObject {
         orpcthis.encode(ndr);
 
         //now write the IPID
-        UUID.encodeToBuffer(new UUID(ipidOfIUnknown), ndr.buf);
+        new UUID(ipidOfIUnknown).encode(ndr.buf);
         ndr.writeUnsignedShort(1);//1 interfaces. (requested IID)
         ndr.writeUnsignedShort(0);//byte alignment
         ndr.writeUnsignedLong(1);//length of the array
-        UUID.encodeToBuffer(new UUID(requestedIID), ndr.buf);
+        new UUID(requestedIID).encode(ndr.buf);
         ndr.writeUnsignedLong(0); //TODO Index Matching , there seems to be a bug in
         // the jarapac system, it only reads upto (length - 6) bytes and one has to have another
         // call after that or incomplete request will go. in case no param is present just put an unsigned long = 0.

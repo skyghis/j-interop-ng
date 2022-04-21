@@ -88,7 +88,7 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < P>
+     * <p>
      * Refer to {@link #JIArray(Class, int[], int, boolean)}
      *
      * @param clazz class whose instances will be members of the deserialized
@@ -107,7 +107,7 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < p>
+     * <p>
      * Creates an array object with members of the type <code>template</code>.
      * This constructor is used to prepare a template for decoding an array and
      * is exclusively for composites like <code>JIStruct</code>,
@@ -427,8 +427,8 @@ public final class JIArray implements Serializable {
         for (int i = 0; i < o.length; i++) {
             if (name.charAt(1) != '[') {
                 Object o1[] = (Object[]) array;
-                for (int j = 0; j < o1.length; j++) {
-                    JIMarshalUnMarshalHelper.serialize(ndr, clazz, o1[j], defferedPointers, FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY);
+                for (Object o11 : o1) {
+                    JIMarshalUnMarshalHelper.serialize(ndr, clazz, o11, defferedPointers, FLAG | JIFlags.FLAG_REPRESENTATION_ARRAY);
                 }
                 return;
             }
@@ -574,7 +574,7 @@ public final class JIArray implements Serializable {
         }
 
         i = 0;
-        while (stack.size() > 0) {
+        while (!stack.isEmpty()) {
             ((Object[]) memberArray)[i++] = stack.pop();
         }
 
@@ -597,7 +597,7 @@ public final class JIArray implements Serializable {
         conformantMaxCounts = maxCount;
         //if (upperBounds == null) this will always be null since this api will get called from a decode and
         //in that the upperBounds is always null, since one does not know the dim expected.
-        if (conformantMaxCounts.size() > 0) {
+        if (!conformantMaxCounts.isEmpty()) {
             //max elements will come now.
             numElementsInAllDimensions = 1;
             upperBounds = new int[conformantMaxCounts.size()];
@@ -621,7 +621,7 @@ public final class JIArray implements Serializable {
     }
 
     /**
-     * < p>
+     * <p>
      * Used only from the JIVariant.getDecodedValueAsArray. It is required when
      * the real class of the array is determined after the SafeArray Struct has
      * been processed. SA in COM can contain these along with normal types as

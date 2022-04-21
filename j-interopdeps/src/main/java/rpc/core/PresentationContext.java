@@ -16,31 +16,29 @@
  */
 package rpc.core;
 
-import ndr.NdrException;
 import ndr.NdrObject;
 import ndr.NetworkDataRepresentation;
 
 public class PresentationContext extends NdrObject {
 
     public int contextId;
-
     public PresentationSyntax abstractSyntax;
-
     public PresentationSyntax[] transferSyntaxes;
 
     public PresentationContext() {
         this(0, new PresentationSyntax(), new PresentationSyntax[]{
-            new PresentationSyntax(NetworkDataRepresentation.NDR_SYNTAX)});
+            new PresentationSyntax(NetworkDataRepresentation.NDR_SYNTAX)
+        });
     }
 
     public PresentationContext(int contextId,
             PresentationSyntax abstractSyntax) {
         this(contextId, abstractSyntax, new PresentationSyntax[]{
-            new PresentationSyntax(NetworkDataRepresentation.NDR_SYNTAX)});
+            new PresentationSyntax(NetworkDataRepresentation.NDR_SYNTAX)
+        });
     }
 
-    public PresentationContext(int contextId, PresentationSyntax abstractSyntax,
-            PresentationSyntax[] transferSyntaxes) {
+    public PresentationContext(int contextId, PresentationSyntax abstractSyntax, PresentationSyntax[] transferSyntaxes) {
         this.contextId = contextId;
         this.abstractSyntax = abstractSyntax;
         this.transferSyntaxes = transferSyntaxes;
@@ -52,14 +50,11 @@ public class PresentationContext extends NdrObject {
         contextId = ndr.readUnsignedShort();
         int count = ndr.readUnsignedSmall();
 
-        try {
-            abstractSyntax.decode(ndr, ndr.getBuffer());
-            transferSyntaxes = new PresentationSyntax[count];
-            for (int i = 0; i < count; i++) {
-                transferSyntaxes[i] = new PresentationSyntax();
-                transferSyntaxes[i].decode(ndr, ndr.getBuffer());
-            }
-        } catch (NdrException ne) {
+        abstractSyntax.decode(ndr, ndr.getBuffer());
+        transferSyntaxes = new PresentationSyntax[count];
+        for (int i = 0; i < count; i++) {
+            transferSyntaxes[i] = new PresentationSyntax();
+            transferSyntaxes[i].decode(ndr, ndr.getBuffer());
         }
     }
 
@@ -69,13 +64,9 @@ public class PresentationContext extends NdrObject {
         ndr.writeUnsignedShort(contextId);
         ndr.writeUnsignedShort((short) transferSyntaxes.length);
 
-        try {
-            abstractSyntax.encode(ndr, ndr.getBuffer());
-            for (int i = 0; i < transferSyntaxes.length; i++) {
-                transferSyntaxes[i].encode(ndr, ndr.getBuffer());
-            }
-        } catch (NdrException ne) {
+        abstractSyntax.encode(ndr, ndr.getBuffer());
+        for (final PresentationSyntax transferSyntaxe : transferSyntaxes) {
+            transferSyntaxe.encode(ndr, ndr.getBuffer());
         }
     }
-
 }

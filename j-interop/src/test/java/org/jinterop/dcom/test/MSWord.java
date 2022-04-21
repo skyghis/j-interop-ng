@@ -2,6 +2,7 @@ package org.jinterop.dcom.test;
 
 import java.net.UnknownHostException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.IJIComObject;
@@ -15,10 +16,9 @@ import org.jinterop.dcom.impls.automation.IJIDispatch;
 
 public class MSWord {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private JIComServer comStub = null;
-
     private IJIDispatch dispatch = null;
-
     private IJIComObject unknown = null;
 
     public MSWord(String address, String[] args) throws JIException, UnknownHostException {
@@ -109,8 +109,7 @@ public class MSWord {
                 System.out.println("Please provide address domain username password");
                 return;
             }
-            JISystem.getLogger().setLevel(Level.INFO);
-            JISystem.setInBuiltLogHandler(false);
+            LOGGER.setLevel(Level.INFO);
             MSWord test = new MSWord(args[0], args);
             test.startWord();
             test.showWord();
