@@ -432,6 +432,7 @@ public final class JISession {
      * @see JIComServer#JIComServer(JIClsid, JISession)
      * @see JIComServer#JIComServer(JIProgId, JISession)
      */
+    @Deprecated // SSO Windows only
     public static JISession createSession() {
         if (!System.getProperty("os.name").toLowerCase().startsWith("windows")) {
             throw new IllegalArgumentException(JISystem.getLocalizedMessage(JIErrorCodes.JI_WIN_ONLY));
@@ -458,6 +459,7 @@ public final class JISession {
      *
      * @return
      */
+    @Deprecated // SSO Windows only
     public boolean isSSOEnabled() {
         return isSSO;
     }

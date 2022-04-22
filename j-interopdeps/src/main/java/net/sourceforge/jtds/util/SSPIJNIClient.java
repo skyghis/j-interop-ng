@@ -31,6 +31,7 @@ import java.util.logging.Logger;
  *
  * @author Magendran Sathaiah (mahi@aztec.soft.net)
  */
+@Deprecated // SSO Windows only
 public final class SSPIJNIClient {
 
     /**
