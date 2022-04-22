@@ -51,6 +51,7 @@ public final class JIWinRegStub extends Stub implements IJIWinReg {
         super.setAddress("ncacn_np:" + cleanServerName + "[\\PIPE\\winreg]");
     }
 
+    @Deprecated // SSO Windows only
     public JIWinRegStub(String serverName) throws UnknownHostException {
         super();
         super.setTransportFactory(new rpc.ncacn_np.TransportFactory());

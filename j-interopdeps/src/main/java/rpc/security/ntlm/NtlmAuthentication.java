@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Logger;
 import jcifs.ntlmssp.NtlmFlags;
 import jcifs.ntlmssp.NtlmMessage;
 import jcifs.ntlmssp.Type1Message;
@@ -35,6 +36,7 @@ import rpc.Security;
 
 public class NtlmAuthentication {
 
+    private static final Logger LOGGER = Logger.getLogger("org.jinterop");
     private static final String DEFAULT_WORKSTATION = CifsContextSingleton.instance().getNameServiceClient().getLocalHost().getHostName();
     public static final int AUTHENTICATION_SERVICE_NTLM = 10;
     private static final boolean UNICODE_SUPPORTED = CifsContextSingleton.instance().getConfig().isUseUnicode();
@@ -88,6 +90,7 @@ public class NtlmAuthentication {
         }
 
         if (useSSO) {
+            LOGGER.warning("Using deprecated (Windows only) SSO. Use password authentication instead.");
             jniClient = SSPIJNIClient.getInstance();
         } else {
             jniClient = null;

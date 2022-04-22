@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 - Use a `LOGGER` per class instead of using `JISystem.getLogger`.
 - Deprecate `JISystem.setInBuiltLogHandler`.
+- Deprecate Windows only SSO authentication.
 
 ### Removed
 - Replace custom `MD4` and `MD5` implementation by java integrated one.
