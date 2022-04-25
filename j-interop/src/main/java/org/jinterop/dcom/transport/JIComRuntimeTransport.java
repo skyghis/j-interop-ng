@@ -29,8 +29,7 @@ import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
 /**
- * @exclude @since 1.0
- *
+ * @since 1.0
  */
 public class JIComRuntimeTransport implements Transport {
 

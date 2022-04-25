@@ -250,9 +250,7 @@ public class NtlmAuthentication {
                     byte[][] retval = Responses.getNTLMv2Response(target, credentials.getUsername(), credentials.getPassword(), type2.getTargetInformation(), type2.getChallenge(), clientNonce);
                     byte[] ntlmv2Response = retval[0];
                     blob = retval[1];
-                    type3 = new Type3Message(flags, lmv2Response, ntlmv2Response,
-                            target, credentials.getUsername(),
-                            DEFAULT_WORKSTATION);
+                    type3 = new Type3Message(flags, lmv2Response, ntlmv2Response, target, credentials.getUsername(), DEFAULT_WORKSTATION);
                 } catch (Exception e) {
                     throw new RuntimeException("Exception occured while forming NTLMv2 Type3Response", e);
                 }
@@ -320,7 +318,7 @@ public class NtlmAuthentication {
                 try {
                     //now RC4 encrypt a random 16 byte key
                     byte[] secondayMasterKey = NTLMKeyFactory.getSecondarySessionKey();
-                    type3.setEncryptedSessionKey(NTLMKeyFactory.encryptSecondarySessionKey(secondayMasterKey, userSessionKey));
+                    type3.setEncryptedSessionKey(encryptSecondarySessionKey(secondayMasterKey, userSessionKey));
                     security = new Ntlm1(flags, secondayMasterKey, false);
                 } catch (Exception e) {
                     throw new RuntimeException("Exception occured while forming Session Security for Type3Response", e);
@@ -392,11 +390,18 @@ public class NtlmAuthentication {
 
         try {
             //now RC4 decrypt the session key
-            secondayMasterKey = NTLMKeyFactory.decryptSecondarySessionKey(type3Message.getEncryptedSessionKey(), sessionResponseUserSessionKey);
+            secondayMasterKey = decryptSecondarySessionKey(type3Message.getEncryptedSessionKey(), sessionResponseUserSessionKey);
             security = new Ntlm1(flags, secondayMasterKey, true);
         } catch (Exception e) {
             throw new RuntimeException("Exception occured while forming Session Security Type3Response", e);
         }
     }
 
+    private static byte[] decryptSecondarySessionKey(byte[] encryptedData, byte[] key) {
+        return NTLMKeyFactory.applyARCFOUR(NTLMKeyFactory.getARCFOUR(key), encryptedData);
+    }
+
+    private static byte[] encryptSecondarySessionKey(byte[] plainData, byte[] key) {
+        return NTLMKeyFactory.applyARCFOUR(NTLMKeyFactory.getARCFOUR(key), plainData);
+    }
 }

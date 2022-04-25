@@ -854,7 +854,7 @@ public final class JIComServer extends Stub {
             obj.setParentIpid(remunknownIPID);
             obj.attachSession(session);
             try {
-                call(obj, JIRemUnknown.IID_IUnknown);
+                call(obj, JIRemUnknown.IID_IUNKNOWN);
             } catch (JIRuntimeException e1) {
                 throw new JIException(e1);
             }

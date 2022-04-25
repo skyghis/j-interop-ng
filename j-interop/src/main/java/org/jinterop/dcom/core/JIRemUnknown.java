@@ -25,8 +25,7 @@ import rpc.core.UUID;
 
 final class JIRemUnknown extends NdrObject {
 
-    public static final String IID_IUnknown = "00000143-0000-0000-c000-000000000046";
-    //public static final String IID_IDispatch = "00020400-0000-0000-c000-000000000046";
+    public static final String IID_IUNKNOWN = "00000143-0000-0000-c000-000000000046";
     private String ipidOfIUnknown = null;
     private String requestedIID = null;
     private JIInterfacePointer iidPtr = null;
@@ -55,7 +54,7 @@ final class JIRemUnknown extends NdrObject {
         ndr.writeUnsignedShort(0);//byte alignment
         ndr.writeUnsignedLong(1);//length of the array
         new UUID(requestedIID).encode(ndr.buf);
-        ndr.writeUnsignedLong(0); //TODO Index Matching , there seems to be a bug in
+        ndr.writeUnsignedLong(0); //TODO: Index Matching, there seems to be a bug in
         // the jarapac system, it only reads upto (length - 6) bytes and one has to have another
         // call after that or incomplete request will go. in case no param is present just put an unsigned long = 0.
     }
@@ -69,10 +68,8 @@ final class JIRemUnknown extends NdrObject {
             //something happened.
             throw new JIRuntimeException(hresult1);
         }
-
         //array length
         ndr.readUnsignedLong();
-
         //and now the JIInterfacePointer itself.
         iidPtr = JIInterfacePointer.decode(ndr, new ArrayList<>(), JIFlags.FLAG_NULL, new HashMap<>());
         //final hresult

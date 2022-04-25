@@ -34,7 +34,6 @@ import rpc.security.ntlm.NtlmConnectionContext;
 
 /**
  * @exclude @since 1.0
- *
  */
 public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionContext {
 
@@ -42,7 +41,6 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
     private static final String IID2 = "IID2";
 
     private boolean established = false;
-    private Properties properties = null;
     private final List listOfInterfacesSupported = Collections.synchronizedList(new ArrayList());
 
     // this returns null, so that a recieve is performed first.
@@ -50,7 +48,6 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
     public ConnectionOrientedPdu init(PresentationContext context,
             Properties properties) throws IOException {
         super.init2(context, properties);
-        this.properties = properties;
         listOfInterfacesSupported.add(properties.getProperty(IID).toUpperCase());
         listOfInterfacesSupported.add(properties.getProperty(IID2).toUpperCase() + ":0.0");
         updateListOfInterfacesSupported2((List) properties.get("LISTOFSUPPORTEDINTERFACES"));
@@ -145,5 +142,4 @@ public final class JIComRuntimeNTLMConnectionContext extends NtlmConnectionConte
             listOfInterfacesSupported.add(newList.get(i) + ":0.0");
         }
     }
-
 }

@@ -30,8 +30,7 @@ import rpc.pdu.BindAcknowledgePdu;
 import rpc.pdu.BindPdu;
 
 /**
- * @exclude @since 1.0
- *
+ * @since 1.0
  */
 public final class JIComRuntimeConnectionContext extends BasicConnectionContext {
 

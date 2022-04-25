@@ -151,14 +151,11 @@ public class ARCFour extends BasePRNG {
         }
 
         buffer = new byte[ARCFOUR_SBOX_SIZE];
-        try {
-            fillBlock();
-        } catch (LimitReachedException wontHappen) {
-        }
+        fillBlock();
     }
 
     @Override
-    public void fillBlock() throws LimitReachedException {
+    public void fillBlock() {
         for (int i = 0; i < buffer.length; i++) {
             m++;
             n = (byte) (n + s[m & 0xff]);

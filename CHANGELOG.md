@@ -20,6 +20,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Replace custom `MD4` and `MD5` implementation by java integrated one.
 - Replace iwombat `UUID` implementation by java integrated one.
 - Disable execution of "tests" files when compiling.
+- Update maven plugins dependencies.
+- Set class `JIComRuntimeTransport` more extendable ([#7] and [#9]).
+
+[#7]: https://github.com/skyghis/j-interop-ng/pull/7
+[#9]: https://github.com/skyghis/j-interop-ng/pull/9
 
 ## [3.3.0] - 2022-01-03
 ### Added
