@@ -161,7 +161,7 @@ final class JIRemUnknownServer extends Stub {
             obj.setParentIpid(remunknownIPID);
             obj.attachSession(session);
             try {
-                call(obj, JIRemUnknown.IID_IUnknown, session.getGlobalSocketTimeout());
+                call(obj, JIRemUnknown.IID_IUNKNOWN, session.getGlobalSocketTimeout());
             } catch (JIRuntimeException e1) {
                 throw new JIException(e1);
             }

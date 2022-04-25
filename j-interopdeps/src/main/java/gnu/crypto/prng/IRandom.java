@@ -45,9 +45,7 @@ package gnu.crypto.prng;
 import java.util.Map;
 
 /**
- * <p>
- * The basic visible methods of any pseudo-random number generator.</p>
- *
+ * The basic visible methods of any pseudo-random number generator.
  * <p>
  * The [HAC] defines a PRNG (as implemented in this library) as follows:</p>
  *
@@ -63,7 +61,6 @@ import java.util.Map;
  * the intractability of factoring integers) is called a
  * <em>cryptographically secure pseudorandom bit generator</em> (CSPRBG)."</li>
  * </ul>
- *
  * <p>
  * <b>IMPLEMENTATION NOTE</b>: Although all the concrete classes in this package
  * implement the {@link Cloneable} interface, it is important to note here that
@@ -73,28 +70,22 @@ import java.util.Map;
  * Instead a clone of an already initialised PRNG, that uses and underlying
  * symmetric key block cipher, is another instance with a clone of the same
  * cipher that operates with the <b>same block size</b> but without any
- * knowledge of neither key material nor key size.</p>
- *
+ * knowledge of neither key material nor key size.
  * <p>
- * References:</p>
+ * References:
  *
  * <ol>
- * <li><a href="http://www.cacr.math.uwaterloo.ca/hac">[HAC]</a>: Handbook of
- * Applied Cryptography.<br>
+ * <li><a href="http://www.cacr.math.uwaterloo.ca/hac">[HAC]</a>: Handbook of Applied Cryptography.<br>
  * CRC Press, Inc. ISBN 0-8493-8523-7, 1997<br>
- * Menezes, A., van Oorschot, P. and S. Vanstone.</li>
+ * Menezes, A., van Oorschot, P. and S. Vanstone.
+ * </li>
  * </ol>
  *
  * @version $Revision: 1.8 $
  */
 public interface IRandom extends Cloneable {
 
-    // Constants
-    // -------------------------------------------------------------------------
-    // Methods
-    // -------------------------------------------------------------------------
     /**
-     * <p>
      * Returns the canonical name of this instance.</p>
      *
      * @return the canonical name of this instance.
@@ -102,46 +93,31 @@ public interface IRandom extends Cloneable {
     String name();
 
     /**
-     * <p>
-     * Initialises the pseudo-random number generator scheme with the
-     * appropriate attributes.</p>
+     * Initializes the pseudo-random number generator scheme with the appropriate attributes.
      *
-     * @param attributes a set of name-value pairs that describe the desired
-     * future instance behaviour.
-     * @exception IllegalArgumentException if at least one of the defined name/
-     * value pairs contains invalid data.
+     * @param attributes a set of name-value pairs that describe the desired future instance behavior
+     * @exception IllegalArgumentException if at least one of the defined name/value pairs contains invalid data
      */
     void init(Map attributes);
 
     /**
-     * <p>
-     * Returns the next 8 bits of random data generated from this instance.</p>
+     * Returns the next 8 bits of random data generated from this instance.
      *
-     * @return the next 8 bits of random data generated from this instance.
-     * @exception IllegalStateException if the instance is not yet initialised.
-     * @exception LimitReachedException if this instance has reached its
-     * theoretical limit for generating non-repetitive pseudo-random data.
+     * @return the next 8 bits of random data generated from this instance
      */
-    byte nextByte() throws IllegalStateException, LimitReachedException;
+    byte nextByte();
 
     /**
-     * <p>
-     * Fills the designated byte array, starting from byte at index
-     * <code>offset</code>, for a maximum of <code>length</code> bytes with the
-     * output of this generator instance.
+     * Fills the designated byte array, starting from byte at index <code>offset</code>,
+     * for a maximum of <code>length</code> bytes with the output of this generator instance.
      *
-     * @param out the placeholder to contain the generated random bytes.
-     * @param offset the starting index in <i>out</i> to consider. This method
-     * does nothing if this parameter is not within <code>0</code> and
-     * <code>out.length</code>.
-     * @param length the maximum number of required random bytes. This method
-     * does nothing if this parameter is less than <code>1</code>.
-     * @exception IllegalStateException if the instance is not yet initialised.
-     * @exception LimitReachedException if this instance has reached its
-     * theoretical limit for generating non-repetitive pseudo-random data.
+     * @param out the placeholder to contain the generated random bytes
+     * @param offset the starting index in <i>out</i> to consider.
+     * This method does nothing if this parameter is not within <code>0</code> and <code>out.length</code>
+     * @param length the maximum number of required random bytes.
+     * This method does nothing if this parameter is less than <code>1</code>
      */
-    void nextBytes(byte[] out, int offset, int length)
-            throws IllegalStateException, LimitReachedException;
+    void nextBytes(byte[] out, int offset, int length);
 
     /**
      * <p>

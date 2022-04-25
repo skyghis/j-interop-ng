@@ -17,7 +17,6 @@
 package rpc.security.ntlm;
 
 import gnu.crypto.prng.IRandom;
-import gnu.crypto.prng.LimitReachedException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
@@ -58,11 +57,11 @@ public class Ntlm1 implements NtlmFlags, Security {
         0x61, 0x67, 0x69, 0x63, 0x20, 0x63, 0x6f, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x00
     };
     private static final int NTLM1_VERIFIER_LENGTH = 16;
-    private IRandom clientCipher = null;
-    private IRandom serverCipher = null;
-    private byte[] clientSigningKey = null;
-    private byte[] serverSigningKey = null;
-    private boolean isServer = false;
+    private final IRandom clientCipher;
+    private final IRandom serverCipher;
+    private final byte[] clientSigningKey;
+    private final byte[] serverSigningKey;
+    private final boolean isServer;
     private final int protectionLevel;
     private int requestCounter = 0;
     private int responseCounter = 0;
@@ -71,13 +70,11 @@ public class Ntlm1 implements NtlmFlags, Security {
         this.protectionLevel = ((flags & NTLMSSP_NEGOTIATE_SEAL) != 0) ? PROTECTION_LEVEL_PRIVACY : PROTECTION_LEVEL_INTEGRITY;
         this.isServer = isServer;
         this.clientSigningKey = generateClientSigningKeyUsingNegotiatedSecondarySessionKey(sessionKey);
-        byte[] clientSealingKey = generateClientSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
         this.serverSigningKey = generateServerSigningKeyUsingNegotiatedSecondarySessionKey(sessionKey);
-        byte[] serverSealingKey = generateServerSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
-        // Used by the server to decrypt client messages
-        this.clientCipher = NTLMKeyFactory.getARCFOUR(clientSealingKey);
-        //Used by the client to decrypt server messages
-        this.serverCipher = NTLMKeyFactory.getARCFOUR(serverSealingKey);
+        final byte[] clientSealingKey = generateClientSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
+        this.clientCipher = NTLMKeyFactory.getARCFOUR(clientSealingKey); // Used by the server to decrypt client messages
+        final byte[] serverSealingKey = generateServerSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
+        this.serverCipher = NTLMKeyFactory.getARCFOUR(serverSealingKey); //Used by the client to decrypt server messages
 
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Client Signing Key derieved from the session key: [{0}]", dumpString(clientSigningKey));
@@ -164,13 +161,13 @@ public class Ntlm1 implements NtlmFlags, Security {
     }
 
     @Override
-    public void processOutgoing(NetworkDataRepresentation ndr, int index,
-            int length, int verifierIndex, boolean isFragmented) throws IOException {
+    public void processOutgoing(NetworkDataRepresentation ndr, int index, int length, int verifierIndex, boolean isFragmented) throws IOException {
         try {
             NdrBuffer buffer = ndr.getBuffer();
 
             byte[] signingKey;
             IRandom cipher;
+
             if (isServer) {
                 signingKey = serverSigningKey;
                 cipher = serverCipher;
@@ -193,11 +190,12 @@ public class Ntlm1 implements NtlmFlags, Security {
                 System.arraycopy(data2, 0, ndr.getBuffer().buf, index, data2.length);
             }
             NTLMKeyFactory.signingPt2(verifier, cipher);
+
             buffer.setIndex(verifierIndex);
             buffer.writeOctetArray(verifier, 0, verifier.length);
             requestCounter++;
 
-        } catch (LimitReachedException | NoSuchAlgorithmException | RuntimeException ex) {
+        } catch (NoSuchAlgorithmException | RuntimeException ex) {
             throw new IntegrityException("General error: " + ex.getMessage());
         }
     }

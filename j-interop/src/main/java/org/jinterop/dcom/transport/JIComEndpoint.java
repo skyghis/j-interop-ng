@@ -22,13 +22,11 @@ import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
 /**
- * @exclude @since 1.0
- *
+ * @since 1.0
  */
 public final class JIComEndpoint extends ConnectionOrientedEndpoint {
 
-    JIComEndpoint(Transport transport,
-            PresentationSyntax syntax) {
+    JIComEndpoint(Transport transport, PresentationSyntax syntax) {
         super(transport, syntax);
     }
 

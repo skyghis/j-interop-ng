@@ -35,12 +35,9 @@ import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
 /**
- * Borrowed all from ncacn_ip_tcp.RpcTransport from jarapac, modified attach api
- * to include SocketChannel.
+ * Borrowed all from ncacn_ip_tcp.RpcTransport from jarapac, modified attach api to include SocketChannel.
  *
- * @exclude
  * @since 1.0
- *
  */
 final class JIComTransport implements Transport {
 

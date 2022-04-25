@@ -21,8 +21,7 @@ import rpc.ProviderException;
 import rpc.Transport;
 
 /**
- * @exclude @since 1.0
- *
+ * @since 1.0
  */
 public final class JIComRuntimeTransportFactory implements rpc.TransportFactory {
 

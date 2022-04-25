@@ -18,7 +18,6 @@ package rpc.security.ntlm;
 
 import gnu.crypto.prng.ARCFour;
 import gnu.crypto.prng.IRandom;
-import gnu.crypto.prng.LimitReachedException;
 import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +29,6 @@ import java.util.Random;
 final class NTLMKeyFactory {
 
     private static final Random RANDOM = new Random();
-
 
     private NTLMKeyFactory() {
     }
@@ -52,14 +50,13 @@ final class NTLMKeyFactory {
     }
 
     static byte[] getNTLMv2UserSessionKey(String target, String user, String password, byte[] challenge, byte[] blob) throws Exception {
-        byte key[];
         byte[] ntlm2Hash = Responses.ntlmv2Hash(target, user, password);
         byte[] data = new byte[challenge.length + blob.length];
         System.arraycopy(challenge, 0, data, 0, challenge.length);
         System.arraycopy(blob, 0, data, challenge.length,
                 blob.length);
         byte[] mac = Responses.hmacMD5(data, ntlm2Hash);
-        key = Responses.hmacMD5(mac, ntlm2Hash);
+        byte[] key = Responses.hmacMD5(mac, ntlm2Hash);
         return key;
     }
 
@@ -96,22 +93,12 @@ final class NTLMKeyFactory {
         return keystream;
     }
 
-    static byte[] applyARCFOUR(IRandom keystream, byte[] data) throws IllegalStateException, LimitReachedException {
+    static byte[] applyARCFOUR(IRandom keystream, byte[] data) {
         byte[] retData = new byte[data.length];
-
         for (int i = 0; i < data.length; i++) {
             retData[i] = (byte) (data[i] ^ keystream.nextByte());
         }
-
         return retData;
-    }
-
-    static byte[] decryptSecondarySessionKey(byte[] encryptedData, byte[] key) throws IllegalStateException, LimitReachedException {
-        return applyARCFOUR(getARCFOUR(key), encryptedData);
-    }
-
-    static byte[] encryptSecondarySessionKey(byte[] plainData, byte[] key) throws IllegalStateException, LimitReachedException {
-        return applyARCFOUR(getARCFOUR(key), plainData);
     }
 
     //TODO merge the signing routine for both client and server all that they differ by are keys...as expected
@@ -140,7 +127,7 @@ final class NTLMKeyFactory {
         return retval;
     }
 
-    static void signingPt2(byte[] verifier, IRandom rc4) throws IllegalStateException, LimitReachedException {
+    static void signingPt2(byte[] verifier, IRandom rc4) {
         for (int i = 0; i < 8; i++) {
             verifier[i + 4] = (byte) (verifier[i + 4] ^ rc4.nextByte());
         }

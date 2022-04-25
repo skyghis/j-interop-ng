@@ -109,7 +109,7 @@ public abstract class BasePRNG implements IRandom {
     }
 
     @Override
-    public byte nextByte() throws IllegalStateException, LimitReachedException {
+    public byte nextByte() {
         if (!initialised) {
             throw new IllegalStateException();
         }
@@ -117,8 +117,7 @@ public abstract class BasePRNG implements IRandom {
     }
 
     @Override
-    public void nextBytes(byte[] out, int offset, int length)
-            throws IllegalStateException, LimitReachedException {
+    public void nextBytes(byte[] out, int offset, int length) {
         if (out == null) {
             return;
         }
@@ -143,7 +142,7 @@ public abstract class BasePRNG implements IRandom {
         return initialised;
     }
 
-    private byte nextByteInternal() throws LimitReachedException {
+    private byte nextByteInternal() {
         if (ndx >= buffer.length) {
             this.fillBlock();
             ndx = 0;
@@ -158,5 +157,5 @@ public abstract class BasePRNG implements IRandom {
 
     public abstract void setup(Map attributes);
 
-    public abstract void fillBlock() throws LimitReachedException;
+    public abstract void fillBlock();
 }
