@@ -20,10 +20,6 @@ import java.io.Serializable;
 import org.jinterop.dcom.core.JIPointer;
 import org.jinterop.dcom.core.JIStruct;
 
-/**
- * @exclude @since 1.0
- *
- */
 public final class IdlDesc implements Serializable {
 
     private static final long serialVersionUID = 7130410752801712935L;

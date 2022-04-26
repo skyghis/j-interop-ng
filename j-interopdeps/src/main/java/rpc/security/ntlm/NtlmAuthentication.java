@@ -110,7 +110,6 @@ public class NtlmAuthentication {
             }
             if (authenticationSource == null) {
                 try {
-
                     authenticationSource = (AuthenticationSource) Class.forName(sourceClass).newInstance();
                 } catch (Exception ex) {
                     throw new IllegalArgumentException("Invalid authentication source: " + ex);
