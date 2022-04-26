@@ -22,7 +22,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Replace custom `MD4` and `MD5` implementation by java integrated one.
 - Replace iwombat `UUID` implementation by java integrated one.
 - Disable execution of "tests" files when compiling.
-- Update maven plugins dependencies.
 - Set class `JIComRuntimeTransport` more extendable ([#7] and [#9]).
 
 [#7]: https://github.com/skyghis/j-interop-ng/pull/7
@@ -79,7 +78,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Socket connection timeout not used on connect.
 
 [Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.4.0...HEAD
-[3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...3.4.0
+[3.4.0]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/skyghis/j-interop-ng/compare/3.1.0...3.2.0
 [3.1.0]: https://github.com/skyghis/j-interop-ng/compare/3.0.0...3.1.0
