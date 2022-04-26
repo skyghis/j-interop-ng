@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [3.4.0] - 2022-04-26
 ### Added
 - Force load of `BouncyCastleProvider` to ensure `MD4` implementation exists. Can by disabled by java boolean property `ignore_bouncycastleprovider`.
 
@@ -76,7 +78,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Socket connection timeout not used on connect.
 
-[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...HEAD
+[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.4.0...HEAD
+[3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/skyghis/j-interop-ng/compare/3.1.0...3.2.0
 [3.1.0]: https://github.com/skyghis/j-interop-ng/compare/3.0.0...3.1.0
