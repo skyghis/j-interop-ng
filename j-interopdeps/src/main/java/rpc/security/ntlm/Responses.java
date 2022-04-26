@@ -19,27 +19,24 @@ public final class Responses {
     }
 
     /**
-     * Calculates the LM Response for the given challenge, using the specified
-     * password.
+     * Calculates the LM Response for the given challenge, using the specified password.
      *
-     * @param password The user's password.
-     * @param challenge The Type 2 challenge from the server.
-     *
-     * @return The LM Response.
+     * @param password The user's password
+     * @param challenge The Type 2 challenge from the server
+     * @return The LM Response
      */
     public static byte[] getLMResponse(String password, byte[] challenge) {
+
         byte[] lmHash = lmHash(password);
         return lmResponse(lmHash, challenge);
     }
 
     /**
-     * Calculates the NTLM Response for the given challenge, using the specified
-     * password.
+     * Calculates the NTLM Response for the given challenge, using the specified password.
      *
-     * @param password The user's password.
-     * @param challenge The Type 2 challenge from the server.
-     *
-     * @return The NTLM Response.
+     * @param password The user's password
+     * @param challenge The Type 2 challenge from the server
+     * @return The NTLM Response
      */
     public static byte[] getNTLMResponse(String password, byte[] challenge) {
         byte[] ntlmHash = ntlmHash(password);
@@ -47,19 +44,15 @@ public final class Responses {
     }
 
     /**
-     * Calculates the NTLMv2 Response for the given challenge, using the
-     * specified authentication target, username, password, target information
-     * block, and client nonce.
+     * Calculates the NTLMv2 Response for the given challenge, using the specified authentication target, username, password, target information block, and client nonce.
      *
-     * @param target The authentication target (i.e., domain).
-     * @param user The username.
-     * @param password The user's password.
-     * @param targetInformation The target information block from the Type 2
-     * message.
-     * @param challenge The Type 2 challenge from the server.
-     * @param clientNonce The random 8-byte client nonce.
-     *
-     * @return The NTLMv2 Response.
+     * @param target The authentication target (i.e., domain)
+     * @param user The username
+     * @param password The user's password
+     * @param targetInformation The target information block from the Type 2 message
+     * @param challenge The Type 2 challenge from the server
+     * @param clientNonce The random 8-byte client nonce
+     * @return The NTLMv2 Response
      */
     public static byte[][] getNTLMv2Response(String target, String user, String password, byte[] targetInformation, byte[] challenge, byte[] clientNonce) {
         byte[][] retval = new byte[2][];
@@ -71,16 +64,14 @@ public final class Responses {
     }
 
     /**
-     * Calculates the LMv2 Response for the given challenge, using the specified
-     * authentication target, username, password, and client challenge.
+     * Calculates the LMv2 Response for the given challenge, using the specified authentication target, username, password, and client challenge.
      *
-     * @param target The authentication target (i.e., domain).
-     * @param user The username.
-     * @param password The user's password.
-     * @param challenge The Type 2 challenge from the server.
-     * @param clientNonce The random 8-byte client nonce.
-     *
-     * @return The LMv2 Response.
+     * @param target The authentication target (i.e., domain)
+     * @param user The username
+     * @param password The user's password
+     * @param challenge The Type 2 challenge from the server
+     * @param clientNonce The random 8-byte client nonce
+     * @return The LMv2 Response
      */
     public static byte[] getLMv2Response(String target, String user, String password, byte[] challenge, byte[] clientNonce) {
         byte[] ntlmv2Hash = ntlmv2Hash(target, user, password);
@@ -190,15 +181,12 @@ public final class Responses {
     }
 
     /**
-     * Creates the LMv2 Response from the given hash, client data, and Type 2
-     * challenge.
+     * Creates the LMv2 Response from the given hash, client data, and Type 2 challenge.
      *
-     * @param hash The NTLMv2 Hash.
-     * @param clientData The client data (blob or client nonce).
-     * @param challenge The server challenge from the Type 2 message.
-     *
-     * @return The response (either NTLMv2 or LMv2, depending on the client
-     * data).
+     * @param hash The NTLMv2 Hash
+     * @param clientData The client data (blob or client nonce)
+     * @param challenge The server challenge from the Type 2 message
+     * @return The response (either NTLMv2 or LMv2, depending on the client data)
      */
     private static byte[] lmv2Response(byte[] hash, byte[] clientData, byte[] challenge) {
         byte[] data = new byte[challenge.length + clientData.length];
@@ -212,14 +200,11 @@ public final class Responses {
     }
 
     /**
-     * Creates the NTLMv2 blob from the given target information block and
-     * client nonce.
+     * Creates the NTLMv2 blob from the given target information block and client nonce.
      *
-     * @param targetInformation The target information block from the Type 2
-     * message.
-     * @param clientNonce The random 8-byte client nonce.
-     *
-     * @return The blob, used in the calculation of the NTLMv2 Response.
+     * @param targetInformation The target information block from the Type 2 message
+     * @param clientNonce The random 8-byte client nonce
+     * @return The blob, used in the calculation of the NTLMv2 Response
      */
     static byte[] createBlob(byte[] targetInformation, byte[] clientNonce) {
         byte[] blobSignature = {(byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00};
@@ -257,8 +242,7 @@ public final class Responses {
     }
 
     /**
-     * Calculates the HMAC-MD5 hash of the given data using the specified
-     * hashing key.
+     * Calculates the HMAC-MD5 hash of the given data using the specified hashing key.
      *
      * @param data The data for which the hash will be calculated
      * @param key The hashing key
@@ -288,12 +272,9 @@ public final class Responses {
     /**
      * Creates a DES encryption key from the given key material.
      *
-     * @param bytes A byte array containing the DES key material.
-     * @param offset The offset in the given byte array at which the 7-byte key
-     * material starts.
-     *
-     * @return A DES encryption key created from the key material starting at
-     * the specified offset in the given byte array.
+     * @param bytes A byte array containing the DES key material
+     * @param offset The offset in the given byte array at which the 7-byte key material starts
+     * @return A DES encryption key created from the key material starting at the specified offset in the given byte array
      */
     private static Key createDESKey(byte[] bytes, int offset) {
         byte[] keyBytes = new byte[7];

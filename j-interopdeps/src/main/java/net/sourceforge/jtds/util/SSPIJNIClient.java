@@ -17,15 +17,13 @@
  */
 package net.sourceforge.jtds.util;
 
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * COPIED FROM jtds PROJECT FOR SSO CAPABILITIES.
  *
- * A JNI client to SSPI based CPP program (DLL) that returns the user
- * credentials for NTLM authentication.
+ * A JNI client to SSPI based CPP program (DLL) that returns the user credentials for NTLM authentication.
  * <p>
  * The DLL name is ntlmauth.dll.
  *
@@ -55,7 +53,7 @@ public final class SSPIJNIClient {
     private native void initialize();
 
     /**
-     * Uninitializes the SSPI client.
+     * UnInitializes the SSPI client.
      */
     private native void unInitialize();
 
@@ -67,8 +65,8 @@ public final class SSPIJNIClient {
     /**
      * Prepares the NTLM TYPE-3 message using the current user's credentials.
      * <p>
-     * It needs the challenge BLOB and it's size as input. The challenge BLOB is
-     * nothig but the TYPE-2 message that is received from the SQL Server.
+     * It needs the challenge BLOB and it's size as input. The challenge BLOB is nothing but the TYPE-2 message that is
+     * received from the SQL Server.
      *
      * @param buf challenge BLOB
      * @param size challenge BLOB size
@@ -97,18 +95,12 @@ public final class SSPIJNIClient {
     }
 
     /**
-     * Returns the singleton <code>SSPIJNIClient</code> instance.
+     * Returns the singleton {@code SSPIJNIClient} instance.
      *
-     * @throws SQLException if an error occurs during initialization
+     * @return the singleton {@code SSPIJNIClient} instance
      */
     public static SSPIJNIClient getInstance() {
-
         if (thisInstance == null) {
-//            if (!libraryLoaded) {
-//                throw new IllegalStateException("Native SSPI library not loaded. "
-//                        + "Check the java.library.path system property."
-//                        + "This functionality is available only under \"Microsoft Windows\" line of Operating systems.");
-//            }
             thisInstance = new SSPIJNIClient();
             thisInstance.invokeInitialize();
         }
@@ -116,8 +108,7 @@ public final class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#initialize()</code> if the SSPI client is not already
-     * inited.
+     * Calls <code>#initialize()</code> if the SSPI client is not already inited.
      */
     public void invokeInitialize() {
         if (!initialized) {
@@ -137,11 +128,9 @@ public final class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#prepareSSORequest()</code> to prepare the NTLM TYPE-1
-     * message.
+     * Calls <code>#prepareSSORequest()</code> to prepare the NTLM TYPE-1 message.
      *
-     * @throws Exception if an error occurs during the call or the SSPI client
-     * is uninitialized
+     * @return NTLM TYPE-1 message
      */
     public byte[] invokePrepareSSORequest() {
         if (!initialized) {
@@ -151,11 +140,10 @@ public final class SSPIJNIClient {
     }
 
     /**
-     * Calls <code>#prepareSSOSubmit(byte[], long)</code> to prepare the NTLM
-     * TYPE-3 message.
+     * Calls <code>#prepareSSOSubmit(byte[], long)</code> to prepare the NTLM TYPE-3 message.
      *
-     * @throws Exception if an error occurs during the call or the SSPI client
-     * is uninitialized
+     * @param buf challenge BLOB
+     * @return NTLM TYPE-3 message
      */
     public byte[] invokePrepareSSOSubmit(byte[] buf) {
         if (!initialized) {
