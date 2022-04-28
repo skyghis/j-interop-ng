@@ -9,7 +9,6 @@ hs_err_pid*
 .classpath
 .project
 
-
 # Intellij project files
 *.iml
 *.ipr
@@ -18,3 +17,6 @@ hs_err_pid*
 
 # Netbeans project files
 nb-configuration.xml
+
+# Internal tests
+/src/test/**/*Internal*

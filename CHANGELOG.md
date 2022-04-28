@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- Merge `j-interop-ng-parent`, `j-interop-ng-parent` into `j-interop-ng` to ease maintenance.
 
 ## [3.4.0] - 2022-04-26
 ### Added

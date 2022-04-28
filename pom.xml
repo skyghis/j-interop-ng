@@ -4,16 +4,16 @@
 
     <groupId>com.github.skyghis</groupId>
     <artifactId>j-interop-ng-parent</artifactId>
-    <version>3.5.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <version>4.0.0-SNAPSHOT</version>
 
-    <name>Pure Java - COM bridge - Parent</name>
+    <name>Pure Java - COM bridge</name>
     <description>
-        Implementation of DCOM wire protocol (MSRPC) to enable development of Pure Bi-Directional, Non-Native Java applications which can interoperate with any COM component.
+        Implementation of DCOM wire protocol (MSRPC) to enable development of Pure Bi-Directional,
+        Non-Native Java applications interoperable with any COM component.
+
         The implementation is itself purely in Java and does not use JNI to provide COM access.
 
-        This is a cleaned-up and improved version of the j-Interop library.
-        Based on j-interop kohsuke work, and modified to use jcifs-ng.
+        This is a cleaned-up and improved version of the j-Interop library based on j-interop kohsuke work and modified to use jcifs-ng.
     </description>
     <url>https://github.com/skyghis/j-interop-ng</url>
     <licenses>
@@ -32,11 +32,6 @@
             <url>https://github.com/skyghis</url>
         </developer>
     </developers>
-
-    <modules>
-        <module>j-interop</module>
-        <module>j-interopdeps</module>
-    </modules>
 
     <scm>
         <url>https://github.com/skyghis/j-interop-ng</url>
@@ -59,6 +54,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>eu.agno3.jcifs</groupId>
+            <artifactId>jcifs-ng</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -116,20 +119,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.2.1</version>
                 <executions>
@@ -168,4 +157,28 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
