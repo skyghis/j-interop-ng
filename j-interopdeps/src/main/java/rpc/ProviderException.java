@@ -18,9 +18,6 @@ package rpc;
 
 public class ProviderException extends RpcException {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -1110150203054594627L;
 
     public ProviderException() {
@@ -30,5 +27,4 @@ public class ProviderException extends RpcException {
     public ProviderException(String message) {
         super(message);
     }
-
 }
