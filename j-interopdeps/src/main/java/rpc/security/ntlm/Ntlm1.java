@@ -16,12 +16,15 @@
  */
 package rpc.security.ntlm;
 
-import gnu.crypto.prng.IRandom;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.SecretKeySpec;
 import jcifs.ntlmssp.NtlmFlags;
 import jcifs.util.Hexdump;
 import ndr.NdrBuffer;
@@ -56,9 +59,10 @@ public class Ntlm1 implements NtlmFlags, Security {
         0x74, 0x20, 0x73, 0x65, 0x61, 0x6c, 0x69, 0x6e, 0x67, 0x20, 0x6b, 0x65, 0x79, 0x20, 0x6d,
         0x61, 0x67, 0x69, 0x63, 0x20, 0x63, 0x6f, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x74, 0x00
     };
+    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
     private static final int NTLM1_VERIFIER_LENGTH = 16;
-    private final IRandom clientCipher;
-    private final IRandom serverCipher;
+    private final Cipher clientCipher;
+    private final Cipher serverCipher;
     private final byte[] clientSigningKey;
     private final byte[] serverSigningKey;
     private final boolean isServer;
@@ -72,10 +76,15 @@ public class Ntlm1 implements NtlmFlags, Security {
         this.clientSigningKey = generateClientSigningKeyUsingNegotiatedSecondarySessionKey(sessionKey);
         this.serverSigningKey = generateServerSigningKeyUsingNegotiatedSecondarySessionKey(sessionKey);
         final byte[] clientSealingKey = generateClientSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
-        this.clientCipher = NTLMKeyFactory.getARCFOUR(clientSealingKey); // Used by the server to decrypt client messages
         final byte[] serverSealingKey = generateServerSealingKeyUsingNegotiatedSecondarySessionKey(sessionKey);
-        this.serverCipher = NTLMKeyFactory.getARCFOUR(serverSealingKey); //Used by the client to decrypt server messages
-
+        try {
+            this.clientCipher = Cipher.getInstance("RC4");
+            this.clientCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(clientSealingKey, "RC4"));
+            this.serverCipher = Cipher.getInstance("RC4");
+            this.serverCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(serverSealingKey, "RC4"));
+        } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException("Failed to init decrypt RC4 cipher", ex);
+        }
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Client Signing Key derieved from the session key: [{0}]", dumpString(clientSigningKey));
             LOGGER.log(Level.FINEST, "Client Sealing Key derieved from the session key: [{0}]", dumpString(clientSealingKey));
@@ -100,14 +109,11 @@ public class Ntlm1 implements NtlmFlags, Security {
     }
 
     @Override
-    public void processIncoming(NetworkDataRepresentation ndr, int index,
-            int length, int verifierIndex, boolean isFragmented) throws IOException {
+    public void processIncoming(NetworkDataRepresentation ndr, int index, int length, int verifierIndex, boolean isFragmented) throws IOException {
         try {
-            NdrBuffer buffer = ndr.getBuffer();
-
-            byte[] signingKey;
-            IRandom cipher;
-
+            final NdrBuffer buffer = ndr.getBuffer();
+            final byte[] signingKey;
+            final Cipher cipher;
             //reverse of what it is
             if (!isServer) {
                 signingKey = serverSigningKey;
@@ -121,7 +127,7 @@ public class Ntlm1 implements NtlmFlags, Security {
             System.arraycopy(ndr.getBuffer().getBuffer(), index, data, 0, data.length);
 
             if (getProtectionLevel() == PROTECTION_LEVEL_PRIVACY) {
-                data = NTLMKeyFactory.applyARCFOUR(cipher, data);
+                data = cipher.update(data);
                 System.arraycopy(data, 0, ndr.getBuffer().buf, index, data.length);
             }
 
@@ -131,8 +137,8 @@ public class Ntlm1 implements NtlmFlags, Security {
                 LOGGER.log(Level.FINEST, "\nLength is: {0}", data.length);
             }
 
-            byte[] verifier = NTLMKeyFactory.signingPt1(responseCounter, signingKey, buffer.getBuffer(), verifierIndex);
-            NTLMKeyFactory.signingPt2(verifier, cipher);
+            byte[] verifier = signingPt1(responseCounter, signingKey, buffer.getBuffer(), verifierIndex);
+            signingPt2(verifier, cipher);
 
             buffer.setIndex(verifierIndex);
             //now read the next 16 bytes and pass compare them
@@ -140,7 +146,7 @@ public class Ntlm1 implements NtlmFlags, Security {
             ndr.readOctetArray(signing, 0, signing.length);
 
             //this should result in an access denied fault
-            if (!NTLMKeyFactory.compareSignature(verifier, signing)) {
+            if (!Arrays.equals(verifier, signing)) {
                 throw new IntegrityException("Message out of sequence. Perhaps the user being used to run this application is different from the one under which the COM server is running !.");
             }
 
@@ -154,7 +160,7 @@ public class Ntlm1 implements NtlmFlags, Security {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "", ex);
             throw ex;
-        } catch (Exception ex) {
+        } catch (ShortBufferException | RuntimeException ex) {
             LOGGER.log(Level.SEVERE, "", ex);
             throw new IntegrityException("General error: " + ex.getMessage());
         }
@@ -165,9 +171,8 @@ public class Ntlm1 implements NtlmFlags, Security {
         try {
             NdrBuffer buffer = ndr.getBuffer();
 
-            byte[] signingKey;
-            IRandom cipher;
-
+            final byte[] signingKey;
+            final Cipher cipher;
             if (isServer) {
                 signingKey = serverSigningKey;
                 cipher = serverCipher;
@@ -176,7 +181,7 @@ public class Ntlm1 implements NtlmFlags, Security {
                 cipher = clientCipher;
             }
 
-            byte[] verifier = NTLMKeyFactory.signingPt1(requestCounter, signingKey, buffer.getBuffer(), verifierIndex);
+            byte[] verifier = signingPt1(requestCounter, signingKey, buffer.getBuffer(), verifierIndex);
             byte[] data = new byte[length];
             System.arraycopy(ndr.getBuffer().getBuffer(), index, data, 0, data.length);
             if (LOGGER.isLoggable(Level.FINEST)) {
@@ -186,22 +191,21 @@ public class Ntlm1 implements NtlmFlags, Security {
             }
 
             if (getProtectionLevel() == PROTECTION_LEVEL_PRIVACY) {
-                byte[] data2 = NTLMKeyFactory.applyARCFOUR(cipher, data);
+                byte[] data2 = cipher.update(data);
                 System.arraycopy(data2, 0, ndr.getBuffer().buf, index, data2.length);
             }
-            NTLMKeyFactory.signingPt2(verifier, cipher);
+            signingPt2(verifier, cipher);
 
             buffer.setIndex(verifierIndex);
             buffer.writeOctetArray(verifier, 0, verifier.length);
             requestCounter++;
 
-        } catch (NoSuchAlgorithmException | RuntimeException ex) {
+        } catch (ShortBufferException | RuntimeException ex) {
             throw new IntegrityException("General error: " + ex.getMessage());
         }
     }
-    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
 
-    public static String dumpString(byte[] bytes) {
+    private static String dumpString(byte[] bytes) {
         byte[] hexChars = new byte[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -237,5 +241,34 @@ public class Ntlm1 implements NtlmFlags, Security {
         System.arraycopy(secondarySessionKey, 0, dataforhash, 0, secondarySessionKey.length);
         System.arraycopy(SERVER_SEALING_MAGIC_CONSTANT, 0, dataforhash, secondarySessionKey.length, SERVER_SEALING_MAGIC_CONSTANT.length);
         return DigestHelper.md5(dataforhash);
+    }
+
+    private static byte[] signingPt1(int sequenceNumber, byte[] signingKey, byte[] data, int lengthOfBuffer) {
+        byte[] seqNumPlusData = new byte[4 + lengthOfBuffer];
+
+        seqNumPlusData[0] = (byte) (sequenceNumber & 0xFF);
+        seqNumPlusData[1] = (byte) ((sequenceNumber >> 8) & 0xFF);
+        seqNumPlusData[2] = (byte) ((sequenceNumber >> 16) & 0xFF);
+        seqNumPlusData[3] = (byte) ((sequenceNumber >> 24) & 0xFF);
+
+        System.arraycopy(data, 0, seqNumPlusData, 4, lengthOfBuffer);
+
+        byte[] retval = new byte[16];
+        retval[0] = 0x01; //Version number LE 1.
+
+        byte[] sign = Responses.hmacMD5(seqNumPlusData, signingKey);
+
+        System.arraycopy(sign, 0, retval, 4, 8);
+
+        retval[12] = (byte) (sequenceNumber & 0xFF);
+        retval[13] = (byte) ((sequenceNumber >> 8) & 0xFF);
+        retval[14] = (byte) ((sequenceNumber >> 16) & 0xFF);
+        retval[15] = (byte) ((sequenceNumber >> 24) & 0xFF);
+
+        return retval;
+    }
+
+    private static void signingPt2(byte[] verifier, Cipher rc4) throws ShortBufferException {
+        rc4.update(verifier, 4, 8, verifier, 4);
     }
 }
