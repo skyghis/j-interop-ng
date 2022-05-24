@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Changed
 - Avoid buffer overruns in the NdrBuffer class (Based on [j-interop patch 1](https://sourceforge.net/p/j-interop/patches/1/)).
+- Reset `JIComServer` binding to `null` when unused (Based on [j-interop patch 3](https://sourceforge.net/p/j-interop/patches/3/)).
+- Start `JIComOxidRuntime` ping timer threads on demand (Based on [j-interop patch 3](https://sourceforge.net/p/j-interop/patches/3/)).
 
 ## [3.4.0] - 2022-04-26
 ### Added

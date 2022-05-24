@@ -172,8 +172,8 @@ public final class JIComServer extends Stub {
             //now we choose, otherwise the first one we get.
             while (i < addressBindings.length) {
                 binding = addressBindings[i];
-                if (binding.getTowerId() != 0x07) //this means, even though I asked for TCPIP something else was supplied, noticed this in win2k.
-                {
+                if (binding.getTowerId() != 0x07) { //this means, even though I asked for TCPIP something else was supplied, noticed this in win2k.
+                    binding = null;
                     i++;
                     continue;
                 }
@@ -201,6 +201,7 @@ public final class JIComServer extends Stub {
                     //can only come for the name, saving it incase nothing matches the target address
                     nameBinding = binding;
                 }
+                binding = null;
                 i++;
             }
 
