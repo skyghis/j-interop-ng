@@ -24,10 +24,11 @@ import jcifs.util.Encdec;
 
 public class NdrBuffer {
 
-    int referent;
-    Map<Object, Entry> referents;
+    private int referent;
+    private Map<Object, Entry> referents;
 
     static class Entry {
+
         int referent;
         Object obj;
     }
@@ -85,11 +86,17 @@ public class NdrBuffer {
     }
 
     public void writeOctetArray(byte[] b, int i, int l) {
+        if (index + l > buf.length) {
+            resize(index + l);
+        }
         System.arraycopy(b, i, buf, index, l);
         advance(l);
     }
 
     public void readOctetArray(byte[] b, int i, int l) {
+        if (index + l > buf.length) {
+            resize(index + l);
+        }
         System.arraycopy(buf, index, b, i, l);
         advance(l);
     }
@@ -100,6 +107,12 @@ public class NdrBuffer {
 
     public void advance(int n) {
         index += n;
+        // purposely *don't* resize if the index has been advanced to the end of
+        // the buffer because this is probably not a bug but simply a full
+        // buffer
+        if (index > buf.length) {
+            resize(index + 1);
+        }
         if ((index - start) > deferred.length) {
             deferred.length = index - start;
         }
@@ -114,11 +127,17 @@ public class NdrBuffer {
     }
 
     public void enc_ndr_small(int s) {
+        if (index >= buf.length) {
+            resize(index + 1);
+        }
         buf[index] = (byte) (s & 0xFF);
         advance(1);
     }
 
     public int dec_ndr_small() {
+        if (index >= buf.length) {
+            resize(index + 1);
+        }
         int val = buf[index] & 0xFF;
         advance(1);
         return val;
@@ -139,19 +158,23 @@ public class NdrBuffer {
 
     public void enc_ndr_long(int l) {
         align(4);
+        if (index + 4 > buf.length) {
+            resize(index + 4);
+        }
         Encdec.enc_uint32le(l, buf, index);
         advance(4);
     }
 
     public int dec_ndr_long() {
         align(4);
+        if (index + 4 > buf.length) {
+            resize(index + 4);
+        }
         int val = Encdec.dec_uint32le(buf, index);
         advance(4);
         return val;
     }
 
-    /* float */
- /* double */
     public void enc_ndr_string(String s) {
         align(4);
         int i = index;
@@ -191,38 +214,17 @@ public class NdrBuffer {
         return val;
     }
 
-    private int getDceReferent(Object obj) {
-        Entry e;
-
-        if (referents == null) {
-            referents = new HashMap<>();
-            referent = 1;
-        }
-
-        if ((e = referents.get(obj)) == null) {
-            e = new Entry();
-            e.referent = referent++;
-            e.obj = obj;
-            referents.put(obj, e);
-        }
-
-        return e.referent;
-    }
-
     public void enc_ndr_referent(Object obj, int type) {
         if (obj == null) {
             enc_ndr_long(0);
             return;
         }
         switch (type) {
-            case 1:
-            /* unique */
-            case 3:
-                /* ref */
+            case 1: // unique
+            case 3: // ref
                 enc_ndr_long(System.identityHashCode(obj));
                 return;
-            case 2:
-                /* ptr */
+            case 2: // ptr
                 enc_ndr_long(getDceReferent(obj));
         }
     }
@@ -230,5 +232,30 @@ public class NdrBuffer {
     @Override
     public String toString() {
         return "start=" + start + ",index=" + index + ",length=" + getLength();
+    }
+
+    public void resize(int min) {
+        int newSize = 0;
+        if (min > newSize) {
+            newSize = min;
+        }
+        final byte[] newBuffer = new byte[newSize];
+        System.arraycopy(buf, 0, newBuffer, 0, buf.length);
+        buf = newBuffer;
+    }
+
+    private int getDceReferent(Object obj) {
+        if (referents == null) {
+            referents = new HashMap<>();
+            referent = 1;
+        }
+        Entry entry;
+        if ((entry = referents.get(obj)) == null) {
+            entry = new Entry();
+            entry.referent = referent++;
+            entry.obj = obj;
+            referents.put(obj, entry);
+        }
+        return entry.referent;
     }
 }
