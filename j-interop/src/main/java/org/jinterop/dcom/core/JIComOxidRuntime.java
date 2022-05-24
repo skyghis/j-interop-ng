@@ -39,15 +39,12 @@ import rpc.Security;
 import rpc.core.UUID;
 
 /**
- * Thread for Oxid Resolver. Creates and accepts socket connections for
- * resolving oxids. Gets started once for each instance of the library.
+ * Thread for Oxid Resolver. Creates and accepts socket connections for resolving Oxids.
+ * Gets started once for each instance of the library.
  *
- * Please note that the <b>"Server" <b> Service should be running on the machine
- * where the
- * <br> COM server is running.
+ * Please note that the <strong>Server</strong> Service should be running on the machine where the COM server is running.
  *
  * @since 1.0
- *
  */
 final class JIComOxidRuntime {
 
@@ -70,8 +67,8 @@ final class JIComOxidRuntime {
     private static final Object mutex2 = new Object();//for access to the maps
     private static final Object mutex3 = new Object(); //for access to the AddressVsSession,Stub Map
     private static final Random randomGen = new Random(Double.doubleToRawLongBits(Math.random()));
-    private static final Timer pingTimer_2minutes = new Timer(true);
-    private static final Timer pingTimer_8minutes = new Timer(true);
+    private static Timer pingTimer_2minutes = null;
+    private static Timer pingTimer_8minutes = null;
     private static final Object mutex4 = new Object(); //for access to the mapOfAddressVsStub
     private static ServerSocket serverSocket = null;
     static final Object mutex = new Object(); //for access to the sockets
@@ -389,8 +386,14 @@ final class JIComOxidRuntime {
 
     static synchronized void startResolverTimer() {
         //schedule only 1 timer task , the task to ping the OIDs obtained.
+        if (pingTimer_2minutes == null) {
+            pingTimer_2minutes = new Timer(true);
+        }
         pingTimer_2minutes.scheduleAtFixedRate(new ClientPingTimerTask(), 0, (4 * 60 * 1000));
         if (JISystem.isJavaCoClassAutoCollectionSet()) {
+            if (pingTimer_8minutes == null) {
+                pingTimer_8minutes = new Timer(true);
+            }
             pingTimer_8minutes.scheduleAtFixedRate(new ServerPingTimerTask(), 0, 8 * 60 * 1000);
         }
     }
@@ -435,7 +438,7 @@ final class JIComOxidRuntime {
         return oxidResolverPort;
     }
 
-    //Will be called from shutDownHook thread.
+    // Will be called from shutDownHook thread.
     static synchronized void stopResolver() {
         stopSystem = true;
         try {
@@ -443,8 +446,14 @@ final class JIComOxidRuntime {
         } catch (IOException e) {
         }
 
-        pingTimer_2minutes.cancel();
-        pingTimer_8minutes.cancel();
+        if (pingTimer_2minutes != null) {
+            pingTimer_2minutes.cancel();
+            pingTimer_2minutes = null;
+        }
+        if (pingTimer_8minutes != null) {
+            pingTimer_8minutes.cancel();
+            pingTimer_8minutes = null;
+        }
 
         for (JIComOxidStub s : mapOfAddressVsStub.values()) {
             s.close();
