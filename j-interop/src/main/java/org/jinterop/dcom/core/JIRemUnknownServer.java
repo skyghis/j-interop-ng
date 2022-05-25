@@ -61,7 +61,7 @@ final class JIRemUnknownServer extends Stub {
         super();
 
         this.session = session;
-        super.setTransportFactory(JIComTransportFactory.getSingleTon());
+        super.setTransportFactory(JIComTransportFactory.getSingleton());
         super.setProperties(new Properties(defaults));
         super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
 

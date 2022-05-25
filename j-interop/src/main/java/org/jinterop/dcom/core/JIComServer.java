@@ -146,7 +146,7 @@ public final class JIComServer extends Stub {
             JISystem.internal_dumpMap();
         }
 
-        super.setTransportFactory(JIComTransportFactory.getSingleTon());
+        super.setTransportFactory(JIComTransportFactory.getSingleton());
         //now read the session and prepare information for the stub.
         super.setProperties(new Properties(DEFAULTS));
         super.getProperties().setProperty("rpc.security.username", session.getUserName());
@@ -447,7 +447,7 @@ public final class JIComServer extends Stub {
     }
 
     private void initialise(JIClsid clsid, String address, JISession session) throws JIException {
-        super.setTransportFactory(JIComTransportFactory.getSingleTon());
+        super.setTransportFactory(JIComTransportFactory.getSingleton());
         //now read the session and prepare information for the stub.
         super.setProperties(new Properties(DEFAULTS));
         super.getProperties().setProperty("rpc.socketTimeout", Integer.toString(session.getGlobalSocketTimeout()));
