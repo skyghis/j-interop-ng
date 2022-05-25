@@ -20,9 +20,6 @@ import java.io.IOException;
 
 public class RpcException extends IOException {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6529915206074406077L;
 
     public RpcException() {
@@ -32,5 +29,4 @@ public class RpcException extends IOException {
     public RpcException(String message) {
         super(message);
     }
-
 }
