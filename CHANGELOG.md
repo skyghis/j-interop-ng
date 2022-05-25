@@ -8,13 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Utility class to ease close objects without throw on error.
 
 ### Changed
-- Avoid buffer overruns in the NdrBuffer class (Based on [j-interop patch 1](https://sourceforge.net/p/j-interop/patches/1/)).
-- Simplify JIComTransport (Inspired by [j-interop patch 4](https://sourceforge.net/p/j-interop/patches/4/)).
-- Reset `JIComServer` binding to `null` when unused (Based on [j-interop patch 3](https://sourceforge.net/p/j-interop/patches/3/)).
-- Start `JIComOxidRuntime` ping timer threads on demand (Based on [j-interop patch 3](https://sourceforge.net/p/j-interop/patches/3/)).
+- Avoid buffer overruns in the NdrBuffer class (Based on [j-interop patch 1]).
+- Simplify JIComTransport (Inspired by [j-interop patch 4]).
+- Reset `JIComServer` binding to `null` when unused (Based on [j-interop patch 3]).
+- Start `JIComOxidRuntime` ping timer threads on demand (Based on [j-interop patch 3]).
 
 ### Removed
-- Finish to remove custom `MD4` implementation (Inspired by on [j-interop patch 5](https://sourceforge.net/p/j-interop/patches/5/)).
+- Finish to remove custom `MD4` implementation (Inspired by on [j-interop patch 5]).
+
+### Fixed
+- Update JIComTransport to fix socket leak (Inspired by [j-interop patch 6] and [j-interop patch 7]).
+
+[j-interop patch 1]: https://sourceforge.net/p/j-interop/patches/1/
+[j-interop patch 3]: https://sourceforge.net/p/j-interop/patches/3/
+[j-interop patch 4]: https://sourceforge.net/p/j-interop/patches/4/
+[j-interop patch 5]: https://sourceforge.net/p/j-interop/patches/5/
+[j-interop patch 6]: https://sourceforge.net/p/j-interop/patches/6/
+[j-interop patch 7]: https://sourceforge.net/p/j-interop/patches/7/
 
 ## [3.4.0] - 2022-04-26
 ### Added

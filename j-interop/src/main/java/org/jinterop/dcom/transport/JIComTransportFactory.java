@@ -16,35 +16,47 @@
  */
 package org.jinterop.dcom.transport;
 
+import java.io.IOException;
 import java.util.Properties;
+import org.jinterop.dcom.transport.utils.SelectorManager;
 import rpc.ProviderException;
 import rpc.Transport;
 import rpc.TransportFactory;
 
 /**
- * @exclude @since 1.0
+ * Factory for {@link JIComTransport}
+ *
+ * @since 1.0
  */
 public final class JIComTransportFactory implements TransportFactory {
 
-    private static JIComTransportFactory factory = null;
+    private static JIComTransportFactory instance = null;
+    private final SelectorManager selectorManager;
 
     private JIComTransportFactory() {
+        try {
+            selectorManager = new SelectorManager();
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     @Override
     public Transport createTransport(String address, Properties properties) throws ProviderException {
-        return new JIComTransport(address, properties);
+        return new JIComTransport(address, selectorManager, properties);
     }
 
-    public static JIComTransportFactory getSingleTon() {
-        if (factory == null) {
-            synchronized (JIComTransportFactory.class) {
-                if (factory == null) {
-                    factory = new JIComTransportFactory();
-                }
+    public static JIComTransportFactory getSingleton() {
+        synchronized (JIComTransportFactory.class) {
+            if (instance == null) {
+                instance = new JIComTransportFactory();
             }
+            return instance;
         }
+    }
 
-        return factory;
+    @Deprecated // Use getSingleton instead
+    public static JIComTransportFactory getSingleTon() {
+        return getSingleton();
     }
 }

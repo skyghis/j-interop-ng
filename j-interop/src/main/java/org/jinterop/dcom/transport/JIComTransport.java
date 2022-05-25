@@ -17,20 +17,24 @@
 package org.jinterop.dcom.transport;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import ndr.NdrBuffer;
-import org.jinterop.IoUtils;
+import org.jinterop.dcom.transport.utils.ChannelWrapper;
+import org.jinterop.dcom.transport.utils.IoUtils;
+import org.jinterop.dcom.transport.utils.SelectorManager;
 import rpc.Endpoint;
 import rpc.ProviderException;
 import rpc.RpcException;
@@ -39,24 +43,27 @@ import rpc.core.PresentationSyntax;
 
 final class JIComTransport implements Transport {
 
-    public static final String PROTOCOL = "ncacn_ip_tcp";
     private static final Logger LOGGER = Logger.getLogger("org.jinterop");
-    private static final Pattern ADDRESS_PATTERN = Pattern.compile("ncacn_ip_tcp:(?<host>[^\\[]*)\\[(?<port>\\d+)\\]");
+    private static final String PROTOCOL = "ncacn_ip_tcp";
+    private static final Pattern ADDRESS_PATTERN = Pattern.compile(PROTOCOL + ":(?<host>[^\\[]*)\\[(?<port>\\d+)\\]");
     private static final String LOCALHOST = getLocalhostName();
+    private static final Object HANDOFF = new Object();
+    private final SynchronousQueue<Object> readReadyHandoff = new SynchronousQueue<>();
     private final Properties properties;
     private final String host;
     private final int port;
-    private SocketChannel channel = null;
-    private Socket socket = null;
+    private final SelectorManager selectorManager;
+    private ChannelWrapper wrappedChannel;
     private boolean attached = false;
 
-    JIComTransport(String address, Properties properties) throws ProviderException {
+    JIComTransport(String address, SelectorManager selectorManager, Properties properties) throws ProviderException {
+        this.selectorManager = selectorManager;
         this.properties = properties;
 
         if (address == null) {
             throw new ProviderException("Null address.");
         }
-        if (!address.startsWith("ncacn_ip_tcp:")) {
+        if (!address.startsWith(PROTOCOL + ":")) {
             throw new ProviderException("Not an ncacn_ip_tcp address.");
         }
         final Matcher addressMatcher = ADDRESS_PATTERN.matcher(address);
@@ -83,39 +90,49 @@ final class JIComTransport implements Transport {
             throw new RpcException("Transport already attached.");
         }
         try {
-            if (LOGGER.isLoggable(Level.FINEST)) {
-                LOGGER.log(Level.FINEST, "Opening socket on {0}", new InetSocketAddress(InetAddress.getByName(host), port));
-            }
-            channel = SocketChannel.open();
-            socket = channel.socket();
-            int timeout = getSocketTimeout();
+            LOGGER.log(Level.FINEST, "Opening socket on {0}", this);
+            final int timeout = getSocketTimeout();
+            final SocketChannel channel = SocketChannel.open();
+
+            final Socket socket = channel.socket();
             socket.setSoTimeout(timeout);
             socket.connect(new InetSocketAddress(InetAddress.getByName(host), port), timeout);
-
+            // Configure the channel to be non-blocking, we will handle simulating blocking mode using selectors.
+            // Using a blocking connect above is fine as that does not cause the NIO code to generate temporary pipe on Linux/Unix.
+            channel.configureBlocking(false);
+            wrappedChannel = new ChannelWrapper(selectorManager, channel, () -> {
+                try {
+                    if (!readReadyHandoff.offer(HANDOFF, timeout, TimeUnit.MILLISECONDS)) {
+                        // Maybe the reader thread has died between adding read interest and waiting for the handoff
+                        LOGGER.log(Level.WARNING, "Timeout while awaiting read ready handoff to {0}", JIComTransport.this);
+                    }
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt(); // Re-set interrupt flag
+                }
+            });
             attached = true;
-
             return new JIComEndpoint(this, syntax);
+
         } catch (IOException ex) {
             close();
             throw ex;
         } catch (RuntimeException ex) {
             close();
-            throw new IOException("Failed to attach COM Transport on " + this);
+            throw new IOException("Failed to attach COM Transport on " + this, ex);
         }
     }
 
     @Override
     public String toString() {
-        return host + ":" + port;
+        return "Transport to " + host + ":" + port;
     }
 
     @Override
     public void close() {
         if (LOGGER.isLoggable(Level.FINEST)) {
-            LOGGER.log(Level.FINEST, "Close socket {0} host {1} , port {2}", new Object[]{socket, host, port});
+            LOGGER.log(Level.FINEST, "Close channelWrapper {0} host {1} , port {2}", new Object[]{wrappedChannel, host, port});
         }
-        socket = IoUtils.closeSilent(socket, "JIComTransport socket");
-        channel = IoUtils.closeSilent(channel, "JIComTransport channel");
+        wrappedChannel = IoUtils.closeSilent(wrappedChannel);
         attached = false;
     }
 
@@ -124,9 +141,8 @@ final class JIComTransport implements Transport {
         if (!attached) {
             throw new RpcException("Transport not attached.");
         }
-        final OutputStream output = socket.getOutputStream();
-        output.write(buffer.getBuffer(), 0, buffer.getLength());
-        output.flush();
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(buffer.getBuffer(), 0, buffer.getLength());
+        wrappedChannel.writeAll(byteBuffer);
     }
 
     @Override
@@ -134,7 +150,25 @@ final class JIComTransport implements Transport {
         if (!attached) {
             throw new RpcException("Transport not attached.");
         }
-        buffer.length = channel.read(ByteBuffer.wrap(buffer.getBuffer()));
+
+        final int timeoutMillis = getSocketTimeout();
+        // Register for read and wait for the read to occur
+        wrappedChannel.registerForRead();
+        try {
+            final Object handoffResult;
+            if (timeoutMillis == 0) {
+                handoffResult = readReadyHandoff.take();
+            } else {
+                handoffResult = readReadyHandoff.poll(timeoutMillis, TimeUnit.MILLISECONDS);
+            }
+            if (handoffResult == null) {
+                throw new SocketTimeoutException();
+            }
+            buffer.length = wrappedChannel.read(ByteBuffer.wrap(buffer.getBuffer()));
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt(); // Re-set interrupted flag
+            throw new IOException("Interrupted while reading");
+        }
     }
 
     private int getSocketTimeout() {
