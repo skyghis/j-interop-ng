@@ -22,6 +22,8 @@ import java.security.GeneralSecurityException;
 import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import jcifs.ntlmssp.NtlmFlags;
 import jcifs.ntlmssp.NtlmMessage;
 import jcifs.ntlmssp.Type1Message;
@@ -54,8 +56,7 @@ public class NtlmAuthentication {
     private boolean seal;
     private boolean sign;
     private boolean keyExchange;
-    //we always go for 128
-    private int keyLength = 128;
+    private int keyLength = 128; // we always go for 128
     private boolean useNtlm2sessionsecurity = false;
     private boolean useNtlmV2 = false;
     private boolean useSSO = false;
@@ -102,6 +103,7 @@ public class NtlmAuthentication {
         return security;
     }
 
+    @Deprecated // Unused
     protected AuthenticationSource getAuthenticationSource() {
         if (authenticationSource == null) {
             String sourceClass = (properties != null) ? properties.getProperty("rpc.ntlm.authenticationSource") : null;
@@ -112,74 +114,11 @@ public class NtlmAuthentication {
                 try {
                     authenticationSource = (AuthenticationSource) Class.forName(sourceClass).newInstance();
                 } catch (Exception ex) {
-                    throw new IllegalArgumentException("Invalid authentication source: " + ex);
+                    throw new IllegalArgumentException("Invalid authentication source: " + sourceClass, ex);
                 }
             }
         }
         return authenticationSource;
-    }
-
-    private int getDefaultFlags() {
-        int flags = BASIC_FLAGS;
-        if (lanManagerKey) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_LM_KEY;
-        }
-        if (sign) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_SIGN;
-        }
-        if (seal) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_SEAL;
-        }
-        if (keyExchange) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
-        }
-        if (keyLength >= 56) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_56;
-        }
-        if (keyLength >= 128) {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_128;
-        }
-        //We always negotiate for NTLM2 session security
-//        if (useNtlm2sessionsecurity)
-        {
-            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY;
-        }
-
-        return flags;
-    }
-
-    private int adjustFlags(int flags) {
-        int adjustedFlags = flags;
-        if (UNICODE_SUPPORTED && ((adjustedFlags & NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE) != 0)) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_OEM;
-            adjustedFlags |= NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE;
-        } else {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE;
-            adjustedFlags |= NtlmFlags.NTLMSSP_NEGOTIATE_OEM;
-        }
-        if (!lanManagerKey) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_LM_KEY;
-        }
-        if (!(sign || seal)) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_SIGN;
-        }
-        if (!seal) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_SEAL;
-        }
-        if (!keyExchange) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
-        }
-        if (keyLength < 128) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_128;
-        }
-        if (keyLength < 56) {
-            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_56;
-        }
-//        if (!useNtlm2sessionsecurity)
-//        {
-//        	flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY;
-//        }
-        return adjustedFlags;
     }
 
     public Type1Message createType1() throws IOException {
@@ -296,7 +235,7 @@ public class NtlmAuthentication {
                 byte[] userSessionKey;
                 if (useNtlmV2) {
                     try {
-                        userSessionKey = NTLMKeyFactory.getNTLMv2UserSessionKey(target, credentials.getUsername(), credentials.getPassword(), type2.getChallenge(), blob);
+                        userSessionKey = getNTLMv2UserSessionKey(target, credentials.getUsername(), credentials.getPassword(), type2.getChallenge(), blob);
                     } catch (Exception e) {
                         throw new RuntimeException("Exception occured while forming NTLMv2 with NTLM2 Session Security for Type3Response", e);
                     }
@@ -307,16 +246,15 @@ public class NtlmAuthentication {
                     System.arraycopy(type2.getChallenge(), 0, servernonce, 0, type2.getChallenge().length);
                     System.arraycopy(clientNonce, 0, servernonce, 8, clientNonce.length);
                     try {
-                        userSessionKey = NTLMKeyFactory.getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Exception occured while forming Session Security for Type3Response", e);
+                        userSessionKey = getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
+                    } catch (RuntimeException ex) {
+                        throw new RuntimeException("Exception occured while forming Session Security for Type3Response", ex);
                     }
-
                 }
 
                 try {
                     //now RC4 encrypt a random 16 byte key
-                    byte[] secondayMasterKey = NTLMKeyFactory.getSecondarySessionKey();
+                    byte[] secondayMasterKey = getSecondarySessionKey();
                     type3.setEncryptedSessionKey(encryptSecondarySessionKey(secondayMasterKey, userSessionKey));
                     security = new Ntlm1(flags, secondayMasterKey, false);
                 } catch (Exception e) {
@@ -326,36 +264,6 @@ public class NtlmAuthentication {
 
             return type3;
         }
-    }
-
-    private String getTargetFromTargetInformation(byte[] targetInformation) {
-        String target = null;
-
-        int i = 0;
-        while (i < targetInformation.length) {
-            switch (Encdec.dec_uint16le(targetInformation, i)) {
-                case 1: //Server name
-                    i++;
-                    i++; //advance two bytes
-                    int length = Encdec.dec_uint16le(targetInformation, i);
-                    i++;
-                    i++;//advance two bytes
-                    byte[] domainb = new byte[length];
-                    System.arraycopy(targetInformation, i, domainb, 0, length);
-                    target = new String(domainb, StandardCharsets.UTF_16LE);
-                    i = targetInformation.length;
-                    break;
-                default: //skip bytes
-                    i++;
-                    i++; //advance two bytes
-                    length = Encdec.dec_uint16le(targetInformation, i);
-                    i++;
-                    i++;//advance two bytes
-                    i += length;
-            }
-        }
-
-        return target;
     }
 
     void createSecurityWhenServer(NtlmMessage type3) {
@@ -381,7 +289,7 @@ public class NtlmAuthentication {
             System.arraycopy(challenge, 0, servernonce, 0, challenge.length);
             System.arraycopy(type3Message.getLMResponse(), 0, servernonce, 8, 8);//first 8 bytes only , the rest are all 0x00 and not required.
             try {
-                sessionResponseUserSessionKey = NTLMKeyFactory.getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
+                sessionResponseUserSessionKey = getNTLM2SessionResponseUserSessionKey(credentials.getPassword(), servernonce);
             } catch (Exception e) {
                 throw new RuntimeException("Exception occured while forming Session Security from Type3 AUTH", e);
             }
@@ -391,16 +299,157 @@ public class NtlmAuthentication {
             //now RC4 decrypt the session key
             secondayMasterKey = decryptSecondarySessionKey(type3Message.getEncryptedSessionKey(), sessionResponseUserSessionKey);
             security = new Ntlm1(flags, secondayMasterKey, true);
-        } catch (Exception e) {
-            throw new RuntimeException("Exception occured while forming Session Security Type3Response", e);
+        } catch (RuntimeException ex) {
+            throw new RuntimeException("Exception occured while forming Session Security Type3Response", ex);
         }
     }
 
+    private int getDefaultFlags() {
+        int flags = BASIC_FLAGS;
+        if (lanManagerKey) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_LM_KEY;
+        }
+        if (sign) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_SIGN;
+        }
+        if (seal) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_SEAL;
+        }
+        if (keyExchange) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
+        }
+        if (keyLength >= 56) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_56;
+        }
+        if (keyLength >= 128) {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_128;
+        }
+        //We always negotiate for NTLM2 session security
+//        if (useNtlm2sessionsecurity)
+        {
+            flags |= NtlmFlags.NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY;
+        }
+
+        return flags;
+    }
+
+    private int adjustFlags(int flags) {
+        int adjustedFlags = flags;
+        if (UNICODE_SUPPORTED && ((adjustedFlags & NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE) != 0)) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_OEM;
+            adjustedFlags |= NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE;
+        } else {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_UNICODE;
+            adjustedFlags |= NtlmFlags.NTLMSSP_NEGOTIATE_OEM;
+        }
+        if (!lanManagerKey) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_LM_KEY;
+        }
+        if (!(sign || seal)) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_SIGN;
+        }
+        if (!seal) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_SEAL;
+        }
+        if (!keyExchange) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_KEY_EXCH;
+        }
+        if (keyLength < 128) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_128;
+        }
+        if (keyLength < 56) {
+            adjustedFlags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_56;
+        }
+//        if (!useNtlm2sessionsecurity)
+//        {
+//        	flags &= ~NtlmFlags.NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY;
+//        }
+        return adjustedFlags;
+    }
+
+    private static String getTargetFromTargetInformation(byte[] targetInformation) {
+        String target = null;
+        int i = 0;
+        while (i < targetInformation.length) {
+            switch (Encdec.dec_uint16le(targetInformation, i)) {
+                case 1: //Server name
+                    i++;
+                    i++; //advance two bytes
+                    int length = Encdec.dec_uint16le(targetInformation, i);
+                    i++;
+                    i++;//advance two bytes
+                    byte[] domainb = new byte[length];
+                    System.arraycopy(targetInformation, i, domainb, 0, length);
+                    target = new String(domainb, StandardCharsets.UTF_16LE);
+                    i = targetInformation.length;
+                    break;
+                default: //skip bytes
+                    i++;
+                    i++; //advance two bytes
+                    length = Encdec.dec_uint16le(targetInformation, i);
+                    i++;
+                    i++;//advance two bytes
+                    i += length;
+            }
+        }
+        return target;
+    }
+
     private static byte[] decryptSecondarySessionKey(byte[] encryptedData, byte[] key) {
-        return NTLMKeyFactory.applyARCFOUR(NTLMKeyFactory.getARCFOUR(key), encryptedData);
+        try {
+            final Cipher cipher = Cipher.getInstance("RC4");
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "RC4"));
+            return cipher.update(encryptedData);
+        } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException("Failed to decrypt secondary session key");
+        }
     }
 
     private static byte[] encryptSecondarySessionKey(byte[] plainData, byte[] key) {
-        return NTLMKeyFactory.applyARCFOUR(NTLMKeyFactory.getARCFOUR(key), plainData);
+        try {
+            final Cipher cipher = Cipher.getInstance("RC4");
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "RC4"));
+            return cipher.update(plainData);
+        } catch (GeneralSecurityException ex) {
+            throw new IllegalStateException("Failed to encrypt secondary session key");
+        }
+    }
+
+    /**
+     * @return 16 bytes randomly generated
+     */
+    private static byte[] getSecondarySessionKey() {
+        byte[] key = new byte[16];
+        RANDOM.nextBytes(key);
+        return key;
+    }
+
+    private static byte[] getNTLMv2UserSessionKey(String target, String user, String password, byte[] challenge, byte[] blob) throws Exception {
+        byte[] ntlm2Hash = Responses.ntlmv2Hash(target, user, password);
+        byte[] data = new byte[challenge.length + blob.length];
+        System.arraycopy(challenge, 0, data, 0, challenge.length);
+        System.arraycopy(blob, 0, data, challenge.length, blob.length);
+        byte[] mac = Responses.hmacMD5(data, ntlm2Hash);
+        byte[] key = Responses.hmacMD5(mac, ntlm2Hash);
+        return key;
+    }
+
+    /**
+     * Password of the user.
+     *
+     * NTLMv1 User Session Key. Cases where LMcompatibilitylevel is 0,1,2. For
+     * 3,4,5 the logic is different and based upon the responses being sent back
+     * (either LMv2 or NTLMv2)
+     *
+     * @param password
+     * @param servernonce challenge + nonce from NTLM2 Session Response
+     * @return
+     */
+    private static byte[] getNTLM2SessionResponseUserSessionKey(String password, byte[] servernonce) {
+        //look at NTLMPasswordAuthentication in jcifs. It supports only the NTLMUserSessionKey and the LMv2UserSessionKey...we need more :(
+        final byte[] ntlmHash = Responses.ntlmHash(password);
+        final byte[] nTLMUserSessionKey = DigestHelper.md4(ntlmHash);
+
+        return Responses.hmacMD5(servernonce, nTLMUserSessionKey);
     }
 }
