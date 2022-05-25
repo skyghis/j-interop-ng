@@ -17,45 +17,54 @@
 package org.jinterop.dcom.transport;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import ndr.NdrBuffer;
+import org.jinterop.IoUtils;
 import rpc.Endpoint;
 import rpc.ProviderException;
 import rpc.RpcException;
 import rpc.Transport;
 import rpc.core.PresentationSyntax;
 
-/**
- * Borrowed all from ncacn_ip_tcp.RpcTransport from jarapac, modified attach api to include SocketChannel.
- *
- * @since 1.0
- */
 final class JIComTransport implements Transport {
 
     public static final String PROTOCOL = "ncacn_ip_tcp";
     private static final Logger LOGGER = Logger.getLogger("org.jinterop");
+    private static final Pattern ADDRESS_PATTERN = Pattern.compile("ncacn_ip_tcp:(?<host>[^\\[]*)\\[(?<port>\\d+)\\]");
     private static final String LOCALHOST = getLocalhostName();
     private final Properties properties;
-    private String host;
-    private int port;
-    private Socket socket;
-    private OutputStream output;
-    private InputStream input;
-    private boolean attached;
+    private final String host;
+    private final int port;
     private SocketChannel channel = null;
+    private Socket socket = null;
+    private boolean attached = false;
 
     JIComTransport(String address, Properties properties) throws ProviderException {
         this.properties = properties;
-        parse(address);
+
+        if (address == null) {
+            throw new ProviderException("Null address.");
+        }
+        if (!address.startsWith("ncacn_ip_tcp:")) {
+            throw new ProviderException("Not an ncacn_ip_tcp address.");
+        }
+        final Matcher addressMatcher = ADDRESS_PATTERN.matcher(address);
+        if (!addressMatcher.matches()) {
+            throw new ProviderException("Invalid address format, expecting 'ncacn_ip_tcp:host[port]' got '" + address + "'");
+        }
+        this.host = addressMatcher.group("host").isEmpty() ? LOCALHOST : addressMatcher.group("host");
+        this.port = Integer.parseInt(addressMatcher.group("port"));
     }
 
     @Override
@@ -79,50 +88,35 @@ final class JIComTransport implements Transport {
             }
             channel = SocketChannel.open();
             socket = channel.socket();
-
-            int timeout = 0;
-            try {
-                timeout = Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
-            } catch (NumberFormatException ex) {
-                LOGGER.log(Level.WARNING, "Invalid timeout value " + this.properties.getProperty("rpc.socketTimeout"), ex);
-            }
+            int timeout = getSocketTimeout();
             socket.setSoTimeout(timeout);
             socket.connect(new InetSocketAddress(InetAddress.getByName(host), port), timeout);
-            output = null;
-            input = null;
+
             attached = true;
-            socket.setKeepAlive(true);//backup for not providing a timeout.
+
             return new JIComEndpoint(this, syntax);
         } catch (IOException ex) {
-            try {
-                close();
-            } catch (Exception ignore) {
-            }
+            close();
             throw ex;
+        } catch (RuntimeException ex) {
+            close();
+            throw new IOException("Failed to attach COM Transport on " + this);
         }
     }
 
     @Override
-    public void close() throws IOException {
-        try {
-            if (socket != null) {
-//              input.close();
-//              output.close();
-                socket.shutdownInput();
-                socket.shutdownOutput();
-                socket.close();
-                channel.close();
-                if (LOGGER.isLoggable(Level.FINEST)) {
-                    LOGGER.log(Level.FINEST, "Socket closed... {0} host {1} , port {2}", new Object[]{socket, host, port});
-                }
-            }
-        } finally {
-            attached = false;
-            socket = null;
-            output = null;
-            input = null;
-            channel = null;
+    public String toString() {
+        return host + ":" + port;
+    }
+
+    @Override
+    public void close() {
+        if (LOGGER.isLoggable(Level.FINEST)) {
+            LOGGER.log(Level.FINEST, "Close socket {0} host {1} , port {2}", new Object[]{socket, host, port});
         }
+        socket = IoUtils.closeSilent(socket, "JIComTransport socket");
+        channel = IoUtils.closeSilent(channel, "JIComTransport channel");
+        attached = false;
     }
 
     @Override
@@ -130,10 +124,7 @@ final class JIComTransport implements Transport {
         if (!attached) {
             throw new RpcException("Transport not attached.");
         }
-        if (output == null) {
-            output = socket.getOutputStream();
-        }
-        channel.configureBlocking(true);
+        final OutputStream output = socket.getOutputStream();
         output.write(buffer.getBuffer(), 0, buffer.getLength());
         output.flush();
     }
@@ -143,49 +134,23 @@ final class JIComTransport implements Transport {
         if (!attached) {
             throw new RpcException("Transport not attached.");
         }
-        if (input == null) {
-            input = socket.getInputStream();
-        }
-        buffer.length = (input.read(buffer.getBuffer(), 0,
-                buffer.getCapacity()));
+        buffer.length = channel.read(ByteBuffer.wrap(buffer.getBuffer()));
     }
 
-    private void parse(String address) throws ProviderException {
-        if (address == null) {
-            throw new ProviderException("Null address.");
-        }
-        if (!address.startsWith("ncacn_ip_tcp:")) {
-            throw new ProviderException("Not an ncacn_ip_tcp address.");
-        }
-        address = address.substring(13);
-        int index = address.indexOf('[');
-        if (index == -1) {
-            throw new ProviderException("No port specifier present.");
-        }
-        String server = address.substring(0, index);
-        address = address.substring(index + 1);
-        index = address.indexOf(']');
-        if (index == -1) {
-            throw new ProviderException("Port specifier not terminated.");
-        }
-        address = address.substring(0, index);
-        if ("".equals(server)) {
-            server = LOCALHOST;
-        }
+    private int getSocketTimeout() {
         try {
-            port = Integer.parseInt(address);
-        } catch (Exception ex) {
-            throw new ProviderException("Invalid port specifier.");
+            return Integer.parseInt(this.properties.getProperty("rpc.socketTimeout", "0"));
+        } catch (NumberFormatException ex) {
+            LOGGER.log(Level.WARNING, ex, () -> "Invalid timeout value " + this.properties.getProperty("rpc.socketTimeout"));
+            return 0;
         }
-        host = server;
     }
 
     private static String getLocalhostName() {
-        String localhost = null;
         try {
-            localhost = InetAddress.getLocalHost().getHostName();
+            return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
+            return null;
         }
-        return localhost;
     }
 }
