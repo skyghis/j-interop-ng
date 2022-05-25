@@ -45,10 +45,8 @@ public interface Security {
 
     public int getProtectionLevel();
 
-    public void processIncoming(NetworkDataRepresentation ndr, int index,
-            int length, int verifierIndex, boolean isFragmented) throws IOException;
+    public void processIncoming(NetworkDataRepresentation ndr, int index, int length, int verifierIndex, boolean isFragmented) throws IOException;
 
-    public void processOutgoing(NetworkDataRepresentation ndr, int index,
-            int length, int verifierIndex, boolean isFragmented) throws IOException;
+    public void processOutgoing(NetworkDataRepresentation ndr, int index, int length, int verifierIndex, boolean isFragmented) throws IOException;
 
 }
