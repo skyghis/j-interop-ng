@@ -50,7 +50,7 @@ final class JIComOxidStub extends Stub {
 
     JIComOxidStub(String address, String domain, String username, String password) {
         super();
-        super.setTransportFactory(JIComTransportFactory.getSingleTon());
+        super.setTransportFactory(JIComTransportFactory.getSingleton());
         super.setProperties(new Properties(DEFAULTS));
         super.getProperties().setProperty("rpc.security.username", username);
         super.getProperties().setProperty("rpc.security.password", password);

@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.util.Properties;
 import ndr.NdrBuffer;
 import org.jinterop.dcom.common.JISystem;
+import org.jinterop.dcom.transport.utils.IoUtils;
 import rpc.Endpoint;
 import rpc.RpcException;
 import rpc.Transport;
@@ -33,7 +34,7 @@ import rpc.core.PresentationSyntax;
  */
 public class JIComRuntimeTransport implements Transport {
 
-    public static final String PROTOCOL = "ncacn_ip_tcp";
+    private static final String PROTOCOL = "ncacn_ip_tcp";
     private final Properties properties;
     protected Socket socket;
     private OutputStream output;
@@ -56,47 +57,36 @@ public class JIComRuntimeTransport implements Transport {
     }
 
     @Override
-    public Endpoint attach(PresentationSyntax syntax) throws IOException {
+    public Endpoint attach(PresentationSyntax syntax) throws RpcException {
         if (attached) {
             throw new RpcException("Transport already attached.");
         }
-
-        Endpoint endPoint = null;
         try {
             socket = this.getSocket();
             output = null;
             input = null;
             attached = true;
-            endPoint = this.getEndpoint(syntax);
-        } catch (Exception ex) {
-            try {
-                close();
-            } catch (IOException ignore) {
-            }
+            return getEndpoint(syntax);
+        } catch (RuntimeException ex) {
+            close();
+            return null;
         }
-        return endPoint;
     }
 
-    protected Endpoint getEndpoint(PresentationSyntax syntax) throws Exception {
+    protected Endpoint getEndpoint(PresentationSyntax syntax) {
         return new JIComRuntimeEndpoint(this, syntax);
     }
 
-    protected Socket getSocket() throws Exception {
+    protected Socket getSocket() {
         return JISystem.internal_getSocket();
     }
 
     @Override
-    public void close() throws IOException {
-        try {
-            if (socket != null) {
-                socket.close();
-            }
-        } finally {
-            attached = false;
-            socket = null;
-            output = null;
-            input = null;
-        }
+    public void close() {
+        socket = IoUtils.closeSilent(socket);
+        output = null;
+        input = null;
+        attached = false;
     }
 
     @Override
