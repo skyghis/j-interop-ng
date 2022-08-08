@@ -1,5 +1,15 @@
 # J-Interop-ng
 
+> ⚠️
+> Recent Windows update break the WMI Query capability of this library.  
+> I will no longer actively maintain this library.
+
+> ℹ️
+> I found the great Python 3 library [cesbit/aiowmi](https://github.com/cesbit/aiowmi) as replacement.  
+> I don't have the time or level to convert Python3 code to Java, but I can help if needed.
+
+  
+
 Implementation of DCOM wire protocol (MSRPC) to enable development of Pure Bi-Directional, Non-Native Java applications which can interoperate with any COM component.
 The implementation is itself purely in Java and does **not** use JNI to provide COM access.
 
