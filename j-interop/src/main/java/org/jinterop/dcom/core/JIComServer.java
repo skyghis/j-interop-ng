@@ -457,6 +457,15 @@ public final class JIComServer extends Stub {
             super.getProperties().setProperty("rpc.ntlm.ntlmv2", "true");
         }
 
+        // set the NTLMv2 Session Security.
+        if (session.isSessionSecurityEnabled()) {
+            super.getProperties().setProperty("rpc.ntlm.seal", "true");
+            super.getProperties().setProperty("rpc.ntlm.sign", "true");
+            super.getProperties().setProperty("rpc.ntlm.keyExchange", "true");
+            super.getProperties().setProperty("rpc.ntlm.keyLength", "128");
+            super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
+        }
+
         if (session.isSSOEnabled()) {
             super.getProperties().setProperty("rpc.ntlm.sso", "true");
         } else {
@@ -616,15 +625,6 @@ public final class JIComServer extends Stub {
         }
         //will use this last binding .
         //and currently only TCPIP is supported.
-        //now set the NTLMv2 Session Security.
-        if (session.isSessionSecurityEnabled()) {
-            super.getProperties().setProperty("rpc.ntlm.seal", "true");
-            super.getProperties().setProperty("rpc.ntlm.sign", "true");
-            super.getProperties().setProperty("rpc.ntlm.keyExchange", "true");
-            super.getProperties().setProperty("rpc.ntlm.keyLength", "128");
-            super.getProperties().setProperty("rpc.ntlm.ntlm2", "true");
-        }
-
         String address = binding.getNetworkAddress(); //this will always have the port.
         int index = address.indexOf('[');
         String hostname = binding.getNetworkAddress().substring(0, index);
