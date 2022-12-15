@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Simplify JIComTransport (Inspired by [j-interop patch 4]).
 - Reset `JIComServer` binding to `null` when unused (Based on [j-interop patch 3]).
 - Start `JIComOxidRuntime` ping timer threads on demand (Based on [j-interop patch 3]).
+- Set System Properties earlier in the construction of `JIComServer` to allow a higher level of authentication upon initial connection.
 
 ### Removed
 - Finish to remove custom `MD4` implementation (Inspired by on [j-interop patch 5]).
@@ -28,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [3.4.0] - 2022-04-26
 ### Added
-- Force load of `BouncyCastleProvider` to ensure `MD4` implementation exists. Can by disabled by java boolean property `ignore_bouncycastleprovider`.
+- Force load of `BouncyCastleProvider` to ensure `MD4` implementation exists. Can be disabled by java boolean property `ignore_bouncycastleprovider`.
 
 ### Changed
 - Update maven plugins dependencies.
