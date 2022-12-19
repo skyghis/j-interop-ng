@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [3.5.0] - 2022-12-19
 ### Added
 - Utility class to ease close objects without throw on error.
 
@@ -99,7 +101,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Socket connection timeout not used on connect.
 
-[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.4.0...HEAD
+[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.5.0...HEAD
+[3.5.0]: https://github.com/skyghis/j-interop-ng/compare/3.4.0...3.5.0
 [3.4.0]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.2.0...3.3.0
 [3.2.0]: https://github.com/skyghis/j-interop-ng/compare/3.1.0...3.2.0

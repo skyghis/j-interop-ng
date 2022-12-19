@@ -1,7 +1,7 @@
 
 ```console
-RELEASE_VERSION=3.4.0
-NEXT_VERSION=3.5.0
+RELEASE_VERSION=3.5.0
+NEXT_VERSION=3.6.0
 
 cd j-interop-ng
 git checkout jcifs-ng
