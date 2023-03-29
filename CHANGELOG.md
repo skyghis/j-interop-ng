@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- Ensure the Properties of `JIComServer` are passed along to any subsequent `JIComOxidStub` to allow a higher level of authentication for pings.
+
 ## [3.5.0] - 2022-12-19
 ### Added
 - Utility class to ease close objects without throw on error.

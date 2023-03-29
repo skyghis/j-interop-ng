@@ -192,6 +192,10 @@ final class JIComOxidRuntime {
                     stub = mapOfAddressVsStub.get(address);
                     if (stub == null) {
                         stub = new JIComOxidStub(address, holder.domain, holder.username, holder.password);
+                        JIComServer comServer = entry.getKey().getStub();
+                        if (comServer != null) {
+                            stub.setProperties(comServer.getProperties());
+                        }
                         mapOfAddressVsStub.put(address, stub);
                     }
                 }
