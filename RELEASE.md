@@ -1,10 +1,11 @@
 
 ```console
-RELEASE_VERSION=3.5.0
+RELEASE_VERSION=3.5.1
 NEXT_VERSION=3.6.0
 
 cd j-interop-ng
 git checkout jcifs-ng
+git pull
 
 JAVA_HOME=/usr/lib/jvm/temurin-8-jdk-amd64 mvn clean release:clean
 nano CHANGELOG.md

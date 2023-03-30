@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [3.5.1] - 2023-03-30
 ### Fixed
 - Ensure the Properties of `JIComServer` are passed along to any subsequent `JIComOxidStub` to allow a higher level of authentication for pings.
 
@@ -104,7 +105,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Socket connection timeout not used on connect.
 
-[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.5.0...HEAD
+[Unreleased]: https://github.com/skyghis/j-interop-ng/compare/3.5.1...HEAD
+[3.5.1]: https://github.com/skyghis/j-interop-ng/compare/3.5.0...3.5.1
 [3.5.0]: https://github.com/skyghis/j-interop-ng/compare/3.4.0...3.5.0
 [3.4.0]: https://github.com/skyghis/j-interop-ng/compare/3.3.0...3.4.0
 [3.3.0]: https://github.com/skyghis/j-interop-ng/compare/3.2.0...3.3.0
